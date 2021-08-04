@@ -1,0 +1,29 @@
+---
+# This file contains variables that are private to a specific rack.
+
+####################
+#       SNMP       #
+####################
+
+# NOTE community string is a per rack variable
+snmp_community_string: <rack community string>
+
+
+####################
+#      NGINX       #
+####################        
+
+# Nginx htaccess password to access status pages.
+# Can change username if you want
+fabric_prometheus_ht_user: operator
+fabric_prometheus_ht_password: <ht password>
+
+
+####################
+#  Node Exporter   #  
+####################
+# Universal Rack Node Exporter user & pass
+# Can change username if you want.
+node_exporter_username: fabric_prometheus
+node_exporter_password: <node exporter password>
+

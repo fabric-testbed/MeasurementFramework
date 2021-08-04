@@ -1,0 +1,262 @@
+---
+# Global Metrics vars
+
+# DEV IDEAS - DIFFS
+# Only ports that are exposed by NGINX need to be unique? 
+# change Grafana from 443 to ?
+# change prometheus status from 9090 to ?
+# change thanos status from ? to ?
+# change alertmanger from 9093 to ?
+# DONT RUN COMPACTOR
+# Maybe create a write only ceph dev_global user
+# CiLogon would need new key? or just use admin user without CiLogon
+# Change prom user and group name?
+
+
+#install_name: fabric_prometheus
+install_name: global_test_prometheus
+docker_network_name: "{{ install_name }}"
+base_data_dir: "/opt/data/{{ install_name }}"
+base_install_dir: "/opt/{{ install_name }}" 
+
+# need to make dev certs
+hostname: "dev-metrics.fabric-testbed.net"
+host_cert: "/etc/ssl/certs/metrics_fabric-testbed_net.pem"
+host_key: "/etc/pki/tls/private/metrics_fabric-testbed_net.key"
+host_interm_cert: "/etc/pki/tls/certs/metrics_fabric-testbed_net_interm.cer"
+
+
+prom_user_name: fab-prom
+prom_group_name: fab-prom
+    
+
+####################
+#      Ports       #
+####################
+# In case we need to eliminate conficts
+alertmanager_port: 9093    
+
+####################
+#    Prometheus    #
+####################
+prometheus_files_dir: files
+prometheus_templates_dir: templates/rack/Prometheus
+        
+prometheus_config_template_files: 
+  - prometheus_config.yml
+
+  # node exporters for local rack
+  - rack_node_targets.yml
+
+  # for blackbox targets
+  - local_rack_ping_targets.yml
+
+  # for aux service pings
+  ## TODO - aux_ping_targets.yml
+
+  # for aux node exporters
+  ## TODO - aux_node_targets.yml
+  
+  # snmp exporters for rack devices
+  - base_snmp_targets.yml
+
+  # alertmanger rules
+  #-#TODO alerting templates 
+
+
+####################
+# Container States #
+####################
+
+# snmp_state: absent
+# blackbox_state: absent
+# docker_exporter_state: absent
+# prometheus_state: absent
+# nginx_state: absent
+# thanos_sidecar_state absent
+
+
+snmp_state: started
+blackbox_state: started
+docker_exporter_state: started
+prometheus_state: started
+alertmanger_state: started
+nginx_state: started
+thanos_sidecar_state: started
+thanos_store_state: started 
+thanos_query_state: started 
+thanos_compact_state: started 
+
+####################
+#      Thanos      #
+####################
+thanos_templates_dir: templates/rack/Thanos
+thanos_config_templates:
+  - object_store_config.yml
+  # NOTE needs the CEPH vars contained elsehere in this file
+
+thanos_cert: "{{ host_cert }}"
+thanos_key: "{{ host_key }}"
+thanos_interm_cert: "{{ host_interm_cert }}"
+
+#### Sidecar ####
+thanos_sidecar_ip: "{{ ansible_host }}"
+thanos_sidecar_cert: "{{ thanos_cert }}"
+thanos_sidecar_key: "{{ thanos_key }}"
+
+#### Store ####
+thanos_store_ip: "{{ ansible_host }}"
+thanos_store_cert: "{{ thanos_cert }}"
+thanos_store_key: "{{ thanos_key }}"
+
+#### Query ###
+thanos_query_ip: "{{ ansible_host }}"
+thanos_query_cert: "{{ thanos_cert }}"
+thanos_query_key: "{{ thanos_key }}"
+thanos_query_root_ca: "{{ thanos_interm_cert }}"
+
+#### Compact ####
+# Only run in one place
+#use_thanos_compact: yes
+
+####################
+#  ALERTMANAGER    #
+####################
+alertmanager_template_dir: templates/global
+
+
+
+####################
+#       SNMP       #
+####################
+
+# NOTE community string is a per rack variable
+# -- Moved to private vars -- # snmp_community_string: ZZprivateYY
+
+snmp_templates_dir: templates/rack/SNMP
+snmp_config_template_files: 
+  - snmp.yml
+  # SNMP will probably be the same for all racks
+
+####################
+#    Blackbox      # 
+####################
+blackbox_files_dir: files
+blackbox_templates_dir: templates/rack
+
+
+####################
+#     Grafana      #
+####################
+
+grafana_cert:  "{{ host_cert }}"
+grafana_key:  "{{ host_key }}"
+grafana_user_name: grafana
+grafana_user_id: 472
+grafana_group_name: root  
+
+
+####################
+#      NGINX       #
+####################        
+
+nginx_ip_ports:
+  # Note Each port will correspond to a confd file set above.
+  #- 80:80         # Redirected to 443
+  - 443:443       # /grafana for grafana interface
+  - 9090:9090     # prometheus stats
+  - 10922:10922   # thanos stats
+  - "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
+
+nginx_template_dir: templates/Nginx
+
+nginx_server_confd_template_files: 
+  - prometheus.conf
+  #- global_welcome.conf
+  - alertmanager.conf
+  - thanos.conf
+  - grafana.conf
+
+nginx_config_template_files:
+  - ssl_snippet.conf
+  - nginx.conf
+
+nginx_cert: "{{ host_cert }}"
+nginx_key: "{{ host_key }}"
+nginx_interm_cert: "{{ host_interm_cert }}"
+
+
+                  
+# Nginx htaccess password to access status pages.
+# -- Moved to private vars -- # fabric_prometheus_ht_user: ZZprivateYY
+# -- Moved to private vars -- # fabric_prometheus_ht_password: ZZprivateYY
+
+
+####################
+#  Node Exporter   #  
+####################
+
+node_exporter_tls_server_config:
+  cert_file: /etc/node_exporter/tls.cert
+  key_file: /etc/node_exporter/tls.key
+node_exporter_web_listen_address: "{{ ansible_host }}:9100"
+
+# Universal Rack Node Exporter user & pass
+# -- Moved to private vars -- # node_exporter_username: ZZprivateYY
+# -- Moved to private vars -- # node_exporter_password: ZZprivateYY
+
+####################
+#       CEPH       #
+####################
+# Global has ability to modify ceph data so it has different keys
+# Maybe I should add a new dev key for global that prevents it from 
+#  deleting anything
+# -- Moved to private vars -- # ceph_bucket: ZZprivateYY
+# -- Moved to private vars -- # ceph_endpoint: ZZprivateYY
+# -- Moved to private vars -- # ceph_access_key: ZZprivateYY
+# -- Moved to private vars -- # ceph_secret_key: ZZprivateYY
+
+
+
+
+
+
+
+
+
+
+####################
+#     Grafana      #
+####################
+grafana_admin_password: ZZpassword_goes_hereYY
+
+
+####################
+#       SNMP       #
+####################
+snmp_community_string: ZZsnmp community stringYY
+
+
+####################
+#      NGINX       #
+####################        
+
+# Nginx htaccess password to access status pages.
+# Prometheus and Alertmanager have web UIs that do not
+#   have any user logins. So we password protect them 
+#   using htaccess.
+fabric_prometheus_ht_user: ZZuser_name_goes_hereYY
+fabric_prometheus_ht_password: ZZpassword_goes_hereYY
+
+
+####################
+#  Node Exporter   #  
+####################
+# Node Exporter user & pass
+# Note that these values are only used between Prom and the 
+#   node exporter. No user will need to type them.
+node_exporter_username: ZZnode_exporter_user_name_goes_hereYY
+node_exporter_password: ZZnode_exporter_password_goes_hereYY
+
+
+
