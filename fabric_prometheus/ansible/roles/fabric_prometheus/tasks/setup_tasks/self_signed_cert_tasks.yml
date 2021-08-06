@@ -1,0 +1,50 @@
+---
+# Create self-signed certs for testing and machines that don't have official certs or
+#  for times we just need a cert for TLS.
+
+    - name: Generate a Self Signed OpenSSL certificate 
+      block:
+
+      - name: Create Directories for certs
+        file: 
+          path: "{{ self_signed_cert_path }}"
+          state: directory 
+          mode: 755
+
+      - name: Create Directories for keys
+        file: 
+          path: "{{ self_signed_key_path }}"
+          state: directory 
+          mode: 710
+
+
+
+      # - name: Ensure directory exists for local self-signed TLS certs.
+      #   file:
+      #     path: "{{ self_signed_cert_path }}"
+      #     #path: /etc/test_ssl/{{ hostname }}
+      #     state: directory
+
+      - name: Generate an OpenSSL private key.
+        openssl_privatekey:
+          path: "{{ host_key }}"
+          #path: /etc/test_ssl/{{ hostname }}/privkey.pem
+
+      - name: Generate an OpenSSL CSR.
+        openssl_csr:
+          #path: /etc/ssl/private/{{ hostname }}.csr
+          #privatekey_path: /etc/test_ssl/{{ hostname }}/privkey.pem
+          path: "{{ host_csr }}"
+          privatekey_path: "{{ host_key }}"
+          common_name: "{{ hostname }}"
+
+      - name: Generate a Self Signed OpenSSL certificate.
+        openssl_certificate:
+          # path: /etc/test_ssl/{{ hostname }}/fullchain.pem
+          # privatekey_path: /etc/test_ssl/{{ hostname }}/privkey.pem
+          # csr_path: /etc/ssl/private/{{ hostname }}.csr
+          path: "{{ host_cert }}"
+          privatekey_path: "{{ host_key }}"
+          csr_path: "{{ host_csr }}"
+          provider: selfsigned
+      become: yes

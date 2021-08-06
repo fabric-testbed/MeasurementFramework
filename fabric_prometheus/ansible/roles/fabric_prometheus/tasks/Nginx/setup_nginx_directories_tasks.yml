@@ -1,0 +1,25 @@
+---
+- name: "Create NGINX Directories"
+  block:
+    - name: "Create NGINX directories"
+      file:
+        path: "{{ base_install_dir }}/nginx/{{ item }}"
+        state: directory
+        recurse: yes
+        owner: "{{ prom_user_name }}"
+        group: "{{ prom_group_name }}"
+      with_items:
+        - [ "config", "conf.d" ]
+
+    # Create htpassword file.
+    - name: Create htpasswd file. For some reason ansible htpassed will not create it. And later docker volume will erroniously create it as a directory.
+      copy:
+        content: ""
+        dest: "{{ base_install_dir }}/nginx/config/htpasswd"
+        force: no
+        owner: "{{ prom_user_name }}"
+        group: "{{ prom_group_name }}"
+        mode: 0644
+
+
+  become: yes

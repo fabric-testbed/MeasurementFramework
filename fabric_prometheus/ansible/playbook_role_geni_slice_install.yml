@@ -1,0 +1,35 @@
+---
+# Creating the rack monitoring setup.
+- hosts: monitor
+  
+  roles:
+    - fabric_prometheus
+  tags:
+    - monitor
+  #vars_files:  use --extra-var "@your var file name"
+
+  vars:
+    add_docker: yes
+    add_python_docker_sdk: yes
+    add_node_exporter: no
+    add_monitor: yes
+    install_type: geni_slice
+    extra_node_hosts: {}
+
+
+# Note for machine running ansible you must have installed
+#  passlib with the bcrypt option
+#  pip install passlib[bcrypt]
+- hosts: nodes
+
+  roles:
+    - fabric_prometheus
+  tags: 
+    - exporters
+  #vars_files:  use --extra-var "@your var file name"
+
+  vars:
+    add_docker: yes
+    add_python_docker_sdk: yes
+    add_node_exporter: yes
+    install_type: geni_slice

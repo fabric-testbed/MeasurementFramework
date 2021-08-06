@@ -1,0 +1,188 @@
+---
+
+
+
+# Sanity Check
+- pause:
+    prompt: "!!!!!!!!!!!!!Setting up Fabric Rack Install {{ install_name }} on {{ hank_name }} at {{ ansible_host }}. Hit enter to continue.!!!!!!!!!!!!!"
+
+# needed on remote for htpasswd
+- name: passlib
+  become: yes 
+  pip: 
+    name: passlib[bcrypt]
+    executable: pip3 
+    state: present
+
+# Add extra host to Prometheus Container
+- name: set_etc_var
+  # Create etc/hosts entries in the Prometheus Container for the rack nodes that will have node exporters running. This makes labeling in Grafaan easier.
+  set_fact:
+    extra_node_hosts: "{{ extra_node_hosts | combine({ hostvars[item].hostname : hostvars[item].ansible_host }) }}"
+  with_items: "{{ groups[hank_name] }}"
+
+####################     
+#      USER        #
+####################
+- name: Setup user for promtheus monitoring system
+  # Create a user to setup all the fab monitoring stuff under.
+  include_tasks: setup_tasks/create_prom_user_tasks.yml
+
+####################
+#  DOCKER NETWORK  #
+####################
+- name: Setup the docker network to be used by the monitoring containers.
+  include_tasks: setup_tasks/setup_docker_network_tasks.yml
+
+####################
+# Remove all previous monitoring docker containers #
+####################
+- name: Remove containers
+  include_tasks: container_tasks/remove_docker_container_tasks.yml
+  vars:
+    containers_to_act_on: 
+      - prometheus
+      - grafana
+      - nginx
+      - thanos_sidecar
+      - alertmanager
+      - blackbox
+      - docker_exporter
+      - snmp
+
+####################
+#   PROMETHEUS     #
+####################
+# Prometheus consists of several tasks that must be done.
+- name: Prometheus Setup
+  block:
+  - name: Setup Prometheus Directories
+    include_tasks: Prometheus/setup_prometheus_directories_tasks.yml
+  
+  - name: Setup Promtheus Config Files
+    include_tasks: Prometheus/add_prometheus_config_templates.yml
+    # See vars for templates used
+
+  - name: Prometheus Container
+    # 3. Start docker container
+    include_tasks: Prometheus/prometheus_container_tasks.yml
+  
+####################
+#     THANOS       #
+####################
+- name: Setup Thanos
+  block:
+    - name: Thanos Directories
+      include_tasks: Thanos/setup_thanos_directories_tasks.yml
+  
+    - name: Thanos Configs
+      include_tasks: Thanos/add_thanos_config_templates_tasks.yml
+      # See vars for templates used
+
+- name: Thanos Containers
+  block:        
+    - name: Thanos Sidecar
+      include_tasks: Thanos/thanos_sidecar_container_tasks.yml
+      # For a rack we are just starting up sidecar.
+
+#  May add this later for high availablility for Alert manager
+# ####################
+# #  ALERTMANAGER    #
+# ####################  
+#     - name: Setup Alertmanager
+#       block: 
+#         - name: Alertmanager Directories
+#           include_tasks: Alertmanager/setup_alertmanager_directories_tasks.yml
+
+#         - name: Alertmanager Config
+#           include_tasks: Alertmanager/config_alertmanager_tasks.yml
+
+#         - name: Alertmanager Container
+#           include_tasks: Alertmanager/alertmanager_container_tasks.yml
+#       vars:
+#         alertmanager_template_dir: templates/geni_slice
+#         alertmanager_state: started
+
+####################
+# SNMP EXPORTER    #
+####################
+- name: Setup SNMP Exporter
+  block:
+    - name: SNMP Directories
+      include_tasks: SNMPExporter/setup_snmp_directories_tasks.yml
+
+    # Changed to use fragments. see below.
+    # - name: SNMP Config 
+    #   include_tasks: SNMPExporter/add_snmp_config_templates_tasks.yml
+
+    - name: SNMP Config from fragments 
+      include_tasks: SNMPExporter/combine_snmp_config_task.yml
+      
+    - name: SNMP Container 
+      include_tasks: SNMPExporter/snmp_exporter_container_tasks.yml
+####################
+# BLACKBOX EXPORTER #
+####################
+- name: Setup Blackbox EXPORTER
+  block:
+    - name: Blackbox Directories 
+      include_tasks: Blackbox/setup_blackbox_directories_tasks.yml
+
+    - name: Blackbox Config 
+      include_tasks: Blackbox/config_blackbox_tasks.yml
+
+    - name: Blackbox Container 
+      include_tasks: Blackbox/blackbox_container_tasks.yml
+####################
+# DOCKER EXPORTER  #
+####################
+- name: Setup Docker Exporter
+  block:
+    - name: Docker Exporter Container 
+      include_tasks: DockerExporter/docker_exporter_container_tasks.yml
+
+####################
+#     NGINX        #
+####################
+- name: Setup Nginx
+  block:
+    # Directories
+    - name: Nginx Directories
+      include_tasks: Nginx/setup_nginx_directories_tasks.yml
+
+    # Config files
+    - name: Nginx Configs
+      include_tasks: Nginx/config_nginx_tasks.yml
+      # vars: 
+      #       nginx_template_dir: "{{ nginx_config_template_dir }}"
+          
+    # Add user to htaccess file
+    # note htpasswd requires passlib to be installed on remote
+    - name: Nginx htaccess user
+      include_tasks: Nginx/add_user_to_htaccess_tasks.yml
+      #var: need vars set in sensitive file
+      #fabric_prometheus_ht_user: & fabric_prometheus_ht_password: 
+          
+    # Confd server files
+    - name: Nginx Add Confd  Files
+      include_tasks: Nginx/confd_nginx_tasks.yml
+      # vars: 
+      #   nginx_template_dir: "{{ nginx_confd_template_dir }}"
+
+  when: true
+
+- name: NGNIX Container
+  include_tasks: Nginx/nginx_container_tasks.yml
+
+
+# Ensure that all of the containers are actually up and running
+- name: Ensure all the containers are up and running.
+  include_tasks: container_tasks/inspect_container_tasks.yml 
+  with_items:
+      - prometheus
+      - nginx
+      - thanos_sidecar
+      - blackbox
+      - docker_exporter
+      - snmp
+

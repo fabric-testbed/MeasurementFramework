@@ -1,0 +1,11 @@
+---
+# Nodes to ping in slice.
+{% for k in geni_slice_nodes %}
+- targets:
+    - {{ k.ip }}
+  labels: 
+    job: ping
+    instance: {{ k.name }}
+{% endfor %}
+
+

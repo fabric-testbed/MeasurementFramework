@@ -1,0 +1,15 @@
+
+# Alert Manager status page - Add SSL & htaccess
+server {
+        listen  {{ alertmanager_port }} ssl http2;
+        server_name {{ hostname }};
+
+        include /etc/nginx/ssl_snippet.conf;
+
+        location / {
+                auth_basic "Admins Only";
+                auth_basic_user_file /etc/nginx/htpasswd;
+                proxy_pass http://{{ install_name }}_alertmanager:{{ alertmanager_port }};
+        }
+}
+
