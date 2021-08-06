@@ -1,9 +1,0 @@
----
-# Starts/Restarts the container with the given name.
-# Note container must already exist, this does not create the contianers.   
-- name: Start Docker Containers
-  community.docker.docker_container:
-    state: started
-    name: "{{ install_name }}_{{ item }}"
-  with_items: "{{ containers_to_act_on }}"
-  become: yes
