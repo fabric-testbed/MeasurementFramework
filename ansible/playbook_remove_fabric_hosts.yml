@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  tasks:
+
+  - name: Remove the no longer needed dirs and files
+    block:
+      - name: Copy needed files.
+        file:
+          path:  "./hosts/{{ item }}"
+          state: absent
+
+        with_items:
+          - group_vars
+          - host_vars
+          - fabric-hosts
+

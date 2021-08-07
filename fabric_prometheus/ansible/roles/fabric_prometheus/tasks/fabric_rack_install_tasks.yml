@@ -3,7 +3,8 @@
 
 
 # Sanity Check
-- pause:
+- name: Sanity Check
+  pause:
     prompt: "!!!!!!!!!!!!!Setting up Fabric Rack Install {{ install_name }} on {{ hank_name }} at {{ ansible_host }}. Hit enter to continue.!!!!!!!!!!!!!"
 
 # needed on remote for htpasswd

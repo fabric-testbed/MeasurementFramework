@@ -11,6 +11,6 @@
   vars_files:
     - private_vars/rack_vars/common_rack_vars.yml
     - private_vars/rack_vars/node_exporter_vars.yml 
-    - private_vars/common_private_vars.yml
+    - private_vars/rack_vars/common_private_vars.yml
     - "private_vars/rack_vars/{{ rack_to_install }}_private_vars.yml" 
 
