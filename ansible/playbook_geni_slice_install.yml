@@ -3,7 +3,7 @@
 - hosts: monitor
   
   roles:
-    - fabric_prometheus
+    - ../fabric_prometheus/ansible/roles/fabric_prometheus
   tags:
     - monitor
   #vars_files:  use --extra-var "@your var file name"
@@ -23,7 +23,7 @@
 - hosts: nodes
 
   roles:
-    - fabric_prometheus
+    - ../fabric_prometheus/ansible/roles/fabric_prometheus
   tags: 
     - exporters
   #vars_files:  use --extra-var "@your var file name"
