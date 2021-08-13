@@ -1,0 +1,2 @@
+This file is needed to add to the global dev-metrics self signed cert so it can contact the racks.
+Thanos query needs to verify all certs using the root/intermediate cert.

@@ -1,0 +1,24 @@
+---
+# Set targets for node exporters on head and worker nodes.
+
+# Head Node
+- targets:
+        - '{{ hostname }}:9100'
+  labels:
+        job : node
+        component_type: head
+
+# Worker Nodes
+- targets:
+{% for h in groups[hank_name+"_worker"] %}
+        - '{{ hostvars[h].hostname }}:9100'
+{% endfor %}
+  labels:
+        job: node
+        component_type: worker
+
+
+
+
+
+

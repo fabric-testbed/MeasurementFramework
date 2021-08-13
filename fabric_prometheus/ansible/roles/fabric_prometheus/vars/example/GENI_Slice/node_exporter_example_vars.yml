@@ -1,0 +1,34 @@
+
+node_exporter_web_listen_address: "{{ ansible_host }}:9100"
+
+# add in all optional exporters except for perf and tcpstat which can cause high load problems
+# also skip wifi
+#node_exporter_enabled_collectors: [buddyinfo, devstat, drbd, interrupts, ksmd, logind, meminfo_numa, mountstats, ntp, processes, qdisc, runit, supervisord, systemd]
+
+#node_exporter_enabled_collectors:
+  #- wifi # not on worker nodes
+  #- tcpstat # may have performance issues with high loads
+  #- perf # may cause high load, dependant on kernel configuration and settings
+  #- devstat # only on freebsd
+  #- ntp # not using ntp
+
+  # #- interrupts # creates lots series
+  # - buddyinfo
+  # - drbd
+  # - ksmd
+  # # - logind # produces lots of series 
+  # - meminfo_numa
+  # - mountstats
+  # - processes
+  # - qdisc
+  # - runit
+  # - supervisord
+  # - systemd # produces lots of series
+
+# to make use of the textfile collector the directory must be set to a directory with write permissions enabled for node-exp
+# node_exporter_textfile_dir: "/var/lib/node_exporter"
+
+# optionally disable some collectors
+# node_exporter_disabled_collectors: []
+
+

@@ -1,0 +1,16 @@
+---
+# Create the base directories needed by Thanos
+- name: Create Thanos Directories
+  block:
+      
+    - name: "Create Thanos directories"
+      file:
+        path: "{{ base_install_dir }}/thanos/{{ item }}"
+        state: directory
+        recurse: yes
+        owner: "{{ prom_user_name }}"
+        group: "{{ prom_group_name }}"
+      with_items:
+        - [ "config" ]
+
+  become: yes

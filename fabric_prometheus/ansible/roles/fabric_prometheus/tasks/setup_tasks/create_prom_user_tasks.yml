@@ -1,0 +1,12 @@
+---
+# CREATE USER fab-prom #
+- name: "Setup Fabric Prometheus User"
+  block:
+    - name: "Create Fabric Prometheus user as fab-prom"
+      user:
+        name: "{{ prom_user_name }}"
+        shell: /usr/sbin/nologin
+        system: true
+        create_home: false
+        home: /
+  become: yes

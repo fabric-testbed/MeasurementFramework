@@ -1,0 +1,30 @@
+---
+# Inspects the installed containers
+- name: Inspect Container
+  block: 
+  - name: Inspect {{install_name }}_{{ item }} container.
+    community.docker.docker_container_info:
+      name: "{{install_name }}_{{ item }}"
+    register: result
+
+
+  # - name: Does container exist?
+  #   ansible.builtin.debug:
+  #     msg: "The container {{ item }} {{ 'exists' if result.exists else 'does not exist' }}"
+
+  # - name: Print information about container
+  #   ansible.builtin.debug:
+  #     var: result.container
+  #   when: result.exists
+
+  # - name: Print information about container
+  #   ansible.builtin.debug:
+  #     var: result.container.State
+  #   when: result.exists
+
+  - name: Assert that the {{install_name }}_{{ item }} container is up and running. 
+    ansible.builtin.assert: 
+      that: 
+        - result.exists 
+        - result.container.State.Running
+      msg: "Container {{install_name }}_{{ item }} is NOT up and running."

@@ -1,0 +1,53 @@
+---
+# Setup a worker node so we can install and monitor docker containers on it.
+
+####################
+#  Create User     #
+####################
+# Need to setup user for file ownership and future container owner.
+- name: Create user on worker nodes 
+  include_tasks: setup_tasks/create_prom_user_tasks.yml
+
+####################
+# Create Docker Network #
+####################
+- name: Setup docker network 
+  include_tasks: setup_tasks/setup_docker_network_tasks.yml
+
+
+####################
+#     NGINX        #
+####################
+- name: Setup Worker Nginx
+  block:
+    # Directories
+    - name: Nginx Directories
+      include_tasks: Nginx/setup_nginx_directories_tasks.yml
+
+    # Config files
+    - name: Nginx Configs
+      include_tasks: Nginx/config_nginx_tasks.yml
+      # vars: 
+      #       nginx_template_dir: "{{ nginx_config_template_dir }}"
+          
+    # Add user to htaccess file
+    # note htpasswd requires passlib to be installed on remote
+    - name: Nginx htaccess user
+      include_tasks: Nginx/add_user_to_htaccess_tasks.yml
+      #var: need vars set in sensitive file
+      #fabric_prometheus_ht_user: & fabric_prometheus_ht_password: 
+          
+    # Confd server files
+    - name: Nginx Add Confd  Files
+      include_tasks: Nginx/confd_nginx_tasks.yml
+      # vars: 
+      #   nginx_template_dir: "{{ nginx_confd_template_dir }}"
+
+          
+  
+  when: true
+
+- name: NGNIX Container
+  include_tasks: Nginx/nginx_container_tasks.yml
+
+
