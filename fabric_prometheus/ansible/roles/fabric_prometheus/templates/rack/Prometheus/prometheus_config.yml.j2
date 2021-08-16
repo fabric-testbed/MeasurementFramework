@@ -116,8 +116,8 @@ scrape_configs:
 # The snmp calls are here since there is a problem with passing the param_module values.
 # These should be moved out when that that is fixed
 # Management Switch
-#  OK but should add more feilds
-  - job_name: 'pdu-test'
+#  OK but should add more fields
+  - job_name: 'pdu'
     #scrape_interval: 120s
     static_configs:
             - targets: 
@@ -166,6 +166,42 @@ scrape_configs:
               target_label: instance
             - target_label: __address__
               replacement: "{{ install_name }}_snmp:9116"
+
+
+# Management Switch ISIS
+# OK
+  - job_name: 'mgt-sw-isis'
+    static_configs:
+            - targets: 
+              -  "{{hostvars[hank_name + '-mgt-sw'].ansible_host}}"
+    metrics_path: /snmp
+    params:
+            module: ['ISIS-MIB']
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_snmp:9116"
+
+# Data Switch ISIS
+# OK
+  - job_name: 'data-sw-isis'
+    static_configs:
+            - targets:
+              - "{{hostvars[hank_name + '-data-sw'].ansible_host}}"
+    metrics_path: /snmp
+    params:
+            module: ['ISIS-MIB']
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_snmp:9116"
+
 
 # PTU
 # OK
