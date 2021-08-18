@@ -25,7 +25,7 @@ modules:
       fail_if_not_ssl: false  # default
       valid_status_codes: [401]
       
-  dns_global_metrics_test:
+  dns_central_metrics_test:
     prober: dns
     timeout: 5s
     dns:

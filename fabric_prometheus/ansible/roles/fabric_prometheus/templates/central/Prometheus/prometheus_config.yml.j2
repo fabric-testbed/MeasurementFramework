@@ -97,7 +97,7 @@ scrape_configs:
   - job_name: 'blackbox-dns'
     metrics_path: /probe
     params:
-         module: [dns_global_metrics_test]
+         module: [dns_central_metrics_test]
 
     file_sd_configs:
       - files:

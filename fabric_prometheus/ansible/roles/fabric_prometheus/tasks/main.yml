@@ -3,15 +3,15 @@
 
 
 ##############################################################
-#                   Global Metrics                           #
+#                   Central Metrics                           #
 ##############################################################
 # This section contains the tasks needed for installing the 
-#   global metrics site.
+#   central metrics site.
 
 ##############################
-#  Fabric Global Prometheus  #
+#  Fabric Central Prometheus  #
 ##############################
-- name: Install Fabric Global setup 
+- name: Install Fabric Central setup 
   block:
   - name: Install python sdk to manage docker
     become: yes
@@ -21,18 +21,18 @@
       - add_python_docker_sdk
 
   
-  - name: Install Fabric Global Metrics
-    import_tasks: fabric_global_install_tasks.yml
+  - name: Install Fabric Central Metrics
+    import_tasks: fabric_central_install_tasks.yml
 
   
   
   when: 
     - install_type is defined
-    - install_type == 'global'
+    - install_type == 'central'
 
 
 ##############################################################
-#               end Global Metrics                           #
+#               end Central Metrics                           #
 ##############################################################
 
 

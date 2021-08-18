@@ -8,13 +8,13 @@
 # change thanos status from ? to ?
 # change alertmanger from 9093 to ?
 # DONT RUN COMPACTOR
-# Maybe create a write only ceph dev_global user
+# Maybe create a write only ceph dev_central user
 # CiLogon would need new key? or just use admin user without CiLogon
 # Change prom user and group name?
 
 
 #install_name: fabric_prometheus
-install_name: global_test_prometheus
+install_name: central_test_prometheus
 docker_network_name: "{{ install_name }}"
 base_data_dir: "/opt/data/{{ install_name }}"
 base_install_dir: "/opt/{{ install_name }}" 
@@ -122,7 +122,7 @@ thanos_query_root_ca: "{{ thanos_interm_cert }}"
 ####################
 #  ALERTMANAGER    #
 ####################
-alertmanager_template_dir: templates/global
+alertmanager_template_dir: templates/central
 
 
 
@@ -172,7 +172,7 @@ nginx_template_dir: templates/Nginx
 
 nginx_server_confd_template_files: 
   - prometheus.conf
-  #- global_welcome.conf
+  #- central_welcome.conf
   - alertmanager.conf
   - thanos.conf
   - grafana.conf
@@ -209,7 +209,7 @@ node_exporter_web_listen_address: "{{ ansible_host }}:9100"
 #       CEPH       #
 ####################
 # Global has ability to modify ceph data so it has different keys
-# Maybe I should add a new dev key for global that prevents it from 
+# Maybe I should add a new dev key for central that prevents it from 
 #  deleting anything
 # -- Moved to private vars -- # ceph_bucket: ZZprivateYY
 # -- Moved to private vars -- # ceph_endpoint: ZZprivateYY

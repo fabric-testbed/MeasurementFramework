@@ -1,5 +1,5 @@
 ---
-# Global Thanos - Sidecar
+# Thanos - Sidecar
 - name: Control Thanos Sidecar
   become: yes
   community.docker.docker_container:
@@ -14,8 +14,8 @@
       # Provide access to the promtheus data.
       - "{{ base_data_dir }}/prometheus:/prometheus"
       # Map certs on head node.
-      - "{{ thanos_sidecar_cert }}:/etc/thanos_certs/cert"
-      - "{{ thanos_sidecar_key }}:/etc/thanos_certs/key"
+      - "{{ thanos_sidecar_cert }}:/etc/thanos_certs/cert:ro"
+      - "{{ thanos_sidecar_key }}:/etc/thanos_certs/key:ro"
 
     container_default_behavior: no_defaults
     

@@ -111,7 +111,7 @@ nginx_template_dir: templates/Nginx
 
 nginx_server_confd_template_files: 
   - prometheus.conf
-  #- global_welcome.conf
+  #- central_welcome.conf
   #- alertmanager.conf
   #- thanos.conf
   #- grafana.conf

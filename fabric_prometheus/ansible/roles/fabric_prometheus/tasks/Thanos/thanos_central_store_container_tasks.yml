@@ -1,5 +1,5 @@
 ---
-# Global Thanos - Store Gateway
+# Central Thanos - Store Gateway
 - name: Control Thanos Store Container
   become: yes
   community.docker.docker_container:

@@ -1,6 +1,6 @@
 ---
-# Global Compactor
-# The Compactor MUST NOT be run anywhere except on the global metrics.
+# Central Compactor
+# The Compactor MUST NOT be run anywhere except on the central metrics.
 # https://github.com/thanos-io/thanos/blob/master/docs/components/compact.md
 # Recommends 100GB disk space
 - name: Control Thanos Compact Container

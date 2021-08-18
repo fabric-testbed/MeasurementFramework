@@ -1,5 +1,5 @@
 ---
-# Global Alertmanager
+# Central Alertmanager
 - name: Control Alertmanager Docker Container
   become: yes
   community.docker.docker_container:

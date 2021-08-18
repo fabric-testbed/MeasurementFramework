@@ -16,12 +16,13 @@ route:
   repeat_interval: 5m
   receiver: slack_general
 
-  routes: 
-    group_by: [rack]
-    #receiver: slack_operator
-    - matchers:
-      - severity = critical
-    reciever: slack_critical
+# below is not right
+#  routes: 
+#    group_by: ['rack']
+#    #receiver: slack_operator
+#    - matchers:
+#      - severity = critical
+#    reciever: slack_critical
 
 
  # continue: true

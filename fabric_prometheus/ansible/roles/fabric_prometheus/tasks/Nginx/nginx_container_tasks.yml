@@ -1,5 +1,5 @@
 ---
-# Global NGINX
+# NGINX
 - name: Control NGINX Docker Container
   become: yes
   community.docker.docker_container:
@@ -15,12 +15,13 @@
       # TLS configs snippet.
       - "{{ base_install_dir }}/nginx/config/ssl_snippet.conf:/etc/nginx/ssl_snippet.conf"
       # TLS certs already on node.
-      - "{{ nginx_interm_cert }}:/etc/nginx/root_CA_cert_plus_intermediates_file"
-      - "{{ nginx_key }}:/etc/nginx/key_file"
-      - "{{ nginx_cert }}:/etc/nginx/cert_file"
+      - "{{ nginx_interm_cert }}:/etc/nginx/root_CA_cert_plus_intermediates_file:ro"
+      - "{{ nginx_key }}:/etc/nginx/key_file:ro"
+      - "{{ nginx_cert }}:/etc/nginx/cert_file:ro"
       # Conf.d files
       - "{{ base_install_dir }}/nginx/conf.d:/etc/nginx/conf.d"
     ports: "{{ nginx_ip_ports }}"
   
     container_default_behavior: no_defaults      
     restart_policy: always
+

@@ -1,6 +1,6 @@
 ---
-# Global Thanos - Query
-# Only needs to be run on global node or similar node that needs to connect
+# Central Thanos - Query
+# Only needs to be run on central node or similar node that needs to connect
 #   to the rack promethice to get the current data and to the s3 for 
 #   long term data.
 # In this case there needs to be a root ca to contact remote stores with TLS.
@@ -37,7 +37,7 @@
 
     restart_policy: always 
 
-    # Thanos needs to make calls to sidecar and store via host node for the global node. 
+    # Thanos needs to make calls to sidecar and store via host node for the central node. 
     # I can use the self-signed cert if we give the host name.
     etc_hosts:
       "{{ thanos_extra_node_hosts  | default(omit) }}"
