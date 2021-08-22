@@ -31,6 +31,27 @@
     - install_type == 'central'
 
 
+- name: Change State of Fabric Central Docker Containers 
+  block:
+  
+  - name: Change Container
+    import_tasks: container_tasks/change_docker_container_states_tasks.yml
+    #vars: 
+    # new_docker_state: absent - removes it | stopped - stops it | started - starts existing container
+    # containers_to_act_on
+  
+  when: 
+    - install_type is defined
+    - install_type == 'central_shutdown'
+
+
+
+
+
+
+
+
+
 ##############################################################
 #               end Central Metrics                           #
 ##############################################################
