@@ -1,0 +1,11 @@
+---
+# BLACKBOX
+- name: "Create Blackbox Directories"
+  file:
+    path: "{{ base_install_dir }}/blackbox/config"
+    state: directory
+    recurse: yes
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+
+  become: yes

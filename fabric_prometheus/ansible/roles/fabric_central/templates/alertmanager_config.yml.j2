@@ -1,0 +1,118 @@
+---
+global:
+
+# The directory from which notification templates are read.
+{# templates:
+- '/etc/alertmanager/template/*.tmpl'
+ #}
+
+  slack_api_url: "{{ alert_manager_slack_api_url }}"
+# The root route on which each incoming alert enters.
+
+route: 
+  group_by: [...]
+  group_wait: 0s
+  group_interval: 10s
+  repeat_interval: 5m
+  receiver: slack_general
+
+# below is not right
+#  routes: 
+#    group_by: ['rack']
+#    #receiver: slack_operator
+#    - matchers:
+#      - severity = critical
+#    reciever: slack_critical
+
+
+ # continue: true
+{# 
+route:
+
+
+  group_by: [rack]
+
+  # When a new group of alerts is created by an incoming alert, wait at
+  # least 'group_wait' to send the initial notification.
+  # This way ensures that you get multiple alerts for the same group that start
+  # firing shortly after another are batched together on the first
+  # notification.
+  group_wait: 30s
+
+  # When the first notification was sent, wait 'group_interval' to send a batch
+  # of new alerts that started firing for that group.
+  group_interval: 5m
+
+  # If an alert has successfully been sent, wait 'repeat_interval' to
+  # resend them.
+  repeat_interval: 3h
+
+  # A default receiver
+  receiver: slack_general
+
+  # All the above attributes are inherited by all child routes and can
+  # overwritten on each.
+
+  # The child route trees.
+  routes:
+#}
+{# 
+  - matchers:
+    - severity = critical
+    receiver: slack_critical
+    continue: true
+
+  - matchers:
+    - job ~= "*"
+    receiver: slack_general 
+
+
+#    - match:
+#        job: "*"
+#      receiver: slack_general
+#      continue: true
+
+    - match:
+        severity: critical
+      receiver: slack_critical
+      continue: true
+
+    - match:
+        concerns: operator
+      receiver: slack_operator  #}
+
+
+receivers:
+
+
+  - name: slack_general
+    slack_configs:
+      - api_url: "{{ alert_manager_slack_api_url_general }}"
+        channel: '#alerts-general'
+
+        text: {% raw %}"!{{ .CommonLabels.responsible_primary }} , @{{ .CommonLabels.responsible_primary }} Via General <!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}"{% endraw %}
+
+        send_resolved: true
+
+
+
+  - name: slack_critical
+    slack_configs:
+      - api_url: "{{ alert_manager_slack_api_url_critical }}"
+        channel: '#alerts-critical'
+
+        text: {% raw %}"Via Critical <!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}"{% endraw %}
+
+        send_resolved: true
+
+
+
+
+  - name: slack_operator
+    slack_configs:
+      - api_url: "{{ alert_manager_slack_api_url_operator }}"
+        channel: '#alerts-operator'
+
+        text: {% raw %}"Via Operator <!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}"{% endraw %}
+
+        send_resolved: true

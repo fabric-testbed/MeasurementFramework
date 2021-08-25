@@ -1,0 +1,224 @@
+global:
+  scrape_interval:     30s # Set the scrape interval to every ? seconds. Default is every 1 minute.
+  evaluation_interval: 1m # Evaluate rules every ? seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+      rack: "{{ hank_name }}"
+  
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - '*_alerts.yml'
+  - '*_rules.yml'
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    #scrape_interval: 5s
+    #scrape_timeout: 5s
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      # by definition this is running on local host
+      - targets: ['localhost:9090']
+      
+### Blackbox Exporters ###
+
+# Ping 
+  - job_name: 'ping'
+    metrics_path: /probe
+    params:
+         module: [icmp_ipv4]
+    file_sd_configs:
+      - files:
+            - '*_ping_targets.yml'
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_blackbox:9115"
+
+# Node Exporter 
+  - job_name: 'node'
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: '{{ node_exporter_username }}'
+      password: '{{ node_exporter_password }}'
+    file_sd_configs:
+      - files:
+            - '*_node_targets.yml'
+
+ # PTP Server Web UI
+  - job_name: 'ptp_server_ui'
+    metrics_path: /probe
+    params:
+         module: [http_401]
+    static_configs:
+         - targets: ['{{hostvars[hank_name + '-time'].ansible_host}}']
+
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_blackbox:9115"
+
+
+ # Docker Exporter for Local Containers
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['{{ install_name }}_docker_exporter:9417']
+
+
+
+
+
+####################################
+# module name passing not working see below
+# SNMP
+#  - job_name: 'snmp'
+#    file_sd_configs:
+#      - files:
+#          - '*_snmp_targets.yml'
+#    metrics_path: /snmp
+#    params:
+#      module: ['placeholder_module']
+#    relabel_configs:
+#      - source_labels: [__address__]
+#        target_label: __param_target__
+#      - source_labels: [__param_target]
+#        target_label: instance
+#      - target_label: __address__
+#        replacement: "{{ install_name }}_snmp:9116"
+#      - source_labels: [mib_module]
+#        regex: (.*?)
+#        replacement: '${1}'
+#        target_label: __param_module
+
+
+
+
+
+##########################################################
+# The snmp calls are here since there is a problem with passing the param_module values.
+# These should be moved out when that that is fixed
+# Management Switch
+#  OK but should add more fields
+  - job_name: 'pdu'
+    #scrape_interval: 120s
+    static_configs:
+            - targets: 
+              - "{{hostvars[hank_name + '-pdu'].ansible_host}}"
+    metrics_path: /snmp
+    params:
+            module: ['PowerNet']
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_snmp:9116"
+
+# Management Switch
+# OK
+  - job_name: 'mgt-sw'
+    static_configs:
+            - targets: 
+              -  "{{hostvars[hank_name + '-mgt-sw'].ansible_host}}"
+    metrics_path: /snmp
+    params:
+            module: ['if_mib']
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_snmp:9116"
+
+# Data Switch
+# OK
+  - job_name: 'data-sw'
+    static_configs:
+            - targets:
+              - "{{hostvars[hank_name + '-data-sw'].ansible_host}}"
+    metrics_path: /snmp
+    params:
+            module: ['if_mib']
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_snmp:9116"
+
+
+# Management Switch ISIS
+# OK
+  - job_name: 'mgt-sw-isis'
+    static_configs:
+            - targets: 
+              -  "{{hostvars[hank_name + '-mgt-sw'].ansible_host}}"
+    metrics_path: /snmp
+    params:
+            module: ['ISIS-MIB']
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_snmp:9116"
+
+# Data Switch ISIS
+# OK
+  - job_name: 'data-sw-isis'
+    static_configs:
+            - targets:
+              - "{{hostvars[hank_name + '-data-sw'].ansible_host}}"
+    metrics_path: /snmp
+    params:
+            module: ['ISIS-MIB']
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_snmp:9116"
+
+
+# PTU
+# OK
+  - job_name: 'ptu'
+    static_configs:
+            - targets: 
+              - "{{hostvars[hank_name + '-time'].ansible_host}}"
+    metrics_path: /snmp
+    params:
+            module: ['tmi_ptu']
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_snmp:9116"
+
+
+

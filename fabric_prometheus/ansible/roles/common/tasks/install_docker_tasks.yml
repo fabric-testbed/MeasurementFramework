@@ -1,0 +1,10 @@
+---
+# Installs the python sdk to allow ansible to perform operations on docker containers on the remote machine,
+- name: Install Docker 
+  include_role: 
+    name: geerlingguy.docker
+ 
+  # vars:
+  #   docker_users:
+  #     - <add optional users here>
+         

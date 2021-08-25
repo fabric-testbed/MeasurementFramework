@@ -1,20 +1,6 @@
 ---
-# Creating the rack monitoring setup.
+# Creating the Fabric Centra monitoring setup.
 - hosts: metrics
 
   roles:
-    - ../fabric_prometheus/ansible/roles/fabric_prometheus
-
-  #vars_files:
-    # TODO edit for this file  Call from command line ala: ansible-playbook -i fabric-hosts --extra-vars "@private_vars/uky/common_rack_vars.yml" --extra-vars "@private_vars/uky/node_exporter_vars.yml" --extra-vars "@private_vars/uky/private_rack_vars.yml" playbook_role_fabric_rack_install.yml --diff --check
-  vars:
-    install_type: central
-    extra_node_hosts: {}
-
-
-# for dev site use
-# ansible-playbook -i dev_central_hosts.ini --extra-vars "@dev_central_metric_vars.yml" playbook_role_fabric_central_install.yml --diff --check
-# ansible-playbook -i hosts/dev-metrics-hosts.ini --extra-vars "@private_vars/dev-metrics_vars.yml" playbook_fabric_central_install.yml --diff --check
-
-# for production site use
-# ansible-playbook -i central_hosts.ini --extra-vars "@central_metric_vars.yml" playbook_role_fabric_central_install.yml --diff --check
+    - ../fabric_prometheus/ansible/roles/fabric_central

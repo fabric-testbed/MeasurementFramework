@@ -1,0 +1,22 @@
+---
+# Create the base directories needed by alertmanager
+- name: Create Alertmanager Directories
+  block:
+    - name: Create Alertmanager directories
+      file:
+        path: "{{ base_install_dir }}/alertmanager"
+        state: directory
+        recurse: yes
+        owner: "{{ prom_user_name }}"
+        group: "{{ prom_group_name }}"
+
+    - name: Create Alertmanager template directories
+      file:
+        path: "{{ base_install_dir }}/alertmanager/templates"
+        state: directory
+        recurse: yes
+        owner: "{{ prom_user_name }}"
+        group: "{{ prom_group_name }}"
+     
+     
+  become: yes

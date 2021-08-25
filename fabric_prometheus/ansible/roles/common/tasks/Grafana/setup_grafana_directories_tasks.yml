@@ -1,0 +1,25 @@
+---
+# Create the base directories needed by grafana
+- name: Create Grafana Directories
+  block:
+    - name: "Create Grafana directories"
+      file:
+        path: "{{ base_install_dir }}/grafana/{{ item }}"
+        state: directory
+        recurse: yes
+        owner: "{{ grafana_user_name }}"
+        group: "{{ grafana_group_name }}"
+      with_items:
+        - [ "custom", "provisioning", "provisioning/dashboards", "provisioning/datasources"  ]
+
+    - name: "Create Grafana Data directories"
+      file:
+        path: "{{ base_data_dir }}/grafana/{{ item }}"
+        state: directory
+        recurse: yes
+        owner: "{{ grafana_user_name }}"
+        group: "{{ grafana_group_name }}"
+      with_items:
+        - [ "data" ]
+
+  become: yes

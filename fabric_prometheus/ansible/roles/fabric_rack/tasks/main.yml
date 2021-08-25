@@ -1,0 +1,90 @@
+---
+
+
+# OK
+##############################
+#  Fabric Rack Prometheus    #
+##############################
+- name: Install Fabric-Prometheus setup 
+  block:
+  - name: Install Fabric Rack
+    import_tasks: fabric_rack_install_tasks.yml
+    when: component_type == 'head'
+  # when: 
+  #   - install_type is defined
+  #   - install_type == 'fabric_rack'
+
+
+# OK
+##############################
+#  Node Exporter Install     #
+##############################
+- name: Install node_exporter 
+  # need each node to have node_exporter
+  block:
+  - name: Install Node_exporter
+    import_tasks: install_node_exporter_tasks.yml
+    when: 
+      - component_type == 'head' or component_type == 'worker'
+  when: 
+    - install_node_exporters is defined
+    - install_node_exporters == yes 
+
+
+# ##############################
+# # Worker Node Docker System   #
+# ##############################
+# #docker - should be already there
+# #docker network -need to add
+# #nginx - need to add
+# #docker monitor - need to add
+
+# - name: Install worker node network and proxy nginx 
+#   # need each worker node to have docker network and nginx 
+#   # to proxy things without TLS or auth
+#   block:
+#   - name: Install worker docker network
+#     import_tasks: worker_node_tasks.yml
+#     when: 
+#       component_type == 'worker'
+#   when: 
+#     - install_type is defined
+#     - install_type == 'fabric_rack' 
+
+
+
+# ##############################
+# #     Docker Exporter        #
+# ##############################
+# - name: Install worker node docker monitoring 
+#   # need each worker node to have docker network and exporter
+#   block:
+#   - name: Install worker docker monitoring
+#     import_tasks: monitored_node_tasks.yml
+#     when: 
+#       component_type == 'worker'
+#   when: 
+#     - install_type is defined
+#     - install_type == 'fabric_rack' 
+
+# OK
+##############################
+# Setup VPN Ping Configs     #
+##############################
+- name: Setup VPN configs 
+  block:
+  - name: Setup Promtheus Config Files
+    include_tasks: Prometheus/add_prometheus_config_templates.yml
+    # Just copies the one template to the Promtheus config.
+    # Note assumes the prometheus_templates_dir has been set in vars file.
+    vars:
+      prometheus_config_template_files:
+        - vpn_ping_targets.yml
+  when: 
+    - install_type is defined
+    - install_type == 'fabric_rack' 
+    - component_type == 'head'
+    - set_vpn_pings is defined
+    - set_vpn_pings
+
+
