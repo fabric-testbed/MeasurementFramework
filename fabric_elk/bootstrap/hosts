@@ -1,6 +1,6 @@
-node-0 ansible_ssh_host=DNS_NAME_HERE ansible_port=PORT_NUMBER
-node-1 ansible_ssh_host=DNS_NAME_HERE ansible_port=PORT_NUMBER
-node-2 ansible_ssh_host=DNS_NAME_HERE ansible_port=PORT_NUMBER
-ELK ansible_ssh_host=DNS_NAME_HERE
-Nginx ansible_ssh_host=DNS_NAME_HERE
-Measurement ansible_ssh_host=DNS_NAME_HERE ansible_port=PORT_NUMBER
+node-0 ansible_ssh_host=pc2.instageni.rnoc.gatech.edu ansible_port=27613
+node-1 ansible_ssh_host=pc2.instageni.rnoc.gatech.edu ansible_port=27614
+node-2 ansible_ssh_host=pc2.instageni.rnoc.gatech.edu ansible_port=27615
+ELK ansible_ssh_host=pcvm2-10.instageni.rnoc.gatech.edu
+Nginx ansible_ssh_host=pcvm2-14.instageni.rnoc.gatech.edu
+Measurement ansible_ssh_host=pc2.instageni.rnoc.gatech.edu ansible_port=27611

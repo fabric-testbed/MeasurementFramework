@@ -33,6 +33,19 @@
       - containerd.io
     state: latest
 
+- name: Create docker group
+  tags: docker
+  group:
+    name: "docker"
+    state: present
+
+- name: Adding user ansible to docker group
+  tags: docker
+  user:
+    name: ansible
+    groups: "docker"
+    append: "yes"
+
 - name: Start and enable docker service
   tags: docker
   service:

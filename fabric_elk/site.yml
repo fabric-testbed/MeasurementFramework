@@ -10,6 +10,7 @@
 
 - hosts: all
   tags: base
+  become: true
   vars:
     docker_compose_ver: 1.25.5
   roles:
@@ -23,6 +24,7 @@
 
 # Installing Filebeat / Packetbeat on workers
 - hosts: workers
+  become: true
   tags: worker
   roles:
     - worker
