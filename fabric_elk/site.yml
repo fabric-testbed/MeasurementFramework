@@ -1,0 +1,41 @@
+---
+
+- hosts: all
+  become: true
+
+  pre_tasks:
+
+  - name: Install updates (CentOS)
+    tags: always
+    yum:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+- hosts: all
+  tags: base
+  vars:
+    local_user:
+    docker_compose_ver: 1.25.5
+  become: true
+  roles: 
+    - base
+
+# Installing ELK cluster on ELK node
+- hosts: elk
+  tags: elk
+  vars:
+    usr_name_elk: fabric
+    passwd_elk: u73jb0amrbc739dfj
+  become: true
+  roles:
+    - elk
+
+# Installing Filebeat / Packetbeat on workers
+- hosts: workers
+  tags: worker
+  become: true
+  roles:
+    - worker
+
+

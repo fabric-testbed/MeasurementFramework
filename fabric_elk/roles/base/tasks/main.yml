@@ -1,0 +1,62 @@
+- name: Installing packages
+  tags: packages
+  yum:
+    name:
+      - epel-release
+      - gcc
+      - openssl-devel
+      - bzip2-devel
+      - libffi-devel
+      - centos-release-scl
+      - yum-utils
+      - ansible
+      - git
+      - httpd-tools
+      - lvm2
+      - device-mapper-persistent-data
+    state: latest
+    update_cache: yes
+
+- name: Configure docker-ce repo
+  tags: docker
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docer-ce.repo
+    mode: 0644
+
+- name: Install docker
+  tags: docker
+  yum:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+
+- name: Start and enable docker service
+  tags: docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Check docker hello-world
+  tags: docker, docker-test
+  shell: docker run hello-world
+
+- name: Check if Docker Compose is installed
+  tags: docker-compose
+  command: docker-compose --version
+  register: docker_compose_check
+  ignore_errors: yes
+
+- name: Setting vm.max_map_count
+  tags: docker
+  shell: sysctl -w vm.max_map_count=262144
+
+- name: Download and install Docker Compose
+  tags: docker-compose
+  get_url:
+    url: https://github.com/docker/compose/releases/download/{{ docker_compose_ver }}/docker-compose-Linux-x86_64
+    dest: /usr/bin/docker-compose
+    mode: 0755
