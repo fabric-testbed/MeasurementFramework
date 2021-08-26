@@ -35,6 +35,6 @@ $ ansible-playbook site.yml -v
 
 ## 3. Check Kibana
 
-After previous step is completed, users can access to `ELK` node (port 80) on the slice using randomly generated Nginx password during the privous step. User should be able to find out the FQDN of `ELK` node in the `rspec` or `FIM` file. The Nginx password is saved under `credentials/nginx_passwd` file.
+After previous step is completed, users can access to `ELK` node (port 80) on the slice using randomly generated Nginx password during the privous step. User should be able to find out the FQDN of `ELK` node in the `rspec` or `FIM` file. The Nginx password is saved under `credentials/nginx_passwd` file and default user name is `fabric`.
 
 If everything worked correctly, users should be able to see the `Kibana` is up and running and `Filebeat, Metricbeat, Packetbeat` are sending data from worker nodes. All the pre-build dashboards are under dashboard menu in the `Kibana`.
