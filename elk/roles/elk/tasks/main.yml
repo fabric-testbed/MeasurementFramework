@@ -21,6 +21,7 @@
 
 # Create random password for Nginx
 - name: Generate random password for Nginx
+  become: true
   set_fact:
     nginx_htaccess_password: "{{ lookup('password', 'credentials/nginx_passwd')}}"
 

@@ -38,10 +38,10 @@
         mode: 0440
 
 - hosts: Measurement
-  become: true
   tasks:
     # Copy private ssh key to Measurement node only
     - name: Copy created private ssh key to Measurement node
+      become: true
       copy:
         src: ~/.ssh/ansible
         dest: /home/ansible/.ssh/ansible
@@ -50,6 +50,7 @@
 
     # Install packages (ansible on Measurement node)
     - name: Installing packages
+      become: true
       tags: packages
       yum:
         name:
@@ -70,6 +71,8 @@
 
     # Check if mf git repo are already created
     - name: Check if mf git repo folders already exists
+      become: true
+      become_user: ansible
       tags: mfgitrepo
       stat:
         path: /home/ansible/mf_git
@@ -77,6 +80,8 @@
 
     # Clone MF git repo dev branch
     - name: Clone mf git repo
+      become: true
+      become_user: ansible
       tags: mfgitrepo
       git:
         repo: https://github.com/fabric-testbed/MeasurementFramework.git
