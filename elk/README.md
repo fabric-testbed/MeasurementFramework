@@ -4,7 +4,18 @@ This document shows how to start ELK (Elasticsearch, Logstash, Kibana) and multi
 
 ## 0. Manual update
 
-Before running the ansible scripts, you have to update `bootstrap/hosts` file that lists alias name, ssh host name, and ssh port of nodes in the slice. This step will be automatically generated later using `rspec` as input file.
+Before running the ansible scripts, you have to create `bootstrap/hosts` file that lists alias name, ssh host name, and ssh port of nodes in the slice like below. You only need to change **bold** texts.
+
+<pre>
+node-0 ansible_ssh_host=<b>pc1.instageni.rnoc.gatech.edu</b> ansible_port=<b>29011</b>
+node-1 ansible_ssh_host=<b>pc1.instageni.rnoc.gatech.edu</b> ansible_port=<b>29012</b>
+node-2 ansible_ssh_host=<b>pc1.instageni.rnoc.gatech.edu</b> ansible_port=<b>29013</b>
+ELK ansible_ssh_host=<b>pcvm12-1.instageni.rnoc.gatech.edu</b>
+Nginx ansible_ssh_host=<b>pcvm13-12.instageni.rnoc.gatech.edu</b>
+Measurement ansible_ssh_host=<b>pc1.instageni.rnoc.gatech.edu</b> ansible_port=<b>29010</b>
+</pre>
+
+> This step will be automatically generated later using `rspec` as input file.
 
 ## 1. Bootstrapping
 
