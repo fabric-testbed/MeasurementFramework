@@ -103,6 +103,9 @@
   - name: Setup Promtheus Config Files
     include_tasks: Prometheus/add_prometheus_config_templates.yml
     # See vars for templates used
+    
+  - name: Setup Promtheus Config Files
+    include_tasks: Prometheus/add_prometheus_config_files.yml
 
   - name: Prometheus Container
     # 3. Start docker container
@@ -241,7 +244,9 @@
 
     - name: Grafana Datasources
       include_tasks: Grafana/grafana_provisioning_tasks.yml
-
+   
+    - name: Grafana Plugins
+      include_tasks: Grafana/grafana_add_plugins_tasks.yml
 
 ####################
 #     NGINX        #
@@ -258,8 +263,10 @@
           
     # Add user to htaccess file
     # note htpasswd requires passlib to be installed on remote
-    - name: Nginx htaccess user
-      include_tasks: Nginx/add_user_to_htaccess_tasks.yml
+    #- name: Nginx htaccess user
+    #  include_tasks: Nginx/add_user_to_htaccess_tasks.yml
+    - name: Nginx htaccess users   
+      include_tasks: Nginx/add_users_to_htaccess_tasks.yml
       
     # Confd server files
     - name: Nginx Add Confd  Files

@@ -60,9 +60,12 @@
   - name: Setup Prometheus Directories
     include_tasks: Prometheus/setup_prometheus_directories_tasks.yml
   
-  - name: Setup Promtheus Config Files
+  - name: Setup Promtheus Config Templates
     include_tasks: Prometheus/add_prometheus_config_templates.yml
     # See vars for templates used
+
+  - name: Setup Promtheus Config Files
+    include_tasks: Prometheus/add_prometheus_config_files.yml
 
   - name: Prometheus Container
     # 3. Start docker container
