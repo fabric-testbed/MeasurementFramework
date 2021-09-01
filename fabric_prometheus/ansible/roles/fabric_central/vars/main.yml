@@ -111,6 +111,9 @@ prometheus_config_template_files:
 
   # To check that head nodes are up
   - headnode_ping_targets.yml
+  # To check that worker nodes are up
+  - workernode_ping_targets.yml
+
 
   # aux node exporters
   #- fabric_node_targets.yml
@@ -118,8 +121,13 @@ prometheus_config_template_files:
   # other exporters such as kafka, openstack, jupyter
   # TODO wherer?
 
-  # alertmanger rules
-  - test_alerts.yml
+  # alertmanager rules
+  #- test_alerts.yml
+
+prometheus_config_files:
+  # Alert rule files
+  - certificate_alerts.yml 
+  - vpn_ping_alerts.yml 
 
 
 ####################
@@ -138,7 +146,6 @@ snmp_state: started
 blackbox_state: started
 docker_exporter_state: started
 prometheus_state: started
-alertmanger_state: started
 nginx_state: started
 thanos_sidecar_state: started
 thanos_store_state: started 
@@ -212,6 +219,10 @@ blackbox_files_dir: files
 ####################
 #     Grafana      #
 ####################
+
+grafana_files_dir: files/Grafana
+grafana_plugin_files: 
+  - flant-statusmap-panel-v0.4.1.zip
 
 grafana_templates_dir: templates/Grafana
 
@@ -288,5 +299,5 @@ node_exporter_web_listen_address: "{{ ansible_host }}:9100"
 ####################
 #  ALERTMANAGER    #
 ####################
-# -- Moved to private vars -- # alert_manager_slack_api_url: <https://hooks.slack.com/services/secret-key>
+# -- Moved to private vars -- # alertmanager_slack_api_url: <https://hooks.slack.com/services/secret-key>
 # etc...

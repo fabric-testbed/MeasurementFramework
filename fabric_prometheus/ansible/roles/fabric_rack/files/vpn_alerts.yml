@@ -1,0 +1,27 @@
+groups: 
+
+- name: Blackbox Alerts
+  #interval: 1m
+  rules:
+
+  - alert: VPN Ping Failed
+    expr: probe_success {job="ping", reason="vpn"} == 0
+    for: 1m
+    labels:
+      severity: warning
+      #responsible_primary: cscarp0
+    annotations:
+      summary: "VPN ping to {{ $labels.instance }} failed for 1 minute."
+      description: "{{ $labels.instance }} did not respond to ping for 1 minute."
+
+
+  - alert: VPN Ping Failed
+    expr: probe_success {job="ping", reason="vpn"} == 0
+    for: 15m
+    labels:
+      severity: critical
+      #responsible_primary: cscarp0
+    annotations:
+      summary: "VPN ping to {{ $labels.instance }} has failed for 15 minutes." 
+      description: "{{ $labels.instance }} has not responded to ping for more than 15 minutes."
+
