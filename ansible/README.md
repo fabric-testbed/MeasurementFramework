@@ -32,6 +32,6 @@ or
 * Create/Download the needed vars file. Most variables have defaults, however several will need to be defined. All private variables will also need to be defined. #TODO document them
 * Install using `ansible-playbook -i central_hosts.ini --extra-vars "@<your_extra_vars.yml>" playbook_fabric_central_install.yml --diff --check`  
   Examples:
-  * `ansible-playbook -i central_hosts.ini --extra-vars "@central_vars.yml" playbook_fabric_central_install.yml --diff --check`
+  * For central metrics `ansible-playbook -i hosts/central_hosts.ini --extra-vars "@private_vars/central_vars.yml" playbook_fabric_central_install.yml --diff --check`
   * `ansible-playbook -i hosts/dev_central_hosts.ini --extra-vars "@private_vars/dev_central_vars.yml" playbook_fabric_central_install.yml --diff --check`
   * `ansible-playbook -i dev_central_hosts.ini --extra-vars "@dev_central_vars.yml" playbook_fabric_central_install.yml --diff --check`
