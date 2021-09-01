@@ -1,9 +1,0 @@
----
-# Add user to the htpasswd file
-# Note this just adds a user to the file, it does not remove any existing users.
-- name: Add user to htpasswd file
-  htpasswd:
-    path: "{{ base_install_dir }}/nginx/config/htpasswd"
-    name: "{{ fabric_prometheus_ht_user }}"
-    password: "{{ fabric_prometheus_ht_password }}"
-  become: yes
