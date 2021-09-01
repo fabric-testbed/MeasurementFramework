@@ -30,6 +30,7 @@ modules:
     timeout: 5s
     dns:
       query_name: metrics.fabric-testbed.net
+      preferred_ip_protocol: "ip4" # defaults to "ip6" which does not work, docker blocking?
       
   tcp_connect:
     prober: tcp
