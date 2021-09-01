@@ -28,7 +28,7 @@
       - component_type == 'head' or component_type == 'worker'
   when: 
     - install_node_exporters is defined
-    - install_node_exporters == yes 
+    - install_node_exporters #== yes
 
 
 # ##############################
