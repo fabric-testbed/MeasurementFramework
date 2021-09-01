@@ -4,7 +4,7 @@
 # empty value to be filled in later if needed
 extra_node_hosts: {}
 
-install_node_exporters: yes 
+install_node_exporters: no 
 
 
 install_name: fabric_prometheus
@@ -46,6 +46,12 @@ prometheus_config_template_files:
   # snmp exporters for rack devices
   - base_snmp_targets.yml
 
+prometheus_config_files:
+  # Alert rule files
+  - rack_alerts.yml 
+  - time_alerts.yml 
+  - vpn_alerts.yml
+
 
 ####################
 # Container States #
@@ -65,6 +71,12 @@ docker_exporter_state: started
 prometheus_state: started
 nginx_state: started
 thanos_sidecar_state: started
+
+####################
+#   Alertmanager   #
+####################
+alertmanager_url: 192.128.12.238:9093
+
 
 
 ####################
