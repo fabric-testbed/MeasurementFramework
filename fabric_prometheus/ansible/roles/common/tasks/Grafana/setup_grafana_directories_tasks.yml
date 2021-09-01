@@ -10,7 +10,7 @@
         owner: "{{ grafana_user_name }}"
         group: "{{ grafana_group_name }}"
       with_items:
-        - [ "custom", "provisioning", "provisioning/dashboards", "provisioning/datasources"  ]
+        - [ "custom", "plugins", "provisioning", "provisioning/dashboards", "provisioning/datasources"  ]
 
     - name: "Create Grafana Data directories"
       file:
