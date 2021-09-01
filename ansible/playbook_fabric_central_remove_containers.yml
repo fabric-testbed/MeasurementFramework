@@ -14,7 +14,6 @@
       - blackbox
       - docker_exporter
       - prometheus
-      - alertmanger
       - nginx
       - thanos_sidecar
       - thanos_store 
