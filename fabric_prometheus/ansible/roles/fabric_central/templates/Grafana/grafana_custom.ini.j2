@@ -26,12 +26,21 @@ tls_client_key = /etc/grafana/certs/key
 
 #role_attribute_path = contains(project_roles[*], 'CO:COU:facility-operators:members:active') && 'Admin' || contains(profile[*], "CO:COU:metrics:members:active") && 'Admin' || 'Viewer'
 # For now anyone who can get into the grafana should be able to edit. 
-role_attribute_path = contains(project_roles[*], 'CO:COU:facility-operators:members:active') && 'Admin' || contains(profile[*], "CO:COU:metrics:members:active") && 'Admin' || 'Editor'
+#role_attribute_path = contains(project_roles[*], 'CO:COU:facility-operators:members:active') && 'Admin' || contains(profile[*], "CO:COU:metrics:members:active") && 'Admin' || 'Editor'
 
 {% endif %}
 
-# TODO enable for Global
-[smptp]
+[smtp]
+enabled = true
+host = mail.fabric-testbed.net:25
+from_address = no-reply_{{ hank_name }}_alerts@metrics.fabric-testbed.net
+from_name = {{ hank_name }} Grafana Alert
+skip_verify = true
+ehlo_identity = metrics.fabric-testbed.net
+startTLS_policy = “MandatoryStartTLS”
+user =
+password =
+
 #enabled = false
 #host = mail.fabric-testbed.net:25
 #from_address = alerts@metrics.<your rack>.fabric-testbed.net
@@ -41,3 +50,12 @@ role_attribute_path = contains(project_roles[*], 'CO:COU:facility-operators:memb
 
 [log]
 #level = debug
+
+
+[security]
+
+# Only allow the one datasource to prevent someone from trying to gain 
+#    access to other resources
+data_source_proxy_whitelist = {{ install_name }}_thanos_query:10922
+# Allow the setting of admin account name to something else
+admin_user = {{ grafana_admin_user | default("admin")}}
