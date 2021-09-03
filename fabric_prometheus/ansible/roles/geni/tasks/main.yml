@@ -63,9 +63,7 @@
       - add_node_exporter is defined
       - add_node_exporter 
 
-  when: 
-      - install_type is defined
-      - install_type == 'geni_slice' 
+
 
 ##############################################################
 #                   end GENI Slice                           #
