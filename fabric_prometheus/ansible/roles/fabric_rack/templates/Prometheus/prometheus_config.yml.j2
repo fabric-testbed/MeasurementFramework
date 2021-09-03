@@ -13,6 +13,29 @@ rule_files:
   - '*_alerts.yml'
   - '*_rules.yml'
 
+alerting:
+  alertmanagers:
+    # try the following and then remove the - on the scheme, ie make all below a single object
+    # - name: Central Alerting
+
+    - scheme: https
+      tls_config:
+        insecure_skip_verify: true
+      basic_auth:
+        username: "{{ alertmanager_ht_user }}"
+        password: "{{ alertmanager_ht_password }}"
+      
+      static_configs:
+        - targets: 
+          - "{{ alertmanager_url }}"
+
+#alertmanager_config:
+#  scheme: https
+#  basic_auth:
+#    username: "{{ alertmanager_ht_user }}"
+#    password: "{{ alertmanager_ht_password }}"
+
+
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
 scrape_configs:

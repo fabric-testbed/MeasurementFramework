@@ -75,7 +75,8 @@ thanos_sidecar_state: started
 ####################
 #   Alertmanager   #
 ####################
-alertmanager_url: 192.128.12.238:9093
+#alertmanager_url: 192.128.12.238:9093
+alertmanager_url: metrics.fabric-testbed.net:9093
 
 
 
