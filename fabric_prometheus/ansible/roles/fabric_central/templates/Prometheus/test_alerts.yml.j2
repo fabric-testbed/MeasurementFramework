@@ -113,7 +113,7 @@ groups:
   rules: 
   
   - alert: RackNodeNotTimeSynced
-    expr: node_timex_sync_status { component_type=~"head|worker" } == 0 
+    expr: node_timex_sync_status { component_type=~"head|worker", job="node"} == 0 
     for: 15m
     labels:
       severity: error
