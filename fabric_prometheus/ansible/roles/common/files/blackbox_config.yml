@@ -47,6 +47,15 @@ modules:
       ip_protocol_fallback: false
     timeout: 5s
 
+  smtp_simple:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      preferred_ip_protocol: ip4
+      ip_protocol_fallback: false
+      query_response:
+              #- expect: "^220 ([^ ]+) ESMTP (.+)$"
+        - expect: "220 mail.fabric-testbed.net ESMTP"
 
   smtp_starttls:
     prober: tcp
