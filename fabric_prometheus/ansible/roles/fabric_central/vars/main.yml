@@ -113,10 +113,8 @@ prometheus_config_template_files:
   - headnode_ping_targets.yml
   # To check that worker nodes are up
   - workernode_ping_targets.yml
-
-
-  # aux node exporters
-  #- fabric_node_targets.yml
+  # aux node exporters and local node exporter
+  - central_node_targets.yml
 
   # other exporters such as kafka, openstack, jupyter
   # TODO wherer?

@@ -37,13 +37,12 @@ scrape_configs:
       - targets: ['localhost:9090']
 
 
-
 #######################################
 #         Blackbox Exporters          #
 #######################################
 
 # SMTP, mail
-  - job_name: 'blackbox-ping'
+  - job_name: 'blackbox-smtp'
     metrics_path: /probe
     params:
          module: [smtp_simple]
