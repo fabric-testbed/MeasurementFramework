@@ -39,8 +39,9 @@ If SSH works fine, then users can run ansible playbook to orchestrate ELK and Be
 > Checking out dev branch will be changed later.
 
 ```bash
-$ cd mf_git/MeasurementFramework
+$ cd mf_git/
 $ git checkout dev
+$ cd elk
 $ ansible-playbook site.yml -v
 ```
 
