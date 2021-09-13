@@ -37,6 +37,11 @@ scrape_configs:
       - targets: ['localhost:9090']
 
 
+
+curl --user "operator:Fry-Certain-Waiter-Sudden-Boo"  https://metrics.fabric-testbed.net:9093/metrics -k
+
+
+
 #######################################
 #         Blackbox Exporters          #
 #######################################
@@ -131,6 +136,14 @@ scrape_configs:
 #      end Blackbox Exporters         #
 #######################################
 
+
+# Alertmanager Exporter 
+# for now only one running 
+  - job_name: 'alertmanager-exporter'
+    scheme: http
+    static_configs: 
+      - targets: 
+        - '{{ install_name }}_alert_manager:{{ alertmananger_port }}'
 
 
 # Node Exporter 
