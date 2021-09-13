@@ -9,7 +9,7 @@ groups:
     for: 1m
     labels:
       severity: warning
-      #responsible_primary: cscarp0
+      fabric_system: vpn
     annotations:
       summary: "VPN ping to {{ $labels.instance }} failed for 1 minute."
       description: "{{ $labels.instance }} did not respond to ping for 1 minute."
@@ -20,7 +20,7 @@ groups:
     for: 15m
     labels:
       severity: critical
-      #responsible_primary: cscarp0
+      fabric_system: vpn
     annotations:
       summary: "VPN ping to {{ $labels.instance }} has failed for 15 minutes." 
       description: "{{ $labels.instance }} has not responded to ping for more than 15 minutes."
