@@ -37,6 +37,7 @@ scrape_configs:
       - targets: ['localhost:9090']
 
 
+
 #######################################
 #         Blackbox Exporters          #
 #######################################
@@ -131,6 +132,14 @@ scrape_configs:
 #      end Blackbox Exporters         #
 #######################################
 
+
+# Alertmanager Exporter 
+# for now only one running 
+  - job_name: 'alertmanager-exporter'
+    scheme: http
+    static_configs: 
+      - targets: 
+        - '{{ install_name }}_alert_manager:{{ alertmanager_port }}'
 
 
 # Node Exporter 
