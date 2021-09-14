@@ -4,7 +4,7 @@
 # empty value to be filled in later if needed
 extra_node_hosts: {}
 
-install_node_exporters: no 
+install_node_exporters: yes
 
 
 install_name: fabric_prometheus
