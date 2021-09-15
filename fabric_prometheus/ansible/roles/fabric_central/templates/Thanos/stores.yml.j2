@@ -1,0 +1,22 @@
+---
+# The list of locations that implement the query gRPC for Prometheus/Thanos
+- targets:
+    # Local
+    # cant' use containers due to cert name must match hostname - thanos problem where certs must be validated
+    #- {{ install_name }}_thanos_sidecar:10901
+    #- {{ install_name }}_thanos_store:10911
+    
+    # Go to host machine, may have to add hostname to etc_hosts in container
+    # thanos sidecar
+    - {{ hostname }}:10901
+    # thanos store/gateway
+    - {{ hostname }}:10911
+    
+    # Racks
+    - uky-hn.fabric-testbed.net:10901
+    - renc-hn.fabric-testbed.net:10901
+    - lbnl-hn.fabric-testbed.net:10901
+    - max-hn.fabric-testbed.net:10901
+    - utah-hn.fabric-testbed.net:10901
+    - ncsa-hn.fabric-testbed.net:10901
+    - mich-hn.fabric-testbed.net:10901
