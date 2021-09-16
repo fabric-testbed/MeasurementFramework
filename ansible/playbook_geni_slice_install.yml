@@ -3,7 +3,7 @@
 - hosts: monitor
   
   roles:
-    - ../fabric_prometheus/ansible/roles/fabric_prometheus
+    - ../fabric_prometheus/ansible/roles/geni
   tags:
     - monitor
   #vars_files:  use --extra-var "@your var file name"
@@ -13,8 +13,8 @@
     add_python_docker_sdk: yes
     add_node_exporter: no
     add_monitor: yes
-    install_type: geni_slice
-    extra_node_hosts: {}
+   
+
 
 
 # Note for machine running ansible you must have installed
@@ -23,7 +23,7 @@
 - hosts: nodes
 
   roles:
-    - ../fabric_prometheus/ansible/roles/fabric_prometheus
+    - ../fabric_prometheus/ansible/roles/geni
   tags: 
     - exporters
   #vars_files:  use --extra-var "@your var file name"
@@ -32,4 +32,4 @@
     add_docker: yes
     add_python_docker_sdk: yes
     add_node_exporter: yes
-    install_type: geni_slice
+   

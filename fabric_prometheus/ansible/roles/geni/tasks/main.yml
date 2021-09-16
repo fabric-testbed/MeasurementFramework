@@ -1,0 +1,73 @@
+---
+
+
+##############################################################
+#                       GENI Slice                           #
+##############################################################
+# This section contains the tasks needed for installing 
+# Prometheus on a GENI Slice. 
+# Use the var install_type: geni_slice to trigger these tasks.
+# To control the sub tasks define the add_ variables
+#   add_docker: yes  
+#     Adds docker and docker-compose install.
+#   add_monitor: yes
+#     Adds the main Prometheus components - Prometheus, Grafana
+#     etc.. on the monitoring node.
+#   add_node_exporter: yes 
+#     Adds the node_exporter to a node.
+
+- name: GENI Slice
+  block:
+  ###############################
+  #   GENI Slice Prereqs        #
+  ###############################
+
+  # These tasks may be required on nodes that do not have docker already installed.
+  - name: Install Docker 
+    become: yes
+    import_tasks: install_docker_tasks.yml
+    when: 
+      - add_docker is defined
+      - add_docker
+
+  - name: Install python sdk to manage docker
+    become: yes
+    import_tasks: install_docker_python_sdk_tasks.yml
+    when: 
+      - add_python_docker_sdk is defined
+      - add_python_docker_sdk
+
+
+  ###############################
+  #   GENI Slice Prometheus     #
+  ###############################
+  - name: Install Prometheus setup on a GENI Slice 
+    block:
+    - name: Install GENI Rack
+      import_tasks: geni_slice_install_tasks.yml
+    when: 
+      - add_monitor is defined
+      - add_monitor 
+      
+  ###############################
+  #   Node Exporter Install     #
+  ###############################
+  - name: Install node_exporter for GENI rack
+    # need each node to have node_exporter
+    block:
+    - name: Install Node_exporter
+      import_tasks: install_node_exporter_tasks.yml
+      when: 
+        - yes
+    when: 
+      - add_node_exporter is defined
+      - add_node_exporter 
+
+
+
+##############################################################
+#                   end GENI Slice                           #
+##############################################################
+
+
+
