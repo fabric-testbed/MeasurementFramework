@@ -1,17 +1,17 @@
 # Filebeat
 filebeat_version: 7.13.2
 filebeat_template_file: filebeat.yml.j2
-filebeat_output_elasticsearch_hosts: ELK
-filebeat_setup_kibana_host: ELK
+filebeat_output_elasticsearch_hosts: Meas_Net
+filebeat_setup_kibana_host: Meas_Net
 
 # Metricbeat
 metricbeat_version: 7.13.2
 metricbeat_template_file: metricbeat.yml.j2
-metricbeat_output_elasticsearch_hosts: ELK
-metricbeat_setup_kibana_host: ELK
+metricbeat_output_elasticsearch_hosts: Meas_Net
+metricbeat_setup_kibana_host: Meas_Net
 
 # Packetbeat
 packetbeat_version: 7.13.2
 packetbeat_template_file: packetbeat.yml.j2
-packetbeat_output_elasticsearch_hosts: ELK
-packetbeat_setup_kibana_host: ELK
+packetbeat_output_elasticsearch_hosts: Meas_Net
+packetbeat_setup_kibana_host: Meas_Net

@@ -37,7 +37,7 @@
         group: root
         mode: 0440
 
-- hosts: Measurement
+- hosts: Measurement_Node
   tasks:
     # Copy private ssh key to Measurement node only
     - name: Copy created private ssh key to Measurement node
