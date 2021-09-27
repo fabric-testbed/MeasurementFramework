@@ -4,7 +4,7 @@ node-1
 node-2
 
 [elk]
-ELK
+Meas_Net
 
 [nginx]
-Nginx
+Meas_NGINX
