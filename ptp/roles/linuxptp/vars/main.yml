@@ -1,0 +1,10 @@
+---
+# vars file for linuxptp-host
+#chrony_conf: "{{ '/etc/chrony/chrony.conf' if ansible_os_family == 'Debian' else '/etc/chrony.conf' }}"
+#chrony_conf: '/etc/chrony.conf'
+PTP_REPO_URL: 'http://git.code.sf.net/p/linuxptp/code'
+PTP_PACKAGE_NAME: 'linuxptp'
+PTP_PACKAGE_TAG: 'v3.1.1'
+ALL_NICS: False
+MANAGEMENT_IP_FOR_PTP: "{{ ansible_host }}"
+time_server_IP: "{{ hostvars[ hank_name + '-time']['ansible_host'] }}"

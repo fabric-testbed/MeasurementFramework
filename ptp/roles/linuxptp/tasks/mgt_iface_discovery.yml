@@ -1,0 +1,26 @@
+---
+#- debug:
+#    msg: "{{ MANAGEMENT_IP_FOR_PTP }}"
+
+- name: parse interfaces
+  set_fact:
+    MANAGEMENT_IFACE_FOR_PTP="{{ item }}"
+  when: 
+    - hostvars[inventory_hostname]['ansible_{{item}}']['ipv4'] is defined
+    - hostvars[inventory_hostname]['ansible_{{item}}']['ipv4']['address'] == MANAGEMENT_IP_FOR_PTP
+  with_items:
+    - "{{ ansible_interfaces }}"
+
+- block:
+
+  - name: Hacky way to find management interface in Openstack VMs
+    shell: netstat -rn|grep ^'0.0.0.0'|awk '{print $8}'
+    register: hack_output
+
+  - name: Last resort trying to find the interface name
+    set_fact:
+      MANAGEMENT_IFACE_FOR_PTP="{{ hack_output.stdout }}"
+
+  - fail:
+      msg:  "Cannot find Management Interface Name for the IP Provided"
+  when: MANAGEMENT_IFACE_FOR_PTP is not defined

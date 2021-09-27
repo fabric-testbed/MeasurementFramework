@@ -1,0 +1,13 @@
+---
+#- block:
+#  - include: for_hosts.yml
+#    become: True
+#  when: inventory_hostname in groups[ 'fabric_head' ] or inventory_hostname in groups[ 'fabric_worker' ]
+#  tags: linuxptp
+
+
+- block:
+  - include: for_vms.yml
+    become: True
+  when: inventory_hostname in groups[ 'fabric_user_vms' ] 
+  tags: linuxptp
