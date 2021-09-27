@@ -1,0 +1,54 @@
+---
+
+- block:
+  - include: mgt_iface_discovery.yml
+  - include: package_dependency_install.yml
+  - include: linuxptp_fetch_n_install.yml
+  - include: generate_ptpconf_tail.yml
+  - include: disable_chronyd.yml
+  tags: linuxptp
+
+- name: Template ptp4l.conf 
+  template:
+    src: templates/ptp4l.conf.head.j2
+    dest: /etc/linuxptp/conf.d/ptp4l.conf.head
+    owner: root
+    group: root
+  tags: linuxptp
+
+- name: Assemble a new "ptp4l.conf" file into place
+  assemble:
+    src: /etc/linuxptp/conf.d/
+    dest: /etc/linuxptp/ptp4l.conf
+  tags: linuxptp
+
+- name: Copy monitor source file
+  copy:
+    src: files/ptp_monitor.py
+    dest: /opt/ptp_monitor/
+
+- name: Copy service files
+  copy:
+    src: files/{{ item }}
+    dest: /lib/systemd/system/
+  with_items:
+    - phc2sys.service
+    - ptp4l.service
+    - ptp4l-monitor.service
+  tags: linuxptp
+
+- name: Re-read systemd services
+  systemd:
+    daemon_reload: yes
+  tags: linuxptp
+
+- name: Start Services 
+  systemd:
+    state: restarted
+    enabled: yes
+    name: "{{ item }}"
+  with_items:
+    - "ptp4l.service"
+    - "phc2sys.service"
+    - "ptp4l-monitor.service"
+  tags: linuxptp

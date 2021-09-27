@@ -1,0 +1,8 @@
+---
+# Creating the rack monitoring setup.
+- hosts: monitor
+  
+  roles:
+    - ../ptp/roles/linuxptp
+  tags:
+    - linuxptp

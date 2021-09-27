@@ -1,0 +1,55 @@
+---
+- block:
+
+  - include: mgt_iface_discovery.yml
+  - include: package_dependency_install.yml
+  - include: linuxptp_fetch_n_install.yml
+  - include: generate_ptpconf_tail.yml
+  tags: linuxptp
+
+
+- name: Modprobe ptp_kvm
+  modprobe:
+    name: ptp_kvm
+    state: present
+  tags: linuxptp
+
+
+- name: Ansible modprobe file for ptp_kvm
+  copy:
+    dest: "/etc/modules-load.d/ptp_kvm.conf"
+    content: |
+      ptp_kvm
+  tags: linuxptp
+
+- name: Remove old service files
+  shell: rm -rf /lib/systemd/system/phc2sys-*.service
+  tags: linuxptp
+
+- name: Template phc2sys for PTP Capable Interfaces in KVM
+  template:
+    src: templates/phc2sys.service.kvm.j2
+    dest: /lib/systemd/system/phc2sys-{{ IFACE }}.service
+    owner: root
+    group: root
+  loop: "{{ IFACES.stdout_lines + [ 'CLOCK_REALTIME' ] }}"
+  loop_control:
+    loop_var: IFACE
+  when:  (IFACE | trim) != ''
+  tags: linuxptp
+
+- name: Re-read systemd services
+  systemd:
+    daemon_reload: yes
+  tags: linuxptp
+
+- name: Start phc2sys service for PTP Capable Interfaces
+  systemd:
+    state: restarted
+    enabled: yes
+    name: phc2sys-{{ IFACE }}.service
+  loop: "{{ IFACES.stdout_lines + [ 'CLOCK_REALTIME' ] }}"
+  loop_control:
+    loop_var: IFACE
+  when: (IFACE | trim) != ''
+  tags: linuxptp

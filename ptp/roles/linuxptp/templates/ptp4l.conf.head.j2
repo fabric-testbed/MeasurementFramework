@@ -1,0 +1,25 @@
+# UNICAST slave example configuration with contrived master tables.
+# This example will not work out of the box!
+#
+[global]
+#
+# Request service for sixty seconds.
+#
+#
+unicast_req_duration    60
+logging_level          6
+use_syslog             0
+#verbose                0
+#summary_interval       0
+clock_servo             linreg
+time_stamping           hardware
+slaveOnly               1
+
+[unicast_master_table]
+table_id                1
+logQueryInterval        2
+peer_address            {{ time_server_IP }}
+UDPv4                   {{ time_server_IP }}
+
+[{{ MANAGEMENT_IFACE_FOR_PTP }}]
+unicast_master_table    1
