@@ -6,7 +6,7 @@ The user needs to create two files (`hosts` and `.vault_key_beats`) under `beats
 
 ## 1.1. `hosts` file
 
-`hosts` file under `beats` folder lists all the target nodes. The example of `hosts` file is shown below. To deploy `Filebeat` on a node, list the target node under `[filebeat]` group in the `hosts` file. Same for the `packetbeat`.
+`hosts` file under `beats` folder lists all the target nodes. The example of `hosts` file is shown below. To deploy `Filebeat` on a node, list the target node under `[filebeats]` group in the `hosts` file. Same for the `packetbeat`.
 
 ```yml
 [filebeats]
