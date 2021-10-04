@@ -1,0 +1,15 @@
+---
+- name: Start Filebeats
+  hosts: filebeats
+  tags: filebeat
+  tasks:
+    - name: Start docker-compose for Filebeats
+      shell: docker-compose up -d filebeat
+      args:
+        chdir: /opt/beats/
+# # Installing Packetbeat on nodes
+# - hosts: packetbeats
+#   become: true
+#   tags: packetbeat
+#   roles:
+#     - packetbeat

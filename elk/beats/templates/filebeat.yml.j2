@@ -1,0 +1,43 @@
+filebeat.inputs:
+- type: log
+  enabled: false
+  paths:
+    #- c:\programdata\elasticsearch\logs\*
+
+- type: filestream
+  enabled: false
+  paths:
+    - /var/log/*.log
+    #- c:\programdata\elasticsearch\logs\*
+
+filebeat.modules:
+  - module: system
+    syslog:
+      enabled: true
+      var.paths: ["/var/log/messages"]
+      var.convert_timezone: false
+    auth:
+      enabled: true
+      var.paths: ["/var/log/secure*"]
+      var.convert_timezone: false
+
+setup.template.settings:
+  index.number_of_shards: 1
+
+# -------------------------------- Kafka Output --------------------------------
+output.kafka:
+  enabled: true
+  hosts: ["mfkfk1-1.fabric-testbed.net:19094","mfkfk1-2.fabric-testbed.net:29094","mfkfk1-3.fabric-testbed.net:39094"]
+  topic: '{{ mfkfk_topic_name }}'
+  username: {{ mfkfk_username }}
+  password: {{ mfkfk_password }}
+  sasl.mechanism: SCRAM-SHA-256
+  ssl.verification_mode: certificate
+  ssl.certificate_authorities: ["/etc/filebeat/mfkfk1-1_fabric-testbed_net_interm.cer"]
+
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
