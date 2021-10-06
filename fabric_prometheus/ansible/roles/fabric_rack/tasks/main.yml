@@ -81,10 +81,10 @@
       prometheus_config_template_files:
         - vpn_ping_targets.yml
   when: 
-    - install_type is defined
-    - install_type == 'fabric_rack' 
+    # - install_type is defined
+    # - install_type == 'fabric_rack' 
     - component_type == 'head'
     - set_vpn_pings is defined
-    - set_vpn_pings
+    - set_vpn_pings #== yes
 
 
