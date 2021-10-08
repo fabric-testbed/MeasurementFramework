@@ -183,7 +183,7 @@
     #  include_tasks: Nginx/add_user_to_htaccess_tasks.yml
       #var: need vars set in sensitive file
       #fabric_prometheus_ht_user: & fabric_prometheus_ht_password: 
-          
+
     # Confd server files
     - name: Nginx Add Confd  Files
       include_tasks: Nginx/confd_nginx_tasks.yml
