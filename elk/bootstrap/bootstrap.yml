@@ -99,6 +99,7 @@
 
     # Copy host file
     - name: Update host file
+      become: true
       become_user: ansible
       tags: updatehostfile
       copy:
