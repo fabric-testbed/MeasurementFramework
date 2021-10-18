@@ -1,55 +1,25 @@
 # Orchestrating Measurement Framework (ELK/Beats) using Ansible
 
-This document shows how to start ELK (Elasticsearch, Logstash, Kibana) and multiple beats (Filebeat, Metricbeat, Packetbeat) using Ansible scripts to orchestrate.
+This document shows how to start ELK (Elasticsearch, Logstash, Kibana) and multiple beats (Filebeat, Metricbeat, Packetbeat) using Ansible scripts to orchestrate on GENI.
 
-## 0. Manual update
+## 0. Requirements
 
-Before running the ansible scripts, you have to create `elk/bootstrap/hosts` file that lists alias name, ssh host name, and ssh port in the slice like below. You only need to change **bold** texts. Do not change alias name of hosts.
+You must have following packages are installed on the machine that you are running this code:
 
-<pre>
-[Measurement_Node]
-Meas_Node ansible_ssh_host=<b>pc3.instageni.research.umich.edu</b> ansible_port=<b>27412</b>
+- `omni`
+- `ansible`
 
-[Measurement_Net]
-Meas_Net ansible_ssh_host=<b>pcvm3-6.instageni.research.umich.edu</b>
+## 1. Create slice and reserve resources on GENI
 
-[Measurement_NGINX]
-Meas_NGINX ansible_ssh_host=<b>pcvm3-5.instageni.research.umich.edu</b>
-
-[Experiment_Nodes]
-node-0 ansible_ssh_host=<b>pc3.instageni.research.umich.edu</b> ansible_port=<b>27413</b>
-node-1 ansible_ssh_host=<b>pc3.instageni.research.umich.edu</b> ansible_port=<b>27414</b>
-node-2 ansible_ssh_host=<b>pc3.instageni.research.umich.edu</b> ansible_port=<b>27415</b>
-</pre>
-
-> This step will be automatically generated later using `rspec` as input file.
-
-## 1. Bootstrapping
-
-`bootstrap/bootstrap.yml` file creates a random SSH key pair (public and private key) and save it to `~/.ssh/ansible`. Then, it copies the public key to all the remote nodes. It copies the randomly generated private key to `Meas_Node` node and install required pakages (e.g. ansible) on the `Meas_Node` node. The `Meas_Node` node is going to be used to orchestrating the Measurement Framework after bootstraping step.
-
-```bash
-$ cd bootstrap
-$ ansible-playbook bootstrap.yml -v
-```
+First, you have to create a slice using your own `rspec` or using one of `rspec_GENI_w*.rspec` files and reserve resources. Make it sure your machine that is orchestraing have proper SSH key to access all the GENI slice's VMs.
 
 ## 2. Orchestrating ELK/Beats on slice
 
-Once the bootstraping step is completed, users can ssh into the `Meas_Node` node using the randomly generated SSH key (~/.ssh/ansible) during bootstrapping step.
+Once all the resources are reserved successfully and you can access to all the VMs properly, you can simply run single Python command like below.
 
 ```bash
-$ ssh ansible@pc3.instageni.research.umich.edu -p 27412 -i ~/.ssh/ansible
-```
-
-If SSH works fine, then users can run ansible playbook to orchestrate ELK and Beats on the slice.
-
-> Checking out dev branch will be changed later.
-
-```bash
-$ cd mf_git/
-$ git checkout dev
-$ cd elk
-$ ansible-playbook site.yml -v
+$ cd MeasurementFramework/geni
+$ python GENI_Instrumentize_Slice.py -slice your_geni_slice_name_here
 ```
 
 ## 3. Check Kibana

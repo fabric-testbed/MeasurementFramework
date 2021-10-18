@@ -7,7 +7,7 @@
       openssh_keypair:
         path: ~/.ssh/ansible
         type: rsa
-        size: 4096
+        size: 2048
         state: present
         # force: yes # Recreate key
         force: no # Reuse key
@@ -103,6 +103,6 @@
       become_user: ansible
       tags: updatehostfile
       copy:
-        src: ../hosts
+        src: ../../hosts
         dest: /home/ansible/mf_git/elk/hosts
         mode: 0644
