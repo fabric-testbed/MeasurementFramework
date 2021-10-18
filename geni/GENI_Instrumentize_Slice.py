@@ -1,12 +1,12 @@
-
 import os
 import time
 import argparse
 import subprocess
+import sys
+import paramiko
 
 HostDestinations = ["../ansible/hosts/", "../elk/bootstrap/"]
 # Default: ["../ansible/hosts/hosts.ini", "../elk/bootstrap/hosts"]
-
 
 def parseArgs():
     parser = argparse.ArgumentParser()
@@ -46,7 +46,7 @@ def createHostFile():
                 nodes[nodeName] = [hostName, port]
 
         outputFile = ""
-
+        outputFileForELK = ""
 
         # Confirm all required nodes are present.
         if "Meas_Node" not in nodes:
@@ -59,7 +59,6 @@ def createHostFile():
                 print("ERROR: Meas_NGINX was not found in inventory. Please check topography.")
                 return
 
-
         # Print required nodes
         outputFile += "[Measurement_Node]\n"
         outputFile += "Meas_Node ansible_ssh_host=%s ansible_ssh_port=%s"%(nodes["Meas_Node"][0], nodes["Meas_Node"][1])
@@ -69,6 +68,11 @@ def createHostFile():
         outputFile += "[Measurement_NGINX]\n"
         outputFile += "Meas_NGINX ansible_ssh_host=%s ansible_ssh_port=%s\n"%(nodes["Meas_NGINX"][0], nodes["Meas_NGINX"][1])
 
+        # Print required nodes for ELK (using hostnames)
+        outputFileForELK += "[elk]\n"
+        outputFileForELK += "Meas_Net\n\n"
+        outputFileForELK += "[nginx]\n"
+        outputFileForELK += "Meas_NGINX\n\n"
 
         # Print all other nodes
         outputFile += "\n[Experiment_Nodes]\n"
@@ -76,6 +80,11 @@ def createHostFile():
                 if ((name != "Meas_Node") and (name != "Meas_Net") and (name != "Meas_NGINX")):
                         outputFile += "%s ansible_ssh_host=%s ansible_ssh_port=%s hostname=%s_link%sm node_exporter_listen_ip=%s_link%sm\n"%(name, value[0], value[1], name, name[-1], name, name[-1])
 
+        # Print all other nodes for ELK
+        outputFileForELK += "[workers]\n"
+        for name,value in nodes.items():
+                if ((name != "Meas_Node") and (name != "Meas_Net") and (name != "Meas_NGINX")):
+                        outputFileForELK += "%s\n" % name
 
         for directory in HostDestinations:
                 hostFile = open(directory + "hosts", "w")
@@ -83,25 +92,48 @@ def createHostFile():
                 hostFile.close
                 print("\tSuccess. hosts file placed inside " + directory + " directory.")
 
+        hostFileForELK = open("../elk/hosts", "w")
+        writeAttempt = hostFileForELK.write(outputFileForELK)
+        hostFileForELK.close
+        print("\tSuccess. hosts file placed inside ../elk/ directory.")
+
+        return [nodes["Meas_Node"][0], nodes["Meas_Node"][1]]
+
 #======================================================================
 
 def ansible_call():
-       
+
         time.sleep(1)   # Delays for 1 seconds
                         # to help with all subprocess writes
-        output_ansible = subprocess.call("ansible-playbook bootstrap.yml -v", shell=True ,cwd="CHANGE_ME/MeasurementFramework/elk/bootstrap/")
+        output_ansible = subprocess.call("ansible-playbook bootstrap.yml -v", shell=True ,cwd="/home/vagrant/MeasurementFramework/elk/bootstrap/")
 
 
 #======================================================================
 
+#======================================================================
 
+def remote_ansible_call(host_ip, host_port):
+        username = "ansible"
+        command = "cd mf_git/elk/; ansible-playbook site.yml"
 
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(host_ip, host_port, username, key_filename=os.path.expanduser("~/.ssh/ansible"))
+
+        stdin, stdout, stderr = ssh.exec_command(command, get_pty=True)
+        stdin.close()
+        for line in iter(lambda: stdout.readline(2048), ""):
+                sys.stdout.write(line)
+
+#======================================================================
 
 def main():
         sliceName = parseArgs()
         getInventory(sliceName)
-        createHostFile()
+        [meas_node_ip, meas_node_port] = createHostFile()
         ansible_call()
+        remote_ansible_call(meas_node_ip, meas_node_port.split()[0])
+
 
 if __name__ == "__main__":
     main()

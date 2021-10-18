@@ -14,6 +14,14 @@
 
 - hosts: all
   become: true
+  pre_tasks:
+    - name: Install updates (CentOS)
+      tags: always
+      yum:
+        update_only: yes
+        update_cache: yes
+      when: ansible_distribution == "CentOS"
+
   tasks:
     # Create ansible user on remote hosts
     - name: Create ansible user
@@ -86,4 +94,14 @@
       git:
         repo: https://github.com/fabric-testbed/MeasurementFramework.git
         dest: /home/ansible/mf_git
+        version: dev
       when: r_mf_git_folder_exist.stat.exists == false
+
+    # Copy host file
+    - name: Update host file
+      become_user: ansible
+      tags: updatehostfile
+      copy:
+        src: ../hosts
+        dest: /home/ansible/mf_git/elk/hosts
+        mode: 0644
