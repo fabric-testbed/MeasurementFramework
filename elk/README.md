@@ -8,6 +8,7 @@ You must have following packages are installed on the machine that you are runni
 
 - `omni`
 - `ansible`
+- `paramiko`
 
 ## 1. Create slice and reserve resources on GENI
 

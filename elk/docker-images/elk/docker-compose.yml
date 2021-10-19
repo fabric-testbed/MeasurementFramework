@@ -1,7 +1,7 @@
 version: "3"
 services:
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0
     container_name: es01
     ports:
       - "9200:9200"
@@ -26,7 +26,7 @@ services:
       - elk
 
   es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0
     container_name: es02
     ports:
       - "9201:9200"
@@ -51,7 +51,7 @@ services:
       - elk
 
   es03:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0
     container_name: es03
     ports:
       - "9202:9200"
@@ -76,7 +76,7 @@ services:
       - elk
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:${ELK_VERSION}
+    image: docker.elastic.co/logstash/logstash:7.13.0
     container_name: logstash
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
@@ -93,7 +93,7 @@ services:
       - elk
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:${ELK_VERSION}
+    image: docker.elastic.co/kibana/kibana:7.13.0
     container_name: kibana
     ports:
       - "5601:5601"
