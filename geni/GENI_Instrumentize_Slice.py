@@ -105,8 +105,8 @@ def ansible_call():
 
         time.sleep(1)   # Delays for 1 seconds
                         # to help with all subprocess writes
-        output_ansible = subprocess.call("ansible-playbook bootstrap.yml -v", shell=True ,cwd="/home/vagrant/MeasurementFramework/elk/bootstrap/")
-
+        bootstrap_folder = os.path.dirname(os.getcwd())+"/elk/bootstrap/"
+        output_ansible = subprocess.call("ansible-playbook bootstrap.yml -v", shell=True ,cwd=bootstrap_folder)
 
 #======================================================================
 
