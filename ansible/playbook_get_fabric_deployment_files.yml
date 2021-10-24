@@ -1,8 +1,4 @@
 ---
-
-# DEPRECATED use playbook_get_fabric_deployment_files.yml
-
-
 # Clones the fabric-deployment git repo so we can use the host and vars files.
 # Note that the temp dir does not work in check mode
 
@@ -24,6 +20,7 @@
     git:
       #repo: https://github.com/fabric-testbed/fabric-deployment.git # This asks for username and password for every interaction with github - thus you have to type it all in 3 times
       repo: "git@github.com:fabric-testbed/fabric-deployment.git"  
+      version: monitoring
       # This just uses your ssh key
       dest: "{{ tmp_clone_dir.path }}"
 
@@ -37,12 +34,14 @@
       - name: Copy needed files.
         copy:
           src:  "{{ tmp_clone_dir.path }}/fabric-ansible/{{ item }}"
-          dest: ./hosts/
+          dest: ./tmp_deployment_files/
+          decrypt: no 
 
         with_items:
           - group_vars
           - host_vars
           - fabric-hosts
+          - monitoring
 
   - name: Remove the no longer needed fabric-deployment repository.
     file:
