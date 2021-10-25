@@ -38,6 +38,18 @@ scrape_configs:
 
 
 
+# Jupyter
+  - job_name: 'jupyterhub'
+    bearer_token_file: /etc/prometheus/secrets/jupyterhub
+    scheme: https
+    metrics_path: '/hub/metrics'
+    tls_config:
+            insecure_skip_verify: true
+    static_configs:
+            - targets: ['jupyter.fabric-testbed.net']
+
+
+
 #######################################
 #         Blackbox Exporters          #
 #######################################
