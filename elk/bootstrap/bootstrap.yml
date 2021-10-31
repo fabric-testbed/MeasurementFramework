@@ -15,12 +15,13 @@
 - hosts: all
   become: true
   pre_tasks:
-    - name: Install updates (CentOS)
+    - name: Install updates #(CentOS)
       tags: always
-      yum:
-        update_only: yes
+      ansible.builtin.package:
+        #update_only: yes
+        # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/package_module.html
         update_cache: yes
-      when: ansible_distribution == "CentOS"
+      #when: ansible_distribution == "CentOS"
 
   tasks:
     # Create ansible user on remote hosts
@@ -60,7 +61,7 @@
     - name: Installing packages
       become: true
       tags: packages
-      yum:
+      ansible.builtin.package:
         name:
           - epel-release
           - gcc
@@ -74,7 +75,7 @@
           - httpd-tools
           - lvm2
           - device-mapper-persistent-data
-        state: latest
+        state: present
         update_cache: yes
 
     # Check if mf git repo are already created

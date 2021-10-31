@@ -1,6 +1,6 @@
 - name: Installing packages
   tags: packages
-  yum:
+  ansible.builtin.package:
     name:
       - epel-release
       - gcc
@@ -14,7 +14,7 @@
       - httpd-tools
       - lvm2
       - device-mapper-persistent-data
-    state: latest
+    state: present
     update_cache: yes
 
 - name: Configure docker-ce repo
@@ -26,12 +26,12 @@
 
 - name: Install docker
   tags: docker
-  yum:
+  ansible.builtin.package:
     name:
       - docker-ce
       - docker-ce-cli
       - containerd.io
-    state: latest
+    state: present
 
 - name: Create docker group
   tags: docker

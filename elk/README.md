@@ -20,7 +20,7 @@ Once all the resources are reserved successfully and you can access to all the V
 
 ```bash
 $ cd MeasurementFramework/geni
-$ python GENI_Instrumentize_Slice.py -slice your_geni_slice_name_here
+$ python GENI_Instrumentize_Slice.py --slice your_geni_slice_name_here
 ```
 
 ## 3. Check Kibana
