@@ -124,8 +124,8 @@ prometheus_config_template_files:
 
 prometheus_config_files:
   # Alert rule files
-  - certificate_alerts.yml 
-  - vpn_ping_alerts.yml 
+  - certificate_alert_rules.yml 
+  - vpn_ping_alert_rules.yml 
 
 
 ####################

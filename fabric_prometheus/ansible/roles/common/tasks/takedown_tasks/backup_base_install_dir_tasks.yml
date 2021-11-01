@@ -1,0 +1,18 @@
+---
+# Copy the base install dir to backup dir
+
+- name: Ensure backup dir exists
+  file:
+    path: "{{ base_data_dir }}/backup"
+    state: directory
+    recurse: yes
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+  become: yes
+
+- name: Backup base install dir
+  community.general.archive: 
+    path: "{{ base_install_dir }}"
+    dest: "{{ base_data_dir }}/backup/install_dir_{{ ansible_date_time.iso8601 }}.tgz"
+  become: yes
+  #become_user: "{{ prom_user_name }}"

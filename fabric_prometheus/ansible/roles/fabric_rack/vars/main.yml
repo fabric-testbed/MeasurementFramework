@@ -127,14 +127,15 @@ nginx_ip_ports:
   # Note Each port will correspond to a confd file set above.
   #- 80:80         # Redirected to 443
   #- 443:443       # /grafana for grafana interface
-  - 9090:9090     # prometheus stats
+  - 127.0.0.1:9090:9090     # prometheus stats
   #- 10922:10922   # thanos stats
   #- "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
 
 nginx_template_dir: templates/Nginx
 
 nginx_server_confd_template_files: 
-  - prometheus.conf
+  #- prometheus.conf
+  - prometheus_localhost.conf
   #- global_welcome.conf
   #- alertmanager.conf
   #- thanos.conf

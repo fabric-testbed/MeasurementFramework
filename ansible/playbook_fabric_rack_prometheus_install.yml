@@ -1,9 +1,12 @@
 ---
 # Creating the rack monitoring setup.
 - hosts: "{{ rack_to_install | default(omit) }}"
+
   roles:
     - ../fabric_prometheus/ansible/roles/fabric_rack
 
   vars_files:
-    - private_vars/rack_vars/common_vault.yml
-    - "private_vars/rack_vars/{{ rack_to_install }}_vault.yml" 
+    #- private_vars/rack_vars/common_vault.yml
+    #- "private_vars/rack_vars/{{ rack_to_install }}_vault.yml"  
+    - tmp_deployment_files/monitoring/private_vars/rack_vars/common_vault.yml
+    - "tmp_deployment_files/monitoring/private_vars/rack_vars/{{ rack_to_install }}_vault.yml"
