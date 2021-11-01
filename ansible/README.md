@@ -3,14 +3,15 @@ This directory contains ansible scripts that install and configure Fabric monito
 
 
 -----
-## Install Prometheus Monitoring On Fabric Rack
+## Dev-Install Prometheus Monitoring On Fabric Rack
+For developing the Fabric Rack system:
+* Run `ansible-playbook playbook_get_fabric_deployment_files.yml`. This will download the fabric-hosts and vars file from fabric-deployment repo and place them into `tmp_deployment_files` directory.  
+* Install to the rack using `ansible-playbook -i tmp_deployment_files/fabric-hosts playbook_fabric_rack_prometheus_install.yml --vault-password-file <vault-password-file> --extra-vars "rack_to_install=<sitename>" --diff` where `<sitename>` is the short site name and `<valut-password-file>` is the path to the file that contains the vault password.
+Once you are done you maner remove the downloaded files using `ansible-playbook playbook_remove_fabric_deploymnet_files.yml`. Be cautious not to remove any hosts or variable files you created or altered.
+  
+Notes:
+The `tmp_deployment_files` directory is provided as a safe place to hold the needed hosts and vars files. Those directories have `.gitignore` files to help prevent commiting private/sensitive data to the repo. However if you delete the `.gitignore` file and leave data in those directories, the data maybe pushed back out to the repo. Be careful. 
 
-* Run `ansible-playbook playbook_get_fabric_hosts.yml`  to download the fabric-hosts and vars file from fabric-deployment repo and place into `hosts` directory.  
-* Download the `rack_vars` and place in the `private_vars` directory. TODO setup vars in private repo.
-* Install to the rack using `ansible-playbook -i hosts/fabric-hosts playbook_fabric_rack_prometheus_install.yml --extra-vars "rack_to_install=<sitename>" --diff` where `<sitename>` is the short site name.
-* Remove the downloaded files. `ansible-playbook playbook_remove_fabric_hosts.yml`
-
-Notes:  
 The `hosts` and `private_vars` directories are provided as a safe place to hold the needed vars files. Those directories have `.gitignore` files to help prevent commiting private/sensitive data to the repo. However if you delete the `.gitignore` file and leave data in those directories, the data maybe pushed back out to the repo. Be careful. 
 
 If reinstalling you might want to use --extra-vars "install_node_exporters=no" to save time.
