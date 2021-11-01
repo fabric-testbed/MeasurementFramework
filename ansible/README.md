@@ -10,11 +10,22 @@ For developing the Fabric Rack system:
 Once you are done you maner remove the downloaded files using `ansible-playbook playbook_remove_fabric_deploymnet_files.yml`. Be cautious not to remove any hosts or variable files you created or altered.
   
 Notes:
-The `tmp_deployment_files` directory is provided as a safe place to hold the needed hosts and vars files. Those directories have `.gitignore` files to help prevent commiting private/sensitive data to the repo. However if you delete the `.gitignore` file and leave data in those directories, the data maybe pushed back out to the repo. Be careful. 
+* The `tmp_deployment_files` directory is provided as a safe place to hold the needed hosts and vars files. Those directories have `.gitignore` files to help prevent commiting private/sensitive data to the repo. However if you delete the `.gitignore` file and leave data in those directories, the data maybe pushed back out to the repo. Be careful. 
 
-The `hosts` and `private_vars` directories are provided as a safe place to hold the needed vars files. Those directories have `.gitignore` files to help prevent commiting private/sensitive data to the repo. However if you delete the `.gitignore` file and leave data in those directories, the data maybe pushed back out to the repo. Be careful. 
+* Deprecating this ~The `hosts` and `private_vars` directories are provided as a safe place to hold the needed vars files. Those directories have `.gitignore` files to help prevent commiting private/sensitive data to the repo. However if you delete the `.gitignore` file and leave data in those directories, the data maybe pushed back out to the repo. Be careful. ~
 
-If reinstalling you might want to use --extra-vars "install_node_exporters=no" to save time.
+* If reinstalling you might want to use --extra-vars "install_node_exporters=no" to save time.
+* Important! Dev racks uky and renc are hardcoded to have the base install dirs backed up before deleting them for complete overwrites. Productions racks should never be manipulated except by ansible scriptes so the will always be deleted on a reinstall. 
+
+### Test install
+
+Test if rack is gathering data. Tunnel into the head node from a machine on the operator head node. 
+`ssh -L 9090:localhost:9090 <user>@192.168.12.10` Then go to `https://localhost:9090`
+on your local browser.
+
+
+Tip: If you need to acces multiple racks at the same time try: `ssh -L 100,rack_no>:localhost:9090 <user>@192.168.12.10` Then go to `https://localhost:100<rack_no>`
+
 
 
 -----
