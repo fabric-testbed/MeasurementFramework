@@ -20,7 +20,7 @@
 # Install rsyslog using yum
 - name: Install rsyslog
   tags: filebeat
-  yum:
+  ansible.builtin.package:
     name: rsyslog
     state: present
 

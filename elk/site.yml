@@ -10,11 +10,11 @@
 #      #when: ansible_distribution == "CentOS"
 
 # only installing what is needed on all hosts
-- hosts: all
-  tags: base
-  become: true
-  roles:
-    - base
+#- hosts: all
+#  tags: base
+#  become: true
+#  roles:
+#    - base
 
 # Installing ELK cluster on ELK node
 - hosts: elk

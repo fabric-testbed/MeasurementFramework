@@ -56,10 +56,6 @@
     state: started
     enabled: yes
 
-# - name: Check docker hello-world
-#   tags: docker, docker-test
-#   shell: docker run hello-world
-
 - name: Check if Docker Compose is installed
   tags: docker-compose
   command: docker-compose --version
@@ -95,7 +91,7 @@
   git:
     repo: https://github.com/fabric-testbed/MeasurementFramework.git
     dest: ~/mf_git
-    version: dev
+    version: dev_general
   when: r_git_code_exist.stat.exists == false
 
 ## Check if elk folders are already created

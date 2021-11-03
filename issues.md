@@ -4,6 +4,9 @@
 		- Currently using private fork for testing
 		- version 
 		- and check
+	- In /elk/tasks
+		- lines 89-95
+		- version
 	- Changes to the .gitignore 
 
 # Current Issues
