@@ -25,6 +25,7 @@
 
 - name: Configure docker-ce repo
   tags: docker
+  become: true
   get_url:
     url: https://download.docker.com/linux/centos/docker-ce.repo
     dest: /etc/yum.repos.d/docer-ce.repo
@@ -42,12 +43,14 @@
 
 - name: Create docker group
   tags: docker
+  become: true
   group:
     name: "docker"
     state: present
 
 - name: Adding user ansible to docker group
   tags: docker
+  become: true
   user:
     name: ansible
     groups: "docker"
@@ -55,6 +58,7 @@
 
 - name: Start and enable docker service
   tags: docker
+  become: true
   service:
     name: docker
     state: started
