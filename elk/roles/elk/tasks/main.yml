@@ -3,7 +3,7 @@
 
 # Only being ran on an CentOs host.
 
-- name: Installing packages in base/tasks/main.yml
+- name: Installing packages in elk/tasks/main.yml
   become: true
   tags: packages
   ansible.builtin.package:
@@ -19,8 +19,6 @@
       - centos-release-scl
       - yum-utils
     state: present
-  when: 
-    - ansible_distribution == "CentOS
 
 - name: Configure docker-ce repo
   tags: docker
