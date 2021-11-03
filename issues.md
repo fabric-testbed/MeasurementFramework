@@ -21,5 +21,7 @@
 # Tested on and Issues:
 	- Ubuntu 20.04 (UBUNTU20-64-STD) => 
 		- Does not have epel-release
-			- {"ansible_facts": {"pkg_mgr": "apt"}, "changed": false, "msg": "No package matching 'epel-release' is available"}
 	- CentOS 7 (CENTOS7-64-STD) => Normal Run
+
+# Working
+	- Bootstrap.yml
