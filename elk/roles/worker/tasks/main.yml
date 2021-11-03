@@ -46,24 +46,16 @@
   register: d_filebeat_package_exist
   when: ansible_facts['distribution'] == "Ubuntu"
 
-# Download Filebeat for Ubuntu
-- name: Download Filebeat Ubuntu
-  tags: filebeat
-  get_url:
-    url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-amd64.deb
-    dest: /tmp/
-  when:
-    - ansible_facts['distribution'] == "Ubuntu"
-    - d_filebeat_package_exist.stat.exists == false
-    
-
   # Install Filebeat using apt
 - name: Install Filebeat Ubuntu
   tags: filebeat
   ansible.builtin.apt:
-    name: /tmp/filebeat-{{ filebeat_version }}-amd64.deb
+    deb: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-amd64.deb
+    dest: /tmp/
     state: present
-  when: ansible_facts['distribution'] == "Ubuntu"
+  when: 
+    - ansible_facts['distribution'] == "Ubuntu"
+    - d_filebeat_package_exist.stat.exists == false
 
 
 # normal run

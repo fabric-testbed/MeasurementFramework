@@ -30,6 +30,5 @@
 # Working
 	- Bootstrap.yml
 	- site.yml
-		- Up to worker roles
 
-# Could change to OS family
+# Could change to OS family for some of the calls
