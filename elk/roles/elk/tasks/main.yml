@@ -8,17 +8,20 @@
   tags: packages
   ansible.builtin.package:
     name:
+      - epel-release
       - gcc
+      - openssl-devel
       - bzip2-devel
       - libffi-devel
+      - centos-release-scl
+      - yum-utils
+      - ansible
+      - git
       - httpd-tools
       - lvm2
       - device-mapper-persistent-data
-      - epel-release
-      - openssl-devel
-      - centos-release-scl
-      - yum-utils
     state: present
+    update_cache: yes
 
 - name: Configure docker-ce repo
   tags: docker
@@ -64,6 +67,7 @@
 
 - name: Setting vm.max_map_count
   tags: docker
+  become: true
   shell: sysctl -w vm.max_map_count=262144
 
 - name: Download and install Docker Compose

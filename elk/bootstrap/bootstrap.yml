@@ -14,15 +14,6 @@
 
 - hosts: all
   become: true
-  pre_tasks:
-    - name: Install updates #(CentOS)
-      tags: always
-      ansible.builtin.package:
-        #update_only: yes
-        # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/package_module.html
-        update_cache: yes
-      #when: ansible_distribution == "CentOS"
-
   tasks:
     # Create ansible user on remote hosts
     - name: Create ansible user
