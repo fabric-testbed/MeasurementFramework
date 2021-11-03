@@ -1,8 +1,9 @@
-- name: Installing packages
+# Install packages (ansible on Measurement node)
+- name: Installing packages in base/tasks/main.yml
+  become: true
   tags: packages
   ansible.builtin.package:
     name:
-      - epel-release
       - gcc
       - openssl-devel
       - bzip2-devel
@@ -15,7 +16,18 @@
       - lvm2
       - device-mapper-persistent-data
     state: present
-    update_cache: yes
+    #update_cache: yes
+    # seems to cause issue with apt
+
+- name: Installing CentOs Packages in base/tasks/main.yml
+  become: true
+  tags: packages_CENTOS
+  ansible.builtin.package:
+    name:
+      - epel-release # does not work for ubuntu
+    state: present
+  when: 
+    - ansible_distribution == "CentOS"
 
 - name: Configure docker-ce repo
   tags: docker

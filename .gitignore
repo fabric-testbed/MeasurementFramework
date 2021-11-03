@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Make sure to only keep locally
+elk/credentials/*
+
+# Only keep the needed script
+geni/*
+!geni/*.py

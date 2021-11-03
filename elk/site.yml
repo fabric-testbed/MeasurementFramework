@@ -1,11 +1,11 @@
 ---
 - hosts: all
   pre_tasks:
-    - name: Install updates #(CentOS)
+    - name: Install updates
       tags: always
       ansible.builtin.package:
-        #update_only: yes
-        update_cache: yes
+        update_only: yes
+        #update_cache: yes
       #when: ansible_distribution == "CentOS"
 
 - hosts: all

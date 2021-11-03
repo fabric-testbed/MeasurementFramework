@@ -1,3 +1,11 @@
+# Changes needed before Merging
+	- In /elk/bootstrap/bootstrap.yml
+		- lines 103-107
+		- Currently using private fork for testing
+		- version 
+		- and check
+	- Changes to the .gitignore 
+
 # Current Issues
 	- Name Descripencies between diffrent distros
 		- Current implementation 
@@ -7,7 +15,8 @@
 
 # Changes Made
 	- Changed from state 'latest' to 'present'
-		- 
+	- Removed 'update cache' <= Seems to cause issues with apt 
+		- changed: false, "msg": "Failed to lock apt for exclusive operation"
 
 # Tested on and Issues:
 	- Ubuntu 20.04 (UBUNTU20-64-STD) => 
