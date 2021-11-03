@@ -2,7 +2,7 @@
   tags: Ubuntu
   become: true
   ansible.builtin.package:
-    - curl
+    name: curl
     state: present
 
 ####################### FILEBEAT ##########################
