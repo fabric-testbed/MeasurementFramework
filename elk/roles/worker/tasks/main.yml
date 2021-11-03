@@ -1,5 +1,5 @@
 - name: Prior
-  tags: Ubuntu
+  tags: worker_install
   become: true
   ansible.builtin.package:
     name: curl
@@ -26,8 +26,8 @@
     url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-x86_64.rpm
     dest: /tmp/
   when:
-    - r_filebeat_package_exist.stat.exists == false
     - ansible_facts['distribution'] == "CentOS"
+    - r_filebeat_package_exist.stat.exists == false
 
 # Install Filebeat using yum
 - name: Install Filebeat
@@ -53,8 +53,9 @@
     url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-amd64.deb
     dest: /tmp/
   when:
-    - d_filebeat_package_exist.stat.exists == false
     - ansible_facts['distribution'] == "Ubuntu"
+    - d_filebeat_package_exist.stat.exists == false
+    
 
   # Install Filebeat using apt
 - name: Install Filebeat
@@ -114,8 +115,9 @@
     url: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-{{ metricbeat_version }}-x86_64.rpm
     dest: /tmp/
   when:
-    - r_metricbeat_package_exist.stat.exists == false
     - ansible_facts['distribution'] == "CentOS"
+    - r_metricbeat_package_exist.stat.exists == false
+    
 
 # Install metricbeat using yum
 - name: Install metricbeat
@@ -141,8 +143,9 @@
     url: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-{{ metricbeat_version }}-amd64.deb
     dest: /tmp/
   when:
-    - d_metricbeat_package_exist.stat.exists == false
     - ansible_facts['distribution'] == "Ubuntu"
+    - d_metricbeat_package_exist.stat.exists == false
+    
 
   # Install metricbeat using apt
 - name: Install metricbeat
@@ -195,8 +198,9 @@
     url: https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-{{ packetbeat_version }}-x86_64.rpm
     dest: /tmp/
   when:
-    - r_packetbeat_package_exist.stat.exists == false
     - ansible_facts['distribution'] == "CentOS"
+    - r_packetbeat_package_exist.stat.exists == false
+    
 
 # Install packetbeat using yum
 - name: Install packetbeat
@@ -222,8 +226,8 @@
     url: https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-{{ packetbeat_version }}-amd64.deb
     dest: /tmp/
   when:
-    - d_packetbeat_package_exist.stat.exists == false
     - ansible_facts['distribution'] == "Ubuntu"
+    - d_packetbeat_package_exist.stat.exists == false
 
   # Install packetbeat using apt
 - name: Install packetbeat
