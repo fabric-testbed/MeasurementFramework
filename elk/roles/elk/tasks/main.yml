@@ -77,6 +77,7 @@
 
 - name: Download and install Docker Compose
   tags: docker-compose
+  become: true
   get_url:
     url: https://github.com/docker/compose/releases/download/{{ docker_compose_ver }}/docker-compose-Linux-x86_64
     dest: /usr/bin/docker-compose
