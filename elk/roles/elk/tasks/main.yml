@@ -32,6 +32,7 @@
 
 - name: Install docker
   tags: docker
+  become: true
   ansible.builtin.package:
     name:
       - docker-ce
