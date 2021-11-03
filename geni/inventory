@@ -1,4 +1,0 @@
-Meas_NGINX  ansible_ssh_host=pcvm2-1.lan.sdn.uky.edu  ansible_ssh_user=amdo257 
-Meas_Node  ansible_ssh_host=pc2.lan.sdn.uky.edu  ansible_ssh_port=25412  ansible_ssh_user=amdo257 
-node-0  ansible_ssh_host=pc2.lan.sdn.uky.edu  ansible_ssh_port=25413  ansible_ssh_user=amdo257 
-Meas_Net  ansible_ssh_host=pcvm2-2.lan.sdn.uky.edu  ansible_ssh_user=amdo257 
