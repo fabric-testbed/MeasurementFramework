@@ -17,13 +17,6 @@
   when:
     r_filebeat_package_exist.stat.exists == false
 
-# Install rsyslog using ansible.builtin.package
-- name: Install rsyslog
-  tags: filebeat
-  ansible.builtin.package:
-    name: rsyslog
-    state: present
-
 # Install Filebeat using ansible.builtin.package
 - name: Install Filebeat
   tags: filebeat

@@ -9,17 +9,18 @@
 #        update_cache: yes
 #      #when: ansible_distribution == "CentOS"
 
+# only installing what is needed on all hosts
 - hosts: all
   tags: base
   become: true
-  vars:
-    docker_compose_ver: 1.25.5
   roles:
     - base
 
 # Installing ELK cluster on ELK node
 - hosts: elk
   tags: elk
+  vars:
+    docker_compose_ver: 1.25.5
   roles:
     - elk
 

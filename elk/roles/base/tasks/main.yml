@@ -4,84 +4,10 @@
   tags: packages
   ansible.builtin.package:
     name:
-      - gcc
-      - openssl-devel
-      - bzip2-devel
-      - libffi-devel
-      - centos-release-scl
-      - yum-utils
       - ansible
       - git
-      - httpd-tools
-      - lvm2
-      - device-mapper-persistent-data
+      - rsyslog
     state: present
     #update_cache: yes
     # seems to cause issue with apt
 
-- name: Installing CentOs Packages in base/tasks/main.yml
-  become: true
-  tags: packages_CENTOS
-  ansible.builtin.package:
-    name:
-      - epel-release # does not work for ubuntu
-    state: present
-  when: 
-    - ansible_distribution == "CentOS"
-
-- name: Configure docker-ce repo
-  tags: docker
-  get_url:
-    url: https://download.docker.com/linux/centos/docker-ce.repo
-    dest: /etc/yum.repos.d/docer-ce.repo
-    mode: 0644
-
-- name: Install docker
-  tags: docker
-  ansible.builtin.package:
-    name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-    state: present
-
-- name: Create docker group
-  tags: docker
-  group:
-    name: "docker"
-    state: present
-
-- name: Adding user ansible to docker group
-  tags: docker
-  user:
-    name: ansible
-    groups: "docker"
-    append: "yes"
-
-- name: Start and enable docker service
-  tags: docker
-  service:
-    name: docker
-    state: started
-    enabled: yes
-
-# - name: Check docker hello-world
-#   tags: docker, docker-test
-#   shell: docker run hello-world
-
-- name: Check if Docker Compose is installed
-  tags: docker-compose
-  command: docker-compose --version
-  register: docker_compose_check
-  ignore_errors: yes
-
-- name: Setting vm.max_map_count
-  tags: docker
-  shell: sysctl -w vm.max_map_count=262144
-
-- name: Download and install Docker Compose
-  tags: docker-compose
-  get_url:
-    url: https://github.com/docker/compose/releases/download/{{ docker_compose_ver }}/docker-compose-Linux-x86_64
-    dest: /usr/bin/docker-compose
-    mode: 0755
