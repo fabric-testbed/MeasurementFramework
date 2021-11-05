@@ -107,6 +107,9 @@
   - name: Setup Promtheus Config Files
     include_tasks: Prometheus/add_prometheus_config_files.yml
 
+  - name: Setup Prometheus Secrets
+    include_tasks: Prometheus/add_prometheus_secrets.yml
+
   - name: Prometheus Container
     # 3. Start docker container
     include_tasks: Prometheus/prometheus_container_tasks.yml
