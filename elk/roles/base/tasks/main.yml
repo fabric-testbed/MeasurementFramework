@@ -53,9 +53,9 @@
     state: started
     enabled: yes
 
-- name: Check docker hello-world
-  tags: docker, docker-test
-  shell: docker run hello-world
+# - name: Check docker hello-world
+#   tags: docker, docker-test
+#   shell: docker run hello-world
 
 - name: Check if Docker Compose is installed
   tags: docker-compose

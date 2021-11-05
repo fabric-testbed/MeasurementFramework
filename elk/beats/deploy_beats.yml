@@ -1,0 +1,22 @@
+---
+# - hosts: all
+#   tags: base
+#   become: true
+#   vars:
+#     docker_compose_ver: 1.25.5
+#   roles:
+#     - base
+
+# Installing Filebeat on nodes
+- hosts: filebeats
+  tags: filebeat
+  vars:
+    rsyslog_conf_template_file: rsyslog.conf.j2
+  roles:
+    - filebeat
+
+# Installing Packetbeat on nodes
+- hosts: packetbeats
+  tags: packetbeat
+  roles:
+    - packetbeat
