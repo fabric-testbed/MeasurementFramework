@@ -2,7 +2,8 @@
   tags: worker_install
   become: true
   ansible.builtin.package:
-    name: curl
+    name: 
+      - curl
     state: present
 
 ####################### FILEBEAT ##########################
@@ -56,11 +57,17 @@
     - ansible_facts['distribution'] == "Ubuntu"
     - d_filebeat_package_exist.stat.exists == false
     
+- name: Install Filebeat Ubuntu Prereq's
+  tags: filebeat
+  ansible.builtin.package:
+    name: xz-utils
+    state: present
+  when: ansible_facts['distribution'] == "Ubuntu"
 
   # Install Filebeat using apt
 - name: Install Filebeat Ubuntu
   tags: filebeat
-  ansible.builtin.apt:
+  ansible.builtin.package:
     deb: /tmp/filebeat-{{ filebeat_version }}-amd64.deb
     state: present
   when: ansible_facts['distribution'] == "Ubuntu"

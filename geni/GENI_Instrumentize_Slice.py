@@ -70,7 +70,7 @@ def createHostFile():
 
         # Print required nodes for ELK (using hostnames)
         outputFileForELK += "[elk]\n"
-        outputFileForELK += "Meas_Net\n\n"
+        outputFileForELK += "Meas_Node\n\n"
         outputFileForELK += "[nginx]\n"
         outputFileForELK += "Meas_NGINX\n\n"
 
