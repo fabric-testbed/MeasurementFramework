@@ -21,6 +21,8 @@
   tags: elk
   vars:
     docker_compose_ver: 1.25.5
+    nginx_template_file: nginx.conf.j2
+    nginx_htaccess_username: fabric
   roles:
     - elk
 
