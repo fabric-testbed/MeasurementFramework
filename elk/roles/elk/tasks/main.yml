@@ -112,7 +112,7 @@
   git:
     repo: https://github.com/AndrewDnvn/MeasurementFramework.git
     dest: /home/ansible/mf_git
-    version: dev_general
+    version: dev_new
     force: true
   #when: r_mf_git_folder_exist.stat.exists == false
   # force new install for testing
