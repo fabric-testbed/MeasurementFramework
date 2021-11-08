@@ -1,24 +1,26 @@
 ---
-- hosts: all
-  pre_tasks:
-    - name: Install updates (CentOS)
-      tags: always
-      yum:
-        update_only: yes
-        update_cache: yes
-      when: ansible_distribution == "CentOS"
+#
+#- hosts: all
+#  pre_tasks:
+#    - name: Install updates
+#      tags: always
+#      ansible.builtin.package:
+#        #update_only: yes
+#        update_cache: yes
+#      #when: ansible_distribution == "CentOS"
 
-- hosts: all
-  tags: base
-  become: true
-  vars:
-    docker_compose_ver: 1.25.5
-  roles:
-    - base
+# only installing what is needed on all hosts
+#- hosts: all
+#  tags: base
+#  become: true
+#  roles:
+#    - base
 
 # Installing ELK cluster on ELK node
 - hosts: elk
   tags: elk
+  vars:
+    docker_compose_ver: 1.25.5
   roles:
     - elk
 
@@ -26,5 +28,18 @@
 - hosts: workers
   become: true
   tags: worker
+  vars:
+    filebeat_version: 7.13.2
+    filebeat_template_file: filebeat.yml.j2
+    filebeat_output_elasticsearch_hosts: Meas_Net
+    filebeat_setup_kibana_host: Meas_Net
+    metricbeat_version: 7.13.2
+    metricbeat_template_file: metricbeat.yml.j2
+    metricbeat_output_elasticsearch_hosts: Meas_Net
+    metricbeat_setup_kibana_host: Meas_Net
+    packetbeat_version: 7.13.2
+    packetbeat_template_file: packetbeat.yml.j2
+    packetbeat_output_elasticsearch_hosts: Meas_Net
+    packetbeat_setup_kibana_host: Meas_Net
   roles:
     - worker

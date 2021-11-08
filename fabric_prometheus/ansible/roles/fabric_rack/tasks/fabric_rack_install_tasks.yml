@@ -3,14 +3,9 @@
 
 
 # Sanity Check
-# - name: Sanity Check
-#   pause:
-#     prompt: "!!!!!!!!!!!!!Setting up Fabric Rack Install {{ install_name }} on {{ hank_name }} at {{ ansible_host }}. Hit enter to continue.!!!!!!!!!!!!!"
-
 - name: Sanity Check
-  debug:
-    msg: "!!!!!!!!!!!!!Setting up Fabric Rack Install {{ install_name }} on {{ hank_name }} at {{ ansible_host }}.!!!!!!!!!!!!!"
-
+  pause:
+    prompt: "!!!!!!!!!!!!!Setting up Fabric Rack Install {{ install_name }} on {{ hank_name }} at {{ ansible_host }}. Hit enter to continue.!!!!!!!!!!!!!"
 
 # needed on remote for htpasswd
 - name: passlib
@@ -55,27 +50,6 @@
       - blackbox
       - docker_exporter
       - snmp
-
-
-
-####################
-# Backup all base install directories #
-####################
-- name: Backup base install directories
-  include_tasks: takedown_tasks/backup_base_install_dir_tasks.yml
-  when:
-    - hank_name == 'uky' or hank_name == 'renc'
-    # NOTE hardcoded here to back up dev racks since they may be manipulated by hand
-    # All other racks should never have any non ansible installed code so deleteing it all is fine.
-    
-
-
-# ####################
-# # Remove all base install directories #
-# ####################
-- name: Remove base install directories
-  include_tasks: takedown_tasks/remove_base_install_dirs_tasks.yml
-
 
 ####################
 #   PROMETHEUS     #
@@ -185,15 +159,15 @@
       include_tasks: Nginx/config_nginx_tasks.yml
       # vars: 
       #       nginx_template_dir: "{{ nginx_config_template_dir }}"
-          
-    # Add user to htaccess file
-    # note htpasswd requires passlib to be installed on remote
-    ## No longer needed since access is local host only 
-    #- name: Nginx htaccess user
-    #  include_tasks: Nginx/add_user_to_htaccess_tasks.yml
-      #var: need vars set in sensitive file
-      #fabric_prometheus_ht_user: & fabric_prometheus_ht_password: 
 
+    # No longer needed, moved to localhost access only.          
+    # # Add user to htaccess file
+    # # note htpasswd requires passlib to be installed on remote
+    # - name: Nginx htaccess user
+    #   include_tasks: Nginx/add_user_to_htaccess_tasks.yml
+    #   #var: need vars set in sensitive file
+    #   #fabric_prometheus_ht_user: & fabric_prometheus_ht_password: 
+          
     # Confd server files
     - name: Nginx Add Confd  Files
       include_tasks: Nginx/confd_nginx_tasks.yml

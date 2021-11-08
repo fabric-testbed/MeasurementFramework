@@ -7,7 +7,7 @@
       openssh_keypair:
         path: ~/.ssh/ansible
         type: rsa
-        size: 4096
+        size: 2048
         state: present
         # force: yes # Recreate key
         force: no # Reuse key
@@ -37,7 +37,7 @@
         group: root
         mode: 0440
 
-- hosts: Measurement
+- hosts: Measurement_Node
   tasks:
     # Copy private ssh key to Measurement node only
     - name: Copy created private ssh key to Measurement node
@@ -49,24 +49,14 @@
         mode: 0600
 
     # Install packages (ansible on Measurement node)
-    - name: Installing packages
+    - name: Installing packages in bootstrap.yml
       become: true
       tags: packages
-      yum:
+      ansible.builtin.package:
         name:
-          - epel-release
-          - gcc
-          - openssl-devel
-          - bzip2-devel
-          - libffi-devel
-          - centos-release-scl
-          - yum-utils
           - ansible
           - git
-          - httpd-tools
-          - lvm2
-          - device-mapper-persistent-data
-        state: latest
+        state: present
         update_cache: yes
 
     # Check if mf git repo are already created
@@ -84,6 +74,18 @@
       become_user: ansible
       tags: mfgitrepo
       git:
-        repo: https://github.com/fabric-testbed/MeasurementFramework.git
+        repo: https://github.com/AndrewDnvn/MeasurementFramework.git
         dest: /home/ansible/mf_git
-      when: r_mf_git_folder_exist.stat.exists == false
+        version: dev_general
+      #when: r_mf_git_folder_exist.stat.exists == false
+      # force new install for testing
+
+    # Copy host file
+    - name: Update host file
+      become: true
+      become_user: ansible
+      tags: updatehostfile
+      copy:
+        src: ../../hosts
+        dest: /home/ansible/mf_git/elk/hosts
+        mode: 0644

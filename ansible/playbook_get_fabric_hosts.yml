@@ -1,8 +1,4 @@
 ---
-
-# DEPRECATED use playbook_get_fabric_deployment_files.yml
-
-
 # Clones the fabric-deployment git repo so we can use the host and vars files.
 # Note that the temp dir does not work in check mode
 

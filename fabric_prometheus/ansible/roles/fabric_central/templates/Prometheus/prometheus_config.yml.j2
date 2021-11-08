@@ -10,7 +10,7 @@ global:
   
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
-  - '*_alert_rules.yml'
+  - '*_alerts.yml'
   - '*_rules.yml'
 
 
@@ -35,18 +35,6 @@ scrape_configs:
     static_configs:
       # by definition this is running on local host
       - targets: ['localhost:9090']
-
-
-
-# Jupyter
-  - job_name: 'jupyterhub'
-    bearer_token_file: /etc/prometheus/secrets/jupyterhub
-    scheme: https
-    metrics_path: '/hub/metrics'
-    tls_config:
-            insecure_skip_verify: true
-    static_configs:
-            - targets: ['jupyter.fabric-testbed.net']
 
 
 
