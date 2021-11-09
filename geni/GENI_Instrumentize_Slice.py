@@ -106,13 +106,10 @@ def createHostFile():
 #======================================================================
 
 def ansible_call():
-
         time.sleep(1)   # Delays for 1 seconds
                         # to help with all subprocess writes
         bootstrap_folder = os.path.dirname(os.getcwd())+"/elk/bootstrap/"
         output_ansible = subprocess.call("ansible-playbook bootstrap.yml", shell=True ,cwd=bootstrap_folder)
-
-#======================================================================
 
 #======================================================================
 
