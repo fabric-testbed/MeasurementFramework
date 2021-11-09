@@ -1,8 +1,9 @@
 [elk]
-Meas_Net
+Meas_Node
 
 [nginx]
 Meas_NGINX
 
 [workers]
 node-0
+

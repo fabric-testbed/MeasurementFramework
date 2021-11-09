@@ -2,7 +2,8 @@
   tags: worker_install
   become: true
   ansible.builtin.package:
-    name: curl
+    name: 
+      - curl
     state: present
 
 ####################### FILEBEAT ##########################
@@ -57,11 +58,19 @@
     - d_filebeat_package_exist.stat.exists == false
     
 
+- name: Install Beat Ubuntu Prereq's
+  tags: filebeat
+  ansible.builtin.package:
+    name: xz-utils
+    state: present
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+
   # Install Filebeat using apt
 - name: Install Filebeat Ubuntu
   tags: filebeat
-  ansible.builtin.apt:
-    name: /tmp/filebeat-{{ filebeat_version }}-amd64.deb
+  ansible.builtin.package:
+    deb: /tmp/filebeat-{{ filebeat_version }}-amd64.deb
     state: present
   when: ansible_facts['distribution'] == "Ubuntu"
 
@@ -150,8 +159,8 @@
   # Install metricbeat using apt
 - name: Install metricbeat Ubuntu
   tags: metricbeat
-  ansible.builtin.apt:
-    name: /tmp/metricbeat-{{ metricbeat_version }}-amd64.deb
+  ansible.builtin.package:
+    deb: /tmp/metricbeat-{{ metricbeat_version }}-amd64.deb
     state: present
   when: ansible_facts['distribution'] == "Ubuntu"
 
@@ -232,8 +241,8 @@
   # Install packetbeat using apt
 - name: Install packetbeat Ubuntu
   tags: packetbeat
-  apt:
-    name: /tmp/packetbeat-{{ packetbeat_version }}-amd64.deb
+  ansible.builtin.package:
+    deb: /tmp/packetbeat-{{ packetbeat_version }}-amd64.deb
     state: present
   when: ansible_facts['distribution'] == "Ubuntu"
 

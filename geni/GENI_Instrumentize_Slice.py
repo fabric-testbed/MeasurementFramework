@@ -70,7 +70,7 @@ def createHostFile():
 
         # Print required nodes for ELK (using hostnames)
         outputFileForELK += "[elk]\n"
-        outputFileForELK += "Meas_Net\n\n"
+        outputFileForELK += "Meas_Node\n\n"
         outputFileForELK += "[nginx]\n"
         outputFileForELK += "Meas_NGINX\n\n"
 
@@ -97,12 +97,17 @@ def createHostFile():
         hostFileForELK.close
         print("\tSuccess. hosts file placed inside ../elk/ directory.")
 
-        return [nodes["Meas_Node"][0], nodes["Meas_Node"][1]]
+        
+        # This is done for the time being to install
+        # Paramiko seems to have issues with public IP's.
+        # It is understood that this will not work in Fabric.
+        return [nodes["Meas_Net"][0], nodes["Meas_Net"][1]]
 
 #======================================================================
 
 def ansible_call():
-        # init setup for topology
+        time.sleep(1)   # Delays for 1 seconds
+                        # to help with all subprocess writes
         bootstrap_folder = os.path.dirname(os.getcwd())+"/elk/bootstrap/"
         output_ansible = subprocess.call("ansible-playbook bootstrap.yml", shell=True ,cwd=bootstrap_folder)
 

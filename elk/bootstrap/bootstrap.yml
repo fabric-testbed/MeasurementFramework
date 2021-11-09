@@ -37,7 +37,9 @@
         group: root
         mode: 0440
 
-- hosts: Measurement_Node
+       # changed from  Measurement_Node
+       # so that the calls could be made
+- hosts: Measurement_Net
   tasks:
     # Copy private ssh key to Measurement node only
     - name: Copy created private ssh key to Measurement node
@@ -77,6 +79,9 @@
         repo: https://github.com/AndrewDnvn/MeasurementFramework.git
         dest: /home/ansible/mf_git
         version: dev_general
+        force: true
+
+        
       #when: r_mf_git_folder_exist.stat.exists == false
       # force new install for testing
 
