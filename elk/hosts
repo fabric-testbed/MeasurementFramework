@@ -5,4 +5,5 @@ Meas_Node
 Meas_NGINX
 
 [workers]
-node-0_Ubuntu
+node-1
+node-0

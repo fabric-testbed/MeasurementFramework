@@ -37,7 +37,10 @@
         group: root
         mode: 0440
 
-- hosts: Measurement_Node
+
+       # changed from  Measurement_Node
+       # so that the calls could be made
+- hosts: Measurement_Net
   tasks:
     # Copy private ssh key to Measurement node only
     - name: Copy created private ssh key to Measurement node

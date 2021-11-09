@@ -9,6 +9,8 @@
 		- version
 	- Changes to the .gitignore 
 
+# For Geni the Bootstrapping happens from 'Meas_Net'
+
 # Current Issues
 	- Name Descripencies between diffrent distros
 		- Current implementation 
