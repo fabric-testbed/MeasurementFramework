@@ -57,7 +57,7 @@
     - ansible_facts['distribution'] == "Ubuntu"
     - d_filebeat_package_exist.stat.exists == false
     
-- name: Install Filebeat Ubuntu Prereq's
+- name: Install Beat Ubuntu Prereq's
   tags: filebeat
   ansible.builtin.package:
     name: xz-utils
@@ -157,8 +157,8 @@
   # Install metricbeat using apt
 - name: Install metricbeat Ubuntu
   tags: metricbeat
-  ansible.builtin.apt:
-    name: /tmp/metricbeat-{{ metricbeat_version }}-amd64.deb
+  ansible.builtin.package:
+    deb: /tmp/metricbeat-{{ metricbeat_version }}-amd64.deb
     state: present
   when: ansible_facts['distribution'] == "Ubuntu"
 
@@ -239,8 +239,8 @@
   # Install packetbeat using apt
 - name: Install packetbeat Ubuntu
   tags: packetbeat
-  apt:
-    name: /tmp/packetbeat-{{ packetbeat_version }}-amd64.deb
+  ansible.builtin.package:
+    deb: /tmp/packetbeat-{{ packetbeat_version }}-amd64.deb
     state: present
   when: ansible_facts['distribution'] == "Ubuntu"
 
