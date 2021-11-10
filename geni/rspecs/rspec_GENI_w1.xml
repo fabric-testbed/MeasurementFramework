@@ -8,7 +8,7 @@
 <services xmlns="http://www.geni.net/resources/rspec/3"/>
 <interface xmlns="http://www.geni.net/resources/rspec/3" client_id="interface-0"/>
 </node>
-<node xmlns="http://www.geni.net/resources/rspec/3" client_id="Meas_Node">
+<node xmlns="http://www.geni.net/resources/rspec/3" client_id="Meas_Net">
 <icon xmlns="http://www.protogeni.net/resources/rspec/ext/jacks/1" url="https://www.emulab.net/protogeni/jacks-stable/images/router.svg"/>
 <site xmlns="http://www.protogeni.net/resources/rspec/ext/jacks/1" id="Site 1"/>
 <sliver_type xmlns="http://www.geni.net/resources/rspec/3" name="emulab-xen">
@@ -18,7 +18,7 @@
 <interface xmlns="http://www.geni.net/resources/rspec/3" client_id="interface-1"/>
 <interface xmlns="http://www.geni.net/resources/rspec/3" client_id="interface-5"/>
 </node>
-<node xmlns="http://www.geni.net/resources/rspec/3" client_id="Meas_Net">
+<node xmlns="http://www.geni.net/resources/rspec/3" client_id="Meas_Node">
 <icon xmlns="http://www.protogeni.net/resources/rspec/ext/jacks/1" url="https://www.emulab.net/protogeni/jacks-stable/images/server.svg"/>
 <site xmlns="http://www.protogeni.net/resources/rspec/ext/jacks/1" id="Site 1"/>
 <routable_control_ip xmlns="http://www.protogeni.net/resources/rspec/ext/emulab/1"/>
