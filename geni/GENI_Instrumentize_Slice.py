@@ -101,7 +101,7 @@ def createHostFile():
         # This is done for the time being to install
         # Paramiko seems to have issues with public IP's.
         # It is understood that this will not work in Fabric.
-        return [nodes["Meas_Net"][0], nodes["Meas_Net"][1]]
+        return [nodes["Meas_Node"][0], nodes["Meas_Node"][1]]
 
 #======================================================================
 
