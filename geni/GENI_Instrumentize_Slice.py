@@ -116,6 +116,7 @@ def ansible_call():
 def remote_ansible_call(host_ip, host_port):
         username = "ansible"
         command = "cd mf_git/elk/; ansible-playbook site.yml"
+        host_ip = host_ip.split(' ', 1)[0];
 
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
