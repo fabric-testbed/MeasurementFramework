@@ -15,7 +15,8 @@
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--web.listen-address=:{{ alertmanager_port }}'
-#      - '--web.external-url={{ alertmanager_external_url }}'
+      # This is reqired to get the linkback to the alertmanager from slack.
+      - '--web.external-url={{ alertmanager_external_url }}'
       - '--log.level=debug'
     # ports:
     #   - "{{ alertmanager_port }}:{{ alertmanager_port }}" 
