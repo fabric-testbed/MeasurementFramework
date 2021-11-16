@@ -1,0 +1,12 @@
+---
+# Add a template to the alertmanager directory
+
+- name: Add Alertmanager Template files for alerts
+  copy:
+    src: "{{ alertmanager_tmpl_file_dir }}/{{ item }}"
+    dest: "{{ base_install_dir }}/alertmanager/templates/{{ item }}"
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+  with_items: "{{ alertmanager_tmpl_files | default(omit) }}"
+      
+  become: yes

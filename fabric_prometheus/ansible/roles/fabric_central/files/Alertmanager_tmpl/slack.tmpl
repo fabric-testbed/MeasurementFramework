@@ -1,0 +1,29 @@
+{{ define "slack.commented_out_with_this_line.title" -}}
+    {{- if .CommonAnnotations.summary -}}
+        {{- .CommonAnnotations.summary -}}
+    {{- else -}}
+        {{- with index .Alerts 0 -}}
+            {{- .Annotations.summary -}}
+        {{- end -}}
+    {{- end -}}
+{{- end }}
+
+{{ define "slack.default.title" -}}
+  [{{ .Status | toUpper -}}
+  {{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end -}}
+  ] {{ .CommonLabels.alertname }}
+{{- end }}
+
+{{ define "slack.default.text" -}}
+    {{- if .CommonAnnotations.description -}}
+        {{- .CommonAnnotations.description -}}
+    {{- else -}}
+        {{- range $i, $alert := .Alerts }}
+            {{- "\n" -}} {{- .Annotations.description -}}
+        {{- end -}}
+    {{- end -}}
+{{- end }}
+
+{{ define "slack.runbook.url" -}}
+https://fabric-testbed.atlassian.net/wiki/spaces/FP/pages/1693941761/Operational+Alerts#OperationalAlerts-{{ .CommonLabels.alertname }}
+{{- end }}
