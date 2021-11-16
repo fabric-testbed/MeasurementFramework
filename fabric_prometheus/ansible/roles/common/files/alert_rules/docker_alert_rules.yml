@@ -1,0 +1,19 @@
+---
+# file: docker_alert_rules.yml
+# location: all racks, central
+
+groups: 
+
+- name: Docker Containers
+  rules: 
+  
+  - alert: FabricPrometheusContainerStopped
+    expr: docker_container_running_state{name=~"fabric_prometheus_.*"} == 0
+    for: 5m
+    labels:
+      severity: error
+      fabric_response: mf
+    annotations:
+      summary:  "Fabric Prometheus system docker container is down: (instance {{ $labels.instance }})"   
+      description:  "A container for the fabric promethues monitoring has stopped.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}" 
+
