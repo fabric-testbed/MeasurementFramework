@@ -90,6 +90,10 @@
     include_tasks: Prometheus/add_prometheus_config_templates.yml
     # See vars for templates used
 
+  - name: Prometheus Alert Rules
+    include_tasks: Prometheus/add_alert_rules.yml
+    # See vars for files used
+
   - name: Setup Promtheus Config Files
     include_tasks: Prometheus/add_prometheus_config_files.yml
 
