@@ -15,5 +15,8 @@
 	Test three worker (11 Nov 2021):
 		- Ubuntu 20.04, CentOs 7 and CentOs 8
 		- Meas_Net, Meas_Node, and Meas_NGINX running CentOs 7
-		- 
+		- real	20m56.562s
+		- user	0m7.801s
+		- sys	0m5.131s
+
 
