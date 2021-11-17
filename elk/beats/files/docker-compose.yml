@@ -6,7 +6,7 @@ services:
     container_name: fabric_beats_packetbeat
     user: root
     command: -strict.perms=false -e
-    cap_add: ['NET_RAW', 'NET_ADMIN']
+    cap_add: ["NET_RAW", "NET_ADMIN"]
     network_mode: host
     logging:
       driver: "json-file"
@@ -30,9 +30,11 @@ services:
       options:
         max-size: "1024m"
     volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
-      - '/var/lib/docker/containers/:/var/lib/docker/containers/:ro'
-      - '/var/log/:/var/log/:ro'
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/lib/docker/containers/:/var/lib/docker/containers/:ro"
+      - "/var/log/:/var/log/:ro"
+      - "/opt/data/zeek/logs:/opt/zeek/logs"
+      - "/opt/data/zeek/spool:/opt/zeek/spool"
     secrets:
       - source: filebeat.yml
         target: /usr/share/filebeat/filebeat.yml
