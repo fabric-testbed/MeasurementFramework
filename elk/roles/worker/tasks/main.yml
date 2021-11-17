@@ -6,6 +6,14 @@
       - curl
     state: present
 
+- name: Adding GPG key for CentOS 8
+  rpm_key:
+    key: https://packages.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  when:
+    - ansible_facts['distribution'] == "CentOS"
+    - ansible_facts['distribution_major_version'] == "8"
+
 ####################### FILEBEAT ##########################
 # ansible-playbook site.yml --tags "filebeat" -v
 ###########################################################
@@ -36,7 +44,8 @@
   yum:
     name: /tmp/filebeat-{{ filebeat_version }}-x86_64.rpm
     state: present
-  when: ansible_facts['distribution'] == "CentOS"
+  when: 
+    - ansible_facts['distribution'] == "CentOS"
 
 # > .deb install
 

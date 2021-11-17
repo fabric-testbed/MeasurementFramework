@@ -1,20 +1,4 @@
 ---
-#
-#- hosts: all
-#  pre_tasks:
-#    - name: Install updates
-#      tags: always
-#      ansible.builtin.package:
-#        #update_only: yes
-#        update_cache: yes
-#      #when: ansible_distribution == "CentOS"
-
-# only installing what is needed on all hosts
-#- hosts: all
-#  tags: base
-#  become: true
-#  roles:
-#    - base
 
 # Installing ELK cluster on ELK node
 - hosts: elk
@@ -45,3 +29,5 @@
     packetbeat_setup_kibana_host: Meas_Node
   roles:
     - worker
+
+  # Var's defined here to make changes easier
