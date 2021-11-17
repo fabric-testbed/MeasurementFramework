@@ -1,3 +1,113 @@
+# Moving most of the needed installs here
+# not needed on all nodes.
+
+# Only being ran on an CentOs host.
+
+- name: Installing packages in elk/tasks/main.yml for CentOS 7
+  become: true
+  tags: packages
+  ansible.builtin.package:
+    name:
+      - gcc
+      - openssl-devel
+      - bzip2-devel
+      - libffi-devel
+      - centos-release-scl
+      - yum-utils
+      - httpd-tools
+      - lvm2
+      - device-mapper-persistent-data
+    state: present
+    update_cache: yes
+  when:
+    - ansible_facts['distribution'] == "CentOS"
+    - ansible_facts['distribution_major_version'] == "7"
+
+- name: Installing packages in elk/tasks/main.yml for CentOS 8
+  become: true
+  tags: packages
+  ansible.builtin.package:
+    name:
+      - gcc
+      - openssl-devel
+      - bzip2-devel
+      - libffi-devel
+      - yum-utils
+      - httpd-tools
+      - lvm2
+      - device-mapper-persistent-data
+    state: present
+    update_cache: yes
+  when:
+    - ansible_facts['distribution'] == "CentOS"
+    - ansible_facts['distribution_major_version'] == "8"
+
+- name: Configure docker-ce repo
+  tags: docker
+  become: true
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docer-ce.repo
+    mode: 0644
+
+- name: Install docker
+  tags: docker
+  become: true
+  ansible.builtin.package:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+
+- name: Create docker group
+  tags: docker
+  become: true
+  group:
+    name: "docker"
+    state: present
+
+- name: Adding user ansible to docker group
+  tags: docker
+  become: true
+  user:
+    name: ansible
+    groups: "docker"
+    append: "yes"
+
+- name: Start and enable docker service
+  tags: docker
+  become: true
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Check if Docker Compose is installed
+  tags: docker-compose
+  command: docker-compose --version
+  register: docker_compose_check
+  ignore_errors: yes
+
+- name: Setting vm.max_map_count
+  tags: docker
+  become: true
+  shell: sysctl -w vm.max_map_count=262144
+
+- name: Download and install Docker Compose
+  tags: docker-compose
+  become: true
+  get_url:
+    url: https://github.com/docker/compose/releases/download/{{ docker_compose_ver }}/docker-compose-Linux-x86_64
+    dest: /usr/bin/docker-compose
+    mode: 0755
+
+# ==============================================================
+
+  # Moved the above from base to here.
+
+# ==============================================================
+
 ## Check if git repo already exists (if so, skip clone git repo)
 - name: Check if file already exists
   tags: elksetup
@@ -5,13 +115,27 @@
     path: ~/mf_git/elk/docker-images/elk/docker-compose.yml
   register: r_git_code_exist
 
-- name: Clone fabric git repo
-  tags: elksetup
+#- name: Clone fabric git repo
+#  tags: elksetup
+#  git:
+#    repo: https://github.com/fabric-testbed/MeasurementFramework.git
+#    dest: ~/mf_git
+#    version: dev_general
+#  when: r_git_code_exist.stat.exists == false
+
+# Clone MF git repo dev branch
+- name: Clone mf git repo
+  become: true
+  become_user: ansible
+  tags: mfgitrepo
   git:
     repo: https://github.com/fabric-testbed/MeasurementFramework.git
-    dest: ~/mf_git
-    version: dev
-  when: r_git_code_exist.stat.exists == false
+    dest: /home/ansible/mf_git
+    version: dev_general
+    force: true
+  #when: r_mf_git_folder_exist.stat.exists == false
+  # force new install for testing
+
 
 ## Check if elk folders are already created
 - name: Check if elk folders already exists

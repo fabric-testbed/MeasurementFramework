@@ -1,34 +1,95 @@
+- name: Prior
+  tags: worker_install
+  become: true
+  ansible.builtin.package:
+    name: 
+      - curl
+    state: present
+
+- name: Adding GPG key for CentOS 8
+  rpm_key:
+    key: https://packages.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  when:
+    - ansible_facts['distribution'] == "CentOS"
+    - ansible_facts['distribution_major_version'] == "8"
+
 ####################### FILEBEAT ##########################
 # ansible-playbook site.yml --tags "filebeat" -v
 ###########################################################
 # Check if Filebeat package is already downloaded
-- name: Check if Filebeat package exists
+
+# > .rpm install for filebeat
+
+- name: Check if Filebeat package exists CentOS
   tags: filebeat 
   stat: 
     path: /tmp/filebeat-{{ filebeat_version }}-x86_64.rpm
-  register: r_filebeat_package_exist 
+  register: r_filebeat_package_exist
+  when: ansible_facts['distribution'] == "CentOS"
 
-# Download Filebeat
-- name: Download Filebeat 
+# Download Filebeat for CentOs
+- name: Download Filebeat CentOS
   tags: filebeat
   get_url:
     url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-x86_64.rpm
     dest: /tmp/
   when:
-    r_filebeat_package_exist.stat.exists == false
-
-# Install rsyslog using yum
-- name: Install rsyslog
-  tags: filebeat
-  yum:
-    name: rsyslog
-    state: present
+    - ansible_facts['distribution'] == "CentOS"
+    - r_filebeat_package_exist.stat.exists == false
 
 # Install Filebeat using yum
-- name: Install Filebeat
+- name: Install Filebeat CentOS
   tags: filebeat
-  yum:
+  ansible.builtin.package:
     name: /tmp/filebeat-{{ filebeat_version }}-x86_64.rpm
+    state: present
+  when: 
+    - ansible_facts['distribution'] == "CentOS"
+
+# > .deb install
+
+- name: Check if Filebeat package exists Ubuntu
+  tags: filebeat 
+  stat: 
+    path: /tmp/filebeat-{{ filebeat_version }}-amd64.deb
+  register: d_filebeat_package_exist
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+# Download Filebeat for Ubuntu
+- name: Download Filebeat Ubuntu
+  tags: filebeat
+  get_url:
+    url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-amd64.deb
+    dest: /tmp/
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+    - d_filebeat_package_exist.stat.exists == false
+    
+
+- name: Install Beat Ubuntu Prereq's
+  tags: filebeat
+  ansible.builtin.package:
+    name: xz-utils
+    state: present
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+
+  # Install Filebeat using apt
+- name: Install Filebeat Ubuntu
+  tags: filebeat
+  ansible.builtin.package:
+    deb: /tmp/filebeat-{{ filebeat_version }}-amd64.deb
+    state: present
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+
+# normal run
+
+- name: Install rsyslog
+  tags: filebeat
+  ansible.builtin.package:
+    name: rsyslog
     state: present
 
 # Copy the filebeat.yml 
@@ -54,28 +115,66 @@
 ####################### METRICBEAT ##########################
 # ansible-playbook site.yml --tags "metricbeat" -v
 #############################################################
-# Check if Metricbeat package is already downloaded
-- name: Check if Metricbeat package exists
+# Check if metricbeat package is already downloaded
+
+# > .rpm install for metricbeat
+
+- name: Check if metricbeat package exists CentOS
   tags: metricbeat 
   stat: 
     path: /tmp/metricbeat-{{ metricbeat_version }}-x86_64.rpm
-  register: r_metricbeat_package_exist 
+  register: r_metricbeat_package_exist
+  when: ansible_facts['distribution'] == "CentOS"
 
-# Download Metricbeat
-- name: Download Metricbeat 
+# Download metricbeat for CentOs
+- name: Download metricbeat CentOS
   tags: metricbeat
   get_url:
     url: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-{{ metricbeat_version }}-x86_64.rpm
     dest: /tmp/
   when:
-    r_metricbeat_package_exist.stat.exists == false
+    - ansible_facts['distribution'] == "CentOS"
+    - r_metricbeat_package_exist.stat.exists == false
+    
 
-# Install Metricbeat using yum
-- name: Install Metricbeat
+# Install metricbeat using yum
+- name: Install metricbeat CentOS
   tags: metricbeat
-  yum:
+  ansible.builtin.package:
     name: /tmp/metricbeat-{{ metricbeat_version }}-x86_64.rpm
     state: present
+  when: ansible_facts['distribution'] == "CentOS"
+
+# > .deb install
+
+- name: Check if metricbeat package exists Ubuntu
+  tags: metricbeat 
+  stat: 
+    path: /tmp/metricbeat-{{ metricbeat_version }}-amd64.deb
+  register: d_metricbeat_package_exist
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+# Download metricbeat for Ubuntu
+- name: Download metricbeat Ubuntu
+  tags: metricbeat
+  get_url:
+    url: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-{{ metricbeat_version }}-amd64.deb
+    dest: /tmp/
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+    - d_metricbeat_package_exist.stat.exists == false
+    
+
+  # Install metricbeat using apt
+- name: Install metricbeat Ubuntu
+  tags: metricbeat
+  ansible.builtin.package:
+    deb: /tmp/metricbeat-{{ metricbeat_version }}-amd64.deb
+    state: present
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+
+# normal run
 
 # Copy the metricbeat.yml 
 - name: Copy Metricbeat template file
@@ -101,28 +200,62 @@
 # ansible-playbook site.yml --tags "packetbeat" -v
 #############################################################
 # Check if Packetbeat package is already downloaded
-- name: Check if Packetbeat package exists
+# > .rpm install for packetbeat
+
+- name: Check if packetbeat package exists CentOS
   tags: packetbeat 
   stat: 
     path: /tmp/packetbeat-{{ packetbeat_version }}-x86_64.rpm
-  register: r_packetbeat_package_exist 
+  register: r_packetbeat_package_exist
+  when: ansible_facts['distribution'] == "CentOS"
 
-# Download Packetbeat
-- name: Download Packetbeat 
+# Download packetbeat for CentOs
+- name: Download packetbeat CentOS
   tags: packetbeat
   get_url:
     url: https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-{{ packetbeat_version }}-x86_64.rpm
     dest: /tmp/
   when:
-    r_packetbeat_package_exist.stat.exists == false
+    - ansible_facts['distribution'] == "CentOS"
+    - r_packetbeat_package_exist.stat.exists == false
+    
 
-# Install Packetbeat using yum
-- name: Install Packetbeat
+# Install packetbeat using yum
+- name: Install packetbeat CentOS
   tags: packetbeat
-  yum:
+  ansible.builtin.package:
     name: /tmp/packetbeat-{{ packetbeat_version }}-x86_64.rpm
     state: present
+  when: ansible_facts['distribution'] == "CentOS"
 
+# > .deb install
+
+- name: Check if packetbeat package exists Ubuntu
+  tags: packetbeat 
+  stat: 
+    path: /tmp/packetbeat-{{ packetbeat_version }}-amd64.deb
+  register: d_packetbeat_package_exist
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+# Download packetbeat for Ubuntu
+- name: Download packetbeat Ubuntu
+  tags: packetbeat
+  get_url:
+    url: https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-{{ packetbeat_version }}-amd64.deb
+    dest: /tmp/
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+    - d_packetbeat_package_exist.stat.exists == false
+
+  # Install packetbeat using apt
+- name: Install packetbeat Ubuntu
+  tags: packetbeat
+  ansible.builtin.package:
+    deb: /tmp/packetbeat-{{ packetbeat_version }}-amd64.deb
+    state: present
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+# normal run
 # Copy the packetbeat.yml 
 - name: Copy Packetbeat template file
   tags: packetbeat

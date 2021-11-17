@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # Make sure to only keep locally
-elk/credentials/*
+#elk/credentials/*
 
 # Only keep the needed script
 geni/*
