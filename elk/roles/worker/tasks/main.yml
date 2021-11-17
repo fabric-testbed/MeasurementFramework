@@ -41,7 +41,7 @@
 # Install Filebeat using yum
 - name: Install Filebeat CentOS
   tags: filebeat
-  yum:
+  ansible.builtin.package:
     name: /tmp/filebeat-{{ filebeat_version }}-x86_64.rpm
     state: present
   when: 
@@ -140,7 +140,7 @@
 # Install metricbeat using yum
 - name: Install metricbeat CentOS
   tags: metricbeat
-  yum:
+  ansible.builtin.package:
     name: /tmp/metricbeat-{{ metricbeat_version }}-x86_64.rpm
     state: present
   when: ansible_facts['distribution'] == "CentOS"
@@ -223,7 +223,7 @@
 # Install packetbeat using yum
 - name: Install packetbeat CentOS
   tags: packetbeat
-  yum:
+  ansible.builtin.package:
     name: /tmp/packetbeat-{{ packetbeat_version }}-x86_64.rpm
     state: present
   when: ansible_facts['distribution'] == "CentOS"
