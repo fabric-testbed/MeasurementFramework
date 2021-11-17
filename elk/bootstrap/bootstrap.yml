@@ -37,6 +37,20 @@
         group: root
         mode: 0440
 
+    - name: Installing packages for CentOs 8 Machines only
+      become: true
+      tags: packages
+      ansible.builtin.package:
+        name:
+          - epel-release
+        state: present
+        update_cache: yes
+      when:
+          - ansible_facts['distribution'] == "CentOS"
+          - ansible_facts['distribution_major_version'] == "8"
+      # This release is needed further on for the rest of the
+      # play to work.
+
        # changed from  Measurement_Node
        # so that the calls could be made
 - hosts: Measurement_Node

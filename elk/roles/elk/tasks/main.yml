@@ -3,25 +3,44 @@
 
 # Only being ran on an CentOs host.
 
-- name: Installing packages in elk/tasks/main.yml
+- name: Installing packages in elk/tasks/main.yml for CentOS 7
   become: true
   tags: packages
   ansible.builtin.package:
     name:
-      - epel-release
       - gcc
       - openssl-devel
       - bzip2-devel
       - libffi-devel
       - centos-release-scl
       - yum-utils
-      - ansible
-      - git
       - httpd-tools
       - lvm2
       - device-mapper-persistent-data
     state: present
     update_cache: yes
+  when:
+    - ansible_facts['distribution'] == "CentOS"
+    - ansible_facts['distribution_major_version'] == "7"
+
+- name: Installing packages in elk/tasks/main.yml for CentOS 8
+  become: true
+  tags: packages
+  ansible.builtin.package:
+    name:
+      - gcc
+      - openssl-devel
+      - bzip2-devel
+      - libffi-devel
+      - yum-utils
+      - httpd-tools
+      - lvm2
+      - device-mapper-persistent-data
+    state: present
+    update_cache: yes
+  when:
+    - ansible_facts['distribution'] == "CentOS"
+    - ansible_facts['distribution_major_version'] == "8"
 
 - name: Configure docker-ce repo
   tags: docker
