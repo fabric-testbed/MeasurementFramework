@@ -15,8 +15,8 @@ groups:
       fabric_system: vpn
       fabric_response: system
     annotations:
-      summary:  "VPN ping to {{ $labels.instance }} failed for 1 minute."   
-      description:  "{{ $labels.instance }} did not respond to ping for 1 minute." 
+      summary:  "VPN ping to {{ $labels.instance }} failed for 5 minutes."   
+      description:  "{{ $labels.instance }} did not respond to ping for 5 minutes." 
 
   - alert: VPNPingFailing
     expr: probe_success {job="ping", reason="vpn"} == 0
