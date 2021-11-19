@@ -52,12 +52,12 @@ scrape_configs:
 # Note that these are servers that connect to kafka to get metrics, not the actual kafka servers.
   - job_name: 'mf-kafka'
     static_configs:
-      - targets: ['nsoelk.netlab.uky.edu:9308']
+      - targets: ['nsoelk.fabric-testbed.net:9308']
 
 
   - job_name: 'mb-kafka'
     static_configs:
-      - targets: ['nsoelk.netlab.uky.edu:9309']
+      - targets: ['nsoelk.fabric-testbed.net:9309']
 
 
 #######################################
