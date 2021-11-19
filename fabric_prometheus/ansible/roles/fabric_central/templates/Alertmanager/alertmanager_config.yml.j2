@@ -7,95 +7,159 @@ global:
  #}
 
   slack_api_url: "{{ alertmanager_slack_api_url }}"
-# The root route on which each incoming alert enters.
+
  
   smtp_from: "{{ alertmanager_email_from }}"
   smtp_smarthost: "{{ alertmanager_smarthost }}"
 
+# The root route on which each incoming alert enters.
 route:
 #  group_by: [...]
 #  group_wait: 5m
 #  group_interval: 0s
   repeat_interval: 1d
-  receiver: slack_general
+  receiver: monitor_operator
 
 
   routes:
-  # Send me everything
+  # Email Send monitor operator everything
   - receiver: monitor_operator
 #    group_by: ['fabric_system']
-    group_wait: 5m
-    repeat_interval: 1d
-    continue: true
-#    matchers: 
-#      - rack =~ ".*"
-
-#  - receiver: nasir_email 
-#    repeat_interval: 1d
-#    matchers:
-#      - fabric_system = "time"
-
-#  - receiver: slack_operator
 #    group_wait: 5m
-#    repeat_interval: 1d
-#    continue: true
-
-
-#  - receiver: slack_general 
-#    group_wait: 5m
-#    repeat_interval: 1d
-#    matchers:
-#      - fabric_system = "time"
-#    continue: true
-
-# TIME
-  - receiver: time_operator
-    group_wait: 5m 
     repeat_interval: 1d
-    matchers:
-      - fabric_system = "time"
     continue: true
 
-# VPN
-  - receiver: operators
-    group_wait: 5m 
-    repeat_interval: 1d
-    matchers:
-      - fabric_system = "vpn"
-    continue: true
 
-# INFRASTRUCTURE
+#############################################################
+# Blanket slack channel test                                # 
+# This group is used to test that all recievers are working #
+#############################################################
+  - receiver: slack_dev_test
+    repeat_interval: 1m
+    matchers: 
+      - fabric_system = "fabric_alert_blanket_test"
+    continue: true 
+
+  - receiver: slack_hardware
+    repeat_interval: 1m
+    matchers: 
+      - fabric_system = "fabric_alert_blanket_test"
+    continue: true 
+    
+  - receiver: slack_services
+    repeat_interval: 1m
+    matchers: 
+      - fabric_system = "fabric_alert_blanket_test"
+    continue: true 
+    
+  - receiver: slack_mf
+    repeat_interval: 1m
+    matchers: 
+      - fabric_system = "fabric_alert_blanket_test"
+    continue: true 
+    
+  - receiver: slack_system
+    repeat_interval: 1m
+    matchers: 
+      - fabric_system = "fabric_alert_blanket_test"
+    continue: true 
+    
+  - receiver: slack_cf
+    repeat_interval: 1m
+    matchers: 
+      - fabric_system = "fabric_alert_blanket_test"
+    continue: true 
+
+  - receiver: slack_data_net
+    repeat_interval: 1m
+    matchers: 
+      - fabric_system = "fabric_alert_blanket_test"
+    continue: true     
+    
   - receiver: monitor_operator
-    group_wait: 5m
+    repeat_interval: 1m
+    matchers: 
+      - fabric_system = "fabric_alert_blanket_test"
+    continue: true 
+    
+###########################################################
+# Operations/Response                                     #
+# Each of these sends alerts to a specific response group #
+###########################################################
+# DEV-TEST  # Grab all alerts and send a copy to dev test 
+  - receiver: slack_dev_test 
+    #group_wait: 5m
+    repeat_interval: 1m
+    matchers:
+      - fabric_response=~"hardware|services|mf|system|cf|data_net"
+    continue: true 
+
+# DEV-TEST 
+  - receiver: slack_dev_test 
+    #group_wait: 5m
+    repeat_interval: 1m
+    matchers:
+      - fabric_response=~"dev_test"
+    continue: true 
+
+# HARDWARE 
+  - receiver: slack_hardware 
+    #group_wait: 5m
     repeat_interval: 1d
     matchers:
-      - reason="infrastructure_check"
-      - job="ping"
-    continue: true
+      - fabric_response = "hardware" 
+    continue: true 
 
-# INFRASTRUCTURE - LIVE HEADNODE DOWN
-  - receiver: monitor_operator
-    group_wait: 5m
+# SERVICES
+  - receiver: slack_services
+    #group_wait: 5m
     repeat_interval: 1d
     matchers:
-      - reason="infrastructure_check"
-      - job="ping"
-      - component_type="head"
-      - status="live"
-    continue: true
+      - fabric_response = "services"
+    continue: true 
 
-# INFRASTRUCTURE - LIVE WORKERNODE DOWN
-  - receiver: monitor_operator
-    group_wait: 5m
+# MF 
+  - receiver: slack_mf
+    #group_wait: 5m
     repeat_interval: 1d
     matchers:
-      - reason="infrastructure_check"
-      - job="ping"
-      - component_type="worker"
-      - status="live"
+      - fabric_response = "mf" 
+    continue: true 
+
+# SYSTEM 
+  - receiver: slack_system 
+    #group_wait: 5m
+    repeat_interval: 1d
+    matchers:
+      - fabric_response = "system" 
+    continue: true 
+
+# CF 
+  - receiver: slack_cf
+    #group_wait: 5m
+    repeat_interval: 1d
+    matchers:
+      - fabric_response = "cf"
+    continue: true 
+
+# DATA-NET 
+  - receiver: slack_data_net 
+    #group_wait: 5m
+    repeat_interval: 1d
+    matchers:
+      - fabric_response = "data_net" 
+    continue: true 
+
+# NO-RESPONSE ORPHANS
+  - receiver: slack_orphans 
+    repeat_interval: 1d
+    matchers: 
+      # missing label is treated the same as an empty label
+      - fabric_response = ""
     continue: true
 
 
+#### RECIEVERS ####
 receivers:
 
 # Emails
@@ -104,40 +168,122 @@ receivers:
     email_configs:
     - to: '{{ alert_email_monitor_operator }}'
 
-  - name: operators
-    # Email everybody
-    email_configs:
-    - to: '{{ alert_email_operators }}'
-
-  - name: time_operator
-    email_configs:
-    - to: '{{ alert_email_time_operator }}'
+#  - name: operators
+#    # Email everybody
+#    email_configs:
+#    - to: '{{ alert_email_operators }}'
+#
+#  - name: time_operator
+#    email_configs:
+#    - to: '{{ alert_email_time_operator }}'
 
 
 # Slack
-  - name: slack_general
+
+# DEV-TEST
+  - name: slack_dev_test
     slack_configs:
-      - api_url: "{{ alertmanager_slack_api_url_general }}"
-        channel: '#alerts-general'
-
-        text: {% raw %}"!{{ .CommonLabels.responsible_primary }} , @{{ .CommonLabels.responsible_primary }} Via General <!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}"{% endraw %}
-
+      - api_url: "{{ alertmanager_slack_api_url_dev_test }}"
+        channel: '#alerts-dev-test'
         send_resolved: true
-
-  - name: slack_critical
+        actions: 
+          - type: button
+            text: "Solutions :notebook_with_decorative_cover:"
+            url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %}  
+        text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
+        title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
+        
+# HARDWARE
+  - name: slack_hardware
     slack_configs:
-      - api_url: "{{ alertmanager_slack_api_url_critical }}"
-        channel: '#alerts-critical'
-
-        text: {% raw %}"Via Critical <!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}"{% endraw %}
-
+      - api_url: "{{ alertmanager_slack_api_url_hardware }}"
+        channel: '#alerts-hardware'
         send_resolved: true
+        actions: 
+          - type: button
+            text: "Solutions :notebook_with_decorative_cover:"
+            url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+        text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
+        title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
 
-  - name: slack_operator
+# SERVICES
+  - name: slack_services
     slack_configs:
-      - api_url: "{{ alertmanager_slack_api_url_operator }}"
-        channel: '#alerts-operator'
-
-        text: {% raw %}"Via Operator <!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}"{% endraw %}
-
+      - api_url: "{{ alertmanager_slack_api_url_services }}"
+        channel: '#alerts-services'
         send_resolved: true
+        actions: 
+          - type: button
+            text: "Solutions :notebook_with_decorative_cover:"
+            url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+        text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
+        title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
+        
+# MF - MeasurementFramework ie  monitoring
+  - name: slack_mf
+    slack_configs:
+      - api_url: "{{ alertmanager_slack_api_url_mf }}"
+        channel: '#alerts-mf'
+        send_resolved: true
+        actions: 
+          - type: button
+            text: "Solutions :notebook_with_decorative_cover:"
+            url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+        text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
+        title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
+
+# SYSTEM
+  - name: slack_system
+    slack_configs:
+      - api_url: "{{ alertmanager_slack_api_url_system }}"
+        channel: '#alerts-system'
+        send_resolved: true
+        actions: 
+          - type: button
+            text: "Solutions :notebook_with_decorative_cover:"
+            url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+        text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
+        title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
+
+# CF - Control Framework
+  - name: slack_cf
+    slack_configs:
+      - api_url: "{{ alertmanager_slack_api_url_cf }}"
+        channel: '#alerts-cf'
+        send_resolved: true
+        actions: 
+          - type: button
+            text: "Solutions :notebook_with_decorative_cover:"
+            url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+        text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
+        title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
+
+# DATA-NET
+  - name: slack_data_net
+    slack_configs:
+      - api_url: "{{ alertmanager_slack_api_url_data_net }}"
+        channel: '#alerts-data_net'
+        send_resolved: true
+        actions: 
+          - type: button
+            text: "Solutions :notebook_with_decorative_cover:"
+            url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+        text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
+        title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
+
+# ORPHANS
+  - name: slack_orphans
+    slack_configs:
+      - api_url: "{{ alertmanager_slack_api_url_orphans }}"
+        channel: '#alerts-orphans'
+        send_resolved: true
+        actions: 
+          - type: button
+            text: "Solutions :notebook_with_decorative_cover:"
+            url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+        text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
+        title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
+
+
+templates:
+  - '/alertmanager/templates/*.tmpl'
