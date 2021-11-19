@@ -46,7 +46,7 @@ route:
       - fabric_system = "fabric_alert_blanket_test"
     continue: true 
     
-  - receiver: slack_service
+  - receiver: slack_services
     repeat_interval: 1m
     matchers: 
       - fabric_system = "fabric_alert_blanket_test"
@@ -152,7 +152,7 @@ route:
 
 # NO-RESPONSE ORPHANS
   - receiver: slack_orphans 
-    repeat_interval: 60m
+    repeat_interval: 1d
     matchers: 
       # missing label is treated the same as an empty label
       - fabric_response = ""
@@ -190,6 +190,9 @@ receivers:
           - type: button
             text: "Solutions :notebook_with_decorative_cover:"
             url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %}  
+          - type: button
+            text: "Silence :no_bell:"
+            url: {% raw %}'{{ template "slack.silence.url" . }}'{% endraw %}  
         text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
         title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
         
@@ -203,6 +206,9 @@ receivers:
           - type: button
             text: "Solutions :notebook_with_decorative_cover:"
             url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+          - type: button
+            text: "Silence :no_bell:"
+            url: {% raw %}'{{ template "slack.silence.url" . }}'{% endraw %}  
         text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
         title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
 
@@ -216,6 +222,9 @@ receivers:
           - type: button
             text: "Solutions :notebook_with_decorative_cover:"
             url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+          - type: button
+            text: "Silence :no_bell:"
+            url: {% raw %}'{{ template "slack.silence.url" . }}'{% endraw %}  
         text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
         title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
         
@@ -229,6 +238,9 @@ receivers:
           - type: button
             text: "Solutions :notebook_with_decorative_cover:"
             url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+          - type: button
+            text: "Silence :no_bell:"
+            url: {% raw %}'{{ template "slack.silence.url" . }}'{% endraw %}  
         text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
         title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
 
@@ -242,6 +254,9 @@ receivers:
           - type: button
             text: "Solutions :notebook_with_decorative_cover:"
             url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+          - type: button
+            text: "Silence :no_bell:"
+            url: {% raw %}'{{ template "slack.silence.url" . }}'{% endraw %}  
         text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
         title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
 
@@ -255,6 +270,9 @@ receivers:
           - type: button
             text: "Solutions :notebook_with_decorative_cover:"
             url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+          - type: button
+            text: "Silence :no_bell:"
+            url: {% raw %}'{{ template "slack.silence.url" . }}'{% endraw %}  
         text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
         title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
 
@@ -268,6 +286,9 @@ receivers:
           - type: button
             text: "Solutions :notebook_with_decorative_cover:"
             url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+          - type: button
+            text: "Silence :no_bell:"
+            url: {% raw %}'{{ template "slack.silence.url" . }}'{% endraw %}  
         text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
         title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
 
@@ -281,6 +302,9 @@ receivers:
           - type: button
             text: "Solutions :notebook_with_decorative_cover:"
             url: {% raw %}'{{ template "slack.runbook.url" . }}'{% endraw %} 
+          - type: button
+            text: "Silence :no_bell:"
+            url: {% raw %}'{{ template "slack.silence.url" . }}'{% endraw %}  
         text: {% raw %}'{{ template "slack.default.text" . }}'{% endraw %}  
         title: {% raw %}'{{ template "slack.default.title" . }}'{% endraw %}  
 
