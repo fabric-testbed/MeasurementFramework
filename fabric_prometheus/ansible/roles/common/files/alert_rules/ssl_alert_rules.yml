@@ -13,7 +13,7 @@ groups:
     labels:
       severity: critical
       fabric_system: SSL Certificate
-      fabric_response: service
+      fabric_response: services
     annotations:
       summary:  "SSL Certificate has expired for {{ $labels.instance }}"   
       description:  "SSL Certificate has expired for {{ $labels.instance }}.\n  Seconds = {{ $value }}\n  LABELS = {{ $labels }}" 
@@ -24,7 +24,7 @@ groups:
     labels:
       severity: critical
       fabric_system: SSL Certificate
-      fabric_response: service
+      fabric_response: services
     annotations:
       summary:  "SSL Certificate will expire in less than 7 days for {{ $labels.instance }}"   
       description:  "SSL Certificate will expire in less than 7 days for {{ $labels.instance }}.\n  Seconds = {{ $value }}\n  LABELS = {{ $labels }}" 
@@ -35,7 +35,7 @@ groups:
     labels:
       severity: critical
       fabric_system: SSL Certificate
-      fabric_response: service
+      fabric_response: services
     annotations:
       summary:  "SSL Certificate is invalid or missing for {{ $labels.instance }}"   
       description:  "SSL Certificate is invalid or missing for {{ $labels.instance }}.\n  Seconds = {{ $value }}\n  LABELS = {{ $labels }}" 
