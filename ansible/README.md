@@ -7,7 +7,7 @@ This directory contains ansible scripts that install and configure Fabric monito
 For developing the Fabric Rack system:
 * Run `ansible-playbook playbook_get_fabric_deployment_files.yml`. This will download the fabric-hosts and vars file from fabric-deployment repo and place them into `tmp_deployment_files` directory.  
 * Install to the rack using `ansible-playbook -i tmp_deployment_files/fabric-hosts playbook_fabric_rack_prometheus_install.yml --vault-password-file <vault-password-file> --extra-vars "rack_to_install=<sitename>" --diff` where `<sitename>` is the short site name and `<valut-password-file>` is the path to the file that contains the vault password.
-Once you are done you maner remove the downloaded files using `ansible-playbook playbook_remove_fabric_deploymnet_files.yml`. Be cautious not to remove any hosts or variable files you created or altered.
+* Once you are done you may remove the downloaded files using `ansible-playbook playbook_remove_fabric_deploymnet_files.yml`. Be cautious not to remove any hosts or variable files you created or altered.
   
 Notes:
 * The `tmp_deployment_files` directory is provided as a safe place to hold the needed hosts and vars files. Those directories have `.gitignore` files to help prevent commiting private/sensitive data to the repo. However if you delete the `.gitignore` file and leave data in those directories, the data maybe pushed back out to the repo. Be careful. 
@@ -17,7 +17,7 @@ Notes:
 * If reinstalling you might want to use --extra-vars "install_node_exporters=no" to save time.
 * Important! Dev racks uky and renc are hardcoded to have the base install dirs backed up before deleting them for complete overwrites. Productions racks should never be manipulated except by ansible scriptes so the will always be deleted on a reinstall. 
 
-### Test install
+### Test If Install Worked
 
 Test if rack is gathering data. Tunnel into the head node from a machine on the operator head node. 
 `ssh -L 9090:localhost:9090 <user>@192.168.12.10` Then go to `https://localhost:9090`
@@ -31,22 +31,15 @@ Tip: If you need to acces multiple racks at the same time try: `ssh -L 100,rack_
 -----
 ## Install Fabric Central Monitoring
 
-* Create/Download the needed hosts file:
-```
-[metrics]
-192.168.12.251 hostname=metrics.fabric-testbed.net
-```
-or
-```
-[metrics]
-192.168.12.238 hostname=dev-metrics.fabric-testbed.net
-```
-* Create/Download the needed vars file. Most variables have defaults, however several will need to be defined. All private variables will also need to be defined. #TODO document them
-* Install using `ansible-playbook -i central_hosts.ini --extra-vars "@<your_extra_vars.yml>" playbook_fabric_central_install.yml --diff --check`  
-  Examples:
-  * For central metrics `ansible-playbook -i hosts/central_hosts.ini --extra-vars "@private_vars/central_vars.yml" playbook_fabric_central_install.yml --diff --check`
-  * For dev central metrics `ansible-playbook -i hosts/dev_central_hosts.ini --extra-vars "@private_vars/dev_central_vars.yml" playbook_fabric_central_install.yml --diff --check`
-  
+
+
+* Run `ansible-playbook playbook_get_fabric_deployment_files.yml`. This will download the fabric-hosts and vars file from fabric-deployment repo and place them into `tmp_deployment_files` directory. 
+* Install using the following. If you do not have an ansible config file you will need to add `--vault-password-file <vault_password_file>` 
+  * For central metrics `ansible-playbook -i tmp_deployment_files/fabric-hosts playbook_fabric_central_install.yml --diff` 
+  * For dev central metrics `ansible-playbook -i tmp_deployment_files/fabric-hosts playbook_fabric_dev_central_install.yml --diff` 
+* Once you are done you may remove the downloaded files using `ansible-playbook playbook_remove_fabric_deploymnet_files.yml`. Be cautious not to remove any hosts or variable files you created or altered.
+
+
 -----
 ## Install Prometheus Monitoring on a GENI Slice
 
@@ -57,11 +50,11 @@ Need to create the inventory file for the GENI slice and the corresponding varia
 
 To install from a machine on which you have geni keys use: 
 
-* ~Install Everything~ `ansible-playbook --key-file "~/.ssh/id_geni_ssh_rsa" -i hosts/geni_slice_hosts.ini --extra-vars "@private_vars/geni_slice_vars.yml" playbook_geni_slice_install.yml --diff --check`
+* Install Everything `ansible-playbook --key-file "~/.ssh/id_geni_ssh_rsa" -i hosts/geni_slice_hosts.ini --extra-vars "@private_vars/geni_slice_vars.yml" playbook_geni_slice_install.yml --diff --check`
 
-* ~Install Just the Monitor~ `ansible-playbook --key-file "~/.ssh/id_geni_ssh_rsa" -i hosts/geni_slice_hosts.ini --extra-vars "@private_vars/geni_slice_vars.yml" playbook_geni_slice_install.yml --diff --tags monitor --check`
+* Install Just the Monitor `ansible-playbook --key-file "~/.ssh/id_geni_ssh_rsa" -i hosts/geni_slice_hosts.ini --extra-vars "@private_vars/geni_slice_vars.yml" playbook_geni_slice_install.yml --diff --tags monitor --check`
 
-* ~Install Just the Exporters~ `ansible-playbook --key-file "~/.ssh/id_geni_ssh_rsa" -i hosts/geni_slice_hosts.ini --extra-vars "@private_vars/geni_slice_vars.yml" playbook_geni_slice_install.yml --diff --tags exporters --check`
+* Install Just the Exporters `ansible-playbook --key-file "~/.ssh/id_geni_ssh_rsa" -i hosts/geni_slice_hosts.ini --extra-vars "@private_vars/geni_slice_vars.yml" playbook_geni_slice_install.yml --diff --tags exporters --check`
 
 ### GENI test after ansible scripts are run.
 #### Prometheus
