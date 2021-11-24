@@ -10,14 +10,10 @@ HostDestinations = ["../ansible/hosts/", "../elk/bootstrap/"]
 
 def parseArgs():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-slice", "--slicename", help="Geni slice name")
+    parser.add_argument("-slice", "--slicename", help="Geni slice name", required=True)
+    parser.add_argument("-inventory", "--inventory_filename", help="Inventory file from OMNI")
     args = parser.parse_args()
-    if args.slicename is not None:
-        return args.slicename
-    else:
-        slicename = input("Please enter your GENI slice name.\n\t")
-        return slicename
-
+    return args
 
 def getInventory(sliceName):
         print("Pulling inventory file from " + sliceName)
@@ -130,9 +126,14 @@ def remote_ansible_call(host_ip, host_port):
 #======================================================================
 
 def main():
-        sliceName = parseArgs()
-        getInventory(sliceName)
-        [meas_node_ip, meas_node_port] = createHostFile()
+
+        args = parseArgs()
+        if args.inventory_filename:
+                [meas_node_ip, meas_node_port] = createHostFile(args.inventory_filename) 
+        else:
+                getInventory(sliceName)
+                [meas_node_ip, meas_node_port] = createHostFile()
+
         ansible_call()
         remote_ansible_call(meas_node_ip, meas_node_port.split()[0])
 
