@@ -1,0 +1,72 @@
+---
+# file: prometheus_alert_rules.yml
+# location: all racks, central metrics
+
+groups:
+
+- name: Prometheus Monitoring Alerts
+  rules:
+  
+  - alert: PrometheusConfigurationReloadFailure
+    expr: prometheus_config_last_reload_successful != 1
+    for: 0m
+    labels:
+      severity: warning
+      fabric_response: mf
+    annotations:
+      summary: Prometheus configuration reload failure (instance {{ $labels.instance }})
+      description: "Prometheus configuration reload error\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusAlertmanagerConfigurationReloadFailure
+    expr: alertmanager_config_last_reload_successful != 1
+    for: 0m
+    labels:
+      severity: warning
+      fabric_response: mf
+    annotations:
+      summary: Prometheus AlertManager configuration reload failure (instance {{ $labels.instance }})
+      description: "AlertManager configuration reload error\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusNotConnectedToAlertmanager
+    expr: prometheus_notifications_alertmanagers_discovered < 1
+    for: 0m
+    labels:
+      severity: critical
+
+      fabric_response: mf
+    annotations:
+      summary: Prometheus not connected to alertmanager (instance {{ $labels.instance }})
+      description: "Prometheus cannot connect the alertmanager\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  
+  - alert: PrometheusRuleEvaluationFailures
+    expr: increase(prometheus_rule_evaluation_failures_total[3m]) > 0
+    for: 0m
+    labels:
+      severity: critical
+      fabric_response: mf
+    annotations:
+      summary: Prometheus rule evaluation failures (instance {{ $labels.instance }})
+      description: "Prometheus encountered {{ $value }} rule evaluation failures, leading to potentially ignored alerts.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+ 
+  - alert: RackNodeExporterDown
+    expr: up { component_type=~"head|worker" } == 0
+    for: 5m
+    labels:
+      severity: warning
+      fabric_system: node_exporter
+      fabric_response: mf
+    annotations:
+      summary:  "Rack Node Exporter target missing (instance {{ $labels.instance }})"   
+      description:  "A rack Node Exporter target has disappeared. An exporter might be crashed.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}" 
+
+  # - alert: RackNodeJobMissing
+  #   expr: absent( up{ job="node", component_type=~"head|worker" } ) == 1
+  #   for: 5m
+  #   labels:
+  #     severity: warning
+  #     fabric_response: mf
+  #   annotations:
+  #     summary: "Rack Node Exporter job is missing (instance {{ $labels.instance }})"
+  #     description: "A rack Node Exporter job has disappeared. An exporter might be crashed.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+

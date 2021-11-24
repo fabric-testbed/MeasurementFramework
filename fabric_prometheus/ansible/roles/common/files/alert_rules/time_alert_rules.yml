@@ -1,3 +1,6 @@
+---
+# file: time_alert_rules.yml
+# location: all racks
 
 groups: 
 
@@ -10,10 +13,10 @@ groups:
     labels:
       severity: error
       fabric_system: time
+      fabric_response: hardware
     annotations:
       summary:  "Time is not synced on node {{ $labels.instance }}"   
       description:  "node_timex_sync_status is 0 on {{ $labels.instance }}." 
-      
 
   - alert: RackNodeTimexMaxErrorTooHigh
     expr: node_timex_maxerror_seconds{job="node", component_type=~"head|worker"} > 0.001
@@ -21,6 +24,7 @@ groups:
     labels:
       severity: error
       fabric_system: time
+      fabric_response: hardware
     annotations:
       summary:  "Timex max error exceeded on node {{ $labels.instance }}"   
       description:  "node_timex_maxerror_seconds is > 0.001 on {{ $labels.instance }}. Indicates node is not time synced." 
@@ -31,6 +35,7 @@ groups:
     labels:
       severity: error
       fabric_system: time
+      fabric_response: hardware
     annotations:
       summary:  "GPS time is not known node {{ $labels.instance }}"   
       description:  "tmiGPSTimeKnown is 0 on {{ $labels.instance }}." 
@@ -42,6 +47,7 @@ groups:
     labels:
       severity: info
       fabric_system: time
+      fabric_response: hardware
     annotations:
       summary:  "GPS time sync is only 2D on {{ $labels.instance }}"   
       description:  "tmiGPSFix is 2 on {{ $labels.instance }}." 
@@ -53,6 +59,7 @@ groups:
     labels: 
       severity: warning
       fabric_system: time
+      fabric_response: hardware
     annotations:
       summary:  "GPS time is not fixed on node {{ $labels.instance }}"   
       description:  "tmiGPSFix is 0 on {{ $labels.instance }}." 

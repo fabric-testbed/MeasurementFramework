@@ -48,9 +48,27 @@ prometheus_config_template_files:
 
 prometheus_config_files:
   # Alert rule files
-  - rack_alerts.yml 
-  - time_alerts.yml 
-  - vpn_alerts.yml
+  # - rack_alerts.yml 
+  # - time_alerts.yml 
+  # - vpn_alerts.yml
+
+
+alert_rule_file_dir: files/alert_rules
+
+# Default alert rules for a rack
+alert_rule_files:
+#  - dns_alert_rules.yml
+  - docker_alert_rules.yml
+  - mail_alert_rules.yml
+  - network_alert_rules.yml
+  - node_alert_rules.yml
+  - node_ping_alert_rules.yml
+  - prometheus_alert_rules.yml
+ # - ssl_alert_rules.yml
+  - time_alert_rules.yml
+  # vpn ping only needed on uky/renc racks but do no harm if on others
+  - vpn_ping_alert_rules.yml
+ # - web_site_alert_rules.yml
 
 
 ####################
@@ -77,8 +95,6 @@ thanos_sidecar_state: started
 ####################
 #alertmanager_url: 192.128.12.238:9093
 alertmanager_url: metrics.fabric-testbed.net:9093
-
-
 
 ####################
 #      Thanos      #

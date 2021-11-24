@@ -1,0 +1,10 @@
+---
+# Add alert rule files to the prometheus config directory
+- name: Add Prometheus Alert Rules via Files
+  copy:
+    src: "{{ alert_rule_file_dir }}/{{ item }}"
+    dest: "{{ base_install_dir }}/prometheus/config/{{ item }}"
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+  with_items: "{{ alert_rule_files | default(omit) }}"
+  become: yes

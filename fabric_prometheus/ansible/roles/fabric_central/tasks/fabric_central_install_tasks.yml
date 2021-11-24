@@ -3,8 +3,13 @@
 
 
 # Sanity Check
-- pause:
-    prompt: "!!!!!!!!!!!!!Setting up Central Metrics Install {{ install_name }} at {{ ansible_host }}. Hit enter to continue.!!!!!!!!!!!!!"
+# - pause:
+#     prompt: "!!!!!!!!!!!!!Setting up Central Metrics Install {{ install_name }} at {{ ansible_host }}. Hit enter to continue.!!!!!!!!!!!!!"
+
+- name: Sanity Check
+  debug: 
+    msg: "!!!!!!!!!!!!!Setting up Central Metrics Install {{ install_name }} at {{ ansible_host }}. Hit enter to continue.!!!!!!!!!!!!!"
+
 
 
 # needed on remote for htpasswd
@@ -100,12 +105,17 @@
   - name: Setup Prometheus Directories
     include_tasks: Prometheus/setup_prometheus_directories_tasks.yml
   
-  - name: Setup Promtheus Config Files
+  - name: Setup Promtheus Config Files via templates
     include_tasks: Prometheus/add_prometheus_config_templates.yml
     # See vars for templates used
     
-  - name: Setup Promtheus Config Files
+  - name: Setup Promtheus Config Files via files
     include_tasks: Prometheus/add_prometheus_config_files.yml
+    # See vars for files used
+
+  - name: Prometheus Alert Rules
+    include_tasks: Prometheus/add_alert_rules.yml
+    # See vars for files used
 
   - name: Setup Prometheus Secrets
     include_tasks: Prometheus/add_prometheus_secrets.yml
@@ -182,6 +192,9 @@
 
     - name: Alertmanager Config
       include_tasks: Alertmanager/config_alertmanager_tasks.yml
+
+    - name: Alertmanager tmpl files
+      include_tasks: Alertmanager/add_alertmanager_tmpl_files_tasks.yml
 
     - name: Alertmanager Container
       include_tasks: Alertmanager/alertmanager_container_tasks.yml

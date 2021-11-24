@@ -1,0 +1,19 @@
+---
+# file: web_site_alert_rules.yml
+# location: central
+
+groups: 
+
+- name: Web Sites
+  rules:
+
+  - alert: Fabric Web Site Down
+    expr: probe_success {job="blackbox-http", check_type="web-site"} == 0
+    for: 5m
+    labels: 
+      severity: critical
+      fabric_system: web_site
+      fabric_response: services
+    annotations:
+      summary:  "Web server {{ $labels.instance }} is down."   
+      description:  "{{ $labels.instance }} has been down or not responding for more than 5 minutes." 
