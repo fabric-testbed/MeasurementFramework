@@ -93,6 +93,9 @@ prom_group_name: fab-prom
 # In case we need to eliminate conficts
 alertmanager_port: 9093    
 
+
+#alertmanager_external_url: https://192.168.12.238:9093
+
 ####################
 #    Prometheus    #
 ####################
@@ -123,10 +126,43 @@ prometheus_config_template_files:
   #- test_alerts.yml
 
 prometheus_config_files:
-  # Alert rule files
-  - certificate_alerts.yml 
-  - vpn_ping_alerts.yml 
+  # need default var even if empty
 
+# # Default alert rules for a rack
+# alert_rule_files:
+# #  - dns_alert_rules.yml
+#   - docker_alert_rules.yml
+#   - mail_alert_rules.yml
+#   - network_alert_rules.yml
+#   - node_alert_rules.yml
+#   - node_ping_alert_rules.yml
+#   - prometheus_alert_rules.yml
+#  # - ssl_alert_rules.yml
+#   - time_alert_rules.yml
+#   # vpn ping only needed on uky/renc racks but do no harm if on others
+#   - vpn_ping_alert_rules.yml
+#  # - web_site_alert_rules.yml
+
+
+alert_rule_file_dir: files/alert_rules
+alertmanager_tmpl_file_dir: files/Alertmanager_tmpl
+
+alertmanager_tmpl_files:
+  - slack.tmpl
+
+# Default alert rules for central
+alert_rule_files:
+  - dns_alert_rules.yml
+  - docker_alert_rules.yml
+  - mail_alert_rules.yml
+  - network_alert_rules.yml
+  - node_alert_rules.yml
+  - node_ping_alert_rules.yml
+  - prometheus_alert_rules.yml
+  - ssl_alert_rules.yml
+#  - time_alert_rules.yml
+#  - vpn_ping_alert_rules.yml
+  - web_site_alert_rules.yml
 
 ####################
 # Container States #

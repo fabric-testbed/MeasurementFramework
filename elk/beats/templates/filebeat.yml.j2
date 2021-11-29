@@ -13,13 +13,120 @@ filebeat.inputs:
 filebeat.modules:
   - module: system
     syslog:
-      enabled: true
+      enabled: {{ system_enable }}
       var.paths: ["/var/log/messages"]
       var.convert_timezone: false
     auth:
-      enabled: true
+      enabled: {{ system_enable }}
       var.paths: ["/var/log/secure*"]
       var.convert_timezone: false
+
+  - module: zeek
+    capture_loss:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/capture_loss.log"]
+    connection:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/conn.log"]
+    dhcp:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/dhcp.log"]
+    dns:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/dns.log"]
+    dpd:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/dpd.log"]
+    files:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/files.log"]
+    ftp:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/ftp.log"]
+    http:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/http.log"]
+    intel:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/intel.log"]
+    irc:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/irc.log"]
+    kerberos:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/kerberos.log"]
+    modbus:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/modbus.log"]
+    mysql:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/mysql.log"]
+    notice:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/notice.log"]
+    ntlm:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/ntlm.log"]
+    ocsp:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/ocsp.log"]
+    pe:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/pe.log"]
+    radius:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/radius.log"]
+    rdp:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/rdp.log"]
+    rfb:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/rfb.log"]
+    sip:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/sip.log"]
+    smb_cmd:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/smb_cmd.log"]
+    smb_files:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/smb_files.log"]
+    smb_mapping:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/smb_mapping.log"]
+    smtp:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/smtp.log"]
+    snmp:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/snmp.log"]
+    socks:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/socks.log"]
+    ssh:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/ssh.log"]
+    ssl:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/ssl.log"]
+    stats:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/stats.log"]
+    syslog:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/syslog.log"]
+    traceroute:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/traceroute.log"]
+    tunnel:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/tunnel.log"]
+    weird:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/weird.log"]
+    x509:
+      enabled: {{ zeek_enable }}
+      var.paths: ["/opt/zeek/logs/current/x509.log"]
 
 setup.template.settings:
   index.number_of_shards: 1

@@ -49,7 +49,7 @@ modules:
 
   smtp_simple:
     prober: tcp
-    timeout: 5s
+    timeout: 15s
     tcp:
       preferred_ip_protocol: ip4
       ip_protocol_fallback: false
@@ -59,7 +59,7 @@ modules:
 
   smtp_starttls:
     prober: tcp
-    timeout: 5s
+    timeout: 15s
     http:
       preferred_ip_protocol: ip4
       ip_protocol_fallback: false
