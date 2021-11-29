@@ -131,7 +131,7 @@ def main():
         if args.inventory_filename:
                 [meas_node_ip, meas_node_port] = createHostFile(args.inventory_filename) 
         else:
-                getInventory(sliceName)
+                getInventory(args.slicename)
                 [meas_node_ip, meas_node_port] = createHostFile()
 
         ansible_call()
