@@ -1,0 +1,69 @@
+[omni]
+default_cf = portal
+
+# CONFIGURATION: Edit the url below to match the location of the AM to be tested
+# Should match am-undertest below
+aggregates = https://www.emulab.net:12369/protogeni/xmlrpc/am/2.0
+
+users = alice
+
+[alice]
+# Should be GENI Portal
+urn=urn:publicid:IDN+ch.geni.net+user+alice
+keys=~/.ssh/id_rsa.pg.pub
+
+#------RSpec nicknames
+# When you call
+#      omni.py createsliver myslice myrspec
+# omni will try to read 'myrspec' by interpreting it in the following order:
+# 1. a URL or a file on the local filesystem
+# 2. a nickname specified in the omni_config
+# 3. a file in a location (file or url) defined as: 
+#    <default_rspec_server>/<rspec_nickname>.<default_rspec_extension> 
+
+[rspec_nicknames]
+# Format :
+# Nickname= [location of RSpec file]
+# myawesometopology = ~/.gcf/rspecs/myrspecfile.rspec
+hellogeni = http://www.gpolab.bbn.com/experiment-support/HelloGENI/hellogeni.rspec
+
+default_rspec_location = http://www.gpolab.bbn.com/experiment-support
+default_rspec_extension = rspec
+
+#------AM nicknames
+# Put your custom aggregate nicknames here. 
+# To see all available nicknames try: omni.py nicknames
+# Format :
+# Nickname=URN, URL
+# URN is optional
+[aggregate_nicknames]
+
+# CONFIGURATION: Edit the url to match the location of the AM to be tested
+am-undertest=urn:publicid:IDN+utahddc.geniracks.net+authority+cm,https://boss.utahddc.geniracks.net:12369/protogeni/xmlrpc/am/2.0
+
+[portal]
+type=chapi
+authority=ch.geni.net
+verbose=false
+ch=https://ch.geni.net:8444/CH
+ma=https://ch.geni.net/MA
+sa=https://ch.geni.net/SA
+
+# CONFIGURATION: If necessary, replace the next two lines with the
+#  location of your combined cert/key file you downloaded from
+#  http://portal.geni.net
+cert = ~/.ssl/geni_cert_portal.pem
+key = ~/.ssl/geni_cert_portal.pem
+
+# CONFIGURATION: Edit this to specify the Portal project
+# in which you are creating your testing slices.
+#default_project = MyTestingProject
+
+[my_gcf]
+type=gcf
+authority=geni:gpo:gcf
+ch=https://localhost:8000
+cert=~/.gcf/alice-cert.pem
+key=~/.gcf/alice-key.pem
+
+

@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<!-- Resources at AM:
+	URN: urn:publicid:IDN+utahddc.geniracks.net+authority+cm
+	URL: https://boss.utahddc.geniracks.net:12369/protogeni/xmlrpc/am/2.0
+ -->
+
+<rspec type="request" xmlns="http://www.geni.net/resources/rspec/3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/request.xsd">  
+  <node client_id="ch2" component_id="urn:publicid:IDN+utahddc.geniracks.net+node+pc4" component_manager_id="urn:publicid:IDN+utahddc.geniracks.net+authority+cm" exclusive="false">
+    <sliver_type name="emulab-xen">
+      <disk_image name="urn:publicid:IDN+instageni.gpolab.bbn.com+image+emulab-ops:UBUNTU12-64-STD"/>
+    </sliver_type>
+  </node>
+</rspec>

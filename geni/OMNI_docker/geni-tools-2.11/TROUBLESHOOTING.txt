@@ -1,0 +1,8 @@
+Troubleshooting Guide for GCF and Omni
+======================================
+
+More documentation is on the GCF and Omni Wiki.
+https://github.com/GENI-NSF/geni-tools/wiki
+
+For troubleshooting and tips, see:
+https://github.com/GENI-NSF/geni-tools/wiki/Omni-Troubleshooting

@@ -10,14 +10,10 @@ HostDestinations = ["../ansible/hosts/", "../elk/bootstrap/"]
 
 def parseArgs():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-slice", "--slicename", help="Geni slice name")
+    parser.add_argument("-slice", "--slicename", help="Geni slice name", required=True)
+    parser.add_argument("-inventory", "--inventory_filename", help="Inventory file from OMNI")
     args = parser.parse_args()
-    if args.slicename is not None:
-        return args.slicename
-    else:
-        slicename = input("Please enter your GENI slice name.\n\t")
-        return slicename
-
+    return args
 
 def getInventory(sliceName):
         print("Pulling inventory file from " + sliceName)
@@ -70,7 +66,7 @@ def createHostFile():
 
         # Print required nodes for ELK (using hostnames)
         outputFileForELK += "[elk]\n"
-        outputFileForELK += "Meas_Net\n\n"
+        outputFileForELK += "Meas_Node\n\n"
         outputFileForELK += "[nginx]\n"
         outputFileForELK += "Meas_NGINX\n\n"
 
@@ -97,24 +93,26 @@ def createHostFile():
         hostFileForELK.close
         print("\tSuccess. hosts file placed inside ../elk/ directory.")
 
+        
+        # This is done for the time being to install
+        # Paramiko seems to have issues with public IP's.
+        # It is understood that this will not work in Fabric.
         return [nodes["Meas_Node"][0], nodes["Meas_Node"][1]]
 
 #======================================================================
 
 def ansible_call():
-
         time.sleep(1)   # Delays for 1 seconds
                         # to help with all subprocess writes
         bootstrap_folder = os.path.dirname(os.getcwd())+"/elk/bootstrap/"
-        output_ansible = subprocess.call("ansible-playbook bootstrap.yml -v", shell=True ,cwd=bootstrap_folder)
-
-#======================================================================
+        output_ansible = subprocess.call("ansible-playbook bootstrap.yml", shell=True ,cwd=bootstrap_folder)
 
 #======================================================================
 
 def remote_ansible_call(host_ip, host_port):
         username = "ansible"
         command = "cd mf_git/elk/; ansible-playbook site.yml"
+        host_ip = host_ip.split(' ', 1)[0];
 
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -128,9 +126,14 @@ def remote_ansible_call(host_ip, host_port):
 #======================================================================
 
 def main():
-        sliceName = parseArgs()
-        getInventory(sliceName)
-        [meas_node_ip, meas_node_port] = createHostFile()
+
+        args = parseArgs()
+        if args.inventory_filename:
+                [meas_node_ip, meas_node_port] = createHostFile(args.inventory_filename) 
+        else:
+                getInventory(sliceName)
+                [meas_node_ip, meas_node_port] = createHostFile()
+
         ansible_call()
         remote_ansible_call(meas_node_ip, meas_node_port.split()[0])
 

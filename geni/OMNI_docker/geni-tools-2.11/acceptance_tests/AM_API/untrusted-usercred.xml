@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<signed-credential xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.planet-lab.org/resources/sfa/credential.xsd" xsi:schemaLocation="http://www.planet-lab.org/resources/sfa/ext/policy/1 http://www.planet-lab.org/resources/sfa/ext/policy/1/policy.xsd"><credential xml:id="ref0"><type>privilege</type><serial>8</serial><owner_gid>-----BEGIN CERTIFICATE-----
+MIICNDCCAZ2gAwIBAgIBAzANBgkqhkiG9w0BAQQFADAmMSQwIgYDVQQDExtnZW5p
+Ly9ncG8vL2djZi5hdXRob3JpdHkuc2EwHhcNMTMwMzI5MTkwMjI2WhcNMTUxMjI0
+MTkwMjI2WjAkMSIwIAYDVQQDExlnZW5pLy9ncG8vL2djZi51c2VyLmFsaWNlMIGf
+MA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDAARLTuyPQzrHubXl/rj1yxJyMmd7x
+6/z6y7myxaEp4LbO7tm8bV0URJ5viqZsoIja/sCcg6NfyVfz3pRWMbhzaOP/Bwei
+w7Qke65pmNWBn5FefX79llr2xOMWTedzWkoSUL2oKhIBRgB0smld1PCeaMfkADfd
+MkAyitvyxXmvjQIDAQABo3QwcjAMBgNVHRMBAf8EAjAAMGIGA1UdEQRbMFmGKHVy
+bjpwdWJsaWNpZDpJRE4rZ2VuaTpncG86Z2NmK3VzZXIrYWxpY2WGLXVybjp1dWlk
+OmY3YTczNmNjLWJmOWEtNDMxMi1hOWI4LWE3MTBiNGRjNmVkZTANBgkqhkiG9w0B
+AQQFAAOBgQBDykeeKuFdlcqbZKNJ6kFO0C2LaofzwvAA1AHstR8XpKg0b2iqRMeH
+JGe9Xqb5CBekfXrseTh5/gPsaU+A2oqnmvI5koX4/6PWc7bZTpYBqLGUpAWHVhW7
+UWMvbpz+1/zjqbGgbsyJRcWOr8+7rkhZDcvL75SxnWCFoblDomR7/w==
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+MIICOzCCAaSgAwIBAgIBAzANBgkqhkiG9w0BAQQFADAmMSQwIgYDVQQDExtnZW5p
+Ly9ncG8vL2djZi5hdXRob3JpdHkuc2EwHhcNMTMwMzI5MTkwMjI2WhcNMTgwMzI4
+MTkwMjI2WjAmMSQwIgYDVQQDExtnZW5pLy9ncG8vL2djZi5hdXRob3JpdHkuc2Ew
+gZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMd13jtVbUVY8nBkN0Md0kTGqCZV
+F89TP9YmTXYxUOdEq5QmP3Og4TQuKisZFdyv4+knd7WpYQeNvfAnSsuzjYArJzAE
+T9nnStOHNyVZnu40L8sk8WfjBUj7So0ny5rj+0DkaGZLVVPCZkFR0V/YHVzAcO2g
+fw6KGDeQ1i1bnyBdAgMBAAGjeTB3MA8GA1UdEwEB/wQFMAMBAf8wZAYDVR0RBF0w
+W4YqdXJuOnB1YmxpY2lkOklETitnZW5pOmdwbzpnY2YrYXV0aG9yaXR5K3Nhhi11
+cm46dXVpZDo0ODg1MTUzYi1mZjA5LTRjMzYtYTRkYy03ODlkY2EyOGMyNGMwDQYJ
+KoZIhvcNAQEEBQADgYEAL0WBO3YVRtBNLXwT07mVDinos7ZkzplkeHKKJBNnrfak
+FtLFvX3ilKpt70YlwmCGnIA3tqxzosbLvgTpWEUv0kSy7YAkFGDGIxd+xDHf1Av8
+AhQrWBddeg73Oc4rn1UPwDgtj19Uoki22FXthG8eU/7aLWqhMhVIn4zEdAM1DWw=
+-----END CERTIFICATE-----
+</owner_gid><owner_urn>urn:publicid:IDN+geni:gpo:gcf+user+alice</owner_urn><target_gid>-----BEGIN CERTIFICATE-----
+MIICNDCCAZ2gAwIBAgIBAzANBgkqhkiG9w0BAQQFADAmMSQwIgYDVQQDExtnZW5p
+Ly9ncG8vL2djZi5hdXRob3JpdHkuc2EwHhcNMTMwMzI5MTkwMjI2WhcNMTUxMjI0
+MTkwMjI2WjAkMSIwIAYDVQQDExlnZW5pLy9ncG8vL2djZi51c2VyLmFsaWNlMIGf
+MA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDAARLTuyPQzrHubXl/rj1yxJyMmd7x
+6/z6y7myxaEp4LbO7tm8bV0URJ5viqZsoIja/sCcg6NfyVfz3pRWMbhzaOP/Bwei
+w7Qke65pmNWBn5FefX79llr2xOMWTedzWkoSUL2oKhIBRgB0smld1PCeaMfkADfd
+MkAyitvyxXmvjQIDAQABo3QwcjAMBgNVHRMBAf8EAjAAMGIGA1UdEQRbMFmGKHVy
+bjpwdWJsaWNpZDpJRE4rZ2VuaTpncG86Z2NmK3VzZXIrYWxpY2WGLXVybjp1dWlk
+OmY3YTczNmNjLWJmOWEtNDMxMi1hOWI4LWE3MTBiNGRjNmVkZTANBgkqhkiG9w0B
+AQQFAAOBgQBDykeeKuFdlcqbZKNJ6kFO0C2LaofzwvAA1AHstR8XpKg0b2iqRMeH
+JGe9Xqb5CBekfXrseTh5/gPsaU+A2oqnmvI5koX4/6PWc7bZTpYBqLGUpAWHVhW7
+UWMvbpz+1/zjqbGgbsyJRcWOr8+7rkhZDcvL75SxnWCFoblDomR7/w==
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+MIICOzCCAaSgAwIBAgIBAzANBgkqhkiG9w0BAQQFADAmMSQwIgYDVQQDExtnZW5p
+Ly9ncG8vL2djZi5hdXRob3JpdHkuc2EwHhcNMTMwMzI5MTkwMjI2WhcNMTgwMzI4
+MTkwMjI2WjAmMSQwIgYDVQQDExtnZW5pLy9ncG8vL2djZi5hdXRob3JpdHkuc2Ew
+gZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMd13jtVbUVY8nBkN0Md0kTGqCZV
+F89TP9YmTXYxUOdEq5QmP3Og4TQuKisZFdyv4+knd7WpYQeNvfAnSsuzjYArJzAE
+T9nnStOHNyVZnu40L8sk8WfjBUj7So0ny5rj+0DkaGZLVVPCZkFR0V/YHVzAcO2g
+fw6KGDeQ1i1bnyBdAgMBAAGjeTB3MA8GA1UdEwEB/wQFMAMBAf8wZAYDVR0RBF0w
+W4YqdXJuOnB1YmxpY2lkOklETitnZW5pOmdwbzpnY2YrYXV0aG9yaXR5K3Nhhi11
+cm46dXVpZDo0ODg1MTUzYi1mZjA5LTRjMzYtYTRkYy03ODlkY2EyOGMyNGMwDQYJ
+KoZIhvcNAQEEBQADgYEAL0WBO3YVRtBNLXwT07mVDinos7ZkzplkeHKKJBNnrfak
+FtLFvX3ilKpt70YlwmCGnIA3tqxzosbLvgTpWEUv0kSy7YAkFGDGIxd+xDHf1Av8
+AhQrWBddeg73Oc4rn1UPwDgtj19Uoki22FXthG8eU/7aLWqhMhVIn4zEdAM1DWw=
+-----END CERTIFICATE-----
+</target_gid><target_urn>urn:publicid:IDN+geni:gpo:gcf+user+alice</target_urn><uuid/><expires>2015-12-24T19:10:28</expires><privileges><privilege><name>refresh</name><can_delegate>false</can_delegate></privilege><privilege><name>resolve</name><can_delegate>false</can_delegate></privilege><privilege><name>info</name><can_delegate>false</can_delegate></privilege></privileges></credential><signatures><Signature xmlns="http://www.w3.org/2000/09/xmldsig#" xml:id="Sig_ref0">
+  <SignedInfo>
+    <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+    <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+    <Reference URI="#ref0">
+      <Transforms>
+        <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+      </Transforms>
+      <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+      <DigestValue>n8u8hvRG71BuQiKbNagQnzbYC00=</DigestValue>
+    </Reference>
+  </SignedInfo>
+  <SignatureValue>w17vP82XQ06f6OTQtkX7/az5ZnLsG+RCA5Qa6aDGhF7nd/cWKeDUrt9AHDDa7eEA
+Fms50aboRCAsh1uAvzcM+zQdcjVeyfgWdzVzqWA21MfFj54CM7HrosAejniXFqFY
+e0ySA3Mx/aKLjKTxRuxgTOcLAAG7IRTwDlIu7WWHeUU=</SignatureValue>
+  <KeyInfo>
+    <X509Data>
+      
+      
+      
+    <X509Certificate>MIICOzCCAaSgAwIBAgIBAzANBgkqhkiG9w0BAQQFADAmMSQwIgYDVQQDExtnZW5p
+Ly9ncG8vL2djZi5hdXRob3JpdHkuc2EwHhcNMTMwMzI5MTkwMjI2WhcNMTgwMzI4
+MTkwMjI2WjAmMSQwIgYDVQQDExtnZW5pLy9ncG8vL2djZi5hdXRob3JpdHkuc2Ew
+gZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMd13jtVbUVY8nBkN0Md0kTGqCZV
+F89TP9YmTXYxUOdEq5QmP3Og4TQuKisZFdyv4+knd7WpYQeNvfAnSsuzjYArJzAE
+T9nnStOHNyVZnu40L8sk8WfjBUj7So0ny5rj+0DkaGZLVVPCZkFR0V/YHVzAcO2g
+fw6KGDeQ1i1bnyBdAgMBAAGjeTB3MA8GA1UdEwEB/wQFMAMBAf8wZAYDVR0RBF0w
+W4YqdXJuOnB1YmxpY2lkOklETitnZW5pOmdwbzpnY2YrYXV0aG9yaXR5K3Nhhi11
+cm46dXVpZDo0ODg1MTUzYi1mZjA5LTRjMzYtYTRkYy03ODlkY2EyOGMyNGMwDQYJ
+KoZIhvcNAQEEBQADgYEAL0WBO3YVRtBNLXwT07mVDinos7ZkzplkeHKKJBNnrfak
+FtLFvX3ilKpt70YlwmCGnIA3tqxzosbLvgTpWEUv0kSy7YAkFGDGIxd+xDHf1Av8
+AhQrWBddeg73Oc4rn1UPwDgtj19Uoki22FXthG8eU/7aLWqhMhVIn4zEdAM1DWw=</X509Certificate>
+<X509SubjectName>CN=geni//gpo//gcf.authority.sa</X509SubjectName>
+<X509IssuerSerial>
+<X509IssuerName>CN=geni//gpo//gcf.authority.sa</X509IssuerName>
+<X509SerialNumber>3</X509SerialNumber>
+</X509IssuerSerial>
+</X509Data>
+    <KeyValue>
+<RSAKeyValue>
+<Modulus>
+x3XeO1VtRVjycGQ3Qx3SRMaoJlUXz1M/1iZNdjFQ50SrlCY/c6DhNC4qKxkV3K/j
+6Sd3talhB4298CdKy7ONgCsnMARP2edK04c3JVme7jQvyyTxZ+MFSPtKjSfLmuP7
+QORoZktVU8JmQVHRX9gdXMBw7aB/DooYN5DWLVufIF0=
+</Modulus>
+<Exponent>
+AQAB
+</Exponent>
+</RSAKeyValue>
+</KeyValue>
+  </KeyInfo>
+</Signature></signatures></signed-credential>
+

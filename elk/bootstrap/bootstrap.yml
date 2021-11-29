@@ -14,14 +14,6 @@
 
 - hosts: all
   become: true
-  pre_tasks:
-    - name: Install updates (CentOS)
-      tags: always
-      yum:
-        update_only: yes
-        update_cache: yes
-      when: ansible_distribution == "CentOS"
-
   tasks:
     # Create ansible user on remote hosts
     - name: Create ansible user
@@ -45,6 +37,22 @@
         group: root
         mode: 0440
 
+    - name: Installing packages for CentOs 8 Machines only
+      become: true
+      tags: packages
+      ansible.builtin.package:
+        name:
+          - epel-release
+        state: present
+        update_cache: yes
+      when:
+          - ansible_facts['distribution'] == "CentOS"
+          - ansible_facts['distribution_major_version'] == "8"
+      # This release is needed further on for the rest of the
+      # play to work.
+
+       # changed from  Measurement_Node
+       # so that the calls could be made
 - hosts: Measurement_Node
   tasks:
     # Copy private ssh key to Measurement node only
@@ -57,24 +65,14 @@
         mode: 0600
 
     # Install packages (ansible on Measurement node)
-    - name: Installing packages
+    - name: Installing packages in bootstrap.yml
       become: true
       tags: packages
-      yum:
+      ansible.builtin.package:
         name:
-          - epel-release
-          - gcc
-          - openssl-devel
-          - bzip2-devel
-          - libffi-devel
-          - centos-release-scl
-          - yum-utils
           - ansible
           - git
-          - httpd-tools
-          - lvm2
-          - device-mapper-persistent-data
-        state: latest
+        state: present
         update_cache: yes
 
     # Check if mf git repo are already created
@@ -94,8 +92,12 @@
       git:
         repo: https://github.com/fabric-testbed/MeasurementFramework.git
         dest: /home/ansible/mf_git
-        version: dev
-      when: r_mf_git_folder_exist.stat.exists == false
+        version: dev_general
+        force: true
+
+        
+      #when: r_mf_git_folder_exist.stat.exists == false
+      # force new install for testing
 
     # Copy host file
     - name: Update host file

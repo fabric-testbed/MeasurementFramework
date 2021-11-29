@@ -1,0 +1,13 @@
+# set PATH so it includes geni software if it exists
+if [ -d "/usr/local/bin/gcf/src" ] ; then
+    PATH="/usr/local/bin/gcf/src:/usr/local/bin/gcf/examples:$PATH"
+    export PYTHONPATH="/usr/local/bin/gcf/src:$PYTHONPATH" 
+fi
+
+alias omni='omni.py'
+alias omni-configure='omni-configure.py'
+alias readyToLogin='readyToLogin.py'
+alias clear-passphrases='clear-passphrases.py'
+alias stitcher='stitcher.py'
+alias remote-execute='remote-execute.py'
+alias addMemberToSliceAndSlivers='addMemberToSliceAndSlivers.py'
