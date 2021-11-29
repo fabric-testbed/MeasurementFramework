@@ -1,0 +1,10 @@
+---
+- name: Restart filebeat.yml
+  hosts: filebeats
+  tags: filebeat
+  tasks:
+    # Restart filebeat
+    - name: Restart filebeat
+      shell: docker-compose restart filebeat
+      args:
+        chdir: /opt/beats/

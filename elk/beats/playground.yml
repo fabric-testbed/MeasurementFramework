@@ -1,0 +1,10 @@
+---
+- hosts: all
+  tags: playground
+  tasks:
+    - name: "Pring variable"
+      debug:
+        msg:
+          - "syslog_enabled: {{syslog_enabled}}"
+          - "securelog_enabled: {{securelog_enabled}}"
+          - "zeek_enable: {{zeek_enable}}"
