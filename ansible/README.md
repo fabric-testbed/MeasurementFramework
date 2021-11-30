@@ -50,11 +50,11 @@ Need to create the inventory file for the GENI slice and the corresponding varia
 
 To install from a machine on which you have geni keys use: 
 
-* Install Everything `ansible-playbook --key-file "~/.ssh/id_geni_ssh_rsa" -i hosts/geni_slice_hosts.ini --extra-vars "@private_vars/geni_slice_vars.yml" playbook_geni_slice_install.yml --diff --check`
+* Install Everything `ansible-playbook --key-file "~/.ssh/id_geni_ssh_rsa" -i hosts/geni_slice_hosts.ini --extra-vars "@private_vars/geni_slice_vars.yml" playbook_geni_slice_install.yml --diff`
 
-* Install Just the Monitor `ansible-playbook --key-file "~/.ssh/id_geni_ssh_rsa" -i hosts/geni_slice_hosts.ini --extra-vars "@private_vars/geni_slice_vars.yml" playbook_geni_slice_install.yml --diff --tags monitor --check`
+* Install Just the Monitor `ansible-playbook --key-file "~/.ssh/id_geni_ssh_rsa" -i hosts/geni_slice_hosts.ini --extra-vars "@private_vars/geni_slice_vars.yml" playbook_geni_slice_install.yml --diff --tags monitor`
 
-* Install Just the Exporters `ansible-playbook --key-file "~/.ssh/id_geni_ssh_rsa" -i hosts/geni_slice_hosts.ini --extra-vars "@private_vars/geni_slice_vars.yml" playbook_geni_slice_install.yml --diff --tags exporters --check`
+* Install Just the Exporters `ansible-playbook --key-file "~/.ssh/id_geni_ssh_rsa" -i hosts/geni_slice_hosts.ini --extra-vars "@private_vars/geni_slice_vars.yml" playbook_geni_slice_install.yml --diff --tags exporters`
 
 ### GENI test after ansible scripts are run.
 #### Prometheus
