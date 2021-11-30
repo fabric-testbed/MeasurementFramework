@@ -7,23 +7,17 @@
 
       - name: Create Directories for certs
         file: 
-          path: "{{ self_signed_cert_path }}"
+          path: "{{ self_signed_cert_dir }}"
+          recurse: yes
           state: directory 
           mode: 755
 
       - name: Create Directories for keys
         file: 
-          path: "{{ self_signed_key_path }}"
+          path: "{{ self_signed_key_dir }}"
+          recurse: yes
           state: directory 
           mode: 710
-
-
-
-      # - name: Ensure directory exists for local self-signed TLS certs.
-      #   file:
-      #     path: "{{ self_signed_cert_path }}"
-      #     #path: /etc/test_ssl/{{ hostname }}
-      #     state: directory
 
       - name: Generate an OpenSSL private key.
         openssl_privatekey:
@@ -40,9 +34,6 @@
 
       - name: Generate a Self Signed OpenSSL certificate.
         openssl_certificate:
-          # path: /etc/test_ssl/{{ hostname }}/fullchain.pem
-          # privatekey_path: /etc/test_ssl/{{ hostname }}/privkey.pem
-          # csr_path: /etc/ssl/private/{{ hostname }}.csr
           path: "{{ host_cert }}"
           privatekey_path: "{{ host_key }}"
           csr_path: "{{ host_csr }}"

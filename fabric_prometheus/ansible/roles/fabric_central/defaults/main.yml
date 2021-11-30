@@ -58,7 +58,7 @@ add_python_docker_sdk: no
 # tls_public_dir: /etc/ssl/certs
 
 # host_csr: "{{ tls_private_dir }}/fab_prom_self_signed_{{ hostname }}.csr"
-# self_signed_cert_path: "{{ tls_public_dir }}/fab_prom_self_signed_{{ hostname }}"
+# self_signed_cert_dir: "{{ tls_public_dir }}/fab_prom_self_signed_{{ hostname }}"
 
 # host_cert: "{{ tls_public_dir }}/fab_prom_self_signed_{{ hostname }}/fullchain.pem"
 # host_key: "{{ tls_private_dir }}/fab_prom_self_signed_{{ hostname }}/privkey.pem"
@@ -72,12 +72,12 @@ add_python_docker_sdk: no
 # -----------------------------------------------
 ## if we need to create our own self signed certs 
 
-#self_signed_cert_path: "{{ base_install_dir }}/ssl"
-#self_signed_key_path: "{{ base_install_dir }}/ssl/private"
+#self_signed_cert_dir: "{{ base_install_dir }}/ssl"
+#self_signed_key_dir: "{{ base_install_dir }}/ssl/private"
 
-#host_csr: "{{ self_signed_cert_path }}/{{ hostname }}.csr"
-#host_cert: "{{ self_signed_cert_path }}/{{ hostname }}_fullchain.pem"
-#host_key: "{{ self_signed_key_path }}/{{ hostname }}_privkey.pem"
+#host_csr: "{{ self_signed_cert_dir }}/{{ hostname }}.csr"
+#host_cert: "{{ self_signed_cert_dir }}/{{ hostname }}_fullchain.pem"
+#host_key: "{{ self_signed_key_dir }}/{{ hostname }}_privkey.pem"
 ## Used to verify 
 #host_interm_cert: "{{ host_cert }}"
 
