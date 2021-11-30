@@ -26,4 +26,4 @@
 #    extra_node_hosts: {}
 
 # for dev site use
-# ansible-playbook -i hosts/dev-metrics-hosts.ini playbook_fabric_central_remove_containers.yml --diff --check
+# ansible-playbook -i hosts/dev-metrics-hosts.ini playbook_fabric_central_remove_containers.yml --diff
