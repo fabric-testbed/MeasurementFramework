@@ -43,16 +43,14 @@ prom_group_name: fab-prom
 # Locations for self signed cert creation.
 # If host aleady has certs, then skip the self-signed task and
 #  just use the cert on the host machine.
-host_csr: /etc/ssl/private/{{ hostname }}.csr
-self_signed_cert_path: /etc/test_ssl/{{ hostname }}
+self_signed_cert_dir: "{{ base_install_dir }}/ssl/{{ hostname }}"
+self_signed_key_dir: "{{ base_install_dir }}/ssl/private/{{hostname}}"
 
-# where was this before? still needed?
-self_signed_key_path: /etc/test_ssl/{{hostname}}
+host_csr: "{{ self_signed_cert_dir }}/{{ hostname }}.csr"
+host_cert: "{{ self_signed_cert_dir }}/{{ hostname }}_fullchain.pem"
+host_key: "{{ self_signed_key_dir }}//{{ hostname }}_privkey.pem"
 
-host_cert: /etc/test_ssl/{{ hostname }}/fullchain.pem
-host_key: /etc/test_ssl/{{ hostname }}/privkey.pem
-
-host_interm_cert: /etc/test_ssl/{{ hostname }}/fullchain.pem
+host_interm_cert: "{{ self_signed_cert_dir }}/{{ hostname }}_fullchain.pem"
 
 
 # Prometheus

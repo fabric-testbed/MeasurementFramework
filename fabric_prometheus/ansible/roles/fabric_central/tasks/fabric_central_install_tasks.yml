@@ -65,7 +65,7 @@
 - name: Self-signed certs.
   include_tasks: setup_tasks/self_signed_cert_tasks.yml
   when:
-    - self_signed_cert_path is defined
+    - self_signed_cert_dir is defined
 
 # need to add uky_incommon_root_intermdiate.pem file to the created intermediate cert!!!!!!TODO!!!!!!!!!!!
 
