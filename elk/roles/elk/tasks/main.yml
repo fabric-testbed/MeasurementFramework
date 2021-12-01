@@ -50,7 +50,6 @@
   ansible.builtin.package:
     name:
       - gcc
-      - libffi-devel
       - software-properties-common
       - httpd-tools
       - lvm2
