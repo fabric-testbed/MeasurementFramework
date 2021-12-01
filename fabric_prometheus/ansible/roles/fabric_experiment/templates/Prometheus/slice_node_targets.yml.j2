@@ -1,0 +1,12 @@
+---
+# Node Exporter for each node in slice.
+{% for k in geni_slice_nodes %}
+- targets:
+    - {{ k.ip }}:9100
+  labels: 
+    job: node
+    instance: {{ k.name }}
+    
+{% endfor %}
+
+

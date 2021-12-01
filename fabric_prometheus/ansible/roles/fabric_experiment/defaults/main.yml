@@ -1,0 +1,86 @@
+---
+
+# Passwords will need to be set in another file.
+# fabric_prometheus_ht_user: <username to access nginx proxy>
+# fabric_prometheus_ht_password: <password to access nginx proxy>
+
+# node_exporter_username: <username to access exporter metrics>
+# node_exporter_password: <passord to access exporter metrics>
+
+# snmp_community_string: <community-string>
+
+# grafana_admin_password: <password for admin account>
+
+
+
+# Slice info needs to be found somehow so prometheus knows where to request metrics.
+# This should be automatically created by the script that reads the manifest and creates hosts file.
+# GENI Slice
+# geni_slice_name: alert01
+# geni_slice_nodes:
+#     - ip:  128.163.233.170
+#       name: node-0
+#     - ip:  128.163.233.171
+#       name: node-1
+#     - ip:  128.163.233.172
+#       name: node-2
+#     - ip:  128.163.233.173
+#       name: node-3
+    
+
+# Install Important! This will be the base name for the install directories
+#    and docker containers.
+install_name: fabric_prometheus
+# Network
+docker_network_name: "{{ install_name }}"
+# Install Directories
+base_data_dir: "/opt/data/{{ install_name }}"
+base_install_dir: "/opt/{{ install_name }}" 
+# Install owner
+prom_user_name: fab-prom
+prom_group_name: fab-prom
+    
+# Locations for self signed cert creation.
+# If host aleady has certs, then skip the self-signed task and
+#  just use the cert on the host machine.
+self_signed_cert_dir: "{{ base_install_dir }}/ssl/{{ hostname }}"
+self_signed_key_dir: "{{ base_install_dir }}/ssl/private/{{hostname}}"
+
+host_csr: "{{ self_signed_cert_dir }}/{{ hostname }}.csr"
+host_cert: "{{ self_signed_cert_dir }}/{{ hostname }}_fullchain.pem"
+host_key: "{{ self_signed_key_dir }}//{{ hostname }}_privkey.pem"
+
+host_interm_cert: "{{ self_signed_cert_dir }}/{{ hostname }}_fullchain.pem"
+
+
+# Prometheus
+#prometheus_files_dir: files/
+prometheus_templates_dir: templates/Prometheus
+
+# SNMP
+snmp_templates_dir: templates/SNMP
+
+
+# Blackbox
+blackbox_files_dir: files
+#blackbox_templates_dir: templates
+
+# Grafana
+grafana_templates_dir: templates/Grafana
+
+grafana_datasource_template_files:
+  - grafana_local_prometheus_datasource.yml
+
+
+# AlertManager
+#alertmanager_template_dir: templates/geni_slice
+alertmanager_port: 9093
+#alert_manager_slack_api_url: 
+
+# NGINX
+nginx_template_dir: templates/Nginx
+
+# Node Exporter
+node_exporter_web_listen_address: "{{ ansible_host }}:9100"
+
+extra_node_hosts: {}
