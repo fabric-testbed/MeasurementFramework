@@ -166,7 +166,7 @@
 # Clone MF git repo dev branch
 - name: Clone mf git repo
   become: true
-  become_user: ansible
+  remote_user: ansible
   tags: mfgitrepo
   git:
     repo: https://github.com/fabric-testbed/MeasurementFramework.git
