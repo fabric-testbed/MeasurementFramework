@@ -58,6 +58,7 @@
       - curl 
       - gnupg 
       - lsb-release
+      - gnupg-agent
     state: present
     update_cache: yes
   when:
@@ -72,26 +73,9 @@
     mode: 0644
   when:
     - ansible_facts['distribution'] == "CentOS"
-# https://graspingtech.com/install-docker-ansible/
-
-- name: Install dependencies Ubuntu 20.04
-  become: true
-  ansible.builtin.package:
-    name: "{{ packages }}"
-    state: present
-    update_cache: yes
-  vars:
-    packages:
-    - apt-transport-https
-    - ca-certificates
-    - curl
-    - software-properties-common
-    - gnupg-agent
-  when:
-    - ansible_facts['distribution'] == "Ubuntu"
-
 
 - name: Add an apt signing key for Docker Ubuntu 20.04
+  become: true
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
@@ -99,6 +83,7 @@
     - ansible_facts['distribution'] == "Ubuntu"
 
 - name: Add apt repository for stable version Ubuntu 20.04
+  become: true
   apt_repository:
     repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
     state: present
