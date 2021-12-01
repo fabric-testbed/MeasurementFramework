@@ -4,13 +4,17 @@ domain = {{ hostname }}
 # version if using grafana as root 
 root_url = https://%(domain)s/grafana
 
-[smptp]
-#enabled = false
-#host = mail.fabric-testbed.net:25
-#from_address = alerts@metrics.<your rack>.fabric-testbed.net
-#from_name = <your rack name> Grafana Alert
-#user = <your email user>
-#password = <your email password>
+[security]
+# For getting graphs into jupyter notebook
+allow_embedding = true
+
+
+[auth.anonymous]
+enabled = true
+
+[auth.basic]
+enabled = false
+
 
 [log]
 #level = debug
