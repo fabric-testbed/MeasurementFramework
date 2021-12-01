@@ -42,6 +42,33 @@
     - ansible_facts['distribution'] == "CentOS"
     - ansible_facts['distribution_major_version'] == "8"
 
+
+#may be able to downsize
+- name: Installing packages in elk/tasks/main.yml for Ubuntu 20.04
+  become: true
+  tags: packages
+  ansible.builtin.package:
+    name:
+      - gcc
+      - openssl-devel
+      - bzip2-devel
+      - libffi-devel
+      - software-properties-common
+      - httpd-tools
+      - lvm2
+      - device-mapper-persistent-data
+      - apache2-utils
+      - apt-transport-https 
+      - ca-certificates 
+      - curl 
+      - gnupg 
+      - lsb-release
+    state: present
+    update_cache: yes
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+    - ansible_facts['distribution_major_version'] == "20.04"
+
 - name: Configure docker-ce repo
   tags: docker
   become: true
@@ -49,6 +76,41 @@
     url: https://download.docker.com/linux/centos/docker-ce.repo
     dest: /etc/yum.repos.d/docer-ce.repo
     mode: 0644
+  when:
+    - ansible_facts['distribution'] == "CentOS"
+# https://graspingtech.com/install-docker-ansible/
+
+- name: Install dependencies Ubuntu 20.04
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+    - gnupg-agent
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+    - ansible_facts['distribution_major_version'] == "20.04"
+
+  - name: Add an apt signing key for Docker Ubuntu 20.04
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+    when:
+      - ansible_facts['distribution'] == "Ubuntu"
+      - ansible_facts['distribution_major_version'] == "20.04"
+
+  - name: Add apt repository for stable version Ubuntu 20.04
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+      state: present
+    when:
+      - ansible_facts['distribution'] == "Ubuntu"
+      - ansible_facts['distribution_major_version'] == "20.04"
 
 - name: Install docker
   tags: docker

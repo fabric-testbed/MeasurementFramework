@@ -10,13 +10,14 @@
         size: 2048
         state: present
         # force: yes # Recreate key
-        force: no # Reuse key
+        force: yes # Reuse key
 
 - hosts: all
   become: true
   tasks:
     # Create ansible user on remote hosts
     - name: Create ansible user
+      become: true
       user:
         name: ansible
         group: root
@@ -72,13 +73,14 @@
         name:
           - ansible
           - git
+          - python
         state: present
         update_cache: yes
 
     # Check if mf git repo are already created
     - name: Check if mf git repo folders already exists
       become: true
-      become_user: ansible
+      remote_user: ansible
       tags: mfgitrepo
       stat:
         path: /home/ansible/mf_git
@@ -87,12 +89,12 @@
     # Clone MF git repo dev branch
     - name: Clone mf git repo
       become: true
-      become_user: ansible
+      #become_user: ansible
       tags: mfgitrepo
       git:
         repo: https://github.com/fabric-testbed/MeasurementFramework.git
         dest: /home/ansible/mf_git
-        version: main
+        version: andrew_elk
         force: true
 
         
@@ -102,7 +104,7 @@
     # Copy host file
     - name: Update host file
       become: true
-      become_user: ansible
+      #become_user: ansible
       tags: updatehostfile
       copy:
         src: ../../hosts
