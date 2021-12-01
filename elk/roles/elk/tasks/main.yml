@@ -50,7 +50,6 @@
   ansible.builtin.package:
     name:
       - gcc
-      - openssl-devel
       - bzip2-devel
       - libffi-devel
       - software-properties-common
