@@ -173,9 +173,6 @@
     dest: /home/ansible/mf_git
     version: andrew_elk
     force: true
-  #when: r_mf_git_folder_exist.stat.exists == false
-  # force new install for testing
-
 
 ## Check if elk folders are already created
 - name: Check if elk folders already exists
