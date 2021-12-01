@@ -67,7 +67,6 @@
     update_cache: yes
   when:
     - ansible_facts['distribution'] == "Ubuntu"
-    - ansible_facts['distribution_major_version'] == "20.04"
 
 - name: Configure docker-ce repo
   tags: docker
@@ -94,7 +93,7 @@
     - gnupg-agent
   when:
     - ansible_facts['distribution'] == "Ubuntu"
-    - ansible_facts['distribution_major_version'] == "20.04"
+
 
 - name: Add an apt signing key for Docker Ubuntu 20.04
   apt_key:
@@ -102,7 +101,6 @@
     state: present
   when:
     - ansible_facts['distribution'] == "Ubuntu"
-    - ansible_facts['distribution_major_version'] == "20.04"
 
 - name: Add apt repository for stable version Ubuntu 20.04
   apt_repository:
@@ -110,7 +108,6 @@
     state: present
   when:
     - ansible_facts['distribution'] == "Ubuntu"
-    - ansible_facts['distribution_major_version'] == "20.04"
 
 - name: Install docker
   tags: docker
