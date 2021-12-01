@@ -11,6 +11,9 @@
           recurse: yes
           state: directory 
           mode: 755
+          owner: "{{ prom_user_name }}"
+          group: "{{ prom_group_name }}"
+        become: yes
 
       - name: Create Directories for keys
         file: 
@@ -18,24 +21,26 @@
           recurse: yes
           state: directory 
           mode: 710
+          owner: "{{ prom_user_name }}"
+          group: "{{ prom_group_name }}"
+        become: yes
 
       - name: Generate an OpenSSL private key.
-        openssl_privatekey:
+        community.crypto.openssl_privatekey:
           path: "{{ host_key }}"
-          #path: /etc/test_ssl/{{ hostname }}/privkey.pem
-
+          
       - name: Generate an OpenSSL CSR.
-        openssl_csr:
-          #path: /etc/ssl/private/{{ hostname }}.csr
-          #privatekey_path: /etc/test_ssl/{{ hostname }}/privkey.pem
+        community.crypto.openssl_csr:
           path: "{{ host_csr }}"
           privatekey_path: "{{ host_key }}"
           common_name: "{{ hostname }}"
 
       - name: Generate a Self Signed OpenSSL certificate.
-        openssl_certificate:
+        #openssl_certificate:
+        community.crypto.x509_certificate:
           path: "{{ host_cert }}"
           privatekey_path: "{{ host_key }}"
           csr_path: "{{ host_csr }}"
           provider: selfsigned
-      become: yes
+          selfsigned_not_after: "+365d"
+      #become: yes
