@@ -59,6 +59,7 @@
       - gnupg 
       - lsb-release
       - gnupg-agent
+      - python3
     state: present
     update_cache: yes
   when:
