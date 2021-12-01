@@ -52,7 +52,6 @@
       - gcc
       - software-properties-common
       - lvm2
-      - device-mapper-persistent-data
       - apache2-utils
       - apt-transport-https 
       - ca-certificates 
