@@ -75,9 +75,9 @@
 # https://graspingtech.com/install-docker-ansible/
 
 - name: Install dependencies Ubuntu 20.04
-  apt:
+  become: true
+  ansible.builtin.package:
     name: "{{ packages }}"
-    become: true
     state: present
     update_cache: yes
   vars:
