@@ -51,7 +51,6 @@
     name:
       - gcc
       - software-properties-common
-      - httpd-tools
       - lvm2
       - device-mapper-persistent-data
       - apache2-utils
