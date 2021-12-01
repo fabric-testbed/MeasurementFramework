@@ -96,21 +96,21 @@
     - ansible_facts['distribution'] == "Ubuntu"
     - ansible_facts['distribution_major_version'] == "20.04"
 
-  - name: Add an apt signing key for Docker Ubuntu 20.04
-    apt_key:
-      url: https://download.docker.com/linux/ubuntu/gpg
-      state: present
-    when:
-      - ansible_facts['distribution'] == "Ubuntu"
-      - ansible_facts['distribution_major_version'] == "20.04"
+- name: Add an apt signing key for Docker Ubuntu 20.04
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+    - ansible_facts['distribution_major_version'] == "20.04"
 
-  - name: Add apt repository for stable version Ubuntu 20.04
-    apt_repository:
-      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
-      state: present
-    when:
-      - ansible_facts['distribution'] == "Ubuntu"
-      - ansible_facts['distribution_major_version'] == "20.04"
+- name: Add apt repository for stable version Ubuntu 20.04
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    state: present
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+    - ansible_facts['distribution_major_version'] == "20.04"
 
 - name: Install docker
   tags: docker
