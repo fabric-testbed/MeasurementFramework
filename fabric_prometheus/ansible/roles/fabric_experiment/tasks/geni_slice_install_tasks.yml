@@ -176,8 +176,7 @@
       vars:
         nginx_server_confd_template_files: 
           - prometheus.conf
-          ##- alertmanager.conf
-          - grafana.conf
+          - grafana_with_htaccess.conf
   when: true
 
 - name: NGNIX Container
