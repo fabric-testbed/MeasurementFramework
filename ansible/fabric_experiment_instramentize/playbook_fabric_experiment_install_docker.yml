@@ -4,4 +4,4 @@
   tasks:
     - name: Add docker
       import_tasks: bootstrap_tasks/install_docker_tasks.yml
-
+      become: yes

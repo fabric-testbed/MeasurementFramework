@@ -25,6 +25,7 @@
       user:
         name: ansible
         group: root
+        shell: /bin/bash
 
     # Add ssh public key to remote hosts
     - name: Add public ssh key for ansible user
