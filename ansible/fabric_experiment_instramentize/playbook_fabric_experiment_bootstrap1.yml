@@ -1,0 +1,5 @@
+---
+
+- name: Distrubute Keys
+  import_playbook: bootstrap_tasks/distribute_keys_tasks.yml
+

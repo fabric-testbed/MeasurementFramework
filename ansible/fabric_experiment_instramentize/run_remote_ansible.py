@@ -7,7 +7,7 @@ import paramiko
 
 def remote_ansible_call(host_ip, host_port):
         username = "ansible"
-        command = "cd mf_git/ansible/fabric_experiment_instrametize/; ansible-playbook playbook_fabric_experiment_install_docker.yml"
+        command = "cd /home/ansible/mf_git/ansible/fabric_experiment_instramentize/; ansible-playbook playbook_fabric_experiment_install_docker.yml"
         
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
