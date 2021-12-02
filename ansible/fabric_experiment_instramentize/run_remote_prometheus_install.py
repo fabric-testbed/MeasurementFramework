@@ -5,9 +5,18 @@ import subprocess
 import sys
 import paramiko
 
+
+def parseArgs():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-m", "--MeasurementNode", help="Measurement Node IP", required=True)
+    parser.add_argument("-inventory", "--inventory_filename", help="Inventory file")
+    args = parser.parse_args()
+    return args
+
+
 def remote_ansible_call(host_ip, host_port):
         username = "ansible"
-        command = "cd /home/ansible/mf_git/ansible/fabric_experiment_instramentize/; /home/ansible/.local/bin/ansible-playbook -i hosts playbook_fabric_experiment_install_docker.yml"
+        command = "cd /home/ansible/mf_git/ansible/fabric_experiment_instramentize/; /home/ansible/.local/bin/ansible-playbook playbook_fabric_experiment_install_prometheus.yml"
 
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -22,7 +31,10 @@ def remote_ansible_call(host_ip, host_port):
 
 def main():
 
-        remote_ansible_call("206.196.180.233", 22)
+        args = parseArges()
+        if (args.m):
+                remote_ansible_call(args.m, 22)
+        
 
 
 if __name__ == "__main__":

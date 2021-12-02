@@ -1,0 +1,17 @@
+---
+# Creating the rack monitoring setup.
+- hosts: Meas_Node
+  
+  roles:
+    - ../../fabric_prometheus/ansible/roles/fabric_experiment
+  tags:
+    - monitor
+   
+
+- hosts: Expirement_Nodes
+
+  roles:
+    - ../../fabric_prometheus/ansible/roles/fabric_experiment
+  tags: 
+    - exporters
+   
