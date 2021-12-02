@@ -1,0 +1,11 @@
+# Required for ansible to run this role.
+
+passlib[bcrypt]
+
+ansible==4.5.0
+ansible-core==2.11.5
+
+
+# bcrypt==3.2.0
+# paramiko==2.7.2
+# passlib==1.7.4
