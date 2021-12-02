@@ -2,10 +2,10 @@
 
 
 ##############################################################
-#                       GENI Slice                           #
+#                       FABRIC Slice                           #
 ##############################################################
 # This section contains the tasks needed for installing 
-# Prometheus on a GENI Slice. 
+# Prometheus on a FABRIC Slice. 
 # Use the var install_type: geni_slice to trigger these tasks.
 # To control the sub tasks define the add_ variables
 #   add_docker: yes  
@@ -16,27 +16,27 @@
 #   add_node_exporter: yes 
 #     Adds the node_exporter to a node.
 
-- name: GENI Slice
-  block:
-  ###############################
-  #   GENI Slice Prereqs        #
-  ###############################
+# - name: Fabric Experiment
+#   block:
+#   ###############################
+#   #   GENI Slice Prereqs        #
+#   ###############################
 
-  # These tasks may be required on nodes that do not have docker already installed.
-  - name: Install Docker 
-    become: yes
-    import_tasks: install_docker_tasks.yml
-    when: 
-      - add_docker is defined
-      - add_docker
+#   # These tasks may be required on nodes that do not have docker already installed.
+#   - name: Install Docker 
+#     become: yes
+#     import_tasks: install_docker_tasks.yml
+#     when: 
+#       - add_docker is defined
+#       - add_docker
 
 
-  - name: Install python sdk to manage docker
-    # become: yes
-    import_tasks: fabric_experiment_install_docker_python_sdk_tasks.yml
-    when: 
-      - add_python_docker_sdk is defined
-      - add_python_docker_sdk
+#   - name: Install python sdk to manage docker
+#     # become: yes
+#     import_tasks: fabric_experiment_install_docker_python_sdk_tasks.yml
+#     when: 
+#       - add_python_docker_sdk is defined
+#       - add_python_docker_sdk
 
 
 
