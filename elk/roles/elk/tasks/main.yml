@@ -42,6 +42,27 @@
     - ansible_facts['distribution'] == "CentOS"
     - ansible_facts['distribution_major_version'] == "8"
 
+- name: Installing packages in elk/tasks/main.yml for Ubuntu
+  become: true
+  tags: packages
+  ansible.builtin.package:
+    name:
+      - gcc
+      - libssl-dev
+      - bzip2
+      - libffi-dev
+      - apache2-utils
+      - lvm2
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - gnupg-agent
+    state: present
+    update_cache: yes
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+
 - name: Configure docker-ce repo
   tags: docker
   become: true
@@ -49,7 +70,25 @@
     url: https://download.docker.com/linux/centos/docker-ce.repo
     dest: /etc/yum.repos.d/docer-ce.repo
     mode: 0644
+  when:
+    - ansible_facts['distribution'] == "CentOS"
+    
+- name: Add an apt signing key for Docker for Ubuntu
+  become: true
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
 
+- name: Add apt repository for stable version for Ubuntu
+  become: true
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    state: present
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+    
 - name: Install docker
   tags: docker
   become: true
