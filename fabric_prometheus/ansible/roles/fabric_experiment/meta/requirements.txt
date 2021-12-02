@@ -3,8 +3,8 @@
 passlib[bcrypt]
 
 
-ansible==4.5.0
-ansible-core==2.11.5
+ansible>=4.5.0
+ansible-core>=2.11
 
 
 # bcrypt==3.2.0
