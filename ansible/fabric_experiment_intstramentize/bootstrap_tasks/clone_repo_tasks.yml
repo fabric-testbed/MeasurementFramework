@@ -1,9 +1,5 @@
 ---
 # 
-       
-
-  tasks:
-   
     # Install packages
     - name: Ensure GIT is installed
       become: true
@@ -35,13 +31,13 @@
 
         force: true
 
-# move elsehwere
-    # Copy host file
-    - name: Update host file
-      become: true
-      become_user: ansible
-      tags: updatehostfile
-      copy:
-        src: ../../hosts
-        dest: "{{ git_repo_dir }}/elk/hosts"
-        mode: 0644
+# # move elsehwere
+#     # Copy host file
+#     - name: Update host file
+#       become: true
+#       become_user: ansible
+#       tags: updatehostfile
+#       copy:
+#         src: ../../hosts
+#         dest: "{{ git_repo_dir }}/elk/hosts"
+#         mode: 0644
