@@ -10,5 +10,3 @@ ansible --version
 ansible-galaxy --version 
  
 echo "Finished!" 
-
-
