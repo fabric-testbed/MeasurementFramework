@@ -10,4 +10,13 @@ pip install ansible
 /home/ansible/.local/bin/ansible --version 
 /home/ansible/.local/bin/ansible-galaxy --version 
  
+
+
+echo "-----Install Galaxy Roles-----"
+/home/ansible/.local/bin/ansible-galaxy install -r fabric_prometheus/ansible/roles/fabric_experiment/meta/requirements.yml
+echo "-----Install Galaxy Collections----"
+/home/ansible/.local/bin/ansible-galaxy collection install -r fabric_prometheus/ansible/roles/fabric_experiment/meta/requirements.yml
+
+
+
 echo "-----Finished!-----" 
