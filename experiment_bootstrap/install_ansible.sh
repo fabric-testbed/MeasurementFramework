@@ -5,7 +5,7 @@ pip3 --version
 pip install ansible 
 ansible --version 
 ansible-galaxy --version 
-mkdir -p mf_git 
+ 
 
 #ansible-playbook playbook_fabric_experiment_bootstrap1.yml 
 echo "Finished!" 
