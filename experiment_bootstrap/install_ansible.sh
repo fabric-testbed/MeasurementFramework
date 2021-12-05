@@ -1,20 +1,14 @@
 #!/bin/bash
+echo "Updating apt"
 sudo apt update   
+echo "Installing pip3"
 sudo apt install -y python3-pip   
 pip3 --version 
+echo "Installing ansible"
 pip install ansible 
 ansible --version 
 ansible-galaxy --version 
  
-
-#ansible-playbook playbook_fabric_experiment_bootstrap1.yml 
 echo "Finished!" 
 
 
-
-# git clone https://github.com/fabric-testbed/MeasurementFramework.git mf_git
-# cd mf_git
-# git checkout add_fabric_experiment_role
-# bash mf_git/experiment_bootstrap1.sh
-
-# "git clone https://github.com/fabric-testbed/MeasurementFramework.git mf_git;  cd mf_git; git checkout add_fabric_experiment_role; bash mf_git/experiment_bootstrap.sh"
