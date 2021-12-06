@@ -43,8 +43,8 @@ prom_group_name: fab-prom
 # Locations for self signed cert creation.
 # If host aleady has certs, then skip the self-signed task and
 #  just use the cert on the host machine.
-self_signed_cert_dir: "{{ base_install_dir }}/ssl/{{ hostname }}"
-self_signed_key_dir: "{{ base_install_dir }}/ssl/private/{{hostname}}"
+self_signed_cert_dir: "{{ base_install_dir }}/ssl"
+self_signed_key_dir: "{{ base_install_dir }}/ssl/private"
 
 host_csr: "{{ self_signed_cert_dir }}/{{ hostname }}.csr"
 host_cert: "{{ self_signed_cert_dir }}/{{ hostname }}_fullchain.pem"

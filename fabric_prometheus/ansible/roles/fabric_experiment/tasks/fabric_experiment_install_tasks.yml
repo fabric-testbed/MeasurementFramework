@@ -47,7 +47,12 @@
   block:
   - name: Setup Prometheus Directories
     include_tasks: tasks/Prometheus/setup_prometheus_directories_tasks.yml
-  
+    
+  # SELF-SIGNED CERTS
+  # task needs to be done after prom directories have been created
+  - name: Self-signed certs.
+    include_tasks: tasks/setup_tasks/self_signed_cert_tasks.yml
+
   - name: Setup Promtheus Config Files
     include_tasks: tasks/Prometheus/add_prometheus_config_templates.yml
     vars:
