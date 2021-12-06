@@ -8,7 +8,7 @@
     - monitor
    
 
-- hosts: Expirement_Nodes
+- hosts: Experiment_Nodes
 
   roles:
     - ../../fabric_prometheus/ansible/roles/fabric_experiment
