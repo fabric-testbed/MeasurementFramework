@@ -1,12 +1,17 @@
 ---
-# Node Exporter for each node in slice.
-{% for k in geni_slice_nodes %}
+
+# Node Exporter for each experimentors.
 - targets:
-    - {{ k.ip }}:9100
-  labels: 
-    job: node
-    instance: {{ k.name }}
-    
+{% for h in groups["Experiment_Nodes"] %}
+        - '{{ hostvars[h].hostname }}:9100'
 {% endfor %}
+  labels:
+        job: node
+        #instance: 
+          
+
+
+
+
 
 
