@@ -1,5 +1,11 @@
 ---
 
+
+- name: Update package manager
+  ansible.builtin.package:
+    name: update
+    state: present
+
 - name: Install PIP3
   ansible.builtin.package:
     name: python3-pip
