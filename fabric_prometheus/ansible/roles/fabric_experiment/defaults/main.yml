@@ -70,8 +70,9 @@ grafana_templates_dir: templates/Grafana
 
 grafana_datasource_template_files:
   - grafana_local_prometheus_datasource.yml
-grafana_dashboard_template_files:
-  - grafana_node_exporter_full_dashboard.json
+# grafana_dashboard_template_files:
+#   - grafana_node_exporter_full_dashboard.json
+#   - grafana_dashboard.yml.j2
 
 # AlertManager
 #alertmanager_template_dir: templates/geni_slice
