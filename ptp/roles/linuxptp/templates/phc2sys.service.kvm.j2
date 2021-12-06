@@ -5,7 +5,7 @@ Documentation=man:phc2sys
 [Service]
 Type=simple
 ExecStartPre=/bin/bash -c "/bin/systemctl set-environment PTP_KVM=`realpath /dev/ptp_kvm`"
-ExecStart=/usr/sbin/phc2sys -E linreg -O +0 -s $PTP_KVM -c {{ IFACE }}
+ExecStart=/usr/sbin/phc2sys -E linreg -O +0 -s $PTP_KVM -c {{ IFACE }} -q
 
 [Install]
 WantedBy=multi-user.target
