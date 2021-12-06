@@ -6,7 +6,7 @@ sudo apt install -y python3-pip
 pip3 --version 
 echo "-----Installing python requirements-----"
 
-pip3 install fabric_prometheus/ansible/roles/fabric_experiment/meta/requirements.txt
+pip3 install -r fabric_prometheus/ansible/roles/fabric_experiment/meta/requirements.txt
 
 #pip install ansible 
 # Not sure why need to hard code full path here
