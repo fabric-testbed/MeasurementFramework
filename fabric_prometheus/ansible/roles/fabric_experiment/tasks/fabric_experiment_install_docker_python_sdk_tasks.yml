@@ -1,7 +1,0 @@
----
-
-- name: Install Ansible via pip3 to ensure we will be using python3
-  pip:
-    name: docker
-    executable: pip3
-
