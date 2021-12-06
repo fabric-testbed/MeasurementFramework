@@ -28,12 +28,14 @@
       - name: Generate an OpenSSL private key.
         community.crypto.openssl_privatekey:
           path: "{{ host_key }}"
+        become: yes
           
       - name: Generate an OpenSSL CSR.
         community.crypto.openssl_csr:
           path: "{{ host_csr }}"
           privatekey_path: "{{ host_key }}"
           common_name: "{{ hostname }}"
+        become: yes
 
       - name: Generate a Self Signed OpenSSL certificate.
         #openssl_certificate:
@@ -43,4 +45,4 @@
           csr_path: "{{ host_csr }}"
           provider: selfsigned
           selfsigned_not_after: "+365d"
-      #become: yes
+      become: yes
