@@ -14,7 +14,7 @@
 - block:
 
   - name: Hacky way to find management interface in Openstack VMs
-    shell: netstat -rn|grep ^'0.0.0.0'|awk '{print $8}'
+    shell: ip route show |grep default|awk '{print $5}'
     register: hack_output
 
   - name: Last resort trying to find the interface name
