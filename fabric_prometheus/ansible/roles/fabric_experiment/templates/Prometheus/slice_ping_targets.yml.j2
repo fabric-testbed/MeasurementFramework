@@ -1,13 +1,14 @@
 ---
 # Ping each experimentors node.
-- targets:
 {% for h in groups["Experiment_Nodes"] %}
+- targets:
+
         - '{{ hostvars[h].hostname }}'
-{% endfor %}
+
   labels:
         job: ping
-        #instance: 
-          
+        instance: {{ h }}
+{% endfor %}          
 
 
 
