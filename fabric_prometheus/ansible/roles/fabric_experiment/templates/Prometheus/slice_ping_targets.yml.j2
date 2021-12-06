@@ -1,11 +1,14 @@
 ---
-# Nodes to ping in slice.
-{% for k in geni_slice_nodes %}
+# Ping each experimentors node.
 - targets:
-    - {{ k.ip }}
-  labels: 
-    job: ping
-    instance: {{ k.name }}
+{% for h in groups["Experiment_Nodes"] %}
+        - '{{ hostvars[h].hostname }}'
 {% endfor %}
+  labels:
+        job: ping
+        #instance: 
+          
+
+
 
 
