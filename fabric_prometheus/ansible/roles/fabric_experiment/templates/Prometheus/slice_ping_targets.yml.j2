@@ -7,7 +7,7 @@
 
   labels:
         job: ping
-        instance: {{ h }}
+        instance: '{{ hostvars[h].ansible_hostname }}'
 {% endfor %}          
 
 

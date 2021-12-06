@@ -9,7 +9,7 @@
 
   labels:
         job: node
-        instance: h 
+        instance: '{{ hostvars[h].ansible_hostname }}'
 
 {% endfor %}          
 
