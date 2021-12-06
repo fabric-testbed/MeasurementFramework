@@ -42,24 +42,22 @@
     - ansible_facts['distribution'] == "CentOS"
     - ansible_facts['distribution_major_version'] == "8"
 
-
-#may be able to downsize
-- name: Installing packages in elk/tasks/main.yml for Ubuntu 20.04
+- name: Installing packages in elk/tasks/main.yml for Ubuntu
   become: true
   tags: packages
   ansible.builtin.package:
     name:
       - gcc
-      - software-properties-common
-      - lvm2
+      - libssl-dev
+      - bzip2
+      - libffi-dev
       - apache2-utils
-      - apt-transport-https 
-      - ca-certificates 
-      - curl 
-      - gnupg 
-      - lsb-release
+      - lvm2
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
       - gnupg-agent
-      - python3
     state: present
     update_cache: yes
   when:
@@ -74,8 +72,8 @@
     mode: 0644
   when:
     - ansible_facts['distribution'] == "CentOS"
-
-- name: Add an apt signing key for Docker Ubuntu 20.04
+    
+- name: Add an apt signing key for Docker for Ubuntu
   become: true
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
@@ -83,14 +81,14 @@
   when:
     - ansible_facts['distribution'] == "Ubuntu"
 
-- name: Add apt repository for stable version Ubuntu 20.04
+- name: Add apt repository for stable version for Ubuntu
   become: true
   apt_repository:
     repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
     state: present
   when:
     - ansible_facts['distribution'] == "Ubuntu"
-
+    
 - name: Install docker
   tags: docker
   become: true
@@ -167,13 +165,16 @@
 # Clone MF git repo dev branch
 - name: Clone mf git repo
   become: true
-  remote_user: ansible
+  become_user: ansible
   tags: mfgitrepo
   git:
     repo: https://github.com/fabric-testbed/MeasurementFramework.git
     dest: /home/ansible/mf_git
-    version: andrew_elk
+    version: main
     force: true
+  #when: r_mf_git_folder_exist.stat.exists == false
+  # force new install for testing
+
 
 ## Check if elk folders are already created
 - name: Check if elk folders already exists
@@ -185,7 +186,6 @@
 # Create random password for Nginx
 - name: Generate random password for Nginx
   become: true
-  remote_user: ansible
   set_fact:
     nginx_htaccess_password: "{{ lookup('password', 'credentials/nginx_passwd')}}"
 
