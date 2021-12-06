@@ -1,5 +1,5 @@
 ---
-# Creating the rack monitoring setup.
+# Creating the fabric experiment monitoring setup.
 - hosts: Meas_Node
   
   roles:

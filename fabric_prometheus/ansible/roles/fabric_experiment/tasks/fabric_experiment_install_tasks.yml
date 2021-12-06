@@ -16,13 +16,14 @@
     state: present
 
 
-# SELF-SIGNED CERTS
-- name: Self-signed certs.
-  include_tasks: tasks/setup_tasks/self_signed_cert_tasks.yml
+
 # USER
 - name: Setup user for promtheus monitoring system
   # Create a user to setup all the fab monitoring stuff under.
   include_tasks: tasks/setup_tasks/create_prom_user_tasks.yml
+# SELF-SIGNED CERTS
+- name: Self-signed certs.
+  include_tasks: tasks/setup_tasks/self_signed_cert_tasks.yml
 # DOCKER NETWORK
 - name: Setup the docker network to be used by the monitoring containers.
   include_tasks: tasks/setup_tasks/setup_docker_network_tasks.yml
