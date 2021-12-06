@@ -8,7 +8,7 @@
 
 roles:
 # Ensures pip is installed
-  # - name: geerlingguy.pip
+  - name: geerlingguy.pip
   # #version: 
 
 # Python Docker SDK to allow docker control from ansible.

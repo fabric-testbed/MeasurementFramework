@@ -1,13 +1,25 @@
 ---
-# Installs the Docker.
-- name: Install Docker 
-  include_role: 
-    name: geerlingguy.docker
+# # Installs the Docker.
+# - name: Install Docker 
+#   include_role: 
+#     name: geerlingguy.docker
 
-# Installs Python Docker SDK
+# # Installs Python Docker SDK
 
-- name: Install Python Docker SDK
-  pip:
-    name: docker
-    executable: pip3 
+# - name: Install Python Docker SDK
+#   pip:
+#     name: docker
+#     executable: pip3 
 
+
+
+
+- name: Install PIP
+
+  include_role:
+    # To get role use `ansible-galaxy install geerlingguy.pip`
+    name: geerlingguy.pip
+
+  vars: 
+    pip_install_packages:
+      - name: docker
