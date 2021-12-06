@@ -9,5 +9,5 @@
 - block:
   - include: for_vms.yml
     become: True
-  when: inventory_hostname in groups[ 'fabric_user_vms' ] 
+  #when: inventory_hostname in groups[ 'fabric_user_vms' ] 
   tags: linuxptp
