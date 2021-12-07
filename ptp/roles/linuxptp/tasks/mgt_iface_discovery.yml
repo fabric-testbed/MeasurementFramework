@@ -6,8 +6,8 @@
   set_fact:
     MANAGEMENT_IFACE_FOR_PTP="{{ item }}"
   when: 
-    - hostvars[inventory_hostname]['ansible_{{item}}']['ipv4'] is defined
-    - hostvars[inventory_hostname]['ansible_{{item}}']['ipv4']['address'] == MANAGEMENT_IP_FOR_PTP
+    - hostvars[inventory_hostname]['ansible_' + item ]['ipv4'] is defined
+    - hostvars[inventory_hostname]['ansible_' + item ]['ipv4']['address'] == MANAGEMENT_IP_FOR_PTP
   with_items:
     - "{{ ansible_interfaces }}"
 
