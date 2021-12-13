@@ -5,4 +5,6 @@ Meas_Node
 Meas_NGINX
 
 [workers]
-Testing
+node-1C7
+node-2C8
+node-0U
