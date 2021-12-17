@@ -4,3 +4,4 @@
   - Is what it says the only connections are to Meas_Net.
   - None are currently Public IP's
   - None are currently Mixed Operating Systems
+  - X is the number of worker nodes
