@@ -6,8 +6,7 @@
     state: "{{ grafana_state }}"
     name: "{{ install_name }}_grafana"
     network_mode: "{{ docker_network_name }}"
-    #image: grafana/grafana:7.4.3
-    image: grafana/grafana:8.2.5
+    image: grafana/grafana:8.3.2
     user: "{{ grafana_user_name }}:{{ grafana_group_name }}"
     volumes:
       # data base dir
