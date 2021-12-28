@@ -5,3 +5,10 @@
   - None are currently Public IP's
   - None are currently Mixed Operating Systems
   - X is the number of worker nodes
+
+
+# Tested 
+  - CentOs 7 
+    - 1 CentOs worker time: 17:51.570s
+  - CentOs 8
+    - 8
