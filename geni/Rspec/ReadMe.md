@@ -29,9 +29,9 @@
     - 6 CentOs 8  worker    time: 25m41.410s
     - 6 Ubuntu 20 worker    time: 23m44.547s
   - CentOs 8
-    - 1 CentOs 7  worker    time: xxx
-    - 1 CentOs 8  worker    time: 
-    - 1 Ubuntu 20 worker    time: 
+    - 1 CentOs 7  worker    time: 17m47.735s
+    - 1 CentOs 8  worker    time: 17m22.224s
+    - 1 Ubuntu 20 worker    time: 19m18.047s
     - 2 CentOs 7  worker    time: 
     - 2 CentOs 8  worker    time: 
     - 2 Ubuntu 20 worker    time: 
