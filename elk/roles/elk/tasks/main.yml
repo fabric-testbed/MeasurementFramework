@@ -170,7 +170,7 @@
   git:
     repo: https://github.com/fabric-testbed/MeasurementFramework.git
     dest: /home/ansible/mf_git
-    version: andrew_elk
+    version: main
     force: true
   #when: r_mf_git_folder_exist.stat.exists == false
   # force new install for testing
