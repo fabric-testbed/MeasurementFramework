@@ -2,6 +2,10 @@ Currenlty implemented as if called from the users device.
 
 Meaning that it needs the full name and address that it why the ansible.cfg points to the bootstrap hosts.
 
+
+# How to Run
+	- bash: ansible-playbook {Whichever play needed.}
+
 # Implementation
 	- Filebeat
 		- Currently all nodes stopped
