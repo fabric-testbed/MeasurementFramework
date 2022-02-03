@@ -4,4 +4,4 @@ The code in side Contains various tested Rspecs, and the python script which set
 
 
 # How to run
-	-Bash: python3 pyhton3 GENI_Instrumentize_Slice.py --slicename {YOUR_SLICENAME}
+	-Bash: python3 GENI_Instrumentize_Slice.py --slicename {YOUR_SLICENAME}
