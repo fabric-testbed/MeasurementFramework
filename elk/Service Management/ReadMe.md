@@ -20,3 +20,4 @@ Meaning that it needs the full name and address that it why the ansible.cfg poin
 # Issues
 	- Delay from command to updating logs on dashboard
 		- couple of minutes
+		
