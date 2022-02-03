@@ -1,5 +1,5 @@
 
-The code in side Contains various tested Rspecs, and the python script which sets them up for measurment.
+The code in side contains various tested Rspecs, and the python script which sets them up for measurment.
 
 
 
