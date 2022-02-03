@@ -5,6 +5,9 @@ Meaning that it needs the full name and address that it why the ansible.cfg poin
 
 # How to Run
 	- bash: ansible-playbook {Whichever play needed.}
+	- EX 1: ansible-playbook All_FileBeat_service_stopped.yml
+	- EX 2: ansible-playbook All_FileBeat_service_restarted.yml
+	
 
 # Implementation
 	- Filebeat
