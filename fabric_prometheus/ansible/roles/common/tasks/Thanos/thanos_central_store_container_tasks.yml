@@ -14,6 +14,10 @@
       - "{{ thanos_store_cert }}:/etc/thanos_certs/cert"
       - "{{ thanos_store_key }}:/etc/thanos_certs/key"
     container_default_behavior: no_defaults
+    log_driver: json-file
+    log_options:
+      max-size: 1024m
+
     command:
       - 'store'
       - '--grpc-address=0.0.0.0:10911'

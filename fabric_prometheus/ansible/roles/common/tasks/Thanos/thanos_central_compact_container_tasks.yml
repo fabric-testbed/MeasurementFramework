@@ -22,3 +22,6 @@
       - '--objstore.config-file=/etc/thanos/object_store_config.yml'
     restart_policy: always
     container_default_behavior: no_defaults 
+    log_driver: json-file
+    log_options:
+      max-size: 1024m

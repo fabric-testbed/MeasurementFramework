@@ -14,6 +14,9 @@
         - "{{ base_install_dir }}/snmp/config/snmp.yml:/etc/snmp/snmp.yml"
     
     container_default_behavior: no_defaults
+    log_driver: json-file
+    log_options:
+      max-size: 1024m
 
     command:
       - --config.file="/etc/snmp/snmp.yml"

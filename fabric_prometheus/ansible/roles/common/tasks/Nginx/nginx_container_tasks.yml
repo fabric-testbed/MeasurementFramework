@@ -22,6 +22,9 @@
       - "{{ base_install_dir }}/nginx/conf.d:/etc/nginx/conf.d"
     ports: "{{ nginx_ip_ports }}"
   
-    container_default_behavior: no_defaults      
+    container_default_behavior: no_defaults   
+    log_driver: json-file
+    log_options:
+      max-size: 1024m   
     restart_policy: always
 

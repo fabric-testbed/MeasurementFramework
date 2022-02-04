@@ -26,4 +26,7 @@
     # ports:
     #    - 3000:3000
     container_default_behavior: no_defaults
+    log_driver: json-file
+    log_options:
+      max-size: 1024m
     restart_policy: always

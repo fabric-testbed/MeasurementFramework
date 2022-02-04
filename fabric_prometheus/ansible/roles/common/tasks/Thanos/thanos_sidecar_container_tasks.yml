@@ -18,7 +18,10 @@
       - "{{ thanos_sidecar_key }}:/etc/thanos_certs/key:ro"
 
     container_default_behavior: no_defaults
-    
+    log_driver: json-file
+    log_options:
+      max-size: 1024m
+
     command:
       - 'sidecar'
       - '--tsdb.path=/prometheus'

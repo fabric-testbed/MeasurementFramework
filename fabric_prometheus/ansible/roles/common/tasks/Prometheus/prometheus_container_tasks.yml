@@ -20,7 +20,9 @@
     #   - 9090:9090
     
     container_default_behavior: no_defaults
-
+    log_driver: json-file
+    log_options:
+      max-size: 1024m
 
     etc_hosts:
       "{{ extra_node_hosts  | default(omit) }}"

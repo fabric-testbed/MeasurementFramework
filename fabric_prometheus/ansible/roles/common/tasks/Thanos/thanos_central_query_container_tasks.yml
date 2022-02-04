@@ -18,6 +18,9 @@
       # Map stores.yml file with the list of stores for easier live updates.
       - "{{ base_install_dir }}/thanos/config/stores.yml:/etc/thanos_stores/stores.yml"
     container_default_behavior: no_defaults
+    log_driver: json-file
+    log_options:
+      max-size: 1024m
     command:
         - 'query'
         # grpc is not needed, but could be used by a remote system
