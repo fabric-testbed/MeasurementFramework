@@ -20,7 +20,7 @@
     git:
       #repo: https://github.com/fabric-testbed/fabric-deployment.git # This asks for username and password for every interaction with github - thus you have to type it all in 3 times
       repo: "git@github.com:fabric-testbed/fabric-deployment.git"  
-      version: monitoring
+      #version: monitoring
       # This just uses your ssh key
       dest: "{{ tmp_clone_dir.path }}"
 
@@ -41,7 +41,7 @@
           - group_vars
           - host_vars
           - fabric-hosts
-          - monitoring
+          #- monitoring
 
   - name: Remove the no longer needed fabric-deployment repository.
     file:
