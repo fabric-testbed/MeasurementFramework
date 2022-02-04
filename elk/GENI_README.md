@@ -1,6 +1,8 @@
 # Orchestrating Measurement Framework (ELK/Beats) using Ansible for GENI
 
-This document shows how to start `ELK` (`Elasticsearch`, `Logstash`, `Kibana`) and multiple beats (`Filebeat`, `Metricbeat`, `Packetbeat`) using Ansible scripts to orchestrate on **`GENI`**.
+This document shows how to start `ELK` (`Elasticsearch`, `Logstash`, `Kibana`) and multiple beats (`Filebeat`, `Metricbeat`, `Packetbeat`) using Ansible and Python scripts on **`GENI`**.
+
+If user wants to deploy `ELK` and `Beats` only using `Ansible` script, then check [readme file for using ansible only](./README_AnsibleOnly.md).
 
 ## 0. Requirements
 

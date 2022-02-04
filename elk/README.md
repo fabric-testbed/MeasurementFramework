@@ -7,23 +7,28 @@ This folder (`./elk`) contains all Ansible and Python scripts to deploy ELK and 
 
 ## Structure of folder and descriptions
 
-```
-elk
-│   README.md
-│   FABRIC_README.md
-│   GENI_README.md
-│   hosts
+<pre>
+<b>elk</b>                      
+│  README.md             <span style="color:green">// This document</span>               
+│  README_AnsibleOnly.md <span style="color:green">// Deploying ELK and beats using Ansible only</span> 
+│  FABRIC_README.md      <span style="color:green">// Readme file for Fabric project</span> 
+│  GENI_README.md        <span style="color:green">// Readme file for GENI project</span> 
+│  hosts                 <span style="color:green">// host file for Ansible</span> 
+│  ansible.cfg           <span style="color:green">// Ansible configuration file</span> 
 │
-└─── bootstrap
-│    │   ansible.cfg
-│    │   bootstrap.yml
-│    │
-│    └─── files
-│         └─── sudoer_ansible
+└── <b>bootstrap</b>            
+│   │   ansible.cfg      <span style="color:green">// Ansible configuration file for bootstrap</span>
+│   └── bootstrap.yml    <span style="color:green">// Ansible bootstrap playbook</span>
 │
-└─── docker-images
+└── <b>docker-images</b>        <span style="color:green">// Docker files for ELK and beats</span>
 │
-└─── roles
+└── <b>host_vars</b>            <span style="color:green">// host configuration for nodes</span>
 │
-└─── Service Management
-```
+└── <b>fabric-rack</b>          <span style="color:green">// Ansible script for fabric rack deployment</span>
+│
+└── <b>roles</b>                <span style="color:green">// Ansible roles for deployment</span>
+│   │   <b>elk</b>              <span style="color:green">// deploying elk role</span>
+│   └── <b>worker</b>           <span style="color:green">// deploying beats role</span>
+│
+└── <b>Service Management</b>   <span style="color:green">// Control beats using Ansible</span>
+</pre>

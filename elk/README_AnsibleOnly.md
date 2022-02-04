@@ -1,8 +1,8 @@
-# Orchestrating Measurement Framework (ELK/Beats) using Ansible
+# Orchestrating Measurement Framework (ELK/Beats) using Ansible without using Python script
 
-This document shows how to start ELK (Elasticsearch, Logstash, Kibana) and multiple beats (Filebeat, Metricbeat, Packetbeat) using Ansible scripts to orchestrate.
+This document shows how to start `ELK` (`Elasticsearch`, `Logstash`, `Kibana`) and multiple beats (`Filebeat`, `Metricbeat`, `Packetbeat`) using Ansible scripts only.
 
-## 0. Manual update
+## 0. Change configuration
 
 Before running the ansible scripts, you have to create `elk/bootstrap/hosts` file that lists alias name, ssh host name, and ssh port in the slice like below. You only need to change **bold** texts. Do not change alias name of hosts.
 
@@ -22,7 +22,7 @@ node-1 ansible_ssh_host=<b>pc3.instageni.research.umich.edu</b> ansible_port=<b>
 node-2 ansible_ssh_host=<b>pc3.instageni.research.umich.edu</b> ansible_port=<b>27415</b>
 </pre>
 
-> This step will be automatically generated later using `rspec` as input file.
+> This host file is automatically generated if user is using Python script for GENI project.
 
 ## 1. Bootstrapping
 
