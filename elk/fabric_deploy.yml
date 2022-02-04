@@ -1,0 +1,33 @@
+---
+
+# Installing ELK cluster on ELK node
+- hosts: elk
+  tags: elk
+  vars:
+    docker_compose_ver: 1.25.5
+    nginx_template_file: nginx.conf.j2
+    nginx_htaccess_username: fabric
+  roles:
+    - elk
+
+# Installing Filebeat / Packetbeat on workers
+- hosts: workers
+  become: true
+  tags: worker
+  vars:
+    filebeat_version: 7.13.2
+    filebeat_template_file: filebeat.yml.j2
+    filebeat_output_elasticsearch_hosts: Meas_Node
+    filebeat_setup_kibana_host: Meas_Node
+    metricbeat_version: 7.13.2
+    metricbeat_template_file: metricbeat.yml.j2
+    metricbeat_output_elasticsearch_hosts: Meas_Node
+    metricbeat_setup_kibana_host: Meas_Node
+    packetbeat_version: 7.13.2
+    packetbeat_template_file: packetbeat.yml.j2
+    packetbeat_output_elasticsearch_hosts: Meas_Node
+    packetbeat_setup_kibana_host: Meas_Node
+  roles:
+    - worker
+
+  # Var's defined here to make changes easier
