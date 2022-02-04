@@ -125,7 +125,7 @@ prometheus_config_template_files:
   # alertmanager rules
   #- test_alerts.yml
 
-prometheus_config_files:
+prometheus_config_files: []
   # need default var even if empty
 
 # # Default alert rules for a rack

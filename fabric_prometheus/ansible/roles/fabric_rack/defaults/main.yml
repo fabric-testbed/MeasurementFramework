@@ -8,7 +8,6 @@ install_node_exporters: yes
 
 
 install_name: fabric_prometheus
-#install_name: dev_test_prometheus
 docker_network_name: "{{ install_name }}"
 base_data_dir: "/opt/data/{{ install_name }}"
 base_install_dir: "/opt/{{ install_name }}" 
@@ -46,11 +45,10 @@ prometheus_config_template_files:
   # snmp exporters for rack devices
   - base_snmp_targets.yml
 
-prometheus_config_files:
-  # Alert rule files
-  # - rack_alerts.yml 
-  # - time_alerts.yml 
-  # - vpn_alerts.yml
+# Note empty list var must have [] Without that is is considered a list of one empty string which then causes the entire directory to be copied instead of nothing.  
+# See add_promethues_config_files.yml task.
+# This was formerly used to copy alert_rules.
+prometheus_config_files: []
 
 
 alert_rule_file_dir: files/alert_rules
