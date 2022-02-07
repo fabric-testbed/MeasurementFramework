@@ -107,7 +107,7 @@
 # Start Filebeat
 - name: Start Filebeat
   tags: filebeat
-  service:
+  ansible.builtin.service:
     name: filebeat
     state: restarted
     enabled: yes
@@ -191,7 +191,7 @@
 # Start Metricbeat
 - name: Start Metricbeat
   tags: metricbeat
-  service:
+  ansible.builtin.service:
     name: metricbeat
     state: restarted
     enabled: yes
@@ -271,7 +271,7 @@
 # Start Packetbeat
 - name: Start Packetbeat
   tags: packetbeat
-  service:
+  ansible.builtin.service:
     name: packetbeat
     state: restarted
     enabled: yes
