@@ -37,8 +37,8 @@ groups:
       fabric_system: time
       fabric_response: hardware
     annotations:
-      summary:  "GPS time is not known node {{ $labels.instance }}"   
-      description:  "tmiGPSTimeKnown is 0 on {{ $labels.instance }}." 
+      summary:  "GPS time is not known node {{ $labels.rack }}"   
+      description:  "tmiGPSTimeKnown is 0 on {{ $labels.rack }}." 
       
 
   - alert: 2DGPSFix
@@ -49,8 +49,8 @@ groups:
       fabric_system: time
       fabric_response: hardware
     annotations:
-      summary:  "GPS time sync is only 2D on {{ $labels.instance }}"   
-      description:  "tmiGPSFix is 2 on {{ $labels.instance }}." 
+      summary:  "GPS time sync is only 2D on {{ $labels.rack }}"   
+      description:  "tmiGPSFix is 2 on {{ $labels.rack }}." 
       
 
   - alert: NoGPSFix
@@ -61,6 +61,6 @@ groups:
       fabric_system: time
       fabric_response: hardware
     annotations:
-      summary:  "GPS time is not fixed on node {{ $labels.instance }}"   
-      description:  "tmiGPSFix is 0 on {{ $labels.instance }}." 
+      summary:  "GPS time is not fixed on node {{ $labels.rack }}"   
+      description:  "tmiGPSFix is 0 on {{ $labels.rack }}." 
       

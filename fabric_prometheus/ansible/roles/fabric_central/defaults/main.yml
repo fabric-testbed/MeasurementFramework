@@ -157,7 +157,7 @@ alert_rule_files:
   - mail_alert_rules.yml
   - network_alert_rules.yml
   - node_alert_rules.yml
-  - node_ping_alert_rules.yml
+  - central_ping_alert_rules.yml
   - prometheus_alert_rules.yml
   - ssl_alert_rules.yml
 #  - time_alert_rules.yml

@@ -1,6 +1,6 @@
 ---
-# file: node_ping_alert_rules.yml
-# location: all racks, central
+# file: central_ping_alert_rules.yml
+# location: central
 
 groups: 
 
@@ -16,7 +16,7 @@ groups:
       fabric_response: system
     annotations: 
       summary: "Ping check, central metrics to headnode {{ $labels.subdomain }} on operations network ip {{ $labels.subdomain }} failed."
-      description: "Head node {{ $labels.subdomain }} has not responed to ping for 5m."
+      description: "Head node {{ $labels.subdomain }} has not responed to ping central metrics for 5m."
 
   - alert: WorkerNodePingFailed
     expr: probe_success {job="ping", component_type="worker", reason="infrastructure_check"} == 0
@@ -27,4 +27,4 @@ groups:
       fabric_response: system
     annotations: 
       summary: "Ping check, central metrics to worker node {{ $labels.subdomain }} on operations network ip {{ $labels.subdomain }} failed."
-      description: "Worker node {{ $labels.subdomain }} has not responded to ping for 5m."
+      description: "Worker node {{ $labels.subdomain }} has not responded to ping from central metrics for 5m."
