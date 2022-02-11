@@ -1,0 +1,25 @@
+---
+# Ansible Galaxy Roles Requirements
+# Must be installed using 
+#   ansible-galaxy install -r requirements.yml
+# and 
+#   ansible-galaxy collection install -r requirements.yml
+
+
+roles:
+# Ensures pip is installed
+  - name: geerlingguy.pip
+  # #version: 
+
+# Python Docker SDK to allow docker control from ansible.
+  - name: geerlingguy.docker
+  #version:
+
+# For Node Exporters
+  - name: cloudalchemy.node_exporter
+  #version:
+
+collections:
+  - name: community.docker
+
+

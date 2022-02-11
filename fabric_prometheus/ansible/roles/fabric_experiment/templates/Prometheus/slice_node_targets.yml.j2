@@ -1,0 +1,19 @@
+---
+
+
+
+# Node Exporter for each experimentors.
+{% for h in groups["Experiment_Nodes"] %}
+- targets:
+        - '{{ hostvars[h].hostname }}:9100'
+
+  labels:
+        job: node
+        node_name: '{{ h }}'
+
+{% endfor %}          
+
+
+
+
+
