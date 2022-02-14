@@ -20,7 +20,7 @@
     git:
       #repo: https://github.com/fabric-testbed/fabric-deployment.git # This asks for username and password for every interaction with github - thus you have to type it all in 3 times
       repo: "git@github.com:fabric-testbed/fabric-deployment.git"  
-      #version: monitoring
+      version: "{{ fabric_deployment_repo_version | default('master') }}"
       # This just uses your ssh key
       dest: "{{ tmp_clone_dir.path }}"
 
