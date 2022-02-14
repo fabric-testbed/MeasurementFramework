@@ -78,19 +78,27 @@ class NodeSockManager():
 
 
     def _read_conf(self):
-        f = open(self.config)
-        data = json.load(f)
+        
 
         listener = "DOWN" # Default is down
         dests = []
-    
-        for link in data["links"]:
-            if link["src"] in self.host_ipv4s:
-                dests.append(link["dst"])
 
-            if link["dst"] in self.host_ipv4s:
-                listener = "UP"
+        try:
+            f = open(self.config)
+            data = json.load(f)
     
+            for link in data["links"]:
+                if link["src"] in self.host_ipv4s:
+                    dests.append(link["dst"])
+    
+                if link["dst"] in self.host_ipv4s:
+                    listener = "UP"
+
+        except FileNotFoundError:
+            pass
+            # No service request file found. 
+            # Will return DOWN for receiver status, an empty list for dests
+
         print(f"read_conf: {listener}, {dests}")
 
         return listener, dests
