@@ -170,6 +170,7 @@
   git:
     repo: https://github.com/fabric-testbed/MeasurementFramework.git
     dest: /home/ansible/mf_git
+    # NOTE HARDCODED branch. Might interfere with testing.
     version: main
     force: true
   #when: r_mf_git_folder_exist.stat.exists == false
