@@ -3,7 +3,7 @@
 - hosts: monitor
   
   roles:
-    - ../fabric_prometheus/ansible/roles/geni
+    - ../prometheus/ansible/roles/geni
   tags:
     - monitor
   #vars_files:  use --extra-var "@your var file name"
@@ -23,7 +23,7 @@
 - hosts: nodes
 
   roles:
-    - ../fabric_prometheus/ansible/roles/geni
+    - ../prometheus/ansible/roles/geni
   tags: 
     - exporters
   #vars_files:  use --extra-var "@your var file name"

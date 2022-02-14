@@ -3,7 +3,7 @@
 - hosts: metrics
 
   roles:
-    - ../fabric_prometheus/ansible/roles/fabric_central
+    - ../prometheus/ansible/roles/fabric_central
   
   vars_files: 
     - tmp_deployment_files/monitoring/private_vars/central_vars.yml

@@ -4,6 +4,6 @@
 
 
   roles:
-    - ../fabric_prometheus/ansible/roles/fabric_rack
+    - ../prometheus/ansible/roles/fabric_rack
 
 # Note var files are no longer needed since the vars have been moved to the host & group var files.

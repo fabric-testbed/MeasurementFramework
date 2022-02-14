@@ -25,9 +25,9 @@
   # Now install requirements from roles.
   # WARNING HARDCODED location for ansible-galaxy, shell cant find it otherwise
   - name: Install roles via galaxy
-    shell: "/home/ansible/.local/bin/ansible-galaxy install -r {{ git_repo_dir }}/fabric_prometheus/ansible/roles/fabric_experiment/meta/requirements.yml"
+    shell: "/home/ansible/.local/bin/ansible-galaxy install -r {{ git_repo_dir }}/prometheus/ansible/roles/fabric_experiment/meta/requirements.yml"
 
   - name: Install galaxy collections via galaxy
-    shell: "/home/ansible/.local/bin/ansible-galaxy collection install -r {{ git_repo_dir }}/fabric_prometheus/ansible/roles/fabric_experiment/meta/requirements.yml"
+    shell: "/home/ansible/.local/bin/ansible-galaxy collection install -r {{ git_repo_dir }}/prometheus/ansible/roles/fabric_experiment/meta/requirements.yml"
 
 

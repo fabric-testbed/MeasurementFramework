@@ -3,7 +3,7 @@
 - hosts: Meas_Node
   
   roles:
-    - ../fabric_prometheus/ansible/roles/fabric_experiment
+    - ../prometheus/ansible/roles/fabric_experiment
   tags:
     - monitor
    
@@ -11,7 +11,7 @@
 - hosts: Experiment_Nodes
 
   roles:
-    - ../fabric_prometheus/ansible/roles/fabric_experiment
+    - ../prometheus/ansible/roles/fabric_experiment
   tags: 
     - exporters
    

@@ -3,7 +3,7 @@
 - hosts: metrics
 
   roles:
-    - ../fabric_prometheus/ansible/roles/fabric_prometheus
+    - ../prometheus/ansible/roles/fabric_prometheus
 
   vars:
     install_type: central_shutdown
