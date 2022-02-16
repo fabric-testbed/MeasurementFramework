@@ -8,9 +8,9 @@
     
     # Go to host machine, may have to add hostname to etc_hosts in container
     # thanos sidecar
-    - {{ hostname }}:10901
+    - {{ thanos_hostname }}:10901
     # thanos store/gateway
-    - {{ hostname }}:10911
+    - {{ thanos_hostname }}:10911
     
     # Racks
     - uky-hn.fabric-testbed.net:10901
@@ -22,4 +22,4 @@
     - mich-hn.fabric-testbed.net:10901
 
     - tacc-hn.fabric-testbed.net:10901
-#    - star-hn.fabric-testbed.net:10901
+    - star-hn.fabric-testbed.net:10901
