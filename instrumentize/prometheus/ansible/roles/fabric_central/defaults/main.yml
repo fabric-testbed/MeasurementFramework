@@ -144,6 +144,8 @@ prometheus_config_files: []
 #  # - web_site_alert_rules.yml
 
 
+prometheus_secrets: []
+
 alert_rule_file_dir: files/alert_rules
 alertmanager_tmpl_file_dir: files/Alertmanager_tmpl
 
