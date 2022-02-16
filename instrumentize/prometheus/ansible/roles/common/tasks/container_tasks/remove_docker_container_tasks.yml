@@ -4,5 +4,7 @@
   community.docker.docker_container:
     state: absent
     name: "{{ install_name }}_{{ item }}"
+    # to remove deprecation warning
+    container_default_behavior: no_defaults 
   with_items: "{{ containers_to_act_on }}"
   become: yes
