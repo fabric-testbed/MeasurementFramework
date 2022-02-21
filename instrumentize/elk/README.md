@@ -25,6 +25,7 @@ This folder (`./elk`) contains all Ansible and Python scripts to deploy ELK and 
 └── <b>host_vars</b>            <span style="color:green">// host configuration for nodes</span>
 │
 └── <b>fabric-rack</b>          <span style="color:green">// Ansible script for fabric rack deployment</span>
+│   └── README.md        <span style="color:green">// README file for fabric rack deployment</span>
 │
 └── <b>roles</b>                <span style="color:green">// Ansible roles for deployment</span>
 │   │   <b>elk</b>              <span style="color:green">// deploying elk role</span>
