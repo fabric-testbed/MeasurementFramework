@@ -1,4 +1,5 @@
 import json
+import configparser
 import time
 import socket
 import subprocess
@@ -9,20 +10,22 @@ from threading import Timer
 
 
 class NodeSockManager():
-    def __init__(self, config_file, timer_interval=10, udp_port=5005, 
-                pcap_interval=12, send_interval=0.5):
+    def __init__(self, config_file):
+
+        config = configparser.ConfigParser()
+        config.read(config_file)
 
         self._timer = None
-        self.interval = timer_interval
+        self.interval = int(config['GENERAL']['LinkCheckInterval'])
         self.is_running = False
 
         self.host_ipv4s = self._find_IPs()
         print(self.host_ipv4s)
 
-        self.config = config_file
-        self.udp_port = udp_port
-        self.pcap_interval = pcap_interval
-        self.send_interval = send_interval
+        self.service_request = config['GENERAL']['ServiceRequestFile']   
+        self.udp_port = int(config['GENERAL']['UdpPort'])
+        self.pcap_interval = int(config['receiver']['PcapInterval'])
+        self.send_interval = float(config['sender']['SendInterval'])
 
         self.sender_instances = {}
         self.listen_instance = None
@@ -34,7 +37,7 @@ class NodeSockManager():
         self.is_running = False
         self.start()
 
-        _status, _dests = self._read_conf()
+        _status, _dests = self._read_service_request()
         self._update_capturer(_status)
         self._update_sender(_dests)
 
@@ -77,14 +80,13 @@ class NodeSockManager():
         return s.decode('UTF-8').split()
 
 
-    def _read_conf(self):
+    def _read_service_request(self):
         
-
         listener = "DOWN" # Default is down
         dests = []
 
         try:
-            f = open(self.config)
+            f = open(self.service_request)
             data = json.load(f)
     
             for link in data["links"]:
@@ -95,11 +97,11 @@ class NodeSockManager():
                     listener = "UP"
 
         except FileNotFoundError:
-            pass
-            # No service request file found. 
+            print(f"No service request file ({self.service_request}) found.")
             # Will return DOWN for receiver status, an empty list for dests
 
-        print(f"read_conf: {listener}, {dests}")
+        finally:
+            print(f"read_service_request: {listener}, {dests}")
 
         return listener, dests
     
@@ -146,7 +148,8 @@ class NodeSockManager():
     
 
 if __name__ == "__main__":
-    config_file = "owl_service_request.json"
+
+    config_file = 'owl.conf'
 
     manager = NodeSockManager(config_file)
     time.sleep(60)

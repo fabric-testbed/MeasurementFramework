@@ -1,8 +1,17 @@
 # OWL One Way Latency
 
-## Scapy installation
+## Current owl.conf file format
 ```
-sudo apt install python3-scapy
+[GENERAL]
+LinkCheckInterval = <sec (int)>
+UdpPort = <port>
+ServiceRequestFile = <service request file>.json
+
+[receiver]
+PcapInterval = <sec (int)>
+
+[sender]
+SendInterval= <sec (float)>
 ```
 
 ## Current json service request file format
@@ -88,5 +97,11 @@ tcpdump: listening on eth1, link-type EN10MB (Ethernet), capture size 262144 byt
 ### For reading pcap files using tcpdump (with the payload in HEX and ASCII)
 ```
 sudo tcpdump -qn -tt  -XX -r <file>.pcap
+```
+## Scapy installation (tentative) 
+This is needed only for parsing pcap files. Will likely be changed to `pip`
+installation.
+```
+sudo apt install python3-scapy
 ```
 
