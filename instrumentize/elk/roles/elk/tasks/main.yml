@@ -72,7 +72,7 @@
     mode: 0644
   when:
     - ansible_facts['distribution'] == "CentOS"
-    
+
 - name: Add an apt signing key for Docker for Ubuntu
   become: true
   apt_key:
@@ -88,7 +88,7 @@
     state: present
   when:
     - ansible_facts['distribution'] == "Ubuntu"
-    
+
 - name: Install docker
   tags: docker
   become: true
@@ -143,7 +143,7 @@
 
 # ==============================================================
 
-  # Moved the above from base to here.
+# Moved the above from base to here.
 
 # ==============================================================
 
@@ -161,7 +161,6 @@
 #    dest: ~/mf_git
 #    version: dev_general
 #  when: r_git_code_exist.stat.exists == false
-
 # Clone MF git repo dev branch
 - name: Clone mf git repo
   become: true
@@ -175,7 +174,6 @@
     force: true
   #when: r_mf_git_folder_exist.stat.exists == false
   # force new install for testing
-
 
 ## Check if elk folders are already created
 - name: Check if elk folders already exists
