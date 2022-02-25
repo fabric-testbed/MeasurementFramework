@@ -1,4 +1,5 @@
 import json
+import argparse
 import configparser
 import time
 import socket
@@ -146,12 +147,13 @@ class NodeSockManager():
         new_d = {k:v for k, v in self.sender_instances.items() if v is not None}
         self.sender_instances = new_d
     
-
 if __name__ == "__main__":
 
-    config_file = 'owl.conf'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('conf', type=str, help='path to config file')
+    args = parser.parse_args()
 
-    manager = NodeSockManager(config_file)
+    manager = NodeSockManager(args.conf)
     time.sleep(60)
     manager.stop()
     print("finished")
