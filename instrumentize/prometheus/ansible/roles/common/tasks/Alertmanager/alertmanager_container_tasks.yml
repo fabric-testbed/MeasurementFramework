@@ -6,18 +6,23 @@
     state: "{{ alertmanager_state }}"
     name: "{{ install_name }}_alertmanager"
     network_mode: "{{ docker_network_name }}"
+    # Inorder to access the volume for the silences we must set the uid:gid
+    user: "{{ prom_user_uid }}:{{ prom_user_gid }}"
     #image: prom/alertmanager
     # ensure to get version with matchers enabled
     image: prom/alertmanager:v0.23.0
     volumes:
       - "{{ base_install_dir }}/alertmanager/alertmanager_config.yml:/etc/alertmanager/alertmanager.yml"
       - "{{ base_install_dir }}/alertmanager/templates:/alertmanager/templates"
+      - "{{ base_data_dir }}/alertmanager/data:/alertmanager/data:rw"
+      # Note that the data may be held in memory and not be written to the file untill the container is shutdown.
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--web.listen-address=:{{ alertmanager_port }}'
       # This is reqired to get the linkback to the alertmanager from slack.
       - '--web.external-url={{ alertmanager_external_url }}'
       - '--log.level=debug'
+      - '--storage.path=/alertmanager/data'
     # ports:
     #   - "{{ alertmanager_port }}:{{ alertmanager_port }}" 
     restart_policy: always
