@@ -15,8 +15,8 @@ groups:
       fabric_system: time
       fabric_response: hardware
     annotations:
-      summary:  "Time is not synced on node {{ $labels.instance }}"   
-      description:  "node_timex_sync_status is 0 on {{ $labels.instance }}." 
+      summary:  "Time is not synced on node {{ $labels.instance }}, at {{ $labels.rack }}."   
+      description:  "node_timex_sync_status is 0 on {{ $labels.instance }}, at {{ $labels.rack }}." 
 
   - alert: RackNodeTimexMaxErrorTooHigh
     expr: node_timex_maxerror_seconds{job="node", component_type=~"head|worker"} > 0.001
@@ -26,8 +26,8 @@ groups:
       fabric_system: time
       fabric_response: hardware
     annotations:
-      summary:  "Timex max error exceeded on node {{ $labels.instance }}"   
-      description:  "node_timex_maxerror_seconds is > 0.001 on {{ $labels.instance }}. Indicates node is not time synced." 
+      summary:  "Timex max error exceeded on node {{ $labels.instance }}, at {{ $labels.rack }}."   
+      description:  "node_timex_maxerror_seconds is > 0.001 on {{ $labels.instance }}, at {{ $labels.rack }}. Indicates node is not time synced." 
 
   - alert: RackGPSTimeUnknown
     expr: tmiGPSTimeKnown  == 0
