@@ -21,6 +21,10 @@ prom_user_name: fab-prom
 prom_group_name: fab-prom
     
 
+docker_ipv6_subnet: fd8d:73ee:3857:1315::/64
+docker_ipv6_gateway: fd8d:73ee:3857:1315::1
+
+
 ####################
 #      Ports       #
 ####################
@@ -143,7 +147,7 @@ nginx_ip_ports:
   # localhost only - 127.0.0.1:9090:9090     # prometheus stats
   #- 9090:9090 #prometheus stats
   - "{{ hn_public_ipaddr }}:9090:9090"  #open port will be restricted by iptables to central metric
-  - "[{{ hn_public_ipaddr_ipv6 }}]:9090:9090"  # for dual stack racks
+  #- "[{{ hn_public_ipaddr_ipv6 }}]:9090:9090"  # for dual stack racks - #open port will be restricted by iptables to central metric
   #- 10922:10922   # thanos stats
   #- "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
 
