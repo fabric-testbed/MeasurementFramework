@@ -93,6 +93,13 @@ prom_group_name: fab-prom
 # In case we need to eliminate conficts
 alertmanager_port: 9093    
 
+
+
+docker_ipv6_subnet: fd8d:73ee:3857:1315::/64
+docker_ipv6_gateway: fd8d:73ee:3857:1315::1
+
+
+
 #alertmanager_external_url: https://192.168.12.238:9093
 
 ####################
