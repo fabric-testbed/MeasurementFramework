@@ -1,0 +1,18 @@
+# Docker stop script for all DEV monitoring containers
+
+#!/bin/bash
+echo "Stopping monitoring containers"
+
+docker stop {{ install_name }}_prometheus
+docker stop {{ install_name }}_grafana
+docker stop {{ install_name }}_nginx
+docker stop {{ install_name }}_alertmanager
+docker stop {{ install_name }}_blackbox
+docker stop {{ install_name }}_docker_exporter
+
+docker stop {{ install_name }}_thanos_sidecar 
+docker stop {{ install_name }}_thanos_query 
+
+docker stop {{ install_name }}_thanos_store
+
+echo "Script Done."

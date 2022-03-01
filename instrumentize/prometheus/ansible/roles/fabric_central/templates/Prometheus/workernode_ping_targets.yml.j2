@@ -18,7 +18,7 @@
         worker: gpu
         network: operations
         reason: infrastructure_check
-        status: live
+        # status: live
         
 - targets:
         - 192.168.11.12
@@ -29,7 +29,7 @@
         worker: fastnet
         network: operations
         reason: infrastructure_check
-        status: live
+        # status: live
 
 - targets:
         - 192.168.11.13
@@ -40,7 +40,7 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: live
+        # status: live
 
 # UKY
 - targets:
@@ -52,7 +52,7 @@
         worker: gpu
         network: operations
         reason: infrastructure_check
-        status: live
+        # status: live
 
 - targets:
         - 192.168.12.12
@@ -63,7 +63,7 @@
         worker: fastnet
         network: operations
         reason: infrastructure_check
-        status: live
+        # status: live
 
 - targets:
         - 192.168.12.13
@@ -74,7 +74,7 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: live
+        # status: live
 
 # LBNL      
 - targets:
@@ -86,7 +86,7 @@
         worker: gpu
         network: operations
         reason: infrastructure_check
-        status: live
+        # status: live
 
 - targets:
         - 192.168.13.12
@@ -97,7 +97,7 @@
         worker: fastnet
         network: operations
         reason: infrastructure_check
-        status: live
+        # status: live
 
 - targets:
         - 192.168.13.13
@@ -108,7 +108,7 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: live
+        # status: live
 
 # STAR
 - targets:
@@ -120,7 +120,7 @@
         worker: gpu
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 
 - targets:
@@ -132,7 +132,7 @@
         worker: gpu
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.14.13
@@ -143,7 +143,7 @@
         worker: fastnet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.14.14
@@ -154,7 +154,7 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.14.15
@@ -165,7 +165,7 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.14.16
@@ -176,7 +176,7 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
       
 # MAX
 - targets:
@@ -188,7 +188,7 @@
         worker: gpu
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.15.12
@@ -199,7 +199,7 @@
         worker: gpu
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.15.13
@@ -210,7 +210,7 @@
         worker: fastnet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.15.14
@@ -221,7 +221,7 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.15.15
@@ -232,7 +232,7 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 # TACC
 - targets:
@@ -244,7 +244,7 @@
         worker: gpu
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.16.12
@@ -255,7 +255,7 @@
         worker: gpu
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.16.13
@@ -266,7 +266,7 @@
         worker: fastnet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.16.14
@@ -277,7 +277,7 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.16.15
@@ -288,7 +288,87 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
+
+
+
+#17 mich 
+
+ # MICH
+- targets:
+        - 192.168.17.11
+  labels:
+        subdomain: mich-w1
+        hank: mich
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.17.12
+  labels:
+        subdomain: mich-w2
+        hank: mich
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.17.13
+  labels:
+        subdomain: mich-w3
+        hank: mich
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+
+
+
+#18 mass
+
+ # MASS
+- targets:
+        - 192.168.18.11
+  labels:
+        subdomain: mass-w1
+        hank: mass
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.18.12
+  labels:
+        subdomain: mass-w2
+        hank: mass
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.18.13
+  labels:
+        subdomain: mass-w3
+        hank: mass
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+
+
 
 # UTAH
 - targets:
@@ -300,7 +380,7 @@
         worker: gpu
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.19.12
@@ -311,7 +391,7 @@
         worker: gpu
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.19.13
@@ -322,7 +402,7 @@
         worker: fastnet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.19.14
@@ -333,7 +413,7 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.19.15
@@ -344,7 +424,7 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 
 # NCSA
@@ -357,7 +437,7 @@
         worker: gpu
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.20.12
@@ -368,7 +448,7 @@
         worker: fastnet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
 
 - targets:
         - 192.168.20.13
@@ -379,4 +459,121 @@
         worker: slownet
         network: operations
         reason: infrastructure_check
-        status: building
+        # status: building
+
+
+# 21 
+
+# WASH
+- targets:
+        - 192.168.21.11
+  labels:
+        subdomain: wash-w1
+        hank: wash
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.21.12
+  labels:
+        subdomain: wash-w2
+        hank: wash
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.21.13
+  labels:
+        subdomain: wash-w3
+        hank: wash
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+
+
+
+
+
+
+# 22 
+
+
+# DALL
+- targets:
+        - 192.168.22.11
+  labels:
+        subdomain: dall-w1
+        hank: dall
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.22.12
+  labels:
+        subdomain: dall-w2
+        hank: dall
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.22.13
+  labels:
+        subdomain: dall-w3
+        hank: dall
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+
+
+# 23 salt 
+ # SALT
+- targets:
+        - 192.168.23.11
+  labels:
+        subdomain: salt-w1
+        hank: salt
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.23.12
+  labels:
+        subdomain: salt-w2
+        hank: salt
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.23.13
+  labels:
+        subdomain: salt-w3
+        hank: salt
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building

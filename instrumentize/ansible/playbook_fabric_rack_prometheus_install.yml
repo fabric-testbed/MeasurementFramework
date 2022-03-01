@@ -3,6 +3,11 @@
 - hosts: "{{ rack_to_install | default(omit) }}"
 
 
+  pre_tasks:
+    - name: vars test 
+      debug:
+        msg: "{{ nginx_ip_ports }}" 
+
   roles:
     - ../prometheus/ansible/roles/fabric_rack
 

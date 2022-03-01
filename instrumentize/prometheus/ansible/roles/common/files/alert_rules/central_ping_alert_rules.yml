@@ -23,7 +23,7 @@ groups:
     for: 5m
     labels: 
       severity: error 
-      fabric_system: headnode
+      fabric_system: workernode
       fabric_response: system
     annotations: 
       summary: "Ping check, central metrics to worker node {{ $labels.subdomain }} on operations network ip {{ $labels.subdomain }} failed."

@@ -1,0 +1,18 @@
+# Docker start script for all DEV monitoring containers
+
+#!/bin/bash
+echo "Starting monitoring containers"
+
+docker start {{ install_name }}_prometheus
+docker start {{ install_name }}_grafana
+docker start {{ install_name }}_nginx
+docker start {{ install_name }}_alertmanager
+docker start {{ install_name }}_blackbox
+docker start {{ install_name }}_docker_exporter
+
+docker start {{ install_name }}_thanos_sidecar 
+docker start {{ install_name }}_thanos_query 
+
+docker start {{ install_name }}_thanos_store
+
+echo "Script Done."

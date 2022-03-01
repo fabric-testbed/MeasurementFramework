@@ -21,6 +21,10 @@ prom_user_name: fab-prom
 prom_group_name: fab-prom
     
 
+docker_ipv6_subnet: fd8d:73ee:3857:1315::/64
+docker_ipv6_gateway: fd8d:73ee:3857:1315::1
+
+
 ####################
 #      Ports       #
 ####################
@@ -140,19 +144,24 @@ nginx_ip_ports:
   # Note Each port will correspond to a confd file set above.
   #- 80:80         # Redirected to 443
   #- 443:443       # /grafana for grafana interface
-  - 127.0.0.1:9090:9090     # prometheus stats
+  # localhost only - 127.0.0.1:9090:9090     # prometheus stats
+  #- 9090:9090 #prometheus stats
+  - "{{ hn_public_ipaddr }}:9090:9090"  #open port will be restricted by iptables to central metric
+  #- "[{{ hn_public_ipaddr_ipv6 }}]:9090:9090"  # for dual stack racks - #open port will be restricted by iptables to central metric
   #- 10922:10922   # thanos stats
   #- "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
+
+
 
 nginx_template_dir: templates/Nginx
 
 nginx_server_confd_template_files: 
-  #- prometheus.conf
-  - prometheus_localhost.conf
-  #- global_welcome.conf
-  #- alertmanager.conf
-  #- thanos.conf
-  #- grafana.conf
+  
+  # for private setup
+  #- prometheus_localhost.conf
+  # For dual stack racks
+  - prometheus_dual_public.conf
+
 
 nginx_config_template_files:
   - ssl_snippet.conf

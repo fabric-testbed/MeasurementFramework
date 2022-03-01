@@ -85,13 +85,19 @@ add_python_docker_sdk: no
 
 prom_user_name: fab-prom
 prom_group_name: fab-prom
-    
+
 
 ####################
 #      Ports       #
 ####################
 # In case we need to eliminate conficts
 alertmanager_port: 9093    
+
+
+
+docker_ipv6_subnet: fd8d:73ee:3857:1315::/64
+docker_ipv6_gateway: fd8d:73ee:3857:1315::1
+
 
 
 #alertmanager_external_url: https://192.168.12.238:9093
@@ -108,6 +114,7 @@ prometheus_config_template_files:
   # blackbox targets
   - fabric_dns_targets.yml
   - fabric_http_targets.yml
+  - fabric_beta_http_targets.yml
   - fabric_smtp_targets.yml
   - fabric_tcp_targets.yml
   # needed? - fabric_ping_targets.yml
@@ -289,11 +296,18 @@ nginx_ip_ports:
 nginx_template_dir: templates/Nginx
 
 nginx_server_confd_template_files: 
-  - prometheus.conf
-  #- central_welcome.conf
-  - alertmanager.conf
+  - prometheus_dual.conf
+  - alertmanager_dual.conf
   - thanos.conf
-  - grafana.conf
+  - grafana_dual.conf
+
+  
+  
+  # - prometheus.conf
+  # #- central_welcome.conf
+  # - alertmanager.conf
+  # - thanos.conf
+  # - grafana.conf
 
 nginx_config_template_files:
   - ssl_snippet.conf
