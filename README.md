@@ -34,9 +34,14 @@ The repository is divided in to 2 sections: instrumentize and user_services.
 ## MeasurementFramework Branches
 
 Merging to branches matching rc* is restricted to our admins. These are release candidate branches that will be merged in to main.   
-Merging to the Main branch is restricted to our admins. Anything that is merged into the main branch must be tested and non-breaking. Merges in to main brach should always have a version tag.   
-There is a dev-elk and a dev-prom branch for merging features developed for those systems. Merging to theses branches is also restricted to admins.  
+Merging to the Main branch is restricted to our admins. Anything that is merged into the main branch must be tested and non-breaking. Merges into main brach should always have a version tag.   
+There is a dev, dev-elk and a dev-prom branch for merging features developed for those systems. Merging to theses branches is also restricted to admins. The branches should appear similar to this: 
 
+```text
+                         | <-- dev-elk  <-- features
+main <-- rc* <-- dev <-- |
+                         | <-- dev-prom <-- features
+```                     
 Create a new brach when developing a new feature.
 
 
