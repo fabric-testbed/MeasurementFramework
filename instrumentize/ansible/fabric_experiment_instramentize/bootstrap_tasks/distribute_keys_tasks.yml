@@ -1,0 +1,74 @@
+---
+# Sets up keys for ansible on all nodes in hosts file.
+# Puts privagte key on Measurement Node
+
+
+# Create temporary SSH key pair for ansible
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: generate SSH key
+      openssh_keypair:
+        path: ~/.ssh/ansible
+        type: rsa
+        size: 2048
+        state: present
+        # force: yes # Recreate key
+        force: no # Reuse key
+
+
+- hosts: all
+  become: true
+  tasks:
+    # Create ansible user on remote hosts
+    - name: Create ansible user
+      user:
+        name: ansible
+        group: root
+        shell: /bin/bash
+
+    # Add ssh public key to remote hosts
+    - name: Add public ssh key for ansible user
+      authorized_key:
+        user: ansible
+        key: "{{ lookup('file', '~/.ssh/ansible.pub') }}"
+        state: present
+
+    # Make ansible account sudo
+    - name: Add sudoers file for ansible
+      copy:
+        src: sudoer_ansible
+        dest: /etc/sudoers.d/ansible
+        owner: root
+        group: root
+        mode: 0440
+
+    - name: Installing packages for CentOs 8 Machines only
+      become: true
+      tags: packages
+      ansible.builtin.package:
+        name:
+          - epel-release
+        state: present
+        update_cache: yes
+      when:
+          - ansible_facts['distribution'] == "CentOS"
+          - ansible_facts['distribution_major_version'] == "8"
+      # This release is needed further on for the rest of the
+      # play to work.
+
+       # changed from  Measurement_Node
+       # so that the calls could be made
+
+       
+- hosts: Measurement_Node
+  tasks:
+    # Copy private ssh key to Measurement node only
+    - name: Copy created private ssh key to Measurement node
+      become: true
+      copy:
+        src: ~/.ssh/ansible
+        dest: /home/ansible/.ssh/ansible
+        owner: ansible
+        mode: 0600
+

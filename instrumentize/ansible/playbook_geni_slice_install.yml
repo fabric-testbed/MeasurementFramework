@@ -1,0 +1,35 @@
+---
+# Creating the rack monitoring setup.
+- hosts: monitor
+  
+  roles:
+    - ../prometheus/ansible/roles/geni
+  tags:
+    - monitor
+  #vars_files:  use --extra-var "@your var file name"
+
+  vars:
+    add_docker: yes
+    add_python_docker_sdk: yes
+    add_node_exporter: no
+    add_monitor: yes
+   
+
+
+
+# Note for machine running ansible you must have installed
+#  passlib with the bcrypt option
+#  pip install passlib[bcrypt]
+- hosts: nodes
+
+  roles:
+    - ../prometheus/ansible/roles/geni
+  tags: 
+    - exporters
+  #vars_files:  use --extra-var "@your var file name"
+
+  vars:
+    add_docker: yes
+    add_python_docker_sdk: yes
+    add_node_exporter: yes
+   

@@ -1,0 +1,20 @@
+[server]
+domain = {{ hostname }}
+#root_url = https://%(domain)s
+# version if using grafana as root 
+root_url = https://%(domain)s/grafana
+
+[security]
+# For getting graphs into jupyter notebook
+allow_embedding = true
+
+
+[auth.anonymous]
+enabled = true
+
+[auth.basic]
+enabled = false
+
+
+[log]
+#level = debug

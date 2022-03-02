@@ -1,0 +1,23 @@
+---
+# Start-stop SNMP Exporter container
+- name: Control SNMP Exporter Docker Container
+  become: yes 
+  community.docker.docker_container:
+    state: "{{ snmp_state }}"
+    name: "{{ install_name }}_snmp"
+    network_mode: "{{ docker_network_name }}"
+    image: prom/snmp-exporter
+    #user: 0:0
+    volumes:      
+        # Add generated snmp.yml file. 
+        # See https://github.com/prometheus/snmp_exporter/tree/master/generator for generation details.
+        - "{{ base_install_dir }}/snmp/config/snmp.yml:/etc/snmp/snmp.yml"
+    
+    container_default_behavior: no_defaults
+    log_driver: json-file
+    log_options:
+      max-size: 1024m
+
+    command:
+      - --config.file="/etc/snmp/snmp.yml"
+    restart_policy: always
