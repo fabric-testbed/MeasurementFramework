@@ -50,6 +50,12 @@ SendInterval= <sec (float)>
 }
 
 ```
+## how to run the docker container (WIP)
+```
+docker run -dp 5005:5005 -v "$(pwd):/owl_app" --network="host"  --privileged owl-app owl.conf
+```
+still needs debugging.
+
 ## How to run quick tests
 ### 1-node test (preferrably with multiple interfaces)
 
