@@ -77,16 +77,7 @@
 
 # need to add uky_incommon_root_intermdiate.pem file to the created intermediate cert!!!!!!TODO!!!!!!!!!!!
 
-####################
-#  DOCKER NETWORK  #
-####################
-# note that taking down the network may affect other containers added by other scripts 
-- name: Takedown the docker network to be used by the monitoring containers.
-  include_tasks: takedown_tasks/remove_docker_network_tasks.yml
 
-
-- name: Setup the docker network to be used by the monitoring containers.
-  include_tasks: setup_tasks/setup_docker_dual_network_tasks.yml
 
 ####################
 # Remove all previous monitoring docker containers #
@@ -106,8 +97,22 @@
       - thanos_query 
       - thanos_compact
       - thanos_store
+      #- loki
+
+####################
+#  DOCKER NETWORK  #
+####################
+# note that taking down the network may affect other containers added by other scripts 
+- name: Takedown the docker network to be used by the monitoring containers.
+  include_tasks: takedown_tasks/remove_docker_network_tasks.yml
 
 
+# - name: Setup the docker network to be used by the monitoring containers.
+#   include_tasks: setup_tasks/setup_docker_dual_network_tasks.yml
+
+# IPV4 onky test
+- name: Setup the docker network to be used by the monitoring containers.
+  include_tasks: setup_tasks/setup_docker_network_tasks.yml
 
 
 ####################
@@ -121,9 +126,9 @@
     owner: "{{ prom_user_name }}"
     group: "{{ prom_group_name }}"
   become: yes
-  when: 
-    - dev_site is defined
-    - dev_site
+  # when: 
+  #   - dev_site is defined
+  #   - dev_site
 
 
 - name: Add restart script 
@@ -133,9 +138,23 @@
     owner: "{{ prom_user_name }}"
     group: "{{ prom_group_name }}"
   become: yes
-  when: 
-    - dev_site is defined
-    - dev_site
+  # when: 
+  #   - dev_site is defined
+  #   - dev_site
+
+
+# LOKI Testing
+
+- name: Loki Setup 
+  block: 
+  - name: Loki Dirs 
+    include_tasks: Loki/setup_loki_directories_tasks.yml
+  - name: Loki 
+    include_tasks: Loki/default_loki_config_tasks.yml  
+  - name: Loki container 
+    include_tasks: Loki/loki_container_tasks.yml
+  become: yes
+  when: no
 
 
 ####################
