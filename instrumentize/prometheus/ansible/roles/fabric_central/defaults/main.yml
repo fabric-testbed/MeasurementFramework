@@ -102,6 +102,15 @@ docker_ipv6_gateway: fd8d:73ee:3857:1315::1
 
 #alertmanager_external_url: https://192.168.12.238:9093
 
+
+
+
+# LOKI Testing
+loki_state: started 
+loki_templates_dir: templates/Loki
+
+
+
 ####################
 #    Prometheus    #
 ####################
@@ -299,8 +308,8 @@ nginx_server_confd_template_files:
   - prometheus_dual.conf
   - alertmanager_dual.conf
   - thanos.conf
-  - grafana_dual.conf
-
+  #- grafana_dual.conf
+  - grafana_dual_web_sockets.conf
   
   
   # - prometheus.conf

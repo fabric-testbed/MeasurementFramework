@@ -107,12 +107,12 @@
   include_tasks: takedown_tasks/remove_docker_network_tasks.yml
 
 
-# - name: Setup the docker network to be used by the monitoring containers.
-#   include_tasks: setup_tasks/setup_docker_dual_network_tasks.yml
-
-# IPV4 onky test
 - name: Setup the docker network to be used by the monitoring containers.
-  include_tasks: setup_tasks/setup_docker_network_tasks.yml
+  include_tasks: setup_tasks/setup_docker_dual_network_tasks.yml
+
+# # IPV4 onky test
+# - name: Setup the docker network to be used by the monitoring containers.
+#   include_tasks: setup_tasks/setup_docker_network_tasks.yml
 
 
 ####################
@@ -145,16 +145,16 @@
 
 # LOKI Testing
 
-- name: Loki Setup 
-  block: 
-  - name: Loki Dirs 
-    include_tasks: Loki/setup_loki_directories_tasks.yml
-  - name: Loki 
-    include_tasks: Loki/default_loki_config_tasks.yml  
-  - name: Loki container 
-    include_tasks: Loki/loki_container_tasks.yml
-  become: yes
-  when: no
+# - name: Loki Setup 
+#   block: 
+#   - name: Loki Dirs 
+#     include_tasks: Loki/setup_loki_directories_tasks.yml
+#   - name: Loki 
+#     include_tasks: Loki/default_loki_config_tasks.yml  
+#   - name: Loki container 
+#     include_tasks: Loki/loki_container_tasks.yml
+#   become: yes
+#   when: no
 
 
 ####################
