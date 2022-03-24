@@ -7,6 +7,7 @@
 # Empty value to be filled in later as needed.
 extra_node_hosts: {}
 thanos_extra_node_hosts: {}
+grafana_extra_node_hosts: {}
 
 # Some values commented out here will have to be added by the user when calling the role.
 # Otherwise the role will not run.
