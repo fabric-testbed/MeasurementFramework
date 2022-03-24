@@ -163,6 +163,46 @@ scrape_configs:
       - targets: 
         - '{{ install_name }}_alertmanager:{{ alertmanager_port }}'
 
+#########################################
+#          Thanos Exporters             #
+#########################################
+
+# need to relabel to clairify source?
+# Sidecar
+  - job_name: 'thanos_sidecar'
+    scheme: http 
+    static_configs:
+      - targets:
+        - '{{ install_name }}_thanos_sidecar:10902'
+
+# Store 
+  - job_name: 'thanos_store'
+    scheme: http 
+    static_configs:
+      - targets:
+        - '{{ install_name }}_thanos_store:10912'
+
+# Query
+  - job_name: 'thanos_query'
+    scheme: http 
+    static_configs:
+      - targets:
+        - '{{ install_name }}_thanos_query:10922'
+
+# Compact
+#  - job_name: 'thanos_compact'
+#    scheme: http 
+#    static_configs:
+#      - targets:
+#        - '{{ install_name }}_thanos_compact:10902'
+
+#
+
+
+#########################################
+#       end Thanos Exporters            #
+#########################################
+
 
 # Node Exporter 
   - job_name: 'node'
