@@ -137,7 +137,7 @@ prometheus_config_template_files:
   - central_node_targets.yml
 
   # other exporters such as kafka, openstack, jupyter
-  # TODO wherer?
+  # TODO where?
 
   # alertmanager rules
   #- test_alerts.yml
@@ -299,6 +299,7 @@ nginx_ip_ports:
   # Note Each port will correspond to a confd file set above.
   #- 80:80         # Redirected to 443
   - 443:443       # /grafana for grafana interface
+  - "[::]:443:443"
   - 9090:9090     # prometheus stats
   - 10922:10922   # thanos stats
   - "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
