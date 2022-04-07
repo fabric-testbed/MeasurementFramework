@@ -48,6 +48,15 @@ scrape_configs:
     static_configs:
             - targets: ['jupyter.fabric-testbed.net']
 
+  - job_name: 'jupyterhub-beta'
+    bearer_token_file: /etc/prometheus/secrets/jupyterhub_beta
+    scheme: https
+    metrics_path: '/hub/metrics'
+    tls_config:
+            insecure_skip_verify: true
+    static_configs:
+            - targets: ['jupyter-beta.fabric-testbed.net']
+
 # Kafka 
 # Note that these are servers that connect to kafka to get metrics, not the actual kafka servers.
   - job_name: 'mf-kafka'
