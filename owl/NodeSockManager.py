@@ -27,6 +27,7 @@ class NodeSockManager():
         self.udp_port = int(config['GENERAL']['UdpPort'])
         self.pcap_interval = int(config['receiver']['PcapInterval'])
         self.send_interval = float(config['sender']['SendInterval'])
+        self.output_dir = config['receiver']['OutputDir']
 
         self.sender_instances = {}
         self.listen_instance = None
@@ -98,7 +99,7 @@ class NodeSockManager():
                     listener = "UP"
 
         except FileNotFoundError:
-            print(f"No service request file ({self.service_request}) found.")
+            print(f"No service request file {self.service_request} found.")
             # Will return DOWN for receiver status, an empty list for dests
 
         finally:
@@ -119,7 +120,7 @@ class NodeSockManager():
             if self.listen_instance is None: # need to start 
                 print("starting tcpdump")
                 self.listen_instance = capturer.TcpdumpOps(
-                                            self.udp_port, self.pcap_interval)
+                                            self.udp_port, self.pcap_interval, self.output_dir)
                 self.listen_instance.start()
             else:
                 # let the current tcpdump instance keep going
