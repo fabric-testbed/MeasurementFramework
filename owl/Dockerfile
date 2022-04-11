@@ -5,19 +5,23 @@ EXPOSE 5005
 
 RUN apt-get update && apt-get install -y \
 	tcpdump \
+        git \
 	&& rm -rf /var/lib/apt/lists/*
 
+RUN git clone --branch owl  https://github.com/fabric-testbed/MeasurementFramework.git
+RUN mkdir /owl_data
+RUN mkdir /owl_config
 
-RUN mkdir -p /owl_app/data
-RUN mkdir -p /owl_app/config
 
-WORKDIR /owl_app
+WORKDIR MeasurementFramework/owl
 #COPY requirements.txt requirements.txt
 #RUN pip3 install -r requirements.txt
 
+# For debugging
+RUN ls -lh *
+RUN ls -lh /
+#RUN cat NodeSockManager.py
+#RUN cat sock_ops/udp_capturer.py
 
-COPY ./NodeSockManager.py .
-COPY ./sock_ops/.  ./sock_ops/ 
-RUN ls -l 
 
 ENTRYPOINT [ "python3", "NodeSockManager.py" ] 
