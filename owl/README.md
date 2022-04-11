@@ -9,7 +9,7 @@ ServiceRequestFile = <service request file>.json
 
 [receiver]
 PcapInterval = <sec (int)>
-
+Output_Dir = <path/to/dir/for/pcap/files> (no trailing '/')
 [sender]
 SendInterval= <sec (float)>
 ```
@@ -56,39 +56,8 @@ docker run -dp 5005:5005 -v "$(pwd):/owl_app" --network="host"  --privileged owl
 ```
 still needs debugging.
 
-## How to run quick tests
-### 1-node test (preferrably with multiple interfaces)
 
-#### Terminal window 1
-1. Run Tcpdump to obvserve outgoing packets
-```
-sudo tcpdump -i any -Q out dst port 5005
-```
-
-#### Terminal window 2
-1. While NodeManger is running, edit and save the json file.
-```
-mv owl_service_requst.json  owl_service_request.json.original
-vim owl_service_request.json
-# edit and save
-```
-
-#### Terminal window 3
-1. Run NodeManager alone or inside Python (needs to be root)
-```
-$ python3
-> import NodeManger as manager
-> n = manager.NodeManager()
-> n.start()
-   # Do whatever is needed (observe, change the json file)
-> n.stop()
-```
-2. Check the pcapfile.
-```
-sudo tcpdump -ttnnr <file>.pcap
-```
-
-## Tcpdump command
+## Useful Tcpdump command
 ```
 $ sudo tcpdump -vfn -XX -tt  -i eth1 port 5005
 tcpdump: listening on eth1, link-type EN10MB (Ethernet), capture size 262144 bytes
