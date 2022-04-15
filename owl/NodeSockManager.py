@@ -152,11 +152,15 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('conf', type=str, help='path to config file')
+    parser.add_argument('--duration', type=int, help='number of seconds to run')
     args = parser.parse_args()
 
     manager = NodeSockManager(args.conf)
-    time.sleep(60)
-    manager.stop()
-    print("finished")
-    exit(0)
+
+    if args.duration:
+    # Stop the program at a certain interval only if the arg is given.
+        time.sleep(args.duration)
+        manager.stop()
+        print("finished")
+        exit(0)
 
