@@ -107,6 +107,10 @@
     include_tasks: Prometheus/add_alert_rules.yml
     # See vars for files used
 
+  - name: Prometheus Recording Rules
+    include_tasks: Prometheus/add_recording_rules.yml
+    # See vars for files used
+
   - name: Setup Promtheus Config Files
     include_tasks: Prometheus/add_prometheus_config_files.yml
 

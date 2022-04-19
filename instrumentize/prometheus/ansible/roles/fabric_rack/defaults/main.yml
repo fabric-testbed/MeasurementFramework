@@ -54,7 +54,7 @@ prometheus_config_template_files:
 # This was formerly used to copy alert_rules.
 prometheus_config_files: []
 
-
+ 
 alert_rule_file_dir: files/alert_rules
 
 # Default alert rules for a rack
@@ -70,6 +70,13 @@ alert_rule_files:
   # vpn ping only needed on uky/renc racks but do no harm if on others
   - vpn_ping_alert_rules.yml
  # - web_site_alert_rules.yml
+
+
+recording_rule_file_dir: files/recording_rules
+
+# Default recording rules for a rack
+recording_rule_files:
+  - isis_rules.yml
 
 
 ####################
