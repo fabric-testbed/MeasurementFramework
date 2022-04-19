@@ -1,0 +1,21 @@
+---
+# Start-stop Redfish Exporter container
+- name: Control Redfish Exporter Docker Container
+  become: yes 
+  community.docker.docker_container:
+    state: "{{ redfish_state }}"
+    name: "{{ install_name }}_redfish"
+    network_mode: "{{ docker_network_name }}"
+    image: docker.io/fabrictestbed/redfish_exporter:0.11.0
+
+    #user: 0:0
+    volumes:      
+        # Add config file. 
+        - "{{ base_install_dir }}/redfish/config/config.yml:/etc/prometheus/redfish_exporter.yml"
+    
+    container_default_behavior: no_defaults
+    log_driver: json-file
+    log_options:
+      max-size: 1024m
+
+    restart_policy: always

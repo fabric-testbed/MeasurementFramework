@@ -77,6 +77,21 @@ scrape_configs:
       - files:
             - '*_node_targets.yml'
 
+# Redfish Exporter 
+  - job_name: 'redfish'
+    metrics_path: /redfish
+
+    static_configs:
+    - targets: 
+      - {{ redfish_ip }}
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: '{{ install_name }}_redfish:9610'
+
  # PTP Server Web UI
   - job_name: 'ptp_server_ui'
     metrics_path: /probe

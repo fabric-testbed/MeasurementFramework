@@ -25,6 +25,11 @@ docker_ipv6_subnet: fd8d:73ee:3857:1315::/64
 docker_ipv6_gateway: fd8d:73ee:3857:1315::1
 
 
+redfish_ip: "192.168.{{ hank_id }}.100"
+redfish_templates_dir: templates/Redfish 
+redfish_config_template_files:
+  - config.yml
+
 ####################
 #      Ports       #
 ####################
@@ -97,6 +102,7 @@ docker_exporter_state: started
 prometheus_state: started
 nginx_state: started
 thanos_sidecar_state: started
+redfish_state: started
 
 ####################
 #   Alertmanager   #

@@ -51,6 +51,7 @@
       - blackbox
       - docker_exporter
       - snmp
+      - redfish
 
 
 ####################
@@ -153,6 +154,28 @@
 #       vars:
 #         alertmanager_template_dir: templates/geni_slice
 #         alertmanager_state: started
+
+
+
+####################
+# REDFISH EXPORTER #
+####################
+
+# create dir + config file 
+# start container
+# also needs srcarp config in prometheus
+- name: Setup Redfish Exporter 
+  block:
+    - name: Redfish Directories 
+      include_tasks: Redfish/setup_redfish_directories_tasks.yml
+    
+    - name: Redfish Exporter Config 
+      include_tasks: Redfish/add_redfish_config_templates_tasks.yml
+
+    - name: Redfish Container 
+      include_tasks: Redfish/redfish_exporter_container_tasks.yml
+
+
 
 ####################
 # SNMP EXPORTER    #
