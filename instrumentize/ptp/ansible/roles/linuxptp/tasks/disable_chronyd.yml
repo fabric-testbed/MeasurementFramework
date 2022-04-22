@@ -1,0 +1,6 @@
+---
+- name: Stop and Disable Chronyd
+  systemd:
+    state: stopped
+    enabled: no
+    name: chronyd

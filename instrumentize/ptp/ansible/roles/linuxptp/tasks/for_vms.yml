@@ -1,0 +1,65 @@
+---
+
+- block:
+  - name: Check if ptp4l is installed
+    shell: /usr/sbin/ptp4l -v
+    register: ptp4l_version
+    ignore_errors: True
+
+  - block:
+    - include: package_dependency_install.yml
+      when: (ptp4l_version.stdout == '')
+    - include: linuxptp_fetch_n_install.yml
+    when: (ptp4l_version.stdout == '') or ( ptp4l_version.stdout != (PTP_PACKAGE_TAG | replace('v','')) )
+
+  - include: disable_chronyd.yml
+
+  - include: generate_ptpconf_tail.yml
+
+  - name: Modprobe ptp_kvm
+    modprobe:
+      name: ptp_kvm
+      state: present
+
+  - name: Ansible modprobe file for ptp_kvm
+    copy:
+      dest: "/etc/modules-load.d/ptp_kvm.conf"
+      content: |
+        ptp_kvm
+
+  - name: Remove old service files
+    shell: rm -rf /lib/systemd/system/phc2sys-*.service
+
+  - name: Template phc2sys for PTP Capable Interfaces in KVM
+    template:
+      src: templates/phc2sys.service.kvm.j2
+      dest: /lib/systemd/system/phc2sys@.service
+      owner: root
+      group: root
+    
+  - blockinfile:
+      path: "/etc/logrotate.d/{{ item.path }}"
+      block: "{{ item.conf }}"
+      create: true
+    loop: "{{ lp_logrotate_confd }}"
+
+  - blockinfile:
+      path: "/etc/rsyslog.d/{{ item.path }}.conf"
+      block: "{{ item.conf }}"
+      create: true
+    loop: "{{ lp_rsyslog_confd }}"
+
+  - name: Re-read systemd services
+    systemd:
+      daemon_reload: yes
+
+  - name: Start Syslog Services
+    systemd:
+      state: restarted
+      enabled: yes
+      name: "{{ item }}.service"
+    with_items:
+      - "rsyslog"
+ 
+  tags: linuxptp
+

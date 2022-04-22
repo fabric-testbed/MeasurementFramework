@@ -1,0 +1,33 @@
+---
+- block:
+  - include: for_vms.yml
+    become: True
+  tags: ptp_install
+
+
+- block:
+  - name: Stop phc2sys service for PTP Capable Interfaces
+    systemd:
+      state: stopped
+      enabled: no
+      name: phc2sys@{{ IFACE }}.service
+    loop: "{{ IFACES.stdout_lines + [ 'CLOCK_REALTIME' ] }}"
+    loop_control:
+      loop_var: IFACE
+    when: (IFACE | trim) != ''
+    ignore_errors: True
+  tags: ptp_stop
+
+
+- block:
+  - name: Start phc2sys service for PTP Capable Interfaces
+    systemd:
+      state: restarted
+      enabled: yes
+      name: phc2sys@{{ IFACE }}.service
+    loop: "{{ IFACES.stdout_lines + [ 'CLOCK_REALTIME' ] }}"
+    loop_control:
+      loop_var: IFACE
+    when: (IFACE | trim) != ''
+    ignore_errors: True
+  tags: ptp_start

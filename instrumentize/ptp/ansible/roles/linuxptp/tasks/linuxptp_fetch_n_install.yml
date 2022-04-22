@@ -1,0 +1,22 @@
+---
+- name: Clone the linuxptp repository.
+  git:
+    repo: "{{ PTP_REPO_URL }}"
+    dest: /tmp/{{ PTP_PACKAGE_NAME }}-{{ PTP_PACKAGE_TAG }}
+    version: "{{ PTP_PACKAGE_TAG }}"
+    accept_hostkey: yes
+    #depth: 1
+
+- name: Run 'make clean' target as root
+  become: True
+  make:
+    chdir: /tmp/{{ PTP_PACKAGE_NAME }}-{{ PTP_PACKAGE_TAG }}
+    target: clean
+
+- name: Run 'make install' target as root
+  become: True
+  make:
+    chdir: /tmp/{{ PTP_PACKAGE_NAME }}-{{ PTP_PACKAGE_TAG }}
+    target: install
+    params:
+      prefix: '/usr'
