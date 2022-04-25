@@ -1,5 +1,15 @@
 ---
 - block:
+  - include: find_ptp_interfaces.yml
+    loop: "{{ ansible_interfaces }}"
+    loop_control:
+      loop_var: IFACE
+    become: True
+  tags:
+    - ptp_start
+    - ptp_stop
+
+- block:
   - include: for_vms.yml
     become: True
   tags: ptp_install
@@ -10,12 +20,12 @@
     systemd:
       state: stopped
       enabled: no
-      name: phc2sys@{{ IFACE }}.service
-    loop: "{{ IFACES.stdout_lines + [ 'CLOCK_REALTIME' ] }}"
+      name: phc2sys@{{ PTP_IFACE }}.service
+    loop: "{{ PTP_IFACES + [ 'CLOCK_REALTIME' ] }}"
     loop_control:
-      loop_var: IFACE
-    when: (IFACE | trim) != ''
+      loop_var: PTP_IFACE
     ignore_errors: True
+    become: True
   tags: ptp_stop
 
 
@@ -24,10 +34,10 @@
     systemd:
       state: restarted
       enabled: yes
-      name: phc2sys@{{ IFACE }}.service
-    loop: "{{ IFACES.stdout_lines + [ 'CLOCK_REALTIME' ] }}"
+      name: phc2sys@{{ PTP_IFACE }}.service
+    loop: "{{ PTP_IFACES + [ 'CLOCK_REALTIME' ] }}"
     loop_control:
-      loop_var: IFACE
-    when: (IFACE | trim) != ''
+      loop_var: PTP_IFACE
     ignore_errors: True
+    become: True
   tags: ptp_start

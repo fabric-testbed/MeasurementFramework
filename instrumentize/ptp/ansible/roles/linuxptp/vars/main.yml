@@ -3,8 +3,10 @@
 #chrony_conf: "{{ '/etc/chrony/chrony.conf' if ansible_os_family == 'Debian' else '/etc/chrony.conf' }}"
 #chrony_conf: '/etc/chrony.conf'
 PTP_REPO_URL: 'http://git.code.sf.net/p/linuxptp/code'
+PTP_SOURCE_URL: 'http://archive.ubuntu.com/ubuntu/pool/universe/l/linuxptp/linuxptp_3.1.1.orig.tar.gz'
 PTP_PACKAGE_NAME: 'linuxptp'
-PTP_PACKAGE_TAG: 'v3.1.1'
+PTP_PACKAGE_VERSION: '3.1.1'
+PTP_PACKAGE_TAG: "{{ 'v' + PTP_PACKAGE_VERSION }}"
 ALL_NICS: False
 MANAGEMENT_IP_FOR_PTP: "{{ ansible_host }}"
 time_server_IP: "{{ hostvars[ hank_name + '-time']['ansible_host'] }}"
@@ -45,4 +47,4 @@ lp_rsyslog_confd:
         & stop
 
 # This value(in seconds) is applied as a power of 2  for ptp4l logging interval
-logging_summary_interval : 3 
+logging_summary_interval : 3
