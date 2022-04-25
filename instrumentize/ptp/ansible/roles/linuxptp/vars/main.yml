@@ -48,3 +48,4 @@ lp_rsyslog_confd:
 
 # This value(in seconds) is applied as a power of 2  for ptp4l logging interval
 logging_summary_interval : 3
+
