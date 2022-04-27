@@ -17,6 +17,9 @@ if __name__ == "__main__":
     
     # src_dir is the path to the folder containing the files for controlling the service from mflib.
     # In this simple case all the files are in one folder. 
-    src_dir = "../../../user_services/overview/service_commands"
+    # Get the realtive dir to this file.
+    service_name = "overview"
+    this_script_dir = os.path.dirname(os.path.realpath(__file__))
+    src_dir = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, "service_commands")
     print(f"Copying files and subfolders from {src_dir} to {args.service_dir}")
     copy_files(src_dir, args.service_dir)
