@@ -44,10 +44,12 @@ def make_service_dir(base_service_dir, service_name):
 def run_service_scripts(base_service_dir):
     # Run service scripts & create service directory for each.
 
-    os.chdir("service_scripts")
-    print(os.getcwd())
+    #os.chdir("service_scripts")
+    #print(os.getcwd())
     # Run Python scripts
-    for file in glob.glob("*.py"):
+     
+    glob_txt = os.path.join(os.path.expanduser("~"), "mf_git", "instrumentize", "experiment_bootstrap", "service_script", "*.py")
+    for file in glob.glob(glob_txt):
         try:
             logging.info(f"Setting up {file}.")
             service_dir = make_service_dir(base_service_dir, Path(file).stem)
