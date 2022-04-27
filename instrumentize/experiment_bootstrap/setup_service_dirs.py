@@ -48,7 +48,7 @@ def run_service_scripts(base_service_dir):
     #print(os.getcwd())
     # Run Python scripts
      
-    glob_txt = os.path.join(os.path.expanduser("~"), "mf_git", "instrumentize", "experiment_bootstrap", "service_script", "*.py")
+    glob_txt = os.path.join(os.path.expanduser("~"), "mf_git", "instrumentize", "experiment_bootstrap", "service_scripts", "*.py")
     for file in glob.glob(glob_txt):
         try:
             logging.info(f"Setting up {file}.")
