@@ -2,5 +2,5 @@
 
 # Runs all the scripts needed to setup the meas node.
 
-install_ansible.sh
+/home/mfuser/mf_git/instrumentize/experiment_bootstrap/install_ansible.sh
 
