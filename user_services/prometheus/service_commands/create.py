@@ -4,6 +4,8 @@ from datetime import datetime
 import os
 import subprocess
 
+import prom_utilites as pu
+
 #ansible_dir =  "/home/mfuser/mf_git/instrumentize/ansible/fabric_experiment_instramentize"
 #os.chdir(ansible_dir)
 playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
@@ -15,7 +17,17 @@ keyfile = "/home/mfuser/.ssh/mfuser"
 # For some reason the local ansible.cfg file is not being used
 os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
 
-cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook]
+
+grafana_admin_pass = pu.get_grafana_admin_password()
+if grafana_admin_pass == None:
+    grafana_admin_pass = pu.create_grafana_admin_password()
+    
+   
+cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "--extra-vars", f"grafana_admin_password={grafana_admin_pass}" "-b", playbook ]
+
+print(grafana_admin_pass)
+
+#cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook ]
 
 r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -34,30 +46,6 @@ else:
 
 print(play_recap)
 
-
-# Save the ansible output
-now = datetime.now()
-this_script_dir = os.path.dirname(os.path.realpath(__file__))
-ansible_output_file = os.path.join( this_script_dir,  "experiment_install_prometheus_{0}".format( now.strftime("%b_%d_%Y_%H_%M_%S") ) )
-
-#alphabetical order
-ansible_output_file = os.path.join( this_script_dir,  "experiment_install_prometheus_{0}".format( now.strftime("%Y_%m_%d_%H_%M_%S") ) )
-
-
-with open(ansible_output_file, "w") as aof:
-    aof.write("STDOUT:\n")
-    aof.write(decoded_out)
-    aof.write("\nSTDERR:\n")
-    aof.write(decoded_err)
-
-
-
-# Save the ansible recap for easy access
-ansible_recap_file = os.path.join( this_script_dir,  "experiment_install_prometheus_recap_{0}".format( now.strftime("%b_%d_%Y_%H_%M_%S") ) )
-
-with open(ansible_recap_file, "w") as arf:
-    arf.write(play_recap)
-
-
+pu.save_ansible_output(r.stdout, r.stderr)
 
 

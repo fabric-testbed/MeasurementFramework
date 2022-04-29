@@ -22,10 +22,15 @@ def main():
     else:
         readme_format = "list"
 
+    data = ou.get_data()
+    if data and "readme_format" in data:
+        readme_format = data["readme_format"] 
+
     print(readme_format)
     try:
         retVal["data_recieved"] = ou.get_data()
         retVal["services"] = ou.get_services_list()
+
         if readme_format == "combined":
             retVal["readmes"] = ou.get_services_readme()
         else:
