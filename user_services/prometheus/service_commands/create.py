@@ -6,6 +6,8 @@ import subprocess
 
 import prom_utilites as pu
 
+ret_val = {}
+
 #ansible_dir =  "/home/mfuser/mf_git/instrumentize/ansible/fabric_experiment_instramentize"
 #os.chdir(ansible_dir)
 playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
@@ -25,7 +27,7 @@ if grafana_admin_pass == None:
    
 cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "--extra-vars", f"grafana_admin_password={grafana_admin_pass}" "-b", playbook ]
 
-print(grafana_admin_pass)
+ret_val["grafana_admin_pass"] = grafana_admin_pass
 
 #cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook ]
 
@@ -40,12 +42,15 @@ play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
 decoded_err = r.stderr.decode("utf-8")
 
 if r.returncode == 0:
-    print("Prometheus successfully installed.")
+    ret_val["success"] =  True
+    ret_val["msg"] = "Prometheus successfully installed."
 else:
-    print("Prometheus install playbook failed.")
+    ret_val["success"] =  True
+    ret_val["msg"] = "Prometheus playbook install failed.."
 
-print(play_recap)
+ret_val["play_recap"] = play_recap
 
 pu.save_ansible_output(r.stdout, r.stderr)
 
 
+print(pu.get_json_string(ret_val))
