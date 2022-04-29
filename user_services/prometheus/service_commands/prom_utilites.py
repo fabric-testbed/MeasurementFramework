@@ -43,9 +43,9 @@ def save_ansible_output(stdout, stderr):
     now = datetime.now()
     ansible_output_file = os.path.join( service_dir, "ansible_out", "experiment_install_prometheus_{0}".format( now.strftime("%Y_%m_%d_%H_%M_%S") ) )
 
-    decoded_out = r.stdout.decode("utf-8")
+    decoded_out = stdout.decode("utf-8")
     play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
-    decoded_err = r.stderr.decode("utf-8")
+    decoded_err = stderr.decode("utf-8")
 
     with open(ansible_output_file, "w") as aof:
         aof.write("STDOUT:\n")
