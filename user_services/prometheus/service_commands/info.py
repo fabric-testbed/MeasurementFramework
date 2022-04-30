@@ -12,15 +12,20 @@ def main():
     data = pu.get_data()
 
     if data:
-        if "grafana_admin_password" in data:
-            ret_val["grafana_admin_password"] = pu.get_grafana_admin_password()
-        if "ansible_output" in data:
-            ret_val["ansible_output"]  = pu.get_last_ansible_out_str()
-    # Assume it will go well.
+        install_vars = pu.get_install_vars()
+
+        if "grafana_admin_password" in data and data["grafana_admin_password"]:
+            ret_val["grafana_admin_password"] = install_vars["grafana_admin_password"]
+
+        if "ht_user" in data and data["ht_user"]:
+            ret_val["ht_user"] = install_vars["fabric_prometheus_ht_user"]
+
+        if "ht_password" in data and data["ht_password"]:
+            ret_val["ht_password"] = install_vars["fabric_prometheus_ht_password"]
+
+
     else:
-        # get everything for now
-        ret_val["grafana_admin_password"] = pu.get_grafana_admin_password()
-        ret_val["ansible_output"]  = pu.get_last_ansible_out_str()
+        ret_val["help"] = "Valid request data values include grafana_admin_password, ht_user or ht_password = True. "
 
     print( pu.get_json_string(ret_val) )
 
