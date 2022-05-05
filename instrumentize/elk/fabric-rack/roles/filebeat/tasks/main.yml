@@ -9,17 +9,6 @@
   fail: msg="docker-compose is missing"
   when: is_docker_compose_install.rc != 0
 
-# # Check if the filebeat is already up and running
-# - name: Check if filebeat container is up and running
-#   docker_container_info:
-#     name: fabric_beats_filebeat
-#   register: is_docker_container_running
-
-# - name: Print the status of container
-#   fail:
-#     msg: "fabric_beats_filebeat container is already up and running"
-#   when: is_docker_container_running.container['State']['Status'] == "running"
-
 # Replace rsyslog.conf file
 - name: Copy Filebeat template file
   tags: rsyslog
