@@ -191,7 +191,7 @@
   tags: elksetup
   become: true
   become_user: "{{ become_username }}"
-  shell: ~/mf_git/instrumentize/elk/docker-images/elk/setfolders.sh
+  shell: cd ~/mf_git/instrumentize/elk/docker-images/elk; ~/mf_git/instrumentize/elk/docker-images/elk/setfolders.sh
   when: r_elk_folder_exist.stat.exists == false
 
 - name: Setting login info for nginx
