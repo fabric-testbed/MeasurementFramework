@@ -8,10 +8,10 @@ groups:
   rules:
   
   - alert: HostPhysicalComponentTooHot
-    expr: node_hwmon_temp_celsius > 75
-    for: 5m
+    expr: node_hwmon_temp_celsius > 60
+    for: 1m
     labels:
-      severity: warning
+      severity: critical
       fabric_response: hardware
     annotations:
       summary: Host physical component too hot (instance {{ $labels.instance }})

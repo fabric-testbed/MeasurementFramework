@@ -1,0 +1,15 @@
+---
+# file: isis_rules.yml
+# location: racks
+
+
+groups: 
+
+- name: isis 
+  rules: 
+
+  # Create new metric that has all the info about a isis link - circIndex, ISAdjaNeighSysID, SysID, ISAdjIndex and ISAdjIPAddrAdress
+  - record: isisAdjStateFull
+    expr: ( (isisISAdjState {} * on(rack) group_left(isisSysID) isisSysID{})* on(isisISAdjIndex) group_left(isisISAdjNeighSysID) isisISAdjNeighSysID {} ) * on(isisISAdjIndex) group_left(isisISAdjIPAddrAddress)  isisISAdjIPAddrAddress {isisISAdjIPAddrIndex="1"}
+
+

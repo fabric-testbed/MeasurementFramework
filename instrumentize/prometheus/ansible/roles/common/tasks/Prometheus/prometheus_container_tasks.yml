@@ -6,7 +6,8 @@
     state: "{{ prometheus_state }}"
     name: "{{ install_name }}_prometheus"
     network_mode: "{{ docker_network_name }}"
-    image: prom/prometheus:v2.23.0
+    #image: prom/prometheus:v2.23.0
+    image: prom/prometheus:v2.33.4
     # TODO revisit/document user settings for this container
     user: 0:0
     volumes:      

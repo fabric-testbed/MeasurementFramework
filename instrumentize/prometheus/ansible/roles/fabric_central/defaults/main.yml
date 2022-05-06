@@ -7,6 +7,7 @@
 # Empty value to be filled in later as needed.
 extra_node_hosts: {}
 thanos_extra_node_hosts: {}
+grafana_extra_node_hosts: {}
 
 # Some values commented out here will have to be added by the user when calling the role.
 # Otherwise the role will not run.
@@ -85,7 +86,7 @@ add_python_docker_sdk: no
 
 prom_user_name: fab-prom
 prom_group_name: fab-prom
-    
+
 
 ####################
 #      Ports       #
@@ -94,7 +95,22 @@ prom_group_name: fab-prom
 alertmanager_port: 9093    
 
 
+
+docker_ipv6_subnet: fd8d:73ee:3857:1315::/64
+docker_ipv6_gateway: fd8d:73ee:3857:1315::1
+
+
+
 #alertmanager_external_url: https://192.168.12.238:9093
+
+
+
+
+# LOKI Testing
+loki_state: started 
+loki_templates_dir: templates/Loki
+
+
 
 ####################
 #    Prometheus    #
@@ -108,6 +124,7 @@ prometheus_config_template_files:
   # blackbox targets
   - fabric_dns_targets.yml
   - fabric_http_targets.yml
+  - fabric_beta_http_targets.yml
   - fabric_smtp_targets.yml
   - fabric_tcp_targets.yml
   # needed? - fabric_ping_targets.yml
@@ -120,7 +137,7 @@ prometheus_config_template_files:
   - central_node_targets.yml
 
   # other exporters such as kafka, openstack, jupyter
-  # TODO wherer?
+  # TODO where?
 
   # alertmanager rules
   #- test_alerts.yml
@@ -282,6 +299,7 @@ nginx_ip_ports:
   # Note Each port will correspond to a confd file set above.
   #- 80:80         # Redirected to 443
   - 443:443       # /grafana for grafana interface
+  - "[::]:443:443"
   - 9090:9090     # prometheus stats
   - 10922:10922   # thanos stats
   - "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
@@ -289,11 +307,18 @@ nginx_ip_ports:
 nginx_template_dir: templates/Nginx
 
 nginx_server_confd_template_files: 
-  - prometheus.conf
-  #- central_welcome.conf
-  - alertmanager.conf
+  - prometheus_dual.conf
+  - alertmanager_dual.conf
   - thanos.conf
-  - grafana.conf
+  #- grafana_dual.conf
+  - grafana_dual_web_sockets.conf
+  
+  
+  # - prometheus.conf
+  # #- central_welcome.conf
+  # - alertmanager.conf
+  # - thanos.conf
+  # - grafana.conf
 
 nginx_config_template_files:
   - ssl_snippet.conf

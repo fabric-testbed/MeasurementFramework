@@ -1,8 +1,17 @@
 [server]
+#domain = {{ hostname }}
+##root_url = https://%(domain)s
+## version if using grafana as root 
+root_url = https://%(domain)s/grafana
+
+
 domain = {{ hostname }}
 #root_url = https://%(domain)s
 # version if using grafana as root 
-root_url = https://%(domain)s/grafana
+#root_url = https://%(domain)s:443/grafana
+serve_from_sub_path = true 
+
+
 
 [auth.generic_oauth]
 {% if grafana_oauth_client_id is defined %}
@@ -49,13 +58,15 @@ password =
 #password = <your email password>
 
 [log]
-#level = debug
+level = debug
 
 
 [security]
 
 # Only allow the one datasource to prevent someone from trying to gain 
 #    access to other resources
-data_source_proxy_whitelist = {{ install_name }}_thanos_query:10922
+#data_source_proxy_whitelist = {{ install_name }}_thanos_query:10922,loki_fab_loki_1:3100
+data_source_proxy_whitelist = {{ install_name }}_thanos_query:10922,{{ install_name }}_loki:3100,dev-metrics.fabric-testbed.net:3100,fabric_loki:3100,metrics.fabric-testbed.net:3100
+
 # Allow the setting of admin account name to something else
 admin_user = {{ grafana_admin_user | default("admin")}}

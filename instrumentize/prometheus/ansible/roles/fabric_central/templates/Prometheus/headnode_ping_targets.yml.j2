@@ -19,7 +19,7 @@
       component_type: head
       network: operations
       reason: infrastructure_check
-      status: live
+      #status: live
 # UKY
 - targets:
       - 192.168.12.10
@@ -29,7 +29,7 @@
       component_type: head
       network: operations 
       reason: infrastructure_check
-      status: live
+      #status: live
 # LBNL      
 - targets:
       - 192.168.13.10
@@ -39,7 +39,7 @@
       component_type: head
       network: operations 
       reason: infrastructure_check
-      status: live
+      #status: live
 # STAR
 - targets:
       - 192.168.14.10
@@ -49,7 +49,7 @@
       component_type: head
       network: operations 
       reason: infrastructure_check
-      status: building
+      #status: live
 # MAX
 - targets:
       - 192.168.15.10
@@ -59,7 +59,7 @@
       component_type: head
       network: operations 
       reason: infrastructure_check
-      status: building        
+      #status: building        
 # TACC
 - targets:
       - 192.168.16.10
@@ -69,7 +69,7 @@
       component_type: head
       network: operations 
       reason: infrastructure_check
-      status: building    
+      #status: building    
 # MICH          
 - targets:
       - 192.168.17.10
@@ -79,18 +79,17 @@
       component_type: head
       network: operations 
       reason: infrastructure_check
-      status: building
-
-# # MASS
-# - targets:
-#       - 192.168.18.10
-#   labels:
-#       subdomain: mass-hn
-#       hank: mass
-#       component_type: head
-#       network: operations 
-#       reason: infrastructure_check
-#       status: building                
+      #status: building
+# MASS
+- targets:
+      - 192.168.18.10
+  labels:
+      subdomain: mass-hn
+      hank: mass
+      component_type: head
+      network: operations 
+      reason: infrastructure_check
+      #status: live                
 # UTAH
 - targets:
       - 192.168.19.10
@@ -100,7 +99,7 @@
       component_type: head
       network: operations 
       reason: infrastructure_check                
-      status: building
+      #status: building
 # NCSA
 - targets:
       - 192.168.20.10
@@ -110,4 +109,34 @@
       component_type: head
       network: operations 
       reason: infrastructure_check                
-      status: building
+      #status: building
+# WASH
+- targets:
+      - 192.168.21.10
+  labels:
+      subdomain: wash-hn
+      hank: wash
+      component_type: head
+      network: operations 
+      reason: infrastructure_check                
+      #status: building
+# DALL
+- targets:
+      - 192.168.22.10
+  labels:
+      subdomain: dall-hn
+      hank: dall
+      component_type: head
+      network: operations 
+      reason: infrastructure_check                
+      #status: building
+# SALT
+- targets:
+      - 192.168.23.10
+  labels:
+      subdomain: salt-hn
+      hank: salt
+      component_type: head
+      network: operations 
+      reason: infrastructure_check                
+      #status: building                  

@@ -48,6 +48,15 @@ scrape_configs:
     static_configs:
             - targets: ['jupyter.fabric-testbed.net']
 
+  - job_name: 'jupyterhub-beta'
+    bearer_token_file: /etc/prometheus/secrets/jupyterhub_beta
+    scheme: https
+    metrics_path: '/hub/metrics'
+    tls_config:
+            insecure_skip_verify: true
+    static_configs:
+            - targets: ['jupyter-beta.fabric-testbed.net']
+
 # Kafka 
 # Note that these are servers that connect to kafka to get metrics, not the actual kafka servers.
   - job_name: 'mf-kafka'
@@ -162,6 +171,46 @@ scrape_configs:
     static_configs: 
       - targets: 
         - '{{ install_name }}_alertmanager:{{ alertmanager_port }}'
+
+#########################################
+#          Thanos Exporters             #
+#########################################
+
+# need to relabel to clairify source?
+# Sidecar
+  - job_name: 'thanos_sidecar'
+    scheme: http 
+    static_configs:
+      - targets:
+        - '{{ install_name }}_thanos_sidecar:10902'
+
+# Store 
+  - job_name: 'thanos_store'
+    scheme: http 
+    static_configs:
+      - targets:
+        - '{{ install_name }}_thanos_store:10912'
+
+# Query
+  - job_name: 'thanos_query'
+    scheme: http 
+    static_configs:
+      - targets:
+        - '{{ install_name }}_thanos_query:10922'
+
+# Compact
+#  - job_name: 'thanos_compact'
+#    scheme: http 
+#    static_configs:
+#      - targets:
+#        - '{{ install_name }}_thanos_compact:10902'
+
+#
+
+
+#########################################
+#       end Thanos Exporters            #
+#########################################
 
 
 # Node Exporter 

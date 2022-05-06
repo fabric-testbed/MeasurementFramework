@@ -3,6 +3,7 @@
 # grafana has user accounts so no htaccess needed
 server {
         listen	443 ssl http2;
+        listen [::]:443 ssl http2;
         server_name {{ hostname }};
         
         include /etc/nginx/ssl_snippet.conf;

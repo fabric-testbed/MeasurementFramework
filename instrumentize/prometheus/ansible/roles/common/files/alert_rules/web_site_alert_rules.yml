@@ -8,7 +8,7 @@ groups:
   rules:
 
   - alert: Fabric Web Site Down
-    expr: probe_success {job="blackbox-http", check_type="web-site"} == 0
+    expr: probe_success {job="blackbox-http", check_type="web-site", release="production"} == 0
     for: 5m
     labels: 
       severity: critical

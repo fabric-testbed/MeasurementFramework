@@ -17,6 +17,14 @@
         recurse: yes
         owner: "{{ prom_user_name }}"
         group: "{{ prom_group_name }}"
-     
+
+    - name: Create Alertmanager Data directories
+      file:
+        path: "{{ base_data_dir }}/alertmanager/data"
+        state: directory
+        recurse: yes
+        owner: "{{ prom_user_name }}"
+        group: "{{ prom_group_name }}"
      
   become: yes
+
