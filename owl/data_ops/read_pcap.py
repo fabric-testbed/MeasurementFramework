@@ -14,6 +14,7 @@ class PcapProcessor:
     def process(self):
 
         for pcapfile in self.pcapfiles:
+            print("file name:",  pcapfile)
             pkts = rdpcap(pcapfile)
     
             for pkt in pkts:

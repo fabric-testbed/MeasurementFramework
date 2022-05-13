@@ -1,6 +1,9 @@
 # OWL One Way Latency
 
 ## Current owl.conf file format
+Sample config and service request files are round under `owl_config`.
+
+
 ```
 [GENERAL]
 LinkCheckInterval = <sec (int)>
@@ -10,6 +13,7 @@ ServiceRequestFile = <service request file>.json
 [receiver]
 PcapInterval = <sec (int)>
 Output_Dir = <path/to/dir/for/pcap/files> (no trailing '/')
+
 [sender]
 SendInterval= <sec (float)>
 ```
@@ -24,32 +28,21 @@ SendInterval= <sec (float)>
 	    },
             {
 	      "src": "10.10.2.1",
-	      "dst": "10.10.2.2"
-	    },
-            {
-	      "src": "10.10.3.2",
-	      "dst": "10.10.3.1"
-	    },
-            {
-	      "src": "10.10.3.1",
-	      "dst": "10.10.3.2"
-	    },
-            {
-	      "src": "10.10.1.1",
-	      "dst": "10.10.1.2"
-	    },
-            {
-	      "src": "10.10.1.2",
-	      "dst": "10.10.1.1"
-	    },
-            {
-	      "src": "10.10.2.1",
 	      "dst": "10.10.3.1"
 	    }
   ]
 }
-
 ```
+
+## About Ansible Playbooks
+These Playbooks are for temporary usage. Make sure to check the file source path in `setup_owl.yaml`. 
+
+## Checking Output pcap files on Experiment_Nodes.
+```
+ls -l /var/lib/docker/volumes/owl-output/vol/_data
+```
+
+
 ## how to run the docker container (WIP)
 ```
 docker run -dp 5005:5005 -v "$(pwd):/owl_app" --network="host"  --privileged owl-app owl.conf
