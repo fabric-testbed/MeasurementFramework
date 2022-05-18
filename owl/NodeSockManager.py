@@ -31,11 +31,12 @@ class NodeSockManager():
         self.send_interval = float(config['sender']['SendInterval'])
         self.output_dir = config['receiver']['OutputDir']
 
-        self.logger = logging.basicConfig(
-                        filename=f'{self.output_dir}/owl.log',
+
+        logging.basicConfig(filename=f'{self.output_dir}/owl.log',
                         level=logging.DEBUG, 
                         format='%(created)f %(message)s')
-                            
+        self.logger = logging.getLogger('owl-log')
+
         self.sender_instances = {}
         self.listen_instance = None
 
