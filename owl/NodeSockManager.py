@@ -1,6 +1,7 @@
 import json
 import argparse
 import configparser
+import logging
 import time
 import socket
 import subprocess
@@ -8,6 +9,7 @@ from sock_ops import udp_sender as sender
 from sock_ops import udp_capturer as capturer
 from random import randrange
 from threading import Timer
+
 
 
 class NodeSockManager():
@@ -29,6 +31,11 @@ class NodeSockManager():
         self.send_interval = float(config['sender']['SendInterval'])
         self.output_dir = config['receiver']['OutputDir']
 
+        self.logger = logging.basicConfig(
+                        filename=f'{self.output_dir}/owl.log',
+                        level=logging.DEBUG, 
+                        format='%(created)f %(message)s')
+                            
         self.sender_instances = {}
         self.listen_instance = None
 
@@ -57,14 +64,14 @@ class NodeSockManager():
 
         # Clean up!
         if self.listen_instance:
-            print("stopping tcpdump")
+            self.logger.info("stopping tcpdump")
             self.listen_instance.stop()
             time.sleep(1)
             self.listen_instance = None
 
         if len(self.sender_instances) > 0:
             for ip, instance in self.sender_instances.items():
-                print("stopping send to: ", ip)
+                self.logger.info("stopping send to: ", ip)
                 instance.stop()
                 time.sleep(1)
                 self.sender_instances[ip] = None
@@ -99,11 +106,11 @@ class NodeSockManager():
                     listener = "UP"
 
         except FileNotFoundError:
-            print(f"No service request file {self.service_request} found.")
+            self.logger.error(f"No service request file {self.service_request} found.")
             # Will return DOWN for receiver status, an empty list for dests
 
         finally:
-            print(f"read_service_request: {listener}, {dests}")
+            self.logger.info(f"read_service_request: {listener}, {dests}")
 
         return listener, dests
     
@@ -112,13 +119,13 @@ class NodeSockManager():
     
         if status == "DOWN":
             if self.listen_instance: # there is an instance
-                print("shutting down tcpdump")
+                self.logger.info("shutting down tcpdump")
                 self.listen_instance.stop()
                 time.sleep(1)
                 self.listen_instance = None
         else:
             if self.listen_instance is None: # need to start 
-                print("starting tcpdump")
+                self.logger.info("starting tcpdump")
                 self.listen_instance = capturer.TcpdumpOps(
                                             self.udp_port, self.pcap_interval, self.output_dir)
                 self.listen_instance.start()
@@ -132,14 +139,14 @@ class NodeSockManager():
         # new dest
         for ip in dests:
             if ip not in self.sender_instances.keys():
-                print("new ip dest found: ", ip)
+                self.logger.info("new ip dest found: ", ip)
                 self.sender_instances[ip] = sender.UDP_sender(
                                 self.send_interval, ip, self.udp_port, seq_n)
     
         # dest to be removed
         for ip in self.sender_instances.keys():
             if ip not in dests:
-                print("dest ip to be removed: ", ip)
+                self.logger.info("dest ip to be removed: ", ip)
                 self.sender_instances[ip].stop()
                 time.sleep(1)
                 self.sender_instances[ip] = None
@@ -161,6 +168,6 @@ if __name__ == "__main__":
     # Stop the program at a certain interval only if the arg is given.
         time.sleep(args.duration)
         manager.stop()
-        print("finished")
+        self.logger.info("finished")
         exit(0)
 
