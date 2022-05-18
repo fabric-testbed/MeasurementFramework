@@ -140,14 +140,14 @@ class NodeSockManager():
         # new dest
         for ip in dests:
             if ip not in self.sender_instances.keys():
-                self.logger.info("new ip dest found: ", ip)
+                self.logger.info(f"new ip dest found: {str(ip)} ")
                 self.sender_instances[ip] = sender.UDP_sender(
                                 self.send_interval, ip, self.udp_port, seq_n)
     
         # dest to be removed
         for ip in self.sender_instances.keys():
             if ip not in dests:
-                self.logger.info("dest ip to be removed: ", ip)
+                self.logger.info(f"dest ip to be removed: {str(ip)}")
                 self.sender_instances[ip].stop()
                 time.sleep(1)
                 self.sender_instances[ip] = None
