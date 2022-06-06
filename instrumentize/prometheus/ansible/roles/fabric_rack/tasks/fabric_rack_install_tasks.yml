@@ -67,8 +67,8 @@
   
 # OR
 # ipv6 dual network settings
-#- name: Setup the docker network to be used by the monitoring containers.
-#  include_tasks: setup_tasks/setup_docker_dual_network_tasks.yml
+# - name: Setup the docker network to be used by the monitoring containers.
+#   include_tasks: setup_tasks/setup_docker_dual_network_tasks.yml
   
 
 ####################
@@ -105,6 +105,10 @@
 
   - name: Prometheus Alert Rules
     include_tasks: Prometheus/add_alert_rules.yml
+    # See vars for files used
+
+  - name: Prometheus Recording Rules
+    include_tasks: Prometheus/add_recording_rules.yml
     # See vars for files used
 
   - name: Setup Promtheus Config Files

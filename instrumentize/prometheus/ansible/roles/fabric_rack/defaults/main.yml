@@ -54,7 +54,7 @@ prometheus_config_template_files:
 # This was formerly used to copy alert_rules.
 prometheus_config_files: []
 
-
+ 
 alert_rule_file_dir: files/alert_rules
 
 # Default alert rules for a rack
@@ -70,6 +70,13 @@ alert_rule_files:
   # vpn ping only needed on uky/renc racks but do no harm if on others
   - vpn_ping_alert_rules.yml
  # - web_site_alert_rules.yml
+
+
+recording_rule_file_dir: files/recording_rules
+
+# Default recording rules for a rack
+recording_rule_files:
+  - isis_rules.yml
 
 
 ####################
@@ -146,7 +153,8 @@ nginx_ip_ports:
   #- 443:443       # /grafana for grafana interface
   # localhost only - 127.0.0.1:9090:9090     # prometheus stats
   #- 9090:9090 #prometheus stats
-  - "{{ hn_public_ipaddr }}:9090:9090"  #open port will be restricted by iptables to central metric
+  - "{{ ansible_host }}:9090:9090"  #open port will be restricted by to operations network
+  #- "{{ hn_public_ipaddr }}:9090:9090"  #open port will be restricted by iptables to central metric
   #- "[{{ hn_public_ipaddr_ipv6 }}]:9090:9090"  # for dual stack racks - #open port will be restricted by iptables to central metric
   #- 10922:10922   # thanos stats
   #- "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
@@ -158,9 +166,9 @@ nginx_template_dir: templates/Nginx
 nginx_server_confd_template_files: 
   
   # for private setup
-  #- prometheus_localhost.conf
+  - prometheus_localhost.conf
   # For dual stack racks
-  - prometheus_dual_public.conf
+  #- prometheus_dual.conf
 
 
 nginx_config_template_files:
