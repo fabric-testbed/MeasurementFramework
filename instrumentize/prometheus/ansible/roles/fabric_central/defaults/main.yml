@@ -117,17 +117,23 @@ prometheus_config_template_files:
   - fabric_beta_http_targets.yml
   - fabric_smtp_targets.yml
   - fabric_tcp_targets.yml
-  # needed? - fabric_ping_targets.yml
+  
+  - central_other_ping_targets.yml
+  - central_bastion_ping_targets.yml 
+  - central_bastion_ping6_targets.yml
+
 
   # To check that head nodes are up
-  - headnode_ping_targets.yml
+  #- headnode_ping_targets.yml
   # To check that worker nodes are up
-  - workernode_ping_targets.yml
+  #- workernode_ping_targets.yml
   # aux node exporters and local node exporter
   - central_node_targets.yml
 
+
   # other exporters such as kafka, openstack, jupyter
   # TODO wherer?
+
 
   # alertmanager rules
   #- test_alerts.yml
