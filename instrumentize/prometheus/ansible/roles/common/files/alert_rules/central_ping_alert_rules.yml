@@ -28,3 +28,14 @@ groups:
     annotations: 
       summary: "Ping check, central metrics to worker node {{ $labels.subdomain }} on operations network ip {{ $labels.subdomain }} failed."
       description: "Worker node {{ $labels.subdomain }} has not responded to ping from central metrics for 5m."
+
+  - alert: RackDevicePingFailed
+    expr: probe_success {job="ping", rack="central", reason="infrastructure_check"} == 0
+    for: 5m
+    labels: 
+      severity: error 
+      fabric_system: device
+      fabric_response: system
+    annotations: 
+      summary: "Device {{ $labels.device }} at {{ $labels.subdomain }} on operations network has failed to ping for 5m from central on operations network."
+      description: "Device {{ $labels.subdomain }} has not responded to ping from central metrics for 5m."
