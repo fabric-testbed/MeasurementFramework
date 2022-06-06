@@ -27,6 +27,9 @@
     extra_node_hosts: "{{ extra_node_hosts | combine({ hostvars[item].hostname : hostvars[item].ansible_host }) }}"
   with_items: "{{ groups[hank_name] }}"
 
+
+
+
 ####################     
 #      USER        #
 ####################
@@ -66,9 +69,9 @@
   include_tasks: setup_tasks/setup_docker_network_tasks.yml
   
 # OR
-# ipv6 dual network settings
+# ipv6 network settings (ipv4 will still exist by default)
 #- name: Setup the docker network to be used by the monitoring containers.
-#  include_tasks: setup_tasks/setup_docker_dual_network_tasks.yml
+#  include_tasks: setup_tasks/setup_docker_ipv6_network_tasks.yml
   
 
 ####################
