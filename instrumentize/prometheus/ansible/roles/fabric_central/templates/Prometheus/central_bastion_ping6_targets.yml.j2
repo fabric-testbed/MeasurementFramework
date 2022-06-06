@@ -1,0 +1,18 @@
+---
+# File: central_bastion_ping6_targets.yml.(j2)
+# Ansible generated ping targets for all public ipv6 Fabric bastion hosts.
+
+# Bastion
+{% for b in ["bastion-1", "bastion-2"] %}
+
+- targets:
+        - {{ hostvars[b].host_public_ipv6_address }}
+  labels:
+        job: ping6
+        device: bastion
+        subdomain: {{b}}
+        release: prod
+        ipv: 6
+        network: public
+
+{% endfor %}
