@@ -150,6 +150,40 @@ scrape_configs:
               replacement: "{{ install_name }}_blackbox:9115"
 
 
+# Ping 
+  - job_name: 'ping6'
+    metrics_path: /probe
+    params:
+         module: [icmp_ipv6]
+    file_sd_configs:
+      - files:
+            - '*_ping6_targets.yml'
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_blackbox:9115"
+
+# GRPC 
+#  - job_name: 'blackbox-grpc'
+#    metrics_path: /probe
+#    params:
+#        module: [grpc]
+#    file_sd_configs:
+#        - files:
+#              - '*_grpc_targets.yml'
+#    relabel_configs:
+#            - source_labels: [__address__]
+#              target_label: __param_target
+#            - source_labels: [__param_target]
+#              target_label: instance
+#            - target_label: __address__
+#              replacement: "dev_central_prometheus_blackbox:9115"
+
+
+
 #######################################
 #      end Blackbox Exporters         #
 #######################################
