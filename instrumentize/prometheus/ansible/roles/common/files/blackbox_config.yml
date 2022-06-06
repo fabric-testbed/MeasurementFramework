@@ -6,6 +6,13 @@ modules:
       preferred_ip_protocol: "ip4" # defaults to "ip6"
       ip_protocol_fallback: false  # no fallback to "ip6"
 
+  icmp_ipv6:
+    prober: icmp
+    icmp:
+      preferred_ip_protocol: "ip6" # defaults to "ip6"
+      ip_protocol_fallback: false  # no fallback to "ip4?"
+
+
   http_2xx:
     prober: http
     http:
