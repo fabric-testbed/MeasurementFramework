@@ -21,8 +21,8 @@ if __name__ == "__main__":
     src_dir = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, "service_commands")
     copy_files(src_dir, args.service_dir)
     # Note the files do not need to come from a simple local copy as shown here. They could be pulled from anywhere such as a git repo or auto generated.
-    extra_files_dirs = os.path.join(args.service_dir, "extra_files")
+    extra_files_dirs = os.path.join(args.service_dir, service_name, "extra_files")
     os.makedirs( extra_files_dirs )
-    ansible_out_dirs = os.path.join(args.service_dir, "ansible_out")
+    ansible_out_dirs = os.path.join(args.service_dir, service_name, "ansible_out")
     os.makedirs( ansible_out_dirs )
     
