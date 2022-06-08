@@ -16,7 +16,7 @@ import importlib.util
 
 import logging 
 
-logfile = os.path.join(os.path.expanduser("~"), "services", "setup_service.log")
+logfile = "setup_service.log"
 logging.basicConfig(filename=logfile, format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level="INFO")
 
 
