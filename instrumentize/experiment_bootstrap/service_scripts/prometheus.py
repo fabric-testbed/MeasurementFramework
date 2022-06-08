@@ -16,7 +16,7 @@ if __name__ == "__main__":
     
     # src_dir is the path to the folder containing the files for controlling the service from mflib.
     # In this simple case all the files are in one folder. 
-    service_name = "prometheus"
+    service_name = "promethues"
     this_script_dir = os.path.dirname(os.path.realpath(__file__))
     src_dir = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, "service_commands")
     copy_files(src_dir, args.service_dir)
