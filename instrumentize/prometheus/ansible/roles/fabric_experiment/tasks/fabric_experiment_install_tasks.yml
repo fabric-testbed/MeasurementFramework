@@ -182,8 +182,7 @@
       vars:
         nginx_server_confd_template_files: 
           - prometheus.conf
-          - grafana_with_ssl_only.conf
-          #- grafana_with_htaccess.conf
+          - grafana_with_htaccess.conf
   when: true
 
 - name: NGNIX Container
