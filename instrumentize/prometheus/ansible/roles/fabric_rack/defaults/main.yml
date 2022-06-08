@@ -166,9 +166,9 @@ nginx_template_dir: templates/Nginx
 nginx_server_confd_template_files: 
   
   # for private setup
-  - prometheus_localhost.conf
+  #- prometheus_localhost.conf
   # For dual stack racks
-  #- prometheus_dual.conf
+  - prometheus_dual_public.conf
 
 
 nginx_config_template_files:
