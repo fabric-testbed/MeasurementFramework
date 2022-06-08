@@ -10,9 +10,9 @@ pip3 install -r /home/mfuser/mf_git/instrumentize/prometheus/ansible/roles/fabri
 
 #pip install ansible 
 # Not sure why need to hard code full path here
-#/home/mfuser/.local/bin/pip --version 
-#/home/mfuser/.local/bin/ansible --version 
-#/home/mfuser/.local/bin/ansible-galaxy --version 
+/home/mfuser/.local/bin/pip --version 
+/home/mfuser/.local/bin/ansible --version 
+/home/mfuser/.local/bin/ansible-galaxy --version 
  
 
 echo "-----Install Galaxy Roles-----"
