@@ -6,6 +6,6 @@
 /home/mfuser/mf_git/instrumentize/experiment_bootstrap/install_ansible.sh
 
 # Setup service directories.
-mkdir -p /home/mfuser/services
+mkdirs /home/mfuser/services
 /usr/bin/python3 /home/mfuser/mf_git/instrumentize/experiment_bootstrap/setup_service_dirs.py 
 
