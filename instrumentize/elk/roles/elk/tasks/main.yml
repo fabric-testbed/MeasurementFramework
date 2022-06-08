@@ -63,6 +63,11 @@
   when:
     - ansible_facts['distribution'] == "Ubuntu"
 
+- name: Check If Docker Is Installed
+  command: docker --version
+  register: docker_valid
+  ignore_errors: yes
+
 - name: Configure docker-ce repo
   tags: docker
   become: true
@@ -72,6 +77,8 @@
     mode: 0644
   when:
     - ansible_facts['distribution'] == "CentOS"
+    - docker_valid.failed == true
+
 - name: Add an apt signing key for Docker for Ubuntu
   become: true
   apt_key:
@@ -79,6 +86,7 @@
     state: present
   when:
     - ansible_facts['distribution'] == "Ubuntu"
+    - docker_valid.failed == true
 
 - name: Add apt repository for stable version for Ubuntu
   become: true
@@ -87,6 +95,7 @@
     state: present
   when:
     - ansible_facts['distribution'] == "Ubuntu"
+    - docker_valid.failed == true
 
 - name: Install docker
   tags: docker
@@ -97,6 +106,8 @@
       - docker-ce-cli
       - containerd.io
     state: present
+  when:
+    - docker_valid.failed == true
 
 - name: Create docker group
   tags: docker
@@ -104,6 +115,8 @@
   group:
     name: "docker"
     state: present
+  when:
+    - docker_valid.failed == true
 
 - name: Adding user ansible to docker group
   tags: docker
@@ -112,6 +125,8 @@
     name: ansible
     groups: "docker"
     append: "yes"
+  when:
+    - docker_valid.failed == true
 
 - name: Start and enable docker service
   tags: docker
@@ -120,6 +135,8 @@
     name: docker
     state: started
     enabled: yes
+  when:
+    - docker_valid.failed == true
 
 - name: Check if Docker Compose is installed
   tags: docker-compose
