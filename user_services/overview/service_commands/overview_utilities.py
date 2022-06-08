@@ -23,13 +23,12 @@ def get_services_readme():
     service_list = get_services_list()
     for service in service_list:
         readme_filename = os.path.join(services_dir, service, "README.md")
-        overview_readme += f"\n------------------------------\n# {service} README.md\n------------------------------\n" 
         if os.path.exists(readme_filename):
             with open(readme_filename) as readme_file:
                 readme_str = readme_file.read()
-            overview_readme += readme_str 
+            overview_readme += f"\n------------------------------\n# {service} README.md\n------------------------------\n" + readme_str 
         else: 
-            overview_readme += f"{service} README not found.\n"
+            overview_readme += f"# {service} README\n"
 
     return overview_readme 
 
@@ -59,7 +58,7 @@ def get_data():
         with open(data_filename) as data_file:
             data = json.load(data_file)
     except Exception as e:
-        data = {}
+        data = None
     return data
 
 def get_json_string(data):
