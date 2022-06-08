@@ -16,15 +16,20 @@ ansible_hosts_file = '/home/mfuser/mf_git/instrumentize/ansible/fabric_experimen
 playbook = "/home/mfuser/mf_git/instrumentize/ansible/playbook_fabric_experiment_install_prometheus.yml"
 keyfile = "/home/mfuser/.ssh/mfuser"
 
-
 # For some reason the local ansible.cfg file is not being used
 os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
 
-pu.create_install_vars()
-   
-cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "--extra-var", f'"@{ pu.install_vars_file }"', "-b", playbook ]
 
-ret_val["grafana_admin_pass"] = pu.get_grafana_admin_password()
+grafana_admin_pass = pu.get_grafana_admin_password()
+if grafana_admin_pass == None:
+    grafana_admin_pass = pu.create_grafana_admin_password()
+    
+   
+cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "--extra-vars", f"grafana_admin_password={grafana_admin_pass}" "-b", playbook ]
+
+ret_val["grafana_admin_pass"] = grafana_admin_pass
+
+#cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook ]
 
 r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 

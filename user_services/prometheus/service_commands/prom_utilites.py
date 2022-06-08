@@ -15,7 +15,6 @@ service_dir = os.path.join(os.path.expanduser('~') ,"services", "prometheus")
 data_filename = os.path.join(service_dir, "data.json" )
 extra_files_dir = os.path.join(service_dir, "extra_files")
 ansible_out_dir = os.path.join(service_dir, "ansible_out")
-install_vars_file = os.path.join(extra_files_dir, "install_vars.json")
 
 def get_data():
     # Get incoming data which will be in the data.json file.
@@ -39,33 +38,6 @@ def get_json_string(data):
 
 
 
-
-def create_install_vars():
-    install_vars = {}
-
-    letters = string.ascii_letters
-    
-
-    install_vars["grafana_admin_password"] = "".join(random.choice(letters) for i in range(8))
-    install_vars["node_exporter_username"] = "fabric_exporter"
-    install_vars["node_exporter_password"] = "".join(random.choice(letters) for i in range(16))
-    install_vars["snmp_community_string"] = ""
-    install_vars["fabric_prometheus_ht_user"] = "".join(random.choice(letters) for i in range(8))
-    install_vars["fabric_prometheus_ht_password"] = "".join(random.choice(letters) for i in range(8))
-
-    with open(install_vars_file, 'w') as f:
-        json.dump(install_vars, f)
-    
-def get_install_vars():
-    install_vars = {}
-    if os.path.exists(install_vars_file):
-        with open(install_vars_file, 'r') as f:
-            install_vars = json.load(f)
-    else:
-        # TODO log error
-        return {}
-    return install_vars
-
 def save_ansible_output(stdout, stderr):
     now = datetime.now()
     ansible_output_file = os.path.join( ansible_out_dir, "experiment_install_prometheus_out_{0}".format( now.strftime("%Y_%m_%d_%H_%M_%S") ) )
@@ -88,30 +60,29 @@ def save_ansible_output(stdout, stderr):
     with open(ansible_recap_file, "w") as arf:
         arf.write(play_recap)
 
-# def create_grafana_admin_password():
-#     """
-#     If the password file does not already exist, it is created and True is returned.
-#     Otherwise returns False
-#     """
-#     password_file = os.path.join(extra_files_dir, "grafana_admin_password" )
-#     if not os.path.exists(password_file):
-#         # Create new password and save to file
-#         letters = string.ascii_letters
-#         randpass =  "".join(random.choice(letters) for i in range(10))
-#         with open(password_file,'w') as pout:
-#             pout.write(randpass)
-#         return True
-#     return False
+def create_grafana_admin_password():
+    """
+    If the password file does not already exist, it is created and True is returned.
+    Otherwise returns False
+    """
+    password_file = os.path.join(extra_files_dir, "grafana_admin_password" )
+    if not os.path.exists(password_file):
+        # Create new password and save to file
+        letters = string.ascii_letters
+        randpass =  "".join(random.choice(letters) for i in range(10))
+        with open(password_file,'w') as pout:
+            pout.write(randpass)
+        return True
+    return False
 
 
 def get_grafana_admin_password():
-    install_vars = {}
-    if os.path.exists(install_vars_file):
-        with open(install_vars_file, 'r') as f:
-            install_vars = json.load(f)
-        password = install_vars["grafana_admin_password"]
+    password_file = os.path.join(extra_files_dir, "grafana_admin_password" )
+    if os.path.exists(password_file):
+        with open(password_file, 'r') as pin:
+            password = pin.read()
     else:
-        password = ""
+        return None
     return password
 
 
