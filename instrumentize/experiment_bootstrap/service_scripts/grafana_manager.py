@@ -17,9 +17,7 @@ if __name__ == "__main__":
     
     # src_dir is the path to the folder containing the files for controlling the service from mflib.
     # In this simple case all the files are in one folder. 
-    service_name = "grafana_manager"
-    this_script_dir = os.path.dirname(os.path.realpath(__file__))
-    src_dir = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, "service_commands")
+    src_dir = "../../../instrumentize/prometheus/grafana_manager/service_commands"
     print(f"Copying files and subfolders from {src_dir} to {args.service_dir}")
     copy_files(src_dir, args.service_dir)
     # Note the files do not need to come from a simple local copy as shown here. They could be pulled from anywhere such as a git repo or auto generated.
