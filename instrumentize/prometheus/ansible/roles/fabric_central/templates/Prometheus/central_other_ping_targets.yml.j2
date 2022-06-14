@@ -1,8 +1,9 @@
 ---
-# File: rack_ping_targets.yml
-# Ansible generated ping targets for {{hank_name}} Fabric rack.
-# Sets ping targets for devices running on the rack.
+# File: central_other_ping_targets.yml(.j2)
+# Ansible generated ping targets for all Fabric devices on all racks.
 
+# Set of racks to ping is hard coded here to prevent incomplete racks from being pinged. 
+{% for hank_name in ["dall", "lbnl", "mass", "max", "mich", "ncsa", "renc", "salt", "star", "tacc", "uky", "utah", "wash"] %}
 
 # Head Node
 {% for h in groups[hank_name+"_head"] %}
@@ -11,9 +12,13 @@
   labels:
         job: ping
         device: head
+        hank: {{ hank_name }}
         subdomain: {{h}}
         release: prod
-        relation: rack
+        
+        component_type: head
+        network: operations
+        reason: infrastructure_check
 {% endfor %}
 
 # Worker Nodes
@@ -23,9 +28,13 @@
   labels:
         job: ping
         device: worker
+        hank: {{ hank_name }}
         subdomain: {{h}}
         release: prod
-        relation: rack
+        
+        component_type: worker
+        network: operations
+        reason: infrastructure_check
 {% endfor %}
 
 
@@ -36,11 +45,13 @@
   labels:
         job: ping
         device: {{ h.split("-")[1] }}-sw
-        subdomain: '{{h}}'
+        hank: {{ hank_name }}
+        subdomain: {{h}}
         release: prod
-        relation: rack
+        
+        network: operations
+        reason: infrastructure_check
 {% endfor %}
-
 
 
 # Storage
@@ -50,16 +61,21 @@
   labels:
         job: ping
         device: {{ h.split("-")[1] }}
+        hank: {{ hank_name }}
         subdomain: {{h}}
         release: prod
-        relation: rack
+        
+        
+        network: operations
+        reason: infrastructure_check
 {% endfor %}
-
 
 
 # Others
 {% for h in groups[hank_name+"_others"] %}
-{% if h.split("-")[1] == "pdu" %}
+{% if h.split("-")[1] == "time" %}
+# time is not reachable from central metrics
+{% elif h.split("-")[1] == "pdu" %}
 # pdu have multiple ips that are not listed
 # pdu does not need monitoring
 {% else %}
@@ -68,9 +84,14 @@
   labels:
         job: ping
         device: {{ h.split("-")[1] }}
+        hank: {{ hank_name }}
         subdomain: {{h}}
         release: prod
-        relation: rack
+
+        
+        network: operations
+        reason: infrastructure_check
 {% endif %}
 {% endfor %}
 
+{% endfor %}

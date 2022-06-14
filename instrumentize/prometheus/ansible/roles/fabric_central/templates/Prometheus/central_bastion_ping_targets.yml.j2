@@ -1,0 +1,33 @@
+---
+# File: central_bastion_ping_targets.yml(.j2) 
+# Ansible generated ping targets for all Fabric public Bastion hosts.
+
+# Bastion
+{% for b in ["bastion-1", "bastion-2"] %}
+- targets:
+        - {{ hostvars[b].host_public_ipv4_address }}
+  labels:
+        job: ping
+        device: bastion
+        hank: other
+        subdomain: {{b}}
+        release: prod
+        ipv: 4
+        network: public
+        reason: infrastructure_check
+
+# ping not setup on operations network interface?
+#- targets:
+#        - {{ hostvars[b].host_operations_ipv4_address }}
+#  labels:
+#        job: ping
+#        device: bastion
+#        hank: other
+#        subdomain: {{b}}
+#        release: prod
+#        ipv: 4
+#        network: operations
+#        reason: infrastructure_check
+
+
+{% endfor %}

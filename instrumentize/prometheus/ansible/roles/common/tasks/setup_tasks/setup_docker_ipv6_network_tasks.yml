@@ -10,8 +10,6 @@
               - subnet: "{{ docker_ipv6_subnet }}"
                 gateway: "{{ docker_ipv6_gateway }}"
               
-              # - subnet: 2001:db8:2::/64
-              #   gateway: 2001:db8:2::1
               # # Docker will basically do DHCP for ip4
               # - subnet: 172.22.0.0/16
               #   gateway: 172.22.0.1
