@@ -306,10 +306,12 @@ grafana_datasource_template_files:
 nginx_ip_ports:
   # Note Each port will correspond to a confd file set above.
   #- 80:80         # Redirected to 443
-  #- 443:443       # /grafana for grafana interface
+  # 443 for /grafana on both ipv4 and ipv6, order here may matter depending on version of docker 
   - "[::]:443:443"
+  - 443:443
   - 9090:9090     # prometheus stats
   - 10922:10922   # thanos stats
+  - "[::]:{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
   - "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
 
 nginx_template_dir: templates/Nginx
