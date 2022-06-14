@@ -15,4 +15,4 @@
       #  - "5005:5005"
       volumes:
         - owl-output:/owl_data
-        - ~/owl_config:/owl_config
+        - /home/mfuser/services/owl/settings:/owl_config

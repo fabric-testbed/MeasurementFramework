@@ -4,26 +4,25 @@
   tasks:
     - name: Create a directory for owl config file
       ansible.builtin.file:
-        path: ~/owl_config
+        path: /home/mfuser/services/owl/settings
         state: directory
         mode: '0755'
   
     - name: Copy owl.conf file
       ansible.builtin.copy:
         # Source will change later
-        src: /home/mfuser/MeasurementFramework/owl/owl_config/owl.conf
-        dest: /home/mfuser/owl_config/owl.conf
+        src: /home/mfuser/services/owl/settings/owl.conf
+        dest: /home/mfuser/services/owl/settings/owl.conf
   
     - name: Copy owl service request file
       ansible.builtin.copy:
         # Source will change later
-        src: /home/mfuser/MeasurementFramework/owl/owl_config/owl_service_request.json
-        dest: /home/mfuser/owl_config/owl_service_request.json
+        src: /home/mfuser/services/owl/settings/owl_service_request.json
+        dest: /home/mfuser/services/owl/settings/owl_service_request.json
     
     - name: Create a docker volume called owl-output
       community.general.docker_volume:
         name: owl-output
-  
     - name: Create a container
       community.general.docker_container:
         name: owl
