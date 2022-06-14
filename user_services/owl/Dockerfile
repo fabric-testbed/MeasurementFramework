@@ -14,14 +14,14 @@ RUN mkdir /owl_config
 RUN ls -l /
 
 WORKDIR /MeasurementFramework/user_services/owl
+
+### May be needed later
 #COPY requirements.txt requirements.txt
 #RUN pip3 install -r requirements.txt
+
 
 # For debugging
 RUN pwd
 RUN ls -lh *
-#RUN cat NodeSockManager.py
-#RUN cat sock_ops/udp_capturer.py
 
-# This should probably be changed to simply python3
-ENTRYPOINT [ "python3", "NodeSockManager.py" ] 
+ENTRYPOINT [ "python3" ]  
