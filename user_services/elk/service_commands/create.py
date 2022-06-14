@@ -4,9 +4,9 @@ from datetime import datetime
 import os
 import json
 import subprocess
-import requests
 
 def main():
+    print("Hello")
     ret_val = {}
 
     playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
@@ -22,7 +22,7 @@ def main():
     r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     decoded_out = r.stdout.decode("utf-8")
-    play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
+    #play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
     decoded_err = r.stderr.decode("utf-8")
 
     if r.returncode == 0:
@@ -32,28 +32,32 @@ def main():
         ret_val["success"] =  True
         ret_val["msg"] = "ELK playbook install failed.."
 
-    ret_val["play_recap"] = play_recap
+    #ret_val["play_recap"] = play_recap
+    ret_val["play_recap"] = decoded_out
     print(json.dumps(ret_val))
-    
-    meas_node_ip = socket.gethostbyname(socket.gethostname())
-    username = "fabric"
-    os.chdir('../../../instrumentize/elk/credentials')
-    f = open("nginx_passwd", "r")
-    password = f.readline()
-    f.close()
-    password = password.rstrip()
-    os.chdir('../dashboards')
-    for file in os.scandir(os.getcwd()):
-        if file.endswith('.ndjson'):
-            print("Uploading " + file)
-            api_ip = 'http://' + meas_node_ip + '/api/saved_objects/_import?createNewCopies=true'
-            headers = {
+        
+    try:
+        meas_node_ip = socket.gethostbyname(socket.gethostname())
+        username = "fabric"
+        os.chdir('../../../instrumentize/elk/credentials')
+        f = open("nginx_passwd", "r")
+        password = f.readline()
+        f.close()
+        password = password.rstrip()
+        os.chdir('../dashboards')
+        for file in os.scandir(os.getcwd()):
+            if file.endswith('.ndjson'):
+              print("Uploading " + file)
+              api_ip = 'http://' + meas_node_ip + '/api/saved_objects/_import?createNewCopies=true'
+              headers = {
                 'kbn-xsrf': 'true',
-            }
-            files = {
+              }
+              files = {
                 'file': (file, open(file, 'rb')),
             }
             response = requests.post(api_ip, headers=headers, files=files, auth=(username, password))
+     except Exception as e:
+        print(f"Error in importing dashboards: {e}")
     
 if __name__ == "__main__":
     main()
