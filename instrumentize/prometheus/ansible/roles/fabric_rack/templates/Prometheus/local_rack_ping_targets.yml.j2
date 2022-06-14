@@ -59,7 +59,7 @@
 
 # Others
 {% for h in groups[hank_name+"_others"] %}
-{% elif h.split("-")[1] == "pdu" %}
+{% if h.split("-")[1] == "pdu" %}
 # pdu have multiple ips that are not listed
 # pdu does not need monitoring
 {% else %}
