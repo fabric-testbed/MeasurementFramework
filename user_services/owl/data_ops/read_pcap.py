@@ -2,9 +2,16 @@ from scapy.all import *
 import os
 import csv
 import sys
+from decimal import Decimal
+import datetime
 
 class PcapProcessor:
-    def __init__(self, pcapfiles, outfile="test.csv", delete_pcap=False, verbose=True):
+    def __init__(self, pcapfiles, outfile="out.csv", delete_pcap=False, verbose=True):
+        '''
+        Args:
+            pcapfiles([str,]):
+        '''
+
         self.pcapfiles = pcapfiles
         self.outfile = outfile
         self.delete_pcap = delete_pcap
@@ -18,33 +25,53 @@ class PcapProcessor:
             pkts = rdpcap(pcapfile)
     
             for pkt in pkts:
-                # Fields are <linkid, src-ip, send-t, dst-ip, dst-t, seq-n, latency>
+                # Fields are <linkid, src-ip, send-t, send-t-ISO, 
+                #             dst-ip, dst-t, dst-t-ISO, seq-n, latency_nano>
+                # latency_nano is in nano-seconds
+
                 fields=[]
-    
+
+                # Field: linkid
                 linkid = 0 # for now
                 fields.append(str(linkid))
+
+                # Field: src-ip
                 fields.append(str(pkt[IP].src))
-    
+
+                # Field: send-t
                 send_t, seq_n = pkt[Raw].load.decode().split(",")
-    
-                fields.append(send_t)
+                send_t = Decimal(send_t)  # To prevent floating point issues
+                fields.append(str(send_t))
+
+                # Field: send-t-ISO
+                fields.append(datetime.datetime.utcfromtimestamp(int(send_t)).isoformat() + 'Z')
+
+                # Field: dst-ip
                 fields.append(str(pkt[IP].dst))
-                fields.append(str(pkt.time))
+
+                # Field: dst-t
+                fields.append(str(pkt.time))  # pkt.time is type Decimal
+
+                # Field: dst-t-ISO
+                fields.append(datetime.datetime.utcfromtimestamp(int(pkt.time)).isoformat() + 'Z')
+
+                # Field: seq-n
                 fields.append(seq_n)
-                
-                latency = pkt.time - float(send_t)
-    
-                fields.append(str(latency))
-    
+
+                # Field: latency
+                latency_nano = (pkt.time-send_t)*1000000000
+                fields.append(str(int(latency_nano)))
+
                 if self.verbose:
                     print(fields)
-    
-                with open(self.outfile, 'a+') as f:
+
+                with open(self.outfile, 'a') as f:
                     writer = csv.writer(f)
                     writer.writerow(fields)
-    
+
             if self.delete_pcap:
                 os.remove(pcapfile)
+
 
 if __name__ == "__main__":
    
@@ -54,11 +81,7 @@ if __name__ == "__main__":
     for i in range(1,n):
         pcap_files.append(sys.argv[i])
 
-    test = PcapProcessor(pcap_files)
-    test.process()
-
-
-            
-            
+    processor = PcapProcessor(pcap_files)
+    processor.process()
 
 
