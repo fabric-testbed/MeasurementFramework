@@ -1,0 +1,9 @@
+{
+    "name":"Prometheus",
+    "type":"prometheus",
+    "url":"http://fabric_prometheus_prometheus:9090",
+    "access":"proxy",
+    "basicAuth":false,
+    "isDefault": true,
+    "orgId": 1
+}

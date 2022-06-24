@@ -897,3 +897,132 @@ class GrafanaManager(object):
             response['msg'] = "Given directory not found. Failed to upload dashboards."
 
         return response
+
+
+
+# Setup Datasources
+def createDatasource(self, fileDir):
+        """
+        Creates Grafana datasource from given JSON file
+
+        :param fileDir: Path to JSON containing Grafana datasource
+        :type fileDir: str
+        :return: Function Status
+        :rtype: JSON dictionary 
+        """
+        response = {
+            "success": False,
+            "msg": None
+        }
+
+        if self.apiKey is None:
+            response['msg'] = "No Grafana API token specified to object."
+            return response
+
+        if self.host is None:
+            response['msg'] = "No Grafana host specified to object."
+            return response
+
+        url = 'https://' + self.host + '/grafana/api/datasources'
+
+        headers = {
+            'Content-Type': 'application/json',
+            'User-Agent': "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36",
+            'Authorization': "Bearer " + self.apiKey
+        }
+        
+        datasourceFile = open(fileDir)
+        datasourceObject = datasourceFile.read()
+        datasourceFile.close()
+
+        x = requests.post(url, headers=headers, data=datasourceObject, verify=False)
+
+        if x.status_code == 200:
+            response['success'] = True
+            response['msg'] = "Successfully uploaded datasource."
+            response['data'] = x
+        else:
+            response['msg'] = "Failed to upload datasource."
+            response['data'] = x
+        
+        return response
+
+    # def deleteDashboard(self, dashboardUID):
+    #     """
+    #     Deletes given dashboard unique ID in Grafana host 
+
+    #     :param dashboardUID: Grafana Dashboard Unique ID, usually written within JSON
+    #     :type dashboardUID: str
+    #     :return: Function Status
+    #     :rtype: JSON dictionary 
+    #     """
+    #     response = {
+    #         "success": False,
+    #         "msg": None
+    #     }
+
+    #     if self.apiKey is None:
+    #         response['msg'] = "No Grafana API token specified to object."
+    #         return response
+        
+    #     if self.host is None:
+    #         response['msg'] = "No Grafana host specified to object."
+    #         return response
+
+    #     url = 'https://' + self.host + '/grafana/api/dashboards/uid/' + dashboardUID
+
+    #     headers = {
+    #         'Authorization': "Bearer " + self.apiKey
+    #     }
+
+    #     x = requests.delete(url, headers=headers, verify=False)
+
+    #     if x.status_code == 200:
+    #         response['success'] = True
+    #         response['msg'] = "Successfully deleted dashboard."
+    #         response['data'] = x
+    #     else:
+    #         response['msg'] = "Failed to delete dashboard."
+    #         response['data'] = x
+        
+    #     return response
+
+    def findDatasource(self, datasourceUID):
+        """
+        Locates given datasource unique ID in Grafana host 
+
+        :param datasourceUID: Grafana Datasource Unique ID, usually written within JSON
+        :type datasourceUID: str
+        :return: Function Status
+        :rtype: JSON dictionary 
+        """
+        response = {
+            "success": False,
+            "msg": None
+        }
+
+        if self.apiKey is None:
+            response['msg'] = "No Grafana API token specified to object."
+            return response
+        
+        if self.host is None:
+            response['msg'] = "No Grafana host specified to object."
+            return response
+
+        url = 'https://' + self.host + '/grafana/api/datasource/uid/' + dashboardUID
+
+        headers = {
+            'Authorization': "Bearer " + self.apiKey
+        }
+
+        x = requests.get(url, headers=headers, verify=False)
+        
+        if x.status_code == 200:
+            response['success'] = True
+            response['msg'] = "Successfully found datasource."
+            response['data'] = x
+        else:
+            response['msg'] = "Failed to find datasource."
+            response['data'] = x
+        
+        return response
