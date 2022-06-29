@@ -64,7 +64,7 @@ def main():
 
 
 
-    print(pu.get_json_string(ret_val))
+    print(json.dumps(ret_val))
 
 
     
