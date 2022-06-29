@@ -1,0 +1,11 @@
+---
+# TODO don't install if docker already installed
+# Installs Docker
+- name: Install Docker 
+  hosts: Experiment_nodes
+
+  tasks:
+  # Installs the Docker.
+  - name: Install Docker
+    include_role:
+      name: geerlingguy.docker
