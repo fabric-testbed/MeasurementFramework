@@ -42,6 +42,10 @@ These Playbooks are for temporary usage. Make sure to check the file source path
 ls -l /var/lib/docker/volumes/owl-output/vol/_data
 ```
 
+## Current Limitations
+- IPV4 only
+- Assumes end points are non-routing devices with only 1 experimenter's network interface.
+
 
 ## how to run the docker container (WIP)
 ```
