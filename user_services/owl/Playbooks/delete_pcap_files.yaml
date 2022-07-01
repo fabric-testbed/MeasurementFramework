@@ -8,7 +8,7 @@
       image: owl-app
       state: started
       restart: yes
-      command: ["DataProcessManager.py", "process", "/owl_data", "out.csv"]
+      command: ["DataProcessManager.py", "delete_pcap", "/owl_data", "out.csv"]
       privileged: yes
       network_mode: host
       #ports:

@@ -1,14 +1,14 @@
 ---
-- name: Process OWL data
+- name: Delete csv files on Docker Volume
   hosts: Experiment_Nodes 
   tasks:
-  - name: Extract information from pcap files on a Docker volume and append to a csv file.
+  - name: Delete saved csv files
     community.general.docker_container:
       name: owl
       image: owl-app
       state: started
       restart: yes
-      command: ["DataProcessManager.py", "process", "/owl_data", "out.csv"]
+      command: ["DataProcessManager.py", "delete_csv", "/owl_data"]
       privileged: yes
       network_mode: host
       #ports:
