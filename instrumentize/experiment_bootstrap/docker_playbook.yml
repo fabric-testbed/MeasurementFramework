@@ -2,8 +2,7 @@
 # TODO don't install if docker already installed
 # Installs Docker
 - name: Install Docker 
-  hosts: Experiment_nodes
-
+  hosts: all
   tasks:
   # Installs the Docker.
   - name: Install Docker

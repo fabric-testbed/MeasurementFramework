@@ -1,8 +1,8 @@
 
 ---
 
-- name: Istall pip3 and python docker sdk 
-  hosts: Experiment_nodes
+- name: Install pip3 and python docker sdk 
+  hosts: all
 
   tasks:  
   # Installs Pip3

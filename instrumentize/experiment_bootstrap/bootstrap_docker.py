@@ -15,7 +15,7 @@ def main():
     #ansible_hosts_file = '/home/mfuser/mf_git/instrumentize/ansible/fabric_experiment_instramentize/promhosts.ini'
     ansible_hosts_file = '/home/mfuser/services/common/hosts.ini'
     playbook = "/home/mfuser/mf_git/instrumentize/experiment_bootstrap/pip3_docker_sdk_playbook.yml"
-    keyfile = "/home/mfuser/.ssh/mfuser"
+    keyfile = "/home/mfuser/.ssh/mfuser_private_key"
 
 
     # For some reason the local ansible.cfg file is not being used
