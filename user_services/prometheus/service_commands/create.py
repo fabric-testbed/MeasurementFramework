@@ -16,7 +16,7 @@ def main():
     #ansible_hosts_file = "/home/mfuser/mf_git/promhosts.ini"
     ansible_hosts_file = '/home/mfuser/mf_git/instrumentize/ansible/fabric_experiment_instramentize/promhosts.ini'
     playbook = "/home/mfuser/mf_git/instrumentize/ansible/playbook_fabric_experiment_install_prometheus.yml"
-    keyfile = "/home/mfuser/.ssh/mfuser"
+    keyfile = "/home/mfuser/.ssh/mfuser_private_key"
 
 
     # For some reason the local ansible.cfg file is not being used

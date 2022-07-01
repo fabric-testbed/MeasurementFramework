@@ -11,7 +11,7 @@ def main():
     playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
     ansible_hosts_file = "/home/mfuser/mf_git/elkhosts.ini"
     playbook = "/home/mfuser/mf_git/instrumentize/elk/fabric_deploy.yml"
-    keyfile = "/home/mfuser/.ssh/mfuser"
+    keyfile = "/home/mfuser/.ssh/mfuser_private_key"
 
     # For some reason the local ansible.cfg file is not being used
     os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
