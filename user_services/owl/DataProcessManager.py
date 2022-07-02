@@ -27,7 +27,7 @@ class DataProcessManager:
         processor.process()
 
 
-    def delete_csv(self):
+    def delete_csv_files(self):
         csv_files = glob.glob(f'{self.data_dir}/*.csv')
         
         for csv_f in csv_files:
@@ -37,7 +37,7 @@ class DataProcessManager:
                 print("Error while deleting file: ", csv_f)
 
 
-    def delete_pcap(self):
+    def delete_pcap_files(self):
         for pcap_f in self.pcapfiles:
             try:
                 os.remove(pcap_f)
@@ -70,10 +70,10 @@ if __name__ == "__main__":
         data_processor.process()
 
     elif sys.argv[1] == 'delete_csv':
-        data_processor.delete_csv()
+        data_processor.delete_csv_files()
 
     elif sys.argv[1] == 'delete_pcap':
-        data_processor.delete_pcap()
+        data_processor.delete_pcap_files()
 
     else:
         print("Error: no such action")

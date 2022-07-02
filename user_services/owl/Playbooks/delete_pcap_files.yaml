@@ -2,13 +2,13 @@
 - name: Process OWL data
   hosts: Experiment_Nodes 
   tasks:
-  - name: Extract information from pcap files on a Docker volume and append to a csv file.
+  - name: Delete pcap files
     community.general.docker_container:
       name: owl
       image: owl-app
       state: started
       restart: yes
-      command: ["DataProcessManager.py", "delete_pcap", "/owl_data", "out.csv"]
+      command: ["DataProcessManager.py", "delete_pcap", "/owl_data"]
       privileged: yes
       network_mode: host
       #ports:
