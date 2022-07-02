@@ -7,20 +7,19 @@ class DataProcessManager:
     def __init__(self, dir_path, outfile, delete_pcap=False, verbose=True):
 
         self.data_dir = dir_path
-        files = glob.glob(f'{self.data_dir}/*.pcap')
-        # Remove zero-bye pcap files
-        self.pcapfiles = [f for f in files if os.stat(f).st_size > 0] 
-        
-        print("pcapfiles: ", self.pcapfiles)
-
+        self.pcapfiles = glob.glob(f'{self.data_dir}/*.pcap')
         self.outfile = f'{self.data_dir}/{outfile}'
         self.delete_pcap = delete_pcap
         self.verbose = verbose
 
 
     def process(self):
+        # Remove zero-bye pcap files
+        pcapfiles_with_data = [f for f in self.pcapfiles if os.stat(f).st_size > 0]
+        print("non-zero pcap files to be processed: ", pcapfiles_with_data)
+
         processor = pcap_reader.PcapProcessor(
-                            self.pcapfiles, 
+                            pcapfiles_with_data, 
                             self.outfile, 
                             self.delete_pcap, 
                             self.verbose)
@@ -33,14 +32,17 @@ class DataProcessManager:
         for csv_f in csv_files:
             try:
                 os.remove(csv_f)
+                print("Removed File: ", csv-f)
             except:
                 print("Error while deleting file: ", csv_f)
 
 
     def delete_pcap_files(self):
+        
         for pcap_f in self.pcapfiles:
             try:
                 os.remove(pcap_f)
+                print("Removed File: ". pcap_f)
             except:
                 print("Error while deleting file: ", pcap_f)
 
