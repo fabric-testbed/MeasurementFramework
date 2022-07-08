@@ -900,8 +900,8 @@ class GrafanaManager(object):
 
 
 
-# Setup Datasources
-def createDatasource(self, fileDir):
+    # Setup Datasources
+    def createDatasource(self, fileDir):
         """
         Creates Grafana datasource from given JSON file
 
