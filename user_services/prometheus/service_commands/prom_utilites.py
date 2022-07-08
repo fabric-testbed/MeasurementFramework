@@ -41,6 +41,11 @@ def get_json_string(data):
 
 
 def create_install_vars():
+    if os.exists(install_vars_file):
+        return
+        # Don't recreate the file if it exists.
+
+        
     install_vars = {}
 
     letters = string.ascii_letters
