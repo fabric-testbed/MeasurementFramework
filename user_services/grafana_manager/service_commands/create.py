@@ -15,6 +15,10 @@ def main():
         "msg": None
     }
 
+    # Data is stored in relative dir to this script.
+    service_dir =  os.path.dirname(__file__)
+    infoFilePath = os.path.join( service_dir, "infoFile.txt")
+    configFilePath = os.path.join( service_dir, "configFile.txt")
 
     data = gu.get_data()
 
@@ -27,7 +31,7 @@ def main():
     interface = gi.GrafanaManager( host = "localhost",
                     username = "admin",
                     password = default_settings['grafana_admin_password'],
-                    infoFilePath = "infofile",
+                    infoFilePath = infoFilePath,
                     infoFileDelimiter = ",",
                     key = None
                   ) 
@@ -37,12 +41,12 @@ def main():
 
 
     #def test_CreateConfigFile(self):
-    result = interface.createConfigFile('configFile.txt', '-')
+    result = interface.createConfigFile(configFilePath, '-')
     #assertEqual(True, result['success'], result['msg'])
     print(result)
 
     #def test_ParseConfigFile(self):
-    result = interface.parseConfigFile('configFile.txt', '-')
+    result = interface.parseConfigFile(configFilePath, '-')
     print(result)
     #self.assertEqual(True, result['success'], result['msg'])
 
@@ -77,25 +81,25 @@ def main():
     #self.assertEqual(True, result['success'], result['msg'])
 
     #def test_CreateDashboard(self):
-    result = interface.createDashboard('Dashboards/networkDashboard.json')
+    result = interface.createDashboard(os.path.join(service_dir, 'Dashboards/networkDashboard.json' ))
     print(result)
     #self.assertEqual(True, result['success'], result['msg'])
 
-    #def test_DeleteDashboard(self):
-    result = interface.deleteDashboard('dHEquNzGz')
-    print(result)
-    #self.assertEqual(True, result['success'], result['msg'])
+    # #def test_DeleteDashboard(self):
+    # result = interface.deleteDashboard('dHEquNzGz')
+    # print(result)
+    # #self.assertEqual(True, result['success'], result['msg'])
 
-    #def test_GetHomeDashboard(self):
-    result = interface.getHomeDashboard()
-    print(result)
-    #self.assertEqual(True, result['success'], result['msg'])
+    # #def test_GetHomeDashboard(self):
+    # result = interface.getHomeDashboard()
+    # print(result)
+    # #self.assertEqual(True, result['success'], result['msg'])
 
 
-    #def test_UploadDashboards(self):
-    result = interface.uploadDashboards('Dashboards')
-    print(result)
-    #self.assertEqual(True, result['success'], result['msg'])
+    # #def test_UploadDashboards(self):
+    # result = interface.uploadDashboards('Dashboards')
+    # print(result)
+    # #self.assertEqual(True, result['success'], result['msg'])
 
 
     
