@@ -32,7 +32,7 @@ def main():
                     key = None
                   ) 
     
-    interface.createConfigFile('configFile.txt', '-')
+    #interface.createConfigFile('configFile.txt', '-')
 
 
 
@@ -46,30 +46,30 @@ def main():
     print(result)
     #self.assertEqual(True, result['success'], result['msg'])
 
-    #def test_CreateNewUser(self):
-    result = interface.createNewUser('user', 'user@user.com', 'userLogin', 'userPassword')
-    print(result)
-    #self.assertEqual(True, result['success'], result['msg'])
+    # #def test_CreateNewUser(self):
+    # result = interface.createNewUser('user', 'user@user.com', 'userLogin', 'userPassword')
+    # print(result)
+    # #self.assertEqual(True, result['success'], result['msg'])
 
-    #def test_StoreUserInfo(self):
-    result = interface.storeUserInfo('testingUser', 'testingUserPassword')
-    print(result)
-    #self.assertEqual(True, result['success'], result['msg'])
+    # #def test_StoreUserInfo(self):
+    # result = interface.storeUserInfo('testingUser', 'testingUserPassword')
+    # print(result)
+    # #self.assertEqual(True, result['success'], result['msg'])
 
-    #def test_GetAllUserInfo(self):
-    result = interface.getAllUserInfo()
-    print(result)
-    #self.assertEqual(True, result['success'], result['msg'])
+    # #def test_GetAllUserInfo(self):
+    # result = interface.getAllUserInfo()
+    # print(result)
+    # #self.assertEqual(True, result['success'], result['msg'])
 
-    #def test_FindUser(self):
-    result = interface.findUser('userLogin')
-    print(result)
-    #self.assertEqual(True, result['success'], result['msg'])
+    # #def test_FindUser(self):
+    # result = interface.findUser('userLogin')
+    # print(result)
+    # #self.assertEqual(True, result['success'], result['msg'])
 
-    #def test_GetAllUsers(self):
-    result = interface.getAllUsers()
-    print(result)
-    #self.assertEqual(True, result['success'], result['msg'])
+    # #def test_GetAllUsers(self):
+    # result = interface.getAllUsers()
+    # print(result)
+    # #self.assertEqual(True, result['success'], result['msg'])
 
     #def test_CreateAdminToken(self):
     result = interface.createAdminToken()
