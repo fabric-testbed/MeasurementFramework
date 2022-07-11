@@ -107,7 +107,7 @@ def main():
 
 
     # #def test_UploadDashboards(self):
-    result = interface.uploadDashboard(os.path.join(service_dir, 'Dashboards' ))
+    result = interface.uploadDashboards(os.path.join(service_dir, 'Dashboards' ))
     ret_val['msg'] += result['msg']
     # result = interface.uploadDashboards('Dashboards')
     # print(result)
