@@ -43,11 +43,13 @@ def main():
     #def test_CreateConfigFile(self):
     result = interface.createConfigFile(configFilePath, '-')
     #assertEqual(True, result['success'], result['msg'])
-    print(result)
+    #print(result)
+    ret_val['msg'] += result['msg']
 
     #def test_ParseConfigFile(self):
     result = interface.parseConfigFile(configFilePath, '-')
-    print(result)
+    #print(result)
+    ret_val['msg'] += result['msg']
     #self.assertEqual(True, result['success'], result['msg'])
 
     # #def test_CreateNewUser(self):
@@ -77,12 +79,14 @@ def main():
 
     #def test_CreateAdminToken(self):
     result = interface.createAdminToken()
-    print(result)
+    #print(result)
+    ret_val['msg'] += result['msg']
     #self.assertEqual(True, result['success'], result['msg'])
 
     #def test_CreateDashboard(self):
     result = interface.createDashboard(os.path.join(service_dir, 'Dashboards/networkDashboard.json' ))
-    print(result)
+    ret_val['msg'] += result['msg']
+    #print(result)
     #self.assertEqual(True, result['success'], result['msg'])
 
     # #def test_DeleteDashboard(self):
