@@ -119,7 +119,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         configFileHost = configFileUsername = configFilePassword = configFileKey = ""
@@ -160,7 +160,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         # Check if the configuration file exists
@@ -202,7 +202,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         if not exists(self.infoFilePath):
@@ -250,7 +250,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         if not exists(self.infoFilePath):
@@ -285,7 +285,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         if not exists(self.infoFilePath):
@@ -328,7 +328,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         session = requests.session()
@@ -396,7 +396,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         session = requests.session()
@@ -442,7 +442,7 @@ class GrafanaManager(object):
     def getAllUsers(self):
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         session = requests.session()
@@ -498,7 +498,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         session = requests.session()
@@ -576,7 +576,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         session = requests.session()
@@ -646,7 +646,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         session = requests.session()
@@ -709,7 +709,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         if self.apiKey is None:
@@ -755,7 +755,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         if self.apiKey is None:
@@ -795,7 +795,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         if self.apiKey is None:
@@ -833,7 +833,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         if self.apiKey is None:
@@ -873,7 +873,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         if self.apiKey is None:
@@ -912,7 +912,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         if self.apiKey is None:
@@ -958,7 +958,7 @@ class GrafanaManager(object):
     #     """
     #     response = {
     #         "success": False,
-    #         "msg": None
+    #         "msg":""
     #     }
 
     #     if self.apiKey is None:
@@ -998,7 +998,7 @@ class GrafanaManager(object):
         """
         response = {
             "success": False,
-            "msg": None
+            "msg":""
         }
 
         if self.apiKey is None:

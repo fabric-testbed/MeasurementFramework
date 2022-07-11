@@ -12,7 +12,7 @@ import grafanaInterface as gi
 def main():
     ret_val = {
         "success": True,
-        "msg": None
+        "msg": ""
     }
 
     # Data is stored in relative dir to this script.
@@ -45,7 +45,7 @@ def main():
     #assertEqual(True, result['success'], result['msg'])
     #print(result)
     ret_val['msg'] += result['msg']
-
+    
     #def test_ParseConfigFile(self):
     result = interface.parseConfigFile(configFilePath, '-')
     #print(result)
