@@ -83,6 +83,12 @@ def main():
     ret_val['msg'] += result['msg']
     #self.assertEqual(True, result['success'], result['msg'])
 
+
+
+    # Create datasource
+    result = interface.createDatasource(os.path.join(service_dir, 'Datasources/localPrometheus.yml'))
+    ret_val['msg'] += result["msg"]
+
     #def test_CreateDashboard(self):
     ##result = interface.createDashboard(os.path.join(service_dir, 'Dashboards/networkDashboard.json' ))
     ##ret_val['msg'] += result['msg']
