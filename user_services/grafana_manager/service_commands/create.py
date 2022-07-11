@@ -86,7 +86,7 @@ def main():
 
 
     # Create datasource
-    result = interface.createDatasource(os.path.join(service_dir, 'Datasources/localPrometheus.yml'))
+    result = interface.createDatasource(os.path.join(service_dir, 'Datasources/localPrometheus.json'))
     ret_val['msg'] += result["msg"]
 
     #def test_CreateDashboard(self):
