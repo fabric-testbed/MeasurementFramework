@@ -84,8 +84,8 @@ def main():
     #self.assertEqual(True, result['success'], result['msg'])
 
     #def test_CreateDashboard(self):
-    result = interface.createDashboard(os.path.join(service_dir, 'Dashboards/networkDashboard.json' ))
-    ret_val['msg'] += result['msg']
+    ##result = interface.createDashboard(os.path.join(service_dir, 'Dashboards/networkDashboard.json' ))
+    ##ret_val['msg'] += result['msg']
     #print(result)
     #self.assertEqual(True, result['success'], result['msg'])
 
@@ -101,6 +101,8 @@ def main():
 
 
     # #def test_UploadDashboards(self):
+    result = interface.uploadDashboard(os.path.join(service_dir, 'Dashboards' ))
+    ret_val['msg'] += result['msg']
     # result = interface.uploadDashboards('Dashboards')
     # print(result)
     # #self.assertEqual(True, result['success'], result['msg'])
