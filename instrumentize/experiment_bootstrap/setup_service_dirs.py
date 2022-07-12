@@ -22,7 +22,7 @@ logging.basicConfig(filename=logfile, format='%(asctime)s %(name)-8s %(levelname
 
 def make_base_service_dir():
     # Create the base service directory.
-    logging.INFO("Creating base services dir.")
+    logging.info("Creating base services dir.")
     base_service_dir = os.path.join(os.path.expanduser("~"), "services") 
     try:
         os.makedirs( base_service_dir)
@@ -33,7 +33,7 @@ def make_base_service_dir():
 
 def make_service_dir(base_service_dir, service_name):
     # Create a service directory for the given service_name/
-    logging.INFO(f"Creating directories for {service_name}.")
+    logging.info(f"Creating directories for {service_name}.")
     service_dir = os.path.join(base_service_dir, service_name) 
     try:
         os.makedirs( service_dir)
@@ -85,8 +85,8 @@ def run_service_scripts(base_service_dir):
             print(r)
         except Exception as e:
             print(str(e))
-            logging.ERROR("run_service_scripts has failed.")
-            logging.ERROR(str(e))
+            logging.error("run_service_scripts has failed.")
+            logging.error(str(e))
 
 
 if __name__ == "__main__":

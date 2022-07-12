@@ -23,7 +23,7 @@ def main():
 
     logFilePath = os.path.join( service_dir, "log", "create.log")
     logging.basicConfig(filename=logfilePath, format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level="INFO")
-    logging.INFO("-----Start Ceate Script.-----")
+    logging.info("-----Start Ceate Script.-----")
 
     data = gu.get_data()
 
@@ -31,7 +31,7 @@ def main():
         # Service has already been created, don't run again.
         ret_val['msg'] = "Grafana Manager service has already been created. Use mflib.info('grafana_manager') for more information."
         print( gu.get_json_string(ret_val) )
-        logging.INFO("create.py script is not running again since the config file has aleady been created.")
+        logging.info("create.py script is not running again since the config file has aleady been created.")
         return 
 
 
@@ -53,27 +53,27 @@ def main():
     
     # Create the config file.
     result = interface.createConfigFile(configFilePath, '-')
-    logging.INFO(result)
+    logging.info(result)
     ret_val['msg'] += result['msg']
     
     # Create the admin token
     result = interface.createAdminToken()
-    logging.INFO(result)
+    logging.info(result)
     ret_val['msg'] += result['msg']
 
     # Create local prometheus datasource
     result = interface.createDatasource(os.path.join(service_dir, 'Datasources/localPrometheus.json'))
-    logging.INFO(result)
+    logging.info(result)
     ret_val['msg'] += result["msg"]
 
     # Upload all the default dashboards. Note could change this to just do certain dashboards later.
     result = interface.uploadDashboards(os.path.join(service_dir, 'Dashboards' ))
-    logging.INFO(result)
+    logging.info(result)
     ret_val['msg'] += result['msg']
 
-    logging.INFO(ret_val)
+    logging.info(ret_val)
     print( gu.get_json_string(ret_val) )
-    logging.INFO("-----End Create Script-----")
+    logging.info("-----End Create Script-----")
     
 if __name__ == "__main__":
     main()
