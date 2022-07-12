@@ -18,11 +18,11 @@ def main():
 
     # Data is stored in relative dir to this script.
     service_dir =  os.path.dirname(__file__)
-    infoFilePath = os.path.join( service_dir, "infoFile.txt")
-    configFilePath = os.path.join( service_dir, "configFile.txt")
+    infoFilePath = os.path.join(service_dir, "infoFile.txt")
+    configFilePath = os.path.join(service_dir, "configFile.txt")
 
-    logFilePath = os.path.join( service_dir, "log", "create.log")
-    logging.basicConfig(filename=logfilePath, format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level="INFO")
+    logFilePath = os.path.join(service_dir, "log", "create.log")
+    logging.basicConfig(filename=logFilePath, format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level="INFO")
     logging.info("-----Start Ceate Script.-----")
 
     data = gu.get_data()
