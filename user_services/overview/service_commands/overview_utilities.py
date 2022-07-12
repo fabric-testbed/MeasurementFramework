@@ -5,7 +5,7 @@ import json
 
 services_dir = os.path.join(os.path.expanduser('~') ,"services")
 
-data_filename = os.path.join(services_dir, "overview", "data.json" )
+data_filename = os.path.join(services_dir, "overview", "data", "data.json" )
 
 def get_services_list():
     # Read the services directories and parse service names
