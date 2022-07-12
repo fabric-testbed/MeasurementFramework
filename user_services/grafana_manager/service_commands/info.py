@@ -31,22 +31,23 @@ def main():
                     infoFileDelimiter = ",",
                     key = None
                   ) 
-    
+                      
     if "get" in data:
             
         if "all_users_info" in data["get"]:
             result = interface.getAllUserInfo()
-            ret_val['all_users_info'] = result['msg']
-
-
-        if "all_users" in data["get"]:
-            result = interface.getAllUsers()
-            ret_val['all_users'] = result['msg']
-
+            ret_val['all_users_info'] = result['data']
 
         if "admin_password" in data["get"]:
-            ret_val["defaults"] = gu.get_defaults()
+            defaults = gu.get_defaults()
+            ret_val["grafana_admin_password"] = defaults["grafana_admin_password"]
         
+        if "ht_access" in data["get"]:
+            defaults = gu.get_defaults()
+            ret_val["fabric_prometheus_ht_user"] = defaults["fabric_prometheus_ht_user"]
+            ret_val["fabric_prometheus_ht_password"] = defaults["fabric_prometheus_ht_password"]
+            
+
     # #def test_FindUser(self):
     # result = interface.findUser('userLogin')
     # print(result)
