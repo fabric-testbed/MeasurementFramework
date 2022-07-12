@@ -1,5 +1,5 @@
-# Create the service overview. 
-# Nothing to do. Just check if functions work for getting info.
+# Create the grafana_manager service. 
+# Prometheus service has to be setup prior to running this script.
 
 import os
 from os.path import exists
@@ -7,6 +7,7 @@ import json
 import grafanaUtilities as gu
 import grafanaInterface as gi 
 
+import logging 
 
 
 def main():
@@ -20,7 +21,20 @@ def main():
     infoFilePath = os.path.join( service_dir, "infoFile.txt")
     configFilePath = os.path.join( service_dir, "configFile.txt")
 
+    logFilePath = os.path.join( service_dir, "log", "create.log")
+    logging.basicConfig(filename=logfilePath, format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level="INFO")
+    logging.INFO("-----Start Ceate Script.-----")
+
     data = gu.get_data()
+
+    if os.path.exists(configFilePath):
+        # Service has already been created, don't run again.
+        ret_val['msg'] = "Grafana Manager service has already been created. Use mflib.info('grafana_manager') for more information."
+        print( gu.get_json_string(ret_val) )
+        logging.INFO("create.py script is not running again since the config file has aleady been created.")
+        return 
+
+
 
     # To create the grafana service Prometheus must already be setup
     if not os.path.exists(gu.prometheus_default_install_vars_file):
@@ -36,87 +50,30 @@ def main():
                     key = None
                   ) 
     
-    #interface.createConfigFile('configFile.txt', '-')
-
-
-
-    #def test_CreateConfigFile(self):
+    
+    # Create the config file.
     result = interface.createConfigFile(configFilePath, '-')
-    #assertEqual(True, result['success'], result['msg'])
-    #print(result)
+    logging.INFO(result)
     ret_val['msg'] += result['msg']
     
-    #def test_ParseConfigFile(self):
-    result = interface.parseConfigFile(configFilePath, '-')
-    #print(result)
-    ret_val['msg'] += result['msg']
-    #self.assertEqual(True, result['success'], result['msg'])
-
-    # #def test_CreateNewUser(self):
-    # result = interface.createNewUser('user', 'user@user.com', 'userLogin', 'userPassword')
-    # print(result)
-    # #self.assertEqual(True, result['success'], result['msg'])
-
-    # #def test_StoreUserInfo(self):
-    # result = interface.storeUserInfo('testingUser', 'testingUserPassword')
-    # print(result)
-    # #self.assertEqual(True, result['success'], result['msg'])
-
-    # #def test_GetAllUserInfo(self):
-    # result = interface.getAllUserInfo()
-    # print(result)
-    # #self.assertEqual(True, result['success'], result['msg'])
-
-    # #def test_FindUser(self):
-    # result = interface.findUser('userLogin')
-    # print(result)
-    # #self.assertEqual(True, result['success'], result['msg'])
-
-    # #def test_GetAllUsers(self):
-    # result = interface.getAllUsers()
-    # print(result)
-    # #self.assertEqual(True, result['success'], result['msg'])
-
-    #def test_CreateAdminToken(self):
+    # Create the admin token
     result = interface.createAdminToken()
-    #print(result)
+    logging.INFO(result)
     ret_val['msg'] += result['msg']
-    #self.assertEqual(True, result['success'], result['msg'])
 
-
-
-    # Create datasource
+    # Create local prometheus datasource
     result = interface.createDatasource(os.path.join(service_dir, 'Datasources/localPrometheus.json'))
+    logging.INFO(result)
     ret_val['msg'] += result["msg"]
 
-    #def test_CreateDashboard(self):
-    ##result = interface.createDashboard(os.path.join(service_dir, 'Dashboards/networkDashboard.json' ))
-    ##ret_val['msg'] += result['msg']
-    #print(result)
-    #self.assertEqual(True, result['success'], result['msg'])
-
-    # #def test_DeleteDashboard(self):
-    # result = interface.deleteDashboard('dHEquNzGz')
-    # print(result)
-    # #self.assertEqual(True, result['success'], result['msg'])
-
-    # #def test_GetHomeDashboard(self):
-    # result = interface.getHomeDashboard()
-    # print(result)
-    # #self.assertEqual(True, result['success'], result['msg'])
-
-
-    # #def test_UploadDashboards(self):
+    # Upload all the default dashboards. Note could change this to just do certain dashboards later.
     result = interface.uploadDashboards(os.path.join(service_dir, 'Dashboards' ))
+    logging.INFO(result)
     ret_val['msg'] += result['msg']
-    # result = interface.uploadDashboards('Dashboards')
-    # print(result)
-    # #self.assertEqual(True, result['success'], result['msg'])
 
-
-    
-
+    logging.INFO(ret_val)
     print( gu.get_json_string(ret_val) )
+    logging.INFO("-----End Create Script-----")
     
 if __name__ == "__main__":
     main()
