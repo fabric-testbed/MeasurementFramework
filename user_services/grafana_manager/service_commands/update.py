@@ -48,10 +48,10 @@ def main():
         # print(result)
         # #self.assertEqual(True, result['success'], result['msg'])
 
-        elif data["cmd"] = "get_user_info":
-            result = interface.getAllUserInfo()
-            ret_val['msg'] += result['msg']
-            # print(result)
+        # elif data["cmd"] = "get_user_info":
+        #     result = interface.getAllUserInfo()
+        #     ret_val['msg'] += result['msg']
+        #     # print(result)
         
     # #def test_FindUser(self):
     # result = interface.findUser('userLogin')
