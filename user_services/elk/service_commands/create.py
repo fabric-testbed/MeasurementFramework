@@ -34,8 +34,10 @@ def main():
     play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
     decoded_err = r.stderr.decode("utf-8")
 
-    logging.info(r)
+    #logging.info(r)
+    logging.info("STDOUT")
     logging.info(decoded_out)
+    logging.info("STDERR")
     logging.error(decoded_err)
 
     if r.returncode == 0:
