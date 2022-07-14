@@ -42,11 +42,21 @@ def main():
             defaults = gu.get_defaults()
             ret_val["grafana_admin_password"] = defaults["grafana_admin_password"]
         
-        if "ht_access" in data["get"]:
-            defaults = gu.get_defaults()
-            ret_val["fabric_prometheus_ht_user"] = defaults["fabric_prometheus_ht_user"]
-            ret_val["fabric_prometheus_ht_password"] = defaults["fabric_prometheus_ht_password"]
+        # if "ht_access" in data["get"]:
+        #     defaults = gu.get_defaults()
+        #     ret_val["fabric_prometheus_ht_user"] = defaults["fabric_prometheus_ht_user"]
+        #     ret_val["fabric_prometheus_ht_password"] = defaults["fabric_prometheus_ht_password"]
+
+        if "ht_user" in data["get"]:
+            ret_val["ht_user"] = defaults["fabric_prometheus_ht_user"]
+
+        if "ht_password" in data["get"]:
+            ret_val["ht_password"] = defaults["fabric_prometheus_ht_password"]
+
             
+    else:
+        ret_val["help"] = 'Valid request data values include "get": ["all_users_info", "admin_password", "ht_acesss"]. '
+
 
     # #def test_FindUser(self):
     # result = interface.findUser('userLogin')
