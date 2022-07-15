@@ -55,20 +55,22 @@ def main():
 
     # logging.info("-----End Ceate Script.-----")
     # print(json.dumps(ret_val))
-    
+
     logging.info("Ansible elk install playbooks completed.")
 
     logging.info("Starting Dashboard Imports")
     try:
       meas_node_ip = socket.gethostbyname(socket.gethostname())
       username = "fabric"
-      os.chdir('../../../instrumentize/elk/credentials')
-      f = open("nginx_passwd", "r")
+      #os.chdir('../../../instrumentize/elk/credentials')
+      f = open("/home/mfuser/mf_git/instrumentize/elk/credentials/nginx_passwd", "r")
+      
       password = f.readline()
       f.close()
       password = password.rstrip()
-      os.chdir('../dashboards')
-      for file in os.listdir(os.getcwd()):
+      #os.chdir('../dashboards')
+      #for file in os.listdir(os.getcwd()):
+      for file in os.listdir("/home/mfuser/mf_git/instrumentize/elk/dashboards"):
         if file.endswith('.ndjson'):
           logging.info("Uploading " + file)
           api_ip = 'http://' + meas_node_ip + '/api/saved_objects/_import?createNewCopies=true'
