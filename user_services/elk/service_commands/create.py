@@ -53,35 +53,35 @@ def main():
     logging.info(ret_val['msg'])
     ret_val["play_recap"] = play_recap
 
-    # logging.info("-----End Ceate Script.-----")
-    # print(json.dumps(ret_val))
-
     logging.info("Ansible elk install playbooks completed.")
 
-    logging.info("Starting Dashboard Imports")
-    try:
-      meas_node_ip = socket.gethostbyname(socket.gethostname())
-      username = "fabric"
-      #os.chdir('../../../instrumentize/elk/credentials')
-      f = open("/home/mfuser/mf_git/instrumentize/elk/credentials/nginx_passwd", "r")
+    # Should be moved to update.py? or to kibana_manager service?
+    # logging.info("Starting Dashboard Imports")
+    # try:
+    #   meas_node_ip = socket.gethostbyname(socket.gethostname())
+    #   username = "fabric"
+    #   #os.chdir('../../../instrumentize/elk/credentials')
+    #   f = open("/home/mfuser/mf_git/instrumentize/elk/credentials/nginx_passwd", "r")
       
-      password = f.readline()
-      f.close()
-      password = password.rstrip()
-      #os.chdir('../dashboards')
-      #for file in os.listdir(os.getcwd()):
-      for file in os.listdir("/home/mfuser/mf_git/instrumentize/elk/dashboards"):
-        if file.endswith('.ndjson'):
-          logging.info("Uploading " + file)
-          api_ip = 'http://' + meas_node_ip + '/api/saved_objects/_import?createNewCopies=true'
-          headers = {'kbn-xsrf': 'true',}
-          files = {'file': (file, open(file, 'rb')),}
-          response = requests.post(api_ip, headers=headers, files=files, auth=(username, password))
-          ret_val["msg"] += f"Uploaded dashboard {file}. "
-    except Exception as e:
-        logging.error(f"Error in importing dashboards: {e}")
-        ret_val["msg"] += f"Error in importing dashboards: {e} "
+    #   password = f.readline()
+    #   f.close()
+    #   password = password.rstrip()
+    #   #os.chdir('../dashboards')
+    #   #for file in os.listdir(os.getcwd()):
+    #   for file in os.listdir("/home/mfuser/mf_git/instrumentize/dashboards"):
+    #     if file.endswith('.ndjson'):
+    #       logging.info("Uploading " + file)
+    #       api_ip = 'http://' + meas_node_ip + '/api/saved_objects/_import?createNewCopies=true'
+    #       headers = {'kbn-xsrf': 'true',}
+    #       files = {'file': (file, open(file, 'rb')),}
+    #       response = requests.post(api_ip, headers=headers, files=files, auth=(username, password))
+    #       ret_val["msg"] += f"Uploaded dashboard {file}. "
+    # except Exception as e:
+    #     logging.error(f"Error in importing dashboards: {e}")
+    #     ret_val["msg"] += f"Error in importing dashboards: {e} "
     
+
+
     logging.info("-----End Ceate Script.-----")
     print(json.dumps(ret_val))
 
