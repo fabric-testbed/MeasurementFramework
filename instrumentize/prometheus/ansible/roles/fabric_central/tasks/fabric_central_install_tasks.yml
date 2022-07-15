@@ -108,7 +108,7 @@
 
 
 - name: Setup the docker network to be used by the monitoring containers.
-  include_tasks: setup_tasks/setup_docker_dual_network_tasks.yml
+  include_tasks: setup_tasks/setup_docker_ipv6_network_tasks.yml
 
 # # IPV4 onky test
 # - name: Setup the docker network to be used by the monitoring containers.

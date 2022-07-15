@@ -1,0 +1,10 @@
+---
+- set_fact:
+    NTP_DAEMON: "{{ 'chronyd' if ansible_facts['os_family'] == 'RedHat' else 'chrony' }}"
+
+- name: Stop and Disable Chronyd
+  systemd:
+    state: stopped
+    enabled: no
+    name: "{{ NTP_DAEMON }}"
+  ignore_errors: True

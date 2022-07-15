@@ -1,0 +1,12 @@
+[global]
+
+logging_level           6
+use_syslog              1
+summary_interval        {{ logging_summary_interval }}
+#verbose                0
+clock_servo             linreg
+time_stamping           hardware
+slaveOnly               1
+network_transport       L2
+
+[{{ interface_operations.headnode.mlnx if component_type == 'head' else interface_operations.worker.mlnx }}]

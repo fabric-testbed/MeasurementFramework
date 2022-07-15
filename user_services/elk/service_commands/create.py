@@ -5,9 +5,13 @@ import os
 import json
 import subprocess
 import logging
+import socket
+import requests
 
 def main():
+
     ret_val = {}
+    ret_val['msg'] = ""
 
     playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
     ansible_hosts_file = "/home/mfuser/mf_git/elkhosts.ini"
@@ -31,7 +35,7 @@ def main():
     r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     decoded_out = r.stdout.decode("utf-8")
-    play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
+    #play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
     decoded_err = r.stderr.decode("utf-8")
 
     #logging.info(r)
@@ -48,8 +52,34 @@ def main():
         ret_val["msg"] = "ELK playbook install failed.."
     logging.info(ret_val['msg'])
     ret_val["play_recap"] = play_recap
+    # logging.info("-----End Ceate Script.-----")
+    # print(json.dumps(ret_val))
+    logging.info("Ansible elk install playbooks completed.")
+
+    logging.info("Starting Dashboard Imports")
+    try:
+      meas_node_ip = socket.gethostbyname(socket.gethostname())
+      username = "fabric"
+      os.chdir('../../../instrumentize/elk/credentials')
+      f = open("nginx_passwd", "r")
+      password = f.readline()
+      f.close()
+      password = password.rstrip()
+      os.chdir('../dashboards')
+      for file in os.listdir(os.getcwd()):
+        if file.endswith('.ndjson'):
+          logging.info("Uploading " + file)
+          api_ip = 'http://' + meas_node_ip + '/api/saved_objects/_import?createNewCopies=true'
+          headers = {'kbn-xsrf': 'true',}
+          files = {'file': (file, open(file, 'rb')),}
+          response = requests.post(api_ip, headers=headers, files=files, auth=(username, password))
+          ret_val["msg"] += f"Uploaded dashboard {file}. "
+    except Exception as e:
+        logging.error(f"Error in importing dashboards: {e}")
+        ret_val["msg"] += f"Error in importing dashboards: {e} "
+    
     logging.info("-----End Ceate Script.-----")
     print(json.dumps(ret_val))
-    
+
 if __name__ == "__main__":
     main()

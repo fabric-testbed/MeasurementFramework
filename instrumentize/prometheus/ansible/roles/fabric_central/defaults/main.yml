@@ -127,12 +127,20 @@ prometheus_config_template_files:
   - fabric_beta_http_targets.yml
   - fabric_smtp_targets.yml
   - fabric_tcp_targets.yml
-  # needed? - fabric_ping_targets.yml
+ 
+   
+  - central_other_ping_targets.yml
+  - central_bastion_ping_targets.yml 
+  - central_bastion_ping6_targets.yml
 
-  # To check that head nodes are up
-  - headnode_ping_targets.yml
-  # To check that worker nodes are up
-  - workernode_ping_targets.yml
+
+
+
+  # # To check that head nodes are up
+  # - headnode_ping_targets.yml
+  # # To check that worker nodes are up
+  # - workernode_ping_targets.yml
+
   # aux node exporters and local node exporter
   - central_node_targets.yml
 
@@ -298,10 +306,12 @@ grafana_datasource_template_files:
 nginx_ip_ports:
   # Note Each port will correspond to a confd file set above.
   #- 80:80         # Redirected to 443
-  - 443:443       # /grafana for grafana interface
+  # 443 for /grafana on both ipv4 and ipv6, order here may matter depending on version of docker 
   - "[::]:443:443"
+  - 443:443
   - 9090:9090     # prometheus stats
   - 10922:10922   # thanos stats
+  - "[::]:{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
   - "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
 
 nginx_template_dir: templates/Nginx
