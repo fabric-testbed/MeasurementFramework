@@ -48,7 +48,7 @@ def main():
         ret_val["success"] =  True
         ret_val["msg"] = "Prometheus ansible script ran.."
     else:
-        ret_val["success"] =  True
+        ret_val["success"] =  False
         ret_val["msg"] = "Prometheus playbook install failed.."
 
     logging.info(ret_val["msg"])

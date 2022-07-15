@@ -48,7 +48,7 @@ def main():
         ret_val["success"] =  True
         ret_val["msg"] = "ELK ansible script ran.."
     else:
-        ret_val["success"] =  True
+        ret_val["success"] =  False
         ret_val["msg"] = "ELK playbook install failed.."
     logging.info(ret_val['msg'])
     ret_val["play_recap"] = play_recap
