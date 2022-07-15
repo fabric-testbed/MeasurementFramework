@@ -9,8 +9,8 @@ def main():
     
     if "get" in data:
         try:
-            f = open('/home/mfuser/mf_git/instrumentize/elk/credentials/nginx_passwd', 'r')
-            nginx_password = f.read()
+            with open('/home/mfuser/mf_git/instrumentize/elk/credentials/nginx_passwd', 'r') as f:
+                nginx_password = f.read().strip()
             
             if "nginx_password" in data["get"]:
                 ret_val["nginx_password"] = nginx_password          
@@ -24,8 +24,8 @@ def main():
 
     else:
         try:
-            f = open('/home/mfuser/mf_git/instrumentize/elk/credentials/nginx_passwd', 'r')
-            ret_val["nginx_password"] = f.read()
+            with open('/home/mfuser/mf_git/instrumentize/elk/credentials/nginx_passwd', 'r') as f:
+                ret_val["nginx_password"] = f.read().strip()
             ret_val["nginx_id"] = "fabric"
         except IOError:
             ret_val["error"] = "File does not appear to exist."

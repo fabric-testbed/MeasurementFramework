@@ -55,16 +55,14 @@ def main():
 
     logging.info("Ansible elk install playbooks completed.")
 
-    # Should be moved to update.py? or to kibana_manager service?
+    # # Should be moved to update.py? or to kibana_manager service?
     # logging.info("Starting Dashboard Imports")
     # try:
     #   meas_node_ip = socket.gethostbyname(socket.gethostname())
     #   username = "fabric"
     #   #os.chdir('../../../instrumentize/elk/credentials')
-    #   f = open("/home/mfuser/mf_git/instrumentize/elk/credentials/nginx_passwd", "r")
-      
-    #   password = f.readline()
-    #   f.close()
+    #   with open("/home/mfuser/mf_git/instrumentize/elk/credentials/nginx_passwd", "r") as f:
+    #     password = f.readline()
     #   password = password.rstrip()
     #   #os.chdir('../dashboards')
     #   #for file in os.listdir(os.getcwd()):
