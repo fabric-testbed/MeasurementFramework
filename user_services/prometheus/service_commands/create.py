@@ -3,7 +3,7 @@
 from datetime import datetime
 import os
 import subprocess
-
+import logging
 import prom_utilites as pu
 
 
@@ -18,6 +18,11 @@ def main():
     playbook = "/home/mfuser/mf_git/instrumentize/ansible/playbook_fabric_experiment_install_prometheus.yml"
     keyfile = "/home/mfuser/.ssh/mfuser_private_key"
 
+   # Data is stored in relative dir to this script.
+    service_dir =  os.path.dirname(__file__)
+    logFilePath = os.path.join(service_dir, "log", "create.log")
+    logging.basicConfig(filename=logFilePath, format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level="INFO")
+    logging.info("-----Start Ceate Script.-----")
 
     # For some reason the local ansible.cfg file is not being used
     os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
@@ -25,7 +30,7 @@ def main():
     pu.create_install_vars()
     
     cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook,  "--extra-vars", f"@{ pu.install_vars_file }"]
-
+    logging.info(cmd)
 
     ret_val["grafana_admin_pass"] = pu.get_grafana_admin_password()
 
@@ -46,6 +51,7 @@ def main():
         ret_val["success"] =  True
         ret_val["msg"] = "Prometheus playbook install failed.."
 
+    logging.info(ret_val["msg"])
     ret_val["play_recap"] = play_recap
 
     pu.save_ansible_output(r.stdout, r.stderr)
