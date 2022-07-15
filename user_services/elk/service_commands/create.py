@@ -35,7 +35,7 @@ def main():
     r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     decoded_out = r.stdout.decode("utf-8")
-    #play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
+    play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
     decoded_err = r.stderr.decode("utf-8")
 
     #logging.info(r)
@@ -52,8 +52,10 @@ def main():
         ret_val["msg"] = "ELK playbook install failed.."
     logging.info(ret_val['msg'])
     ret_val["play_recap"] = play_recap
+
     # logging.info("-----End Ceate Script.-----")
     # print(json.dumps(ret_val))
+    
     logging.info("Ansible elk install playbooks completed.")
 
     logging.info("Starting Dashboard Imports")
