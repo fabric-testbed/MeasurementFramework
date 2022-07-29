@@ -16,7 +16,7 @@ def import_dashboards():
       meas_node_ip = socket.gethostbyname(socket.gethostname())
       username = "fabric"
       #os.chdir('../../../instrumentize/elk/credentials')
-      with open(eu.nginx_password_file, "r") as f:
+      with open(eu.nginx_password_filename, "r") as f:
         password = f.readline()
       password = password.rstrip()
       #os.chdir('../dashboards')
