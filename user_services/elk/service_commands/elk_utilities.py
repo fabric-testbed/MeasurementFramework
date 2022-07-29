@@ -16,7 +16,7 @@ data_filename = os.path.join(service_dir, "data", "data.json" )
 # data_filename = os.path.join(services_dir, "elk", "data", "data.json" )
 
 #file should be moved to teh services_dir?
-nginx_password_filenamename = os.path.join('/','home', 'mfuser', 'mf_git', 'instrumentize', 'elk', 'credentials', 'nginx_passwd')
+nginx_password_filename = os.path.join('/','home', 'mfuser', 'mf_git', 'instrumentize', 'elk', 'credentials', 'nginx_passwd')
 
 def get_data():
     # Get incoming data which will be in the data.json file.
