@@ -4,8 +4,12 @@ from pathlib import Path
 import json
 
 services_dir = os.path.join(os.path.expanduser('~') ,"services")
-
+files_dir = os.path.join(services_dir, "files")
+dashboards_dir = os.path.join(services_dir, "dashboards")
 data_filename = os.path.join(services_dir, "elk", "data", "data.json" )
+
+#file should be moved to teh services_dir?
+nginx_password_file = os.path.join('/','home', 'mfuser', 'mf_git', 'instrumentize', 'elk', 'credentials', 'nginx_passwd')
 
 def get_data():
     # Get incoming data which will be in the data.json file.

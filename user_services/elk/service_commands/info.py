@@ -9,7 +9,7 @@ def main():
     
     if "get" in data:
         try:
-            with open('/home/mfuser/mf_git/instrumentize/elk/credentials/nginx_passwd', 'r') as f:
+            with open(eu.nginx_password_file, 'r') as f:
                 nginx_password = f.read().strip()
             
             if "nginx_password" in data["get"]:
@@ -24,7 +24,7 @@ def main():
 
     else:
         try:
-            with open('/home/mfuser/mf_git/instrumentize/elk/credentials/nginx_passwd', 'r') as f:
+            with open(eu.nginx_password_file, 'r') as f:
                 ret_val["nginx_password"] = f.read().strip()
             ret_val["nginx_id"] = "fabric"
         except IOError:
