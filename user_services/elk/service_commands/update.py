@@ -16,7 +16,7 @@ def main():
     data = eu.get_data()
     
     if "cmd" in data:
-        if "upload_custom_dashboards" in "cmd":
+        if "upload_custom_dashboards" in data["cmd"]:
             # get list of filenames
             if "dashboard_filenames" in data:
                 # Dashboards should have been uploaded to the files directory.
