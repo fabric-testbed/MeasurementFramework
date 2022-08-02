@@ -1,4 +1,5 @@
 {
+  "dashboard": {
     "annotations": {
       "list": [
         {
@@ -22,7 +23,7 @@
     "editable": false,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 4,
+    "id": null,
     "iteration": 1658173865833,
     "links": [],
     "liveNow": false,
@@ -147,6 +148,7 @@
     "timezone": "",
     "title": "Ping Status",
     "uid": "hqj_G5R4k",
-    "version": 4,
+    "version": 0,
     "weekStart": ""
-  }
+}
+}
