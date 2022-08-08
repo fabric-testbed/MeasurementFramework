@@ -50,7 +50,7 @@ scrape_configs:
             - source_labels: [__address__]
               target_label: __param_target
             - target_label: __address__
-              replacement: "fabric_prometheus_blackbox:9115"
+              replacement: "{{ install_name }}_blackbox:9115"
             - source_labels: [node_name]
               target_label: instance
 
@@ -60,8 +60,8 @@ scrape_configs:
     tls_config:
       insecure_skip_verify: true
     basic_auth:
-      username: "fabric_exporter"
-      password: "mTQyyIprjkuZdomD"
+      username: "{{ node_exporter_username }}"
+      password: "{{ node_exporter_password }}"
     file_sd_configs:
       - files:
             - '*_node_targets.yml'
