@@ -116,7 +116,9 @@ thanos_cert: "{{ host_cert }}"
 thanos_key: "{{ host_key }}"
 thanos_interm_cert: "{{ host_interm_cert }}"
 
-thanos_sidecar_ip: "{{ hn_public_ipaddr }}"
+# Set thanos ip based on ipv4 or ipv6
+thanos_sidcar_ip: "{% if (network_layer['host']['ipv6'] =='v6' ) %} {{ public_network_ipv6['local']['fabric']['headnode'] }} {% else %} {{ public_network['local']['fabric']['headnode'] }} {% endif %}"
+
 thanos_sidecar_cert: "{{ thanos_cert }}"
 thanos_sidecar_key: "{{ thanos_key }}"
 
