@@ -92,7 +92,7 @@
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Network Traffic by Packets",
+          "title": "$node Network Traffic by Packets",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -140,7 +140,7 @@
           },
           "id": 6,
           "panels": [],
-          "title": "TCP Information",
+          "title": "$node TCP Information",
           "type": "row"
         },
         {
@@ -233,7 +233,7 @@
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "TCP In / Out",
+          "title": "$node TCP In / Out",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -351,7 +351,7 @@
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "TCP Errors",
+          "title": "$node TCP Errors",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -399,7 +399,7 @@
           },
           "id": 4,
           "panels": [],
-          "title": "UDP Information",
+          "title": "$node UDP Information",
           "type": "row"
         },
         {
@@ -491,7 +491,7 @@
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "UDP In / Out",
+          "title": "$node UDP In / Out",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -608,7 +608,7 @@
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "UDP Errors",
+          "title": "$node UDP Errors",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -656,7 +656,7 @@
           },
           "id": 2,
           "panels": [],
-          "title": "Network Errors",
+          "title": "$node Network Errors",
           "type": "row"
         },
         {
@@ -734,7 +734,7 @@
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Network Traffic Received Errors",
+          "title": "$node Network Traffic Received Errors",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -846,7 +846,7 @@
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Network Traffic Send Errors",
+          "title": "$node Network Traffic Send Errors",
           "tooltip": {
             "shared": true,
             "sort": 0,
