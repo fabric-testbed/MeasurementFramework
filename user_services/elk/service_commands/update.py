@@ -14,7 +14,6 @@ def copy_file(src_file, dst_file):
 def main():
     ret_val = { "success":True, "msg":"" }
     data = eu.get_data()
-    
     if "cmd" in data:
         if "upload_custom_dashboards" in data["cmd"]:
             # get list of filenames
@@ -29,12 +28,9 @@ def main():
                     ret_val['msg'] += f'Have dashboard "{dfilename}.\n'
                     # do something with dashboard file
                     # maybe move them to the Dashboards dir
-        if "add_custom_dashboards" in "cmd":
-            ret_val['msg'] += custom_dashboards.import_dashboards()
+        if "add_custom_dashboards" in data["cmd"]:
+             ret_val['msg'] += custom_dashboards.import_dashboards()
 
-
-
-            #
     print(eu.get_json_string(ret_val))
     #print(json.dumps(ret_val))
 
