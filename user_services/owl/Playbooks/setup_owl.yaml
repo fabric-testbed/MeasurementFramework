@@ -24,7 +24,7 @@
       community.general.docker_volume:
         name: owl-output
 
-    - name: Pull owl container
+    - name: Pull fabrictestbed/owl image from DockerHub
       community.general.docker_image:
         name: fabrictestbed/owl:0.1.0
         source: pull
