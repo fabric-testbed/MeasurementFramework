@@ -1,0 +1,19 @@
+---
+- name: Remove OWL (including the output data)
+  hosts: Experiment_Nodes
+  tasks:
+    - name: Remove owl container
+      community.general.docker_container:
+        name: owl
+        state: absent
+   
+    - name: Remove a docker volume called owl-output
+      community.general.docker_volume:
+        name: owl-output
+        state: absent
+
+    - name: Remove owl image
+      community.general.docker_image:
+        name: fabrictestbed/owl:0.1.0
+        state: absent
+
