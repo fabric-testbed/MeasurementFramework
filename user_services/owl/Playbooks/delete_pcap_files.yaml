@@ -5,7 +5,7 @@
   - name: Delete pcap files
     community.general.docker_container:
       name: owl
-      image: owl-app
+      image: fabrictestbed/owl:0.1.0 
       state: started
       restart: yes
       command: ["DataProcessManager.py", "delete_pcap", "/owl_data"]

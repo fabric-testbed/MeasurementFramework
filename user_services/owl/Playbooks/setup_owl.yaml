@@ -23,8 +23,14 @@
     - name: Create a docker volume called owl-output
       community.general.docker_volume:
         name: owl-output
+
+    - name: Pull owl container
+      community.general.docker_image:
+        name: fabrictestbed/owl:0.1.0
+        source: pull
+
     - name: Create a container
       community.general.docker_container:
         name: owl
-        image: owl-app
+        image: fabrictestbed/owl:0.1.0
         state: present
