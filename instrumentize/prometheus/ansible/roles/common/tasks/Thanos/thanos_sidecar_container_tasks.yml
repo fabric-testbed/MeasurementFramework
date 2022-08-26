@@ -35,6 +35,6 @@
       - '--http-address=0.0.0.0:10902'
       - '--objstore.config-file=/etc/thanos/object_store_config.yml'
     ports:
-            - "{{ thanos_sidecar_ip }}:10901:10901"
+            - "{{ thanos_sidecar_ip | ansible.netcommon.ipwrap +':10901:10901' }}"
             #- "{{ thanos_sidecar_ip }}:10902:10902"
     restart_policy: always
