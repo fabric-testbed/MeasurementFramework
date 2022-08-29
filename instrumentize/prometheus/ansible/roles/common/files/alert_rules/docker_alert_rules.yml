@@ -15,5 +15,5 @@ groups:
       fabric_response: mf
     annotations:
       summary:  "{{ $externalLabels.rack }} Fabric Prometheus system docker container, {{ $labels.name }}, is down."   
-      description:  "{{ $externalLabels.rack }} A container, {{ $labels.name }}, for the fabric promethues monitoring has stopped. 
+      description:  "{{ $externalLabels.rack }} A container, {{ $labels.name }}, for the fabric promethues monitoring has stopped." 
 
