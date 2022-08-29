@@ -14,6 +14,6 @@ groups:
       severity: error
       fabric_response: mf
     annotations:
-      summary:  "Fabric Prometheus system docker container is down: (instance {{ $labels.instance }})"   
-      description:  "A container for the fabric promethues monitoring has stopped.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}" 
+      summary:  "{{ $externalLabels.rack }} Fabric Prometheus system docker container, {{ $labels.name }}, is down."   
+      description:  "{{ $externalLabels.rack }} A container, {{ $labels.name }}, for the fabric promethues monitoring has stopped. 
 
