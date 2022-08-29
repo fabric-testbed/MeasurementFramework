@@ -14,7 +14,7 @@ groups:
       severity: critical
       fabric_response: data_net
     annotations:
-      summary: "Data link is down from {{ $labels.rack }} to {{ $labels.isisISAdjIPAddrAddress }}"  
+      summary: "Data link is down from {{ $externalLabels.rack }} to {{ $labels.isisISAdjIPAddrAddress }}"  
       description: "Data link has been down for more than 1 minute from {{ $labels.rack }} to {{ $labels.isisISAdjIPAddrAddress }}"
 
   - alert: DataPlaneAdjLinkFailed
@@ -24,6 +24,6 @@ groups:
       severity: critical
       fabric_response: data_net
     annotations:
-      summary: "Data link has failed from {{ $labels.rack }} to {{ $labels.isisISAdjIPAddrAddress }}"  
-      description: "Data link has failed for more than 1 minute from {{ $labels.rack }} to {{ $labels.isisISAdjIPAddrAddress }}"
+      summary: "Data link has failed from {{ $externalLabels.rack }} to {{ $labels.isisISAdjIPAddrAddress }}"  
+      description: "Data link has failed for more than 1 minute from {{ $externalLabels.rack }} to {{ $labels.isisISAdjIPAddrAddress }}"
 

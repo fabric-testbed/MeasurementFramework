@@ -61,16 +61,26 @@
   include_tasks: takedown_tasks/remove_docker_network_tasks.yml
 
 
+
+# only use ipv4 docker network if there is no ipv6
+# if there is ipv6 then docker will also create ipv4 network
+
+
 # ipv4
 - name: Setup the docker network to be used by the monitoring containers.
   include_tasks: setup_tasks/setup_docker_network_tasks.yml
-  
+  when:
+    - network_layer['host']['ipv6'] == ""
+    - network_layer['host']['ipv4'] == "v4"  
+
 # OR
 # ipv6 dual network settings
-# - name: Setup the docker network to be used by the monitoring containers.
-#   include_tasks: setup_tasks/setup_docker_dual_network_tasks.yml
-  
+- name: Setup the docker network to be used by the monitoring containers.
+  include_tasks: setup_tasks/setup_docker_dual_network_tasks.yml
+  when:
+    - network_layer['host']['ipv6'] == "v6"
 
+  
 ####################
 # Backup all base install directories #
 ####################
