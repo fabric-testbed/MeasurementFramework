@@ -7,6 +7,16 @@ groups:
 - name: Prometheus Monitoring Alerts
   rules:
   
+  - alert: PrometheusAlertmanagerHeartbeat
+    expr: vector(1)
+    for: 0m
+    labels:
+      severity: critical
+      fabric_response: mf
+    annotations:
+      summary: Prometheus Alertmanager Heartbeat (instance {{ $labels.instance }})
+      description: "{{ $externalLabels.rack }} Prometheus Alertmanager Heartbeat is an always-firing alert. It's used as an end-to-end test of Prometheus through the Alertmanager."
+
   - alert: PrometheusConfigurationReloadFailure
     expr: prometheus_config_last_reload_successful != 1
     for: 0m
@@ -14,8 +24,8 @@ groups:
       severity: warning
       fabric_response: mf
     annotations:
-      summary: Prometheus configuration reload failure (instance {{ $labels.instance }})
-      description: "Prometheus configuration reload error\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "{{ $externalLabels.rack }}  Prometheus configuration reload failure (instance {{ $labels.instance }})"
+      description: "{{ $externalLabels.rack }} Prometheus configuration reload error\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: PrometheusAlertmanagerConfigurationReloadFailure
     expr: alertmanager_config_last_reload_successful != 1
@@ -24,7 +34,7 @@ groups:
       severity: warning
       fabric_response: mf
     annotations:
-      summary: Prometheus AlertManager configuration reload failure (instance {{ $labels.instance }})
+      summary: "{{ $externalLabels.rack }} Prometheus AlertManager configuration reload failure (instance {{ $labels.instance }})"
       description: "AlertManager configuration reload error\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: PrometheusNotConnectedToAlertmanager
@@ -35,8 +45,8 @@ groups:
 
       fabric_response: mf
     annotations:
-      summary: Prometheus not connected to alertmanager (instance {{ $labels.instance }})
-      description: "Prometheus cannot connect the alertmanager\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "{{ $externalLabels.rack }} Prometheus not connected to alertmanager (instance {{ $labels.instance }})"
+      description: "{{ $externalLabels.rack }} Prometheus cannot connect the alertmanager\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
   
   - alert: PrometheusRuleEvaluationFailures
     expr: increase(prometheus_rule_evaluation_failures_total[3m]) > 0
@@ -45,8 +55,8 @@ groups:
       severity: critical
       fabric_response: mf
     annotations:
-      summary: Prometheus rule evaluation failures (instance {{ $labels.instance }})
-      description: "Prometheus encountered {{ $value }} rule evaluation failures, leading to potentially ignored alerts.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "{{ $externalLabels.rack }} Prometheus rule evaluation failures (instance {{ $labels.instance }})"
+      description: "{{ $externalLabels.rack }} Prometheus encountered {{ $value }} rule evaluation failures, leading to potentially ignored alerts.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
  
   - alert: RackNodeExporterDown
     expr: up { component_type=~"head|worker" } == 0
@@ -56,8 +66,8 @@ groups:
       fabric_system: node_exporter
       fabric_response: mf
     annotations:
-      summary:  "Rack Node Exporter target missing (instance {{ $labels.instance }})"   
-      description:  "A rack Node Exporter target has disappeared. An exporter might be crashed.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}" 
+      summary:  "{{ $externalLabels.rack }} Rack Node Exporter target missing (instance {{ $labels.instance }})"   
+      description:  "{{ $externalLabels.rack }} A rack Node Exporter target has disappeared. An exporter might be crashed.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}" 
 
   # - alert: RackNodeJobMissing
   #   expr: absent( up{ job="node", component_type=~"head|worker" } ) == 1

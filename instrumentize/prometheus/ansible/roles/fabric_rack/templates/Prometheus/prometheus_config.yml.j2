@@ -100,7 +100,17 @@ scrape_configs:
       - targets: ['{{ install_name }}_docker_exporter:9417']
 
 
+#########################################
+#          Thanos Exporters             #
+#########################################
 
+# need to relabel to clairify source?
+# Sidecar
+  - job_name: 'thanos_sidecar'
+    scheme: http 
+    static_configs:
+      - targets:
+        - '{{ install_name }}_thanos_sidecar:10902'
 
 
 ####################################

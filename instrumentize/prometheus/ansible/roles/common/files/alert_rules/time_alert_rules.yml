@@ -15,8 +15,8 @@ groups:
       fabric_system: time
       fabric_response: hardware
     annotations:
-      summary:  "Time is not synced on node {{ $labels.instance }}, at {{ $labels.rack }}."   
-      description:  "node_timex_sync_status is 0 on {{ $labels.instance }}, at {{ $labels.rack }}." 
+      summary:  "Time is not synced on node {{ $labels.instance }}, at {{ $externalLabels.rack }}."   
+      description:  "node_timex_sync_status is 0 on {{ $labels.instance }}, at {{ $externalLabels.rack }}." 
 
   - alert: RackNodeTimexMaxErrorTooHigh
     expr: node_timex_maxerror_seconds{job="node", component_type=~"head|worker"} > 0.001
@@ -26,8 +26,8 @@ groups:
       fabric_system: time
       fabric_response: hardware
     annotations:
-      summary:  "Timex max error exceeded on node {{ $labels.instance }}, at {{ $labels.rack }}."   
-      description:  "node_timex_maxerror_seconds is > 0.001 on {{ $labels.instance }}, at {{ $labels.rack }}. Indicates node is not time synced." 
+      summary:  "Timex max error exceeded on node {{ $labels.instance }}, at {{ $externalLabels.rack }}."   
+      description:  "node_timex_maxerror_seconds is > 0.001 on {{ $labels.instance }}, at {{ $externalLabels.rack }}. Indicates node is not time synced." 
 
   - alert: RackGPSTimeUnknown
     expr: tmiGPSTimeKnown  == 0
@@ -37,8 +37,8 @@ groups:
       fabric_system: time
       fabric_response: hardware
     annotations:
-      summary:  "GPS time is not known node {{ $labels.rack }}"   
-      description:  "tmiGPSTimeKnown is 0 on {{ $labels.rack }}." 
+      summary:  "GPS time is not known node at {{ $externalLabels.rack }}."   
+      description:  "tmiGPSTimeKnown is 0 on {{ $externalLabels.rack }}." 
       
 
   - alert: 2DGPSFix
@@ -49,8 +49,8 @@ groups:
       fabric_system: time
       fabric_response: hardware
     annotations:
-      summary:  "GPS time sync is only 2D on {{ $labels.rack }}"   
-      description:  "tmiGPSFix is 2 on {{ $labels.rack }}." 
+      summary:  "GPS time sync is only 2D on {{ $externalLabels.rack }}."   
+      description:  "tmiGPSFix is 2 on {{ $externalLabels.rack }}."
       
 
   - alert: NoGPSFix
@@ -61,6 +61,6 @@ groups:
       fabric_system: time
       fabric_response: hardware
     annotations:
-      summary:  "GPS time is not fixed on node {{ $labels.rack }}"   
-      description:  "tmiGPSFix is 0 on {{ $labels.rack }}." 
+      summary:  "GPS time is not fixed on node {{ $externalLabels.rack }}."   
+      description:  "tmiGPSFix is 0 on {{ $externalLabels.rack }}." 
       
