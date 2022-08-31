@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --upgrade pip
 RUN pip install --pre scapy[basic]
 RUN git clone --branch owl  https://github.com/fabric-testbed/MeasurementFramework.git
-RUN mkdir /owl_data
+RUN mkdir /owl_output
 RUN mkdir /owl_config
 RUN ls -l /
 

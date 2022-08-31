@@ -20,9 +20,11 @@
         src: /home/mfuser/services/owl/settings/owl_service_request.json
         dest: /home/mfuser/services/owl/settings/owl_service_request.json
     
-    - name: Create a docker volume called owl-output
-      community.general.docker_volume:
-        name: owl-output
+    - name: Create a directory for owl output data 
+      ansible.builtin.file:
+        path: /home/mfuser/services/owl/output
+        state: directory
+        mode: '0755'
 
     - name: Pull fabrictestbed/owl image from DockerHub
       community.general.docker_image:

@@ -14,5 +14,5 @@
       #ports:
       #  - "5005:5005"
       volumes:
-        - owl-output:/owl_data
+        - /home/mfuser/services/owl/output:/owl_output
         - /home/mfuser/services/owl/settings:/owl_config

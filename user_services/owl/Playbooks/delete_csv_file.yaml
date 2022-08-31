@@ -8,11 +8,11 @@
       image: fabrictestbed/owl:0.1.0 
       state: started
       restart: yes
-      command: ["DataProcessManager.py", "delete_csv", "/owl_data"]
+      command: ["DataProcessManager.py", "delete_csv", "/owl_output"]
       privileged: yes
       network_mode: host
       #ports:
       #  - "5005:5005"
       volumes:
-        - owl-output:/owl_data
+        - /home/mfuser/services/owl/output:/owl_output
         - /home/mfuser/services/owl/settings:/owl_config
