@@ -2,21 +2,81 @@ import subprocess
 import time
 import os
 import signal
+import re
+from decimal import *
+
 
 # This script must be run as root
 
 
 class TcpdumpOps:
-    def __init__(self, port, interval, output_dir):
-        self.cmd = f"tcpdump -vfn -XX -tt  -i any --direction in port {str(port)} \
-                    -w {output_dir}/%s.pcap -G {str(interval)}"
+    def __init__(self, port):
+        self.port = port
 
-    def start(self):
-        self.p = subprocess.Popen(self.cmd.split(), stdout=subprocess.PIPE)
+    def start_capture(self, output_dir, pcap_interval):
+        cmd = f"tcpdump -vfn -XX -tt  \
+                -i any --direction in \
+                --time-stamp-precision nano \
+                port {str(self.port)} \
+                -w {output_dir}/%s.pcap \
+                -G {str(pcap_interval)}"
+
+        self.p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
         print("Pid: ", self.p.pid)
+
+    def start_live_capture(self):
+        cmd = f'tcpdump -U  -q -n  -A -tt \
+                -i any --direction in \
+                port {str(self.port)} \
+                --time-stamp-precision nano'
+        
+        self.p = subprocess.Popen(cmd.split(),stdout=subprocess.PIPE)
+
+        # Set decimal to 9 sub-decimal digits
+        getcontext().prec=9
+        print(getcontext())
+
+        while True:
+            line = self.p.stdout.readline()
+            if not line:
+                break
+        
+            newline = line.rstrip().decode()
+            IP_pos = newline.find("IP")
+        
+            # Find a line that looks like
+            # "1661899028.527932821 IP 10.10.2.1.40634 > 10.10.1.1.5005: UDP, length 23"
+            if IP_pos != -1:
+                packet_data = {}
+        
+                time_dst = newline[:(IP_pos-1)]
+                IPs = re.findall(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})', newline)
+        
+                packet_data["sender"] = IPs[0]
+                packet_data["receiver"] = IPs[1]
+                packet_data["received"] = time_dst
+        
+        
+            # Find a line that looks like ".........F1661899028.5274663,1877"
+            elif re.search(r'\d{10}.\d{,9},\d{1,4}$', newline):
+                parts = re.split(",", newline)
+                timestamp = re.findall('\d{10}\.\d{,9}', parts[0])
+                seq_n = parts[1]
+        
+                t_delta = Decimal(time_dst) - Decimal(timestamp[0])
+        
+                packet_data["sent"] = timestamp[0]
+                packet_data["latency"] = t_delta
+                packet_data["seq"] = seq_n
+        
+                # For debugging
+                print(packet_data)
+
+                # TODO: Push this to InfluxDB
 
     def stop(self):
         self.p.terminate()
+
 
 
 if __name__ == "__main__":
@@ -25,8 +85,15 @@ if __name__ == "__main__":
     interval_pcap = 10
     output_dir = "data"
 
-    session = TcpdumpOps(port, interval_pcap, output_dir)
-    session.start()
+    session1 = TcpdumpOps(port)
+    session1.start_capture(output_dir, interval_pcap)
     time.sleep(30)
-    session.stop()
+    session1.stop()
+
+    time.sleep(5)
+
+    session2 = TcpdumpOps(port)
+    session2.start_live_capture()
+    time.sleep(60)
+    session2.stop()
 
