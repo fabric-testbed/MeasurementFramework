@@ -14,8 +14,8 @@ groups:
       severity: critical
       fabric_response: hardware
     annotations:
-      summary: Host physical component too hot (instance {{ $labels.instance }})
-      description: "Physical hardware component too hot\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "{{ $externalLabels.rack }} Host physical component too hot (instance {{ $labels.instance }})"
+      description: "{{ $externalLabels.rack }} Physical hardware component too hot\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: HostNodeOvertemperatureAlarm
     expr: node_hwmon_temp_crit_alarm_celsius == 1
@@ -24,8 +24,8 @@ groups:
       severity: critical
       fabric_response: hardware
     annotations:
-      summary: Host node overtemperature alarm (instance {{ $labels.instance }})
-      description: "Physical node temperature alarm triggered\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "{{ $externalLabels.rack }} Host node overtemperature alarm (instance {{ $labels.instance }})"
+      description: "{{ $externalLabels.rack }} Physical node temperature alarm triggered\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
 
   # Please add ignored mountpoints in node_exporter parameters like
@@ -38,8 +38,8 @@ groups:
       severity: warning
       fabric_response: hardware
     annotations:
-      summary: Host out of disk space (instance {{ $labels.instance }})
-      description: "Disk is almost full (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "{{ $externalLabels.rack }} Host out of disk space (instance {{ $labels.instance }})"
+      description: "{{ $externalLabels.rack }} Disk is almost full (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   # Please add ignored mountpoints in node_exporter parameters like
   # "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|run)($|/)".
@@ -51,8 +51,8 @@ groups:
       severity: warning
       fabric_response: hardware
     annotations:
-      summary: Host disk will fill in 24 hours (instance {{ $labels.instance }})
-      description: "Filesystem is predicted to run out of space within the next 24 hours at current write rate\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "{{ $externalLabels.rack }} Host disk will fill in 24 hours (instance {{ $labels.instance }})"
+      description: "{{ $externalLabels.rack }} Filesystem is predicted to run out of space within the next 24 hours at current write rate\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
 
   - alert: HostOutOfMemory
@@ -62,8 +62,8 @@ groups:
       severity: warning
       fabric_response: hardware
     annotations:
-      summary: Host out of memory (instance {{ $labels.instance }})
-      description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "{{ $externalLabels.rack }} Host out of memory (instance {{ $labels.instance }})"
+      description: "{{ $externalLabels.rack }} Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
 
   - alert: HostHighCpuLoad
@@ -73,6 +73,6 @@ groups:
       severity: warning
       fabric_response: hardware
     annotations:
-      summary: Host high CPU load (instance {{ $labels.instance }})
-      description: "CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "{{ $externalLabels.rack }} Host high CPU load (instance {{ $labels.instance }})"
+      description: "{{ $externalLabels.rack }} CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
