@@ -27,7 +27,7 @@ class UDP_sender(object):
         self.is_running = False
         self.start()
         
-        MESSAGE = f"{str(time.time())},{str(self.seq_n)}"
+        MESSAGE = f"{(time.time()):.9f},{str(self.seq_n)}"
         self.sock.sendto(MESSAGE.encode(), (self.dst_ip, self.dst_port))
         self.seq_n = self.seq_n + 1
 
