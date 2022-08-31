@@ -63,4 +63,18 @@ groups:
     annotations:
       summary:  "GPS time is not fixed on node {{ $externalLabels.rack }}."   
       description:  "tmiGPSFix is 0 on {{ $externalLabels.rack }}." 
+
+  - alert: PtuWebInterfaceDown
+    expr: probe_success{job="ptp_server_ui"} == 0
+    for: 15m
+    labels: 
+      severity: error
+      fabric_system: time
+      fabric_response: hardware
+    annotations:
+      summary:  "GPS-PTU server web ui is not responding at {{ $externalLabels.rack }}." 
+      description:  "GPS-PTU server web ui has not responded for more than 15 minutes at {{ $externalLabels.rack }}."   
       
+
+
+
