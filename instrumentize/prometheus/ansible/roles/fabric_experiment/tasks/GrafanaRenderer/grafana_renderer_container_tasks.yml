@@ -15,8 +15,8 @@
     # ports:
     #    - 3000:3000
     env:
-      #AUTH_TOKEN: rgdfioBDUEjujPOHD8ww
-      GF_PLUGIN_AUTH_TOKEN: rgdfioBDUEjujPOHD8ww
+      AUTH_TOKEN: rgdfioBDUEjujPOHD8ww
+      #GF_PLUGIN_AUTH_TOKEN: rgdfioBDUEjujPOHD8ww
       
 
     # env:
