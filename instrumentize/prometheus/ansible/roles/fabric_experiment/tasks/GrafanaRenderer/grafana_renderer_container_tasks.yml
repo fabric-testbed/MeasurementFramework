@@ -1,0 +1,26 @@
+---
+# Start-stop Grafana container
+- name: Control Grafana Docker Container
+  become: yes
+  community.docker.docker_container:
+    state: "{{ grafana_state }}"
+    name: "{{ install_name }}_grafana_renderer"
+    network_mode: "{{ docker_network_name }}"
+    image: grafana/grafana-image-renderer:3.6.1
+    user: "{{ grafana_user_name }}:{{ grafana_group_name }}"
+ #   volumes:
+ 
+    #env_file: "{{ base_install_dir }}/grafana/env_file"
+    # use nginx as tls proxy so no ports exposed here
+    # ports:
+    #    - 3000:3000
+
+    # env:
+    #   GF_RENDERING_SERVER_URL: http://renderer:8081/render
+    #   GF_RENDERING_CALLBACK_URL: http://grafana:3000/
+    #   GF_LOG_FILTERS: rendering:debug
+    container_default_behavior: no_defaults
+    log_driver: json-file
+    log_options:
+      max-size: 1024m
+    restart_policy: always

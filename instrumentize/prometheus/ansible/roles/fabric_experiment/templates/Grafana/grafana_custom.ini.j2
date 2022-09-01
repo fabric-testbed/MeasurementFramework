@@ -16,5 +16,9 @@ enabled = true
 enabled = false
 
 
+[renderer]
+server_url = http://{{ install_name }}_grafana_renderer:8081/render
+callback_url = http://{{ install_name }}_grafana:3000/
+
 [log]
 #level = debug
