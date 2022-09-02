@@ -202,7 +202,7 @@
 - name: Generate random password for Nginx
   become: true
   set_fact:
-    nginx_htaccess_password: "{{ lookup('password', 'credentials/nginx_passwd')}}"
+    nginx_htaccess_password: "{{ lookup('password', 'credentials/nginx_passwd chars=ascii_letters,digits')}}"
 
 - name: Setting Folders for ELK Stack
   tags: elksetup
