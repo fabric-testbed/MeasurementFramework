@@ -8,21 +8,12 @@
     network_mode: "{{ docker_network_name }}"
     image: grafana/grafana-image-renderer:3.6.1
     user: "{{ grafana_user_name }}:{{ grafana_group_name }}"
- #   volumes:
- 
-    #env_file: "{{ base_install_dir }}/grafana/env_file"
-    # use nginx as tls proxy so no ports exposed here
-    # ports:
-    #    - 3000:3000
-    env:
-      AUTH_TOKEN: rgdfioBDUEjujPOHD8ww
-      #GF_PLUGIN_AUTH_TOKEN: rgdfioBDUEjujPOHD8ww
-      
 
-    # env:
-    #   GF_RENDERING_SERVER_URL: http://renderer:8081/render
-    #   GF_RENDERING_CALLBACK_URL: http://grafana:3000/
-    #   GF_LOG_FILTERS: rendering:debug
+    env:
+      # Hard coded token OK here since this is only used between 2 docker containers without outside exposure
+      # Value is also set in grafana_custom.ini.j2 as renderer_token
+      AUTH_TOKEN: rgdfioBDUEjujPOHD8ww
+      
     container_default_behavior: no_defaults
     log_driver: json-file
     log_options:

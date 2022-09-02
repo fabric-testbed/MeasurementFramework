@@ -19,6 +19,8 @@ enabled = false
 [rendering]
 server_url = http://{{ install_name }}_grafana_renderer:8081/render
 callback_url = http://{{ install_name }}_grafana:3000/
+# Hard coded token OK here since this is only used between 2 docker containers without outside exposure
+# Value is also set in grafana_renderer_container_tasks.yml as AUTH_TOKEN
 renderer_token = rgdfioBDUEjujPOHD8ww
 
 [log]
