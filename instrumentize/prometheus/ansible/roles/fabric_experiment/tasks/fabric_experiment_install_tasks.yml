@@ -145,6 +145,11 @@
     - name: Grafana Datasources
       include_tasks: tasks/Grafana/grafana_provisioning_tasks.yml
 
+    # Renderer
+    - name: Grafana Renderer Container 
+      include_tasks: tasks/GrafanaRenderer/grafana_renderer_container_tasks.yml
+
+
   vars:
     # Need to move these defaults somewhere else. 
     grafana_state: started
@@ -155,6 +160,9 @@
     grafana_group_name: root  
     
   when: true
+
+
+
 
 # NGINX
 - name: Setup Nginx
