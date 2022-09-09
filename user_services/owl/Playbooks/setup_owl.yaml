@@ -4,21 +4,21 @@
   tasks:
     - name: Create a directory for owl config file
       ansible.builtin.file:
-        path: /home/mfuser/services/owl/settings
+        path: /home/mfuser/services/owl/config
         state: directory
         mode: '0755'
   
     - name: Copy owl.conf file
       ansible.builtin.copy:
         # Source will change later
-        src: /home/mfuser/services/owl/settings/owl.conf
-        dest: /home/mfuser/services/owl/settings/owl.conf
+        src: /home/mfuser/services/owl/config/owl.conf
+        dest: /home/mfuser/services/owl/config/owl.conf
   
     - name: Copy owl service request file
       ansible.builtin.copy:
         # Source will change later
-        src: /home/mfuser/services/owl/settings/owl_service_request.json
-        dest: /home/mfuser/services/owl/settings/owl_service_request.json
+        src: /home/mfuser/services/owl/config/owl_service_request.json
+        dest: /home/mfuser/services/owl/config/owl_service_request.json
     
     - name: Create a directory for owl output data 
       ansible.builtin.file:
