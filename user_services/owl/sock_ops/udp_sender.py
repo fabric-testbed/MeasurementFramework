@@ -1,6 +1,7 @@
 import socket
 import time
 import json
+import argparse
 
 #######
 # Timer part:
@@ -45,16 +46,29 @@ class UDP_sender(object):
 
 
 if __name__ == "__main__":
-    
-    DEST_IP = "10.10.2.1"
-    DEST_PORT = 5005
-    SEND_INTERVAL = 0.5
-    Seq_n = 1000
-    Run_time = 10
 
-    rt = UDP_sender(SEND_INTERVAL, DEST_IP, DEST_PORT, Seq_n)
+    parser = parser = argparse.ArgumentParser()
+    parser.add_argument("--dest-ip", type=str, default="10.10.1.1", 
+                        help='destination IP')
+    parser.add_argument("--dest-port", type=int, default=5005, 
+                        help='destination port')
+    parser.add_argument("--frequency", type=float, default=0.5,
+                        help="second interval at which probe packet will be sent")
+    parser.add_argument("--seq-n", type=int, default=1234,
+                        help="initial sequence number")
+    parser.add_argument("--duration", type=int, default=60,
+                        help="number of seconds to run")
+    args = parser.parse_args()
+    
+    send_interval = args.frequency
+    dest_ip = args.dest_ip
+    dest_port = args.dest_port
+    seq_n = args.seq_n
+    duration = args.duration
+
+    rt = UDP_sender(send_interval, dest_ip, dest_port, seq_n)
     try:
-        time.sleep(Run_time) # function should run during this time
+        time.sleep(duration) # function should run during this time
     finally:
         rt.stop()
 

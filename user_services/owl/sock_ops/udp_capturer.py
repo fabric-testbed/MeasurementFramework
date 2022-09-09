@@ -4,7 +4,7 @@ import os
 import signal
 import re
 from decimal import *
-
+import argparse
 
 # This script must be run as root
 
@@ -81,19 +81,29 @@ class TcpdumpOps:
 
 if __name__ == "__main__":
 
-    port = 5005
-    interval_pcap = 10
-    output_dir = "data"
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--port", help="listening port number")
+    parser.add_argument("--pcap-sec", help="number of capture seconds for each pcap file")
+    parser.add_argument("--outdir", help="output dir where pcap files will be saved")
+    parser.add_argument("--duration", help="number of seconds to run each capture")
+
+
+    args = parser.parse_args()
+    port = int(args.port) if args.port else 5005
+    interval_pcap = int(args.pcap_sec) if args.pcap_sec else 30
+    output_dir = args.outdir if args.outdir else "owl_output"
+    sec = int(args.duration) if args.duration else 45 
 
     session1 = TcpdumpOps(port)
     session1.start_capture(output_dir, interval_pcap)
-    time.sleep(30)
+    time.sleep(sec)
     session1.stop()
 
     time.sleep(5)
 
     session2 = TcpdumpOps(port)
     session2.start_live_capture()
-    time.sleep(60)
+    time.sleep(sec)
     session2.stop()
 
