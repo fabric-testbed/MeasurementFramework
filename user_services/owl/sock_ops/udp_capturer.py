@@ -83,17 +83,21 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--port", help="listening port number")
-    parser.add_argument("--pcap-sec", help="number of capture seconds for each pcap file")
-    parser.add_argument("--outdir", help="output dir where pcap files will be saved")
-    parser.add_argument("--duration", help="number of seconds to run each capture")
+    parser.add_argument("--port", type=int, default=5005, 
+                        help="listening port number")
+    parser.add_argument("--pcap-sec", type=int, default=45, 
+                        help="number of capture seconds for each pcap file")
+    parser.add_argument("--outdir", type=str, default="/owl_output",
+                        help="output dir where pcap files will be saved")
+    parser.add_argument("--duration", type=int, default=60, 
+                        help="number of seconds to run each capture")
 
 
     args = parser.parse_args()
-    port = int(args.port) if args.port else 5005
-    interval_pcap = int(args.pcap_sec) if args.pcap_sec else 30
-    output_dir = args.outdir if args.outdir else "owl_output"
-    sec = int(args.duration) if args.duration else 45 
+    port = args.port
+    interval_pcap = args.pcap_sec
+    output_dir = args.outdir 
+    sec = args.duration 
 
     session1 = TcpdumpOps(port)
     session1.start_capture(output_dir, interval_pcap)
