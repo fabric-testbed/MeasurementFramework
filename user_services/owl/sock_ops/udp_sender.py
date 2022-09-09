@@ -47,7 +47,7 @@ class UDP_sender(object):
 
 if __name__ == "__main__":
 
-    parser = parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument("--dest-ip", type=str, default="10.10.1.1", 
                         help='destination IP')
     parser.add_argument("--dest-port", type=int, default=5005, 
