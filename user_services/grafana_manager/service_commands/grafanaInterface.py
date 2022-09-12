@@ -1146,7 +1146,9 @@ class GrafanaManager(object):
             response["msg"] = "Url path is incorrect format. Must beging with 'render'."
             return response
 
-        url_hash = hashlib.md5(url_path)
+        url_hash = hashlib.md5(url_path.encode('utf-8'))
+        url_hash_str = url_hash.hexdigest()
+
         if "now" in url_path:
             # Cannot use cached png since it is based on relative to now time.
             pass 
@@ -1159,12 +1161,12 @@ class GrafanaManager(object):
 
 
         if request_result["success"]:
-            png_filename = f'{url_hash}.png'
+            png_filename = f'{url_hash_str}.png'
             response['success'] = True
             response['msg'] = "Successfully rendered image."
             #response['data'] = x
-            with open(os.path.join(gu.rendered_dir,png_filename),'wb') as im:
-                im.write(request_result.content)
+            with open(os.path.join(save_dir,png_filename),'wb') as im:
+                im.write(request_result["data"].content)
             response["filename"] = png_filename
         else:
             response['msg'] = "Failed to render image."
