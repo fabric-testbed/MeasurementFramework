@@ -5,6 +5,8 @@ import json
 
 services_dir = os.path.join(os.path.expanduser('~') ,"services")
 
+rendered_dir = os.path.join(services_dir, "rendered")
+
 data_filename = os.path.join(services_dir, "grafana_manager", "data", "data.json" )
 
 prometheus_default_install_vars_file = os.path.join(services_dir, "prometheus", "extra_files", "install_vars.json")

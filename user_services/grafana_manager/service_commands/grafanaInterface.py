@@ -1,6 +1,7 @@
 import requests, json, os
 from os.path import exists
 from urllib3.exceptions import InsecureRequestWarning
+import hashlib
 
 # Settings
 
@@ -1026,3 +1027,150 @@ class GrafanaManager(object):
             response['data'] = x
         
         return response
+
+
+    #     #https://localhost/grafana/render/d-solo/rYdddlPWk/node-exporter-full?orgId=1&panelId=77&var-job=node&var-DS_PROMETHEUS=default&var-diskdevices=%5Ba-z%5D%2B%7Cnvme%5B0-9%5D%2Bn%5B0-9%5D%2B&from=now-5m&to=now&refresh=30s&var-node=Node1
+
+    #     url_path = render/d-solo/rYdddlPWk/node-exporter-full?orgId=1&panelId=77&var-job=node&var-DS_PROMETHEUS=default&var-diskdevices=%5Ba-z%5D%2B%7Cnvme%5B0-9%5D%2Bn%5B0-9%5D%2B&from=now-5m&to=now&refresh=30s&var-node=Node1
+
+
+
+
+    # def getURLasAdmin(self, url_path):
+    #     response = {
+    #         "success": False,
+    #         "msg":""
+    #     }
+
+    #     session = requests.session()
+
+    #     if self.password is None:
+    #         response['msg'] = "No Grafana host admin password specified to object."
+    #         return response
+        
+    #     if self.username is None:
+    #         response['msg'] = "No Grafana host username specified to object."
+    #         return response
+        
+    #     if self.host is None:
+    #         response['msg'] = "No Grafana host specified to object."
+    #         return response
+        
+    #     # Login to Grafana
+    #     session.post(
+    #         'https://' + self.host + '/grafana/login', 
+    #         headers={'Content-Type': 'application/json'},
+    #         json={"password": self.password,"user": self.username}, 
+    #         verify=False
+    #     )
+    #     # Get Users
+    #     x = session.get(
+    #         'https://' + self.host + '/grafana/' + url_path, 
+    #         headers={'Content-Type': 'application/json', 'Accept': 'application/json'}, 
+    #         verify=False
+    #     )
+
+    #     if x.status_code == 200:
+    #         response['success'] = True
+    #         response['msg'] = "Successfully found Grafana user."
+    #         response['data'] = x
+    #     else:
+    #         response['msg'] = "Failed to find Grafana user."
+    #         response['data'] = x
+
+    #     session.close()
+
+    #     return response
+    
+
+    def getURLasAdmin(self, url_path):
+        response = {
+            "success": False,
+            "msg":""
+        }
+
+        session = requests.session()
+
+        if self.password is None:
+            response['msg'] = "No Grafana host admin password specified to object."
+            return response
+
+        if self.username is None:
+            response['msg'] = "No Grafana host username specified to object."
+            return response
+
+        if self.host is None:
+            response['msg'] = "No Grafana host specified to object."
+            return response
+
+        # Login to Grafana
+        session.post(
+            'https://' + self.host + '/grafana/login',
+            headers={'Content-Type': 'application/json'},
+            json={"password": self.password,"user": self.username},
+            verify=False
+        )
+        # Get Users
+        x = session.get(
+            'https://' + self.host + '/grafana/' + url_path,
+            headers={'Content-Type': 'application/json', 'Accept': 'application/json'},
+            verify=False
+        )
+
+        if x.status_code == 200:
+            response['success'] = True
+            response['msg'] = "URL successfully grabbed."
+            response['data'] = x
+        else:
+            response['msg'] = "Failed to grab URL."
+            response['data'] = x
+
+        session.close()
+
+        return response
+
+
+
+    def render(self, url_path, save_dir):
+        response = {
+            "success": False,
+            "msg":""
+        }
+
+        # Sting cleanup
+        url_path = url_path.strip()
+        url_path = url_path.lstrip('/')
+        
+        # Check that it is a render url 
+        if not url_path.startswith("render"):
+            response["msg"] = "Url path is incorrect format. Must beging with 'render'."
+            return response
+
+        url_hash = hashlib.md5(url_path)
+        if "now" in url_path:
+            # Cannot use cached png since it is based on relative to now time.
+            pass 
+        else:
+            #check for existing image
+            pass 
+            #TODO add cache testing
+
+        request_result = self.getURLasAdmin(url_path)
+
+
+        if request_result["success"]:
+            png_filename = f'{url_hash}.png'
+            response['success'] = True
+            response['msg'] = "Successfully rendered image."
+            #response['data'] = x
+            with open(os.path.join(gu.rendered_dir,png_filename),'wb') as im:
+                im.write(request_result.content)
+            response["filename"] = png_filename
+        else:
+            response['msg'] = "Failed to render image."
+            #response['data'] = x
+
+        return response
+
+
+
