@@ -6,7 +6,17 @@ import json
 import grafanaUtilities as gu
 import grafanaInterface as gi 
 
+def copy_files(src_dir, dst_dir):
+    os.system(f"cp -r {src_dir}/* {dst_dir}")
 
+def copy_file(src_file, dst_file):
+    os.system(f"cp -r {src_file} {dst_file}")
+
+def get_file_basenames(files):
+    basenames = []
+    for f in files:
+        basenames.append(os.path.basename(f))
+    return basenames
 
 def main():
     ret_val = {
@@ -14,34 +24,72 @@ def main():
         "msg": ""
     }
 
-    # Data is stored in relative dir to this script.
-    service_dir =  os.path.dirname(__file__)
-    infoFilePath = os.path.join( service_dir, "infoFile.txt")
-    configFilePath = os.path.join( service_dir, "configFile.txt")
 
     data = gu.get_data()
-
-    ret_val['msg'] = "Update not yet implemented."
-
  
     default_settings = gu.get_defaults()
 
     interface = gi.GrafanaManager( host = "localhost",
                     username = "admin",
                     password = default_settings['grafana_admin_password'],
-                    infoFilePath = infoFilePath,
+                    infoFilePath = gu.infoFilePath,
                     infoFileDelimiter = ",",
                     key = None
                   ) 
-    
-    if "cmd" in data:
+
+
+    if "commands" in data:
+        # Ensure certain commands are run in the needed order
+
+        for cmd in data["commands"]:
+            if "cmd" in cmd and cmd["cmd"] == "upload_dashboards":
+                # move files from files dir to dashboards dir
+                if "dashboard_filenames" in cmd:
+
+                    for dashboard_filename in get_file_basenames( cmd["dashboard_filenames"] ):
+                        src_dashboard_filename = os.path.join(gu.files_dir, dashboard_filename )
+                        dst_dashboard_filename = os.path.join(gu.dashboards_dir, dashboard_filename )
+
+                        copy_file(src_dashboard_filename, dst_dashboard_filename)
+                        ret_val['msg'] += f'Have dashboard file {dashboard_filename}.\n'
+
+        for cmd in data["commands"]:
+            if "cmd" in cmd and cmd["cmd"] == "add_dashboards":
+
+                # create (add) the dashboard to grafana
+                if "dashboard_filenames" in cmd:
+                    for dashboard_filename in get_file_basenames(  cmd["dashboard_filenames"] ):
+                        result = interface.createDashboard(os.path.join(gu.dashboards_dir, dashboard_filename ))
+                        ret_val["msg"] += f'Added dashboard {dashboard_filename}\n' 
+                        ret_val[dashboard_filename] = result
+
+                            
+    # if "cmd" in data:
             
-        if data["cmd"] == "new_user":
-            pass 
+    #     if "upload_dashboards" in data["cmd"]:
+    #         # move files from files dir to dashboards dir
+    #         if "dashboard_filenames" in data["cmd"]["upload_dashboards"]:
+
+    #             for dashboard_filename in get_file_basenames( data["cmd"]["upload_dashboards"] ):
+    #                 src_dashboard_filename = os.path.join(gu.files_dir, dashboard_filename )
+    #                 dst_dashboard_filename = os.path.join(gu.dashboards_dir, dashboard_filename )
+
+    #                 copy_file(src_dashboard_filename, dst_dashboard_filename)
+    #                 ret_val['msg'] += f'Have dashboard file {dashboard_filename}.\n'
+
+    #     if "add_dashboard" in data["cmd"]:
+    #         # create (add) the dashboard to grafana
+    #         if "dashboard_filenames" in data["cmd"]["add_dashboards"]:
+    #             for dashboard_filename in get_file_basenames( data["cmd"]["add_dashboards"] ):
+    #                 result = interface.createDashboard(os.path.join(gu.dashboards_dir, dashboard_filename ))
+    #                 ret_val["msg"] += f'Added dashboard {dashboard_filename}\n'
+
+        # if data["cmd"] == "new_user":
+        #     pass 
             
-            #result = interface.createNewUser('user', 'user@user.com', 'userLogin', 'userPassword')
-            result = interface.createNewUser('user', 'user@user.com', 'userLogin', 'userPassword')
-            # print(result)
+        #     #result = interface.createNewUser('user', 'user@user.com', 'userLogin', 'userPassword')
+        #     result = interface.createNewUser('user', 'user@user.com', 'userLogin', 'userPassword')
+        #     # print(result)
         
         # #def test_StoreUserInfo(self):
         # result = interface.storeUserInfo('testingUser', 'testingUserPassword')

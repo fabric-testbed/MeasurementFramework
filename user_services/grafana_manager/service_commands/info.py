@@ -14,20 +14,14 @@ def main():
         "msg": ""
     }
 
-    # Data is stored in relative dir to this script.
-    service_dir =  os.path.dirname(__file__)
-    infoFilePath = os.path.join( service_dir, "infoFile.txt")
-    configFilePath = os.path.join( service_dir, "configFile.txt")
-
     data = gu.get_data()
 
- 
     default_settings = gu.get_defaults()
 
     interface = gi.GrafanaManager( host = "localhost",
                     username = "admin",
                     password = default_settings['grafana_admin_password'],
-                    infoFilePath = infoFilePath,
+                    infoFilePath = gu.infoFilePath,
                     infoFileDelimiter = ",",
                     key = None
                   ) 

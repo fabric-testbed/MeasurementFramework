@@ -17,17 +17,17 @@ def main():
     }
 
     # Data is stored in relative dir to this script.
-    service_dir =  os.path.dirname(__file__)
-    infoFilePath = os.path.join(service_dir, "infoFile.txt")
-    configFilePath = os.path.join(service_dir, "configFile.txt")
+    # service_dir =  os.path.dirname(__file__)
+    # infoFilePath = os.path.join(service_dir, "infoFile.txt")
+    # configFilePath = os.path.join(service_dir, "configFile.txt")
 
-    logFilePath = os.path.join(service_dir, "log", "create.log")
+    logFilePath = os.path.join(gu.this_service_dir, "log", "create.log")
     logging.basicConfig(filename=logFilePath, format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level="INFO")
     logging.info("-----Start Ceate Script.-----")
 
     data = gu.get_data()
 
-    if os.path.exists(configFilePath):
+    if os.path.exists(gu.configFilePath):
         # Service has already been created, don't run again.
         ret_val['msg'] = "Grafana Manager service has already been created. Use mflib.info('grafana_manager') for more information."
         print( gu.get_json_string(ret_val) )
@@ -45,29 +45,30 @@ def main():
     interface = gi.GrafanaManager( host = "localhost",
                     username = "admin",
                     password = default_settings['grafana_admin_password'],
-                    infoFilePath = infoFilePath,
+                    infoFilePath = gu.infoFilePath,
                     infoFileDelimiter = ",",
                     key = None
                   ) 
-    
-    
-    # Create the config file.
-    result = interface.createConfigFile(configFilePath, '-')
-    logging.info(result)
-    ret_val['msg'] += result['msg']
     
     # Create the admin token
     result = interface.createAdminToken()
     logging.info(result)
     ret_val['msg'] += result['msg']
+    
+    # Create the config file.
+    result = interface.createConfigFile(gu.configFilePath, '-')
+    logging.info(result)
+    ret_val['msg'] += result['msg']
+    
+
 
     # Create local prometheus datasource
-    result = interface.createDatasource(os.path.join(service_dir, 'Datasources/localPrometheus.json'))
+    result = interface.createDatasource(os.path.join(gu.this_service_dir, 'Datasources/localPrometheus.json'))
     logging.info(result)
     ret_val['msg'] += result["msg"]
 
     # Upload all the default dashboards. Note could change this to just do certain dashboards later.
-    result = interface.uploadDashboards(os.path.join(service_dir, 'Dashboards' ))
+    result = interface.uploadDashboards(os.path.join(gu.this_service_dir, 'Dashboards' ))
     logging.info(result)
     ret_val['msg'] += result['msg']
 
