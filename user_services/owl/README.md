@@ -1,24 +1,25 @@
 # OWL One Way Latency
 
 ## Current owl.conf file format
-Sample config and service request files are round under `owl_config`.
+Sample config and links files are round under `sample)owl_config`.
 
 
 ```
 [GENERAL]
 LinkCheckInterval = <sec (int)>
 UdpPort = <port>
-ServiceRequestFile = <service request file>.json
+ServiceRequestFile = <links>.json
 
 [receiver]
 PcapInterval = <sec (int)>
+CaptureMode = "live" or "save"
 Output_Dir = <path/to/dir/for/pcap/files> (no trailing '/')
 
 [sender]
 SendInterval= <sec (float)>
 ```
 
-## Current json service request file format
+## Current json links file format
 ```
 {
   "links":[ 

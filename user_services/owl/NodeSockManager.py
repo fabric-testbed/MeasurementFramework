@@ -25,7 +25,7 @@ class NodeSockManager():
         self.host_ipv4s = self._find_IPs()
         print(self.host_ipv4s)
 
-        self.service_request = config['GENERAL']['ServiceRequestFile']   
+        self.links = config['GENERAL']['LinksFile']   
         self.udp_port = int(config['GENERAL']['UdpPort'])
         self.pcap_interval = int(config['receiver']['PcapInterval'])
         self.capture_mode = config['receiver']['CaptureMode']
@@ -46,7 +46,7 @@ class NodeSockManager():
 
 
     def start(self):
-        _status, _dests = self._read_service_request()
+        _status, _dests = self._read_links()
         self._start_capturer(_status)
         self._start_sender(_dests)
 
@@ -78,7 +78,7 @@ class NodeSockManager():
         return s.decode('UTF-8').split()
 
 
-    def _read_service_request(self):
+    def _read_links(self):
         '''
         Returns:
             listener(str): either "UP" or "DOWN" (for the host node)
@@ -89,7 +89,7 @@ class NodeSockManager():
         dests = []
 
         try:
-            f = open(self.service_request)
+            f = open(self.links)
             data = json.load(f)
     
             for link in data["links"]:
@@ -100,11 +100,11 @@ class NodeSockManager():
                     listener = "UP"
 
         except FileNotFoundError:
-            self.logger.error(f"No service request file {self.service_request} found.")
+            self.logger.error(f"No service request file {self.links} found.")
             # Will return DOWN for receiver status, an empty list for dests
 
         finally:
-            self.logger.info(f"read_service_request: {listener}, {dests}")
+            self.logger.info(f"read_links: {listener}, {dests}")
 
         return listener, dests
     
@@ -119,7 +119,7 @@ class NodeSockManager():
                 self.listen_instance.start_live_capture()
             else:
                 self.logger.info(f"Starting capture. Pcap files in {self.output_dir}")
-                self.listen_instance.start_live_capture(self.output_dir, self.pcap_interval)
+                self.listen_instance.start_capture(self.output_dir, self.pcap_interval)
 
         else: # DOWN
             pass
@@ -142,7 +142,7 @@ class NodeSockManager():
     #    self.is_running = False
     #    self.start()
 
-    #    _status, _dests = self._read_service_request()
+    #    _status, _dests = self._read_links()
 
     #    self._update_capturer(_status)
     #    self._update_sender(_dests)
@@ -225,13 +225,14 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('conf', type=str, help='path to config file')
-    parser.add_argument('--duration', type=int, default=120, help='number of seconds to run')
+    parser.add_argument('--duration', type=int, default=0,  help='number of seconds to run')
     args = parser.parse_args()
 
     manager = NodeSockManager(args.conf)
 
     # Stop the program at a certain interval only if the arg is given.
-    time.sleep(args.duration)
-    manager.stop()
-    self.logger.info("finished")
+    if args.duration:
+        time.sleep(args.duration)
+        manager.stop()
+        self.logger.info("finished")
 
