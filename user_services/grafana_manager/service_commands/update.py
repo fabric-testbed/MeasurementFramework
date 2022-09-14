@@ -77,6 +77,7 @@ def main():
                         result = interface.createDashboard(os.path.join(gu.dashboards_dir, dashboard_filename ))
                         logging.info(result)
                         ret_val["msg"] += f'Added dashboard {dashboard_filename}\n'
+                        ret_val[dashboard_filename] = {}
                         ret_val[dashboard_filename]["success"] = result["success"]
                         ret_val[dashboard_filename]["msg"] = result["msg"]
                         #result["data"]  is not dependable json serializable
