@@ -68,7 +68,7 @@ def main():
     ret_val['msg'] += result["msg"]
 
     # Upload all the default dashboards. Note could change this to just do certain dashboards later.
-    result = interface.uploadDashboards(os.path.join(gu.this_service_dir, 'Dashboards' ))
+    result = interface.uploadDashboards(os.path.join(gu.this_service_dir, gu.dashboards_dir ))
     logging.info(result)
     ret_val['msg'] += result['msg']
 
