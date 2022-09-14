@@ -43,7 +43,7 @@ def main():
                     key = None
                   ) 
 
-    interface.parseConfigFile( gu.configFile,"-")
+    interface.parseConfigFile( gu.configFilePath,"-")
 
     command_found = False
     if "commands" in data:
