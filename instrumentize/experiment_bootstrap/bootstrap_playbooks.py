@@ -11,8 +11,6 @@ def main():
     ret_val = {}
 
     playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
-    #ansible_hosts_file = "/home/mfuser/mf_git/promhosts.ini"
-    #ansible_hosts_file = '/home/mfuser/mf_git/instrumentize/ansible/fabric_experiment_instramentize/promhosts.ini'
     ansible_hosts_file = '/home/mfuser/services/common/hosts.ini'
  
     keyfile = "/home/mfuser/.ssh/mfuser_private_key"
