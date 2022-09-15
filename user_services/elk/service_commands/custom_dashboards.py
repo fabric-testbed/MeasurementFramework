@@ -13,7 +13,8 @@ def import_dashboards():
     ret_val = ''
     logging.info("Starting Dashboard Imports")
     try:
-      meas_node_ip = socket.gethostbyname(socket.gethostname())
+      #meas_node_ip = socket.gethostbyname(socket.gethostname())
+      meas_node_ip = [(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]
       username = "fabric"
       #os.chdir('../../../instrumentize/elk/credentials')
       with open(eu.nginx_password_filename, "r") as f:
