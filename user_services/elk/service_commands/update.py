@@ -1,3 +1,4 @@
+from gettext import install
 import os
 import json
 
@@ -24,7 +25,7 @@ def get_file_basenames(files):
 
 def main():
 
-    logFilePath = os.path.join(eu.service_dir, "log", "update.log")
+    logFilePath = os.path.join(eu.log_dir "update.log")
     logging.basicConfig(filename=logFilePath, format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level="INFO")
     logging.info("-----Start Update Script.-----")
 
@@ -58,18 +59,55 @@ def main():
         for cmd in data["commands"]:
             if "cmd" in cmd and cmd["cmd"] == "add_dashboards":
                 command_found = True
+
+                # Check if user wants to force reinstall
+                if "force" in cmd["cmd"]:
+                    do_force = cmd["cmd"]["force"]
+                else:
+                    do_force = False
+
+                installed_dashboards = eu.read_installed_dashboards()
                 logging.info("Adding dashboard")
                 # create (add) the dashboard to grafana
                 if "dashboard_filenames" in cmd:
                     for dashboard_filename in get_file_basenames(  cmd["dashboard_filenames"] ):
                         logging.info(f"Adding {dashboard_filename} to kibana." )
-                        logging.info(os.path.join(eu.dashboards_dir, dashboard_filename ))
-                        result = custom_dashboards.import_dashboard(dashboard_filename)
-                        logging.info(result)
-                        ret_val["msg"] += f'Added dashboard {dashboard_filename}\n'
-                        ret_val[dashboard_filename] = {}
-                        ret_val[dashboard_filename]["success"] = result["success"]
-                        ret_val[dashboard_filename]["msg"] = result["msg"]
+
+
+
+                        if do_force or dashboard_filename not in installed_dashboards:
+                            logging.info(os.path.join(eu.dashboards_dir, dashboard_filename ))
+                            result = custom_dashboards.import_dashboard(dashboard_filename)
+                            logging.info(result)
+                            ret_val["msg"] += f'Added dashboard {dashboard_filename}\n'
+                            ret_val[dashboard_filename] = {}
+                            ret_val[dashboard_filename]["success"] = result["success"]
+                            ret_val[dashboard_filename]["msg"] = result["msg"]
+
+                            if dashboard_filename in installed_dashboards:
+                                logging.info("Forced reinstall of kibana dashboard.")
+                            if result["success"] and dashboard_filename not in installed_dashboards:
+                                installed_dashboards.append(dashboard_filename)
+                                eu.write_installed_dashboards(installed_dashboards)
+
+                        #else: Do nothing dashboard alread exists
+
+                        # Version without force
+                        # if dashboard_filename in installed_dashboards:
+                        #     logging.info(f"{dashboard_filename} has already been installed so it will not be installed again." )
+                        # else:
+                        #     logging.info(os.path.join(eu.dashboards_dir, dashboard_filename ))
+                        #     result = custom_dashboards.import_dashboard(dashboard_filename)
+                        #     logging.info(result)
+                        #     ret_val["msg"] += f'Added dashboard {dashboard_filename}\n'
+                        #     ret_val[dashboard_filename] = {}
+                        #     ret_val[dashboard_filename]["success"] = result["success"]
+                        #     ret_val[dashboard_filename]["msg"] = result["msg"]
+                        #     if (result["success"]):
+                        #         installed_dashboards.append(dashboard_filename)
+                        #         eu.write_installed_dashboards(installed_dashboards)
+                            
+
                         #result["data"]  is not dependable json serializable
                         
 
