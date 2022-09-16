@@ -11,7 +11,7 @@ dashboards_dir = os.path.join(service_dir, "dashboards")
 data_filename = os.path.join(service_dir, "data", "data.json" )
 log_dir = os.path.join(service_dir, "log")
 
-installed_dashboard_file = os.path.join(eu.service_dir, "installed_dashboards")
+installed_dashboard_file = os.path.join(service_dir, "installed_dashboards")
 
 # services_dir = os.path.join(os.path.expanduser('~') ,"services")
 # files_dir = os.path.join(services_dir, "files")
