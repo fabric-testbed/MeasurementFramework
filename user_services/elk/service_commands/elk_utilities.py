@@ -9,6 +9,9 @@ service_dir = os.path.join(services_dir, "elk")
 files_dir = os.path.join(service_dir, "files")
 dashboards_dir = os.path.join(service_dir, "dashboards")
 data_filename = os.path.join(service_dir, "data", "data.json" )
+log_dir = os.path.join(service_dir, "log")
+
+installed_dashboard_file = os.path.join(service_dir, "installed_dashboards")
 
 # services_dir = os.path.join(os.path.expanduser('~') ,"services")
 # files_dir = os.path.join(services_dir, "files")
@@ -37,4 +40,20 @@ def get_json_string(data):
         error_msg['json_exception'] = type(e).__name__  
         json_str = json.dumps(error_msg)
     return json_str
+
+def read_installed_dashboards():
+    try:
+        with open(installed_dashboard_file) as data_file:
+            data = json.load(data_file)
+    except Exception as e:
+        data = []
+    return data
+
+def write_installed_dashboards(installed_dashboards):
+    try:
+        with open(installed_dashboard_file, "w+") as f:
+            json.dump(installed_dashboards,f)
+    except Exception as e:
+        error_msg = "Failed to write installed dashboards"
+        print(e)
 
