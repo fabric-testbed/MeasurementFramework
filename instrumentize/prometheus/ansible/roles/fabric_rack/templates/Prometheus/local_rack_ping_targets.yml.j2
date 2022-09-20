@@ -59,6 +59,10 @@
 
 # Others
 {% for h in groups[hank_name+"_others"] %}
+{% if h.split("-")[1] == "pdu" %}
+# pdu have multiple ips that are not listed
+# pdu does not need monitoring
+{% else %}
 - targets:
         - {{ hostvars[h].ansible_host }}
   labels:
@@ -67,5 +71,6 @@
         subdomain: {{h}}
         release: prod
         relation: rack
+{% endif %}
 {% endfor %}
 

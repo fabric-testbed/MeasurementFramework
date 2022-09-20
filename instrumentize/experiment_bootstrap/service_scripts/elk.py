@@ -21,4 +21,9 @@ if __name__ == "__main__":
     src_dir = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, "service_commands")
     copy_files(src_dir, args.service_dir)
     # Note the files do not need to come from a simple local copy as shown here. They could be pulled from anywhere such as a git repo or auto generated.
+
+    # create a dir for dashboards
+    dashboards_dir = os.path.join(args.service_dir, "dashboards")
+    os.makedirs( dashboards_dir )
+    
     

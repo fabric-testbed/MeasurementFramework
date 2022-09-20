@@ -12,7 +12,7 @@ import random
 
 service_dir = os.path.join(os.path.expanduser('~') ,"services", "prometheus")
 
-data_filename = os.path.join(service_dir, "data.json" )
+data_filename = os.path.join(service_dir, "data", "data.json" )
 extra_files_dir = os.path.join(service_dir, "extra_files")
 ansible_out_dir = os.path.join(service_dir, "ansible_out")
 install_vars_file = os.path.join(extra_files_dir, "install_vars.json")
@@ -41,6 +41,11 @@ def get_json_string(data):
 
 
 def create_install_vars():
+    if os.path.exists(install_vars_file):
+        return
+        # Don't recreate the file if it exists.
+
+
     install_vars = {}
 
     letters = string.ascii_letters

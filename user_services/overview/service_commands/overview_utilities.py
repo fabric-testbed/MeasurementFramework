@@ -5,15 +5,19 @@ import json
 
 services_dir = os.path.join(os.path.expanduser('~') ,"services")
 
-data_filename = os.path.join(services_dir, "overview", "data.json" )
+data_filename = os.path.join(services_dir, "overview", "data", "data.json" )
 
 def get_services_list():
     # Read the services directories and parse service names
     service_list = []
 
     for item in os.listdir(services_dir):
-        if os.path.isdir(os.path.join(services_dir, item)):
-            service_list.append(item)
+        if item == "common":
+            # Hide this one
+            pass
+        else:
+            if os.path.isdir(os.path.join(services_dir, item)):
+                service_list.append(item)
 
     return service_list
 

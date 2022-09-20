@@ -1,0 +1,18 @@
+---
+
+- name: Update package cache in case of Debian based system (workaround)
+  apt:
+    name: linux-modules-extra-{{ ansible_kernel }}
+    update_cache: True
+  when: ansible_os_family == "Debian"
+
+- name: Install dependencies
+  package:
+    name: 
+      - gcc
+      - make
+      - ethtool
+      - chrony
+      - python3-systemd
+      - git
+    state: present

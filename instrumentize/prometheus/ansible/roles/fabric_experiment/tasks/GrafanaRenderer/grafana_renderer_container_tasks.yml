@@ -1,0 +1,21 @@
+---
+# Start-stop Grafana container
+- name: Control Grafana Docker Container
+  become: yes
+  community.docker.docker_container:
+    state: "{{ grafana_state }}"
+    name: "{{ install_name }}_grafana_renderer"
+    network_mode: "{{ docker_network_name }}"
+    image: grafana/grafana-image-renderer:3.6.1
+    user: "{{ grafana_user_name }}:{{ grafana_group_name }}"
+
+    env:
+      # Hard coded token OK here since this is only used between 2 docker containers without outside exposure
+      # Value is also set in grafana_custom.ini.j2 as renderer_token
+      AUTH_TOKEN: rgdfioBDUEjujPOHD8ww
+      
+    container_default_behavior: no_defaults
+    log_driver: json-file
+    log_options:
+      max-size: 1024m
+    restart_policy: always

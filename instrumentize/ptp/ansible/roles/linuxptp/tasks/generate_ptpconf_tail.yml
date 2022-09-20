@@ -1,0 +1,5 @@
+---
+
+- name: Generate ptp config files and find interfaces if KVM
+  script: files/find_ptp_dev_mapping.sh -m {{ MANAGEMENT_IFACE_FOR_PTP }} -a{{ ALL_NICS|int }}
+  register: IFACES

@@ -11,21 +11,24 @@ def main():
 
     data = pu.get_data()
 
-    if data:
+
+
+    if "get" in data:
         install_vars = pu.get_install_vars()
 
-        if "grafana_admin_password" in data and data["grafana_admin_password"]:
+        if "grafana_admin_password" in data["get"]:
             ret_val["grafana_admin_password"] = install_vars["grafana_admin_password"]
 
-        if "ht_user" in data and data["ht_user"]:
+        if "ht_user" in data["get"]:
             ret_val["ht_user"] = install_vars["fabric_prometheus_ht_user"]
 
-        if "ht_password" in data and data["ht_password"]:
+        if "ht_password" in data["get"]:
             ret_val["ht_password"] = install_vars["fabric_prometheus_ht_password"]
 
 
     else:
-        ret_val["help"] = "Valid request data values include grafana_admin_password, ht_user or ht_password = True. "
+        ret_val["help"] = 'Valid request data values include "get": ["grafana_admin_password", "ht_user", "ht_password"]. '
+
 
     print( pu.get_json_string(ret_val) )
 
