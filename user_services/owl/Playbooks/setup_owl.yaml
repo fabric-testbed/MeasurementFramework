@@ -1,6 +1,8 @@
 ---
 - name: Set up OWL
   hosts: Experiment_Nodes
+  vars:
+      ansible_python_interpreter: /usr/bin/python3.9
   tasks:
     - name: Create a directory for owl config file
       ansible.builtin.file:
@@ -14,14 +16,42 @@
         state: directory
         mode: '0755'
 
-    ############   Commented out just for now
+    - name: Create docker build directory
+      ansible.builtin.file:
+        path: /home/mfuser/services/owl/docker
+        state: directory
+        mode: '0755'
+
+    - name: Copy Dockerfile
+      ansible.builtin.copy:
+        src: /home/mfuser/MeasurementFramework/user_services/owl/Dockerfile
+        dest: /home/mfuser/services/owl/docker/Dockerfile
+        mode: '0644'
+
+    - name: Build owl container image
+      community.general.docker_image:
+        name: owl:0.1.1
+        build:
+          path: /home/mfuser/services/owl/docker
+          pull: yes
+        source: build
+
+    - name: Create owl container
+      community.general.docker_container:
+        name: owl
+        image: owl:0.1.1
+        state: present
+
+
+        
+    ############   Commented out for now
     #- name: Pull fabrictestbed/owl image from DockerHub
     #  community.general.docker_image:
     #    name: fabrictestbed/owl:0.1.0
     #    source: pull
 
-    - name: Create a container
-      community.general.docker_container:
-        name: owl
-        image: fab[rictestbed/owl:0.1.0
-        state: present
+    #- name: Create a container
+    #  community.general.docker_container:
+    #    name: owl
+    #    image: fabrictestbed/owl:0.1.0
+    #    state: present
