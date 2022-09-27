@@ -1,53 +1,50 @@
-import argparse
-from configparser import ConfigParser
+######
+# Start OWL container on experiments' nodes  running
+# start_owl.yaml script
+#######
+
+import os
+from datetime import datetime
+import subprocess
 import json
 
 
-def generate_owl_config(port, links_file, send_intvl, capture_mode, pcap_intvl, output_dir ):
-    config = ConfigParser()
-    config.optionxform = str
-    config['GENERAL'] = {}
-    config['GENERAL']['UdpPort'] = port
-    config['GENERAL']['LinksFile'] = links_file
-    
-    config['sender'] = {}
-    config['sender']['SendInterval'] = send_intvl
+def start_owl():
+    ret_val = {}
 
-    config['receiver'] = {}
-    config['receiver']['CaptureMode'] = capture_mode
-    config['receiver']['PcapInterval'] = pcap_intvl
-    config['receiver']['OutputDir'] = output_dir
+    #playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
+    #ansible_hosts_file = "/home/mfuser/mf_git/elkhosts.ini"
+    #playbook = "/home/mfuser/mf_git/instrumentize/elk/fabric_deploy.yml"
+    #keyfile = "/home/mfuser/.ssh/mfuser"
 
-    with open ('/home/mfuser/services/owl/config/owl.conf', 'w') as configfile:
-        config.write(configfile)
+    # TODO: These lines will be changed on FABRIC meas-node
+    playbook_exe = "/home/mfuser/MeasurementFramework/user_services/owl/owl-venv/bin/ansible-playbook"
+    ansible_hosts_file = "/etc/ansible/hosts"
+    playbook = "/home/mfuser/MeasurementFramework/user_services/owl/Playbooks/start_owl.yaml"
+    keyfile = "/home/mfuser/.ssh/id_rsa"
 
 
-def generate_links(links):
-    '''
-    Generate /home/mfuser/services/owl/config/links.json file
-    Args:
-        links([(src, dst),]:
-    '''
+    # For some reason the local ansible.cfg file is not being used
+    os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
 
-    l = []
-    for link in links:
-        d={}
-        d['src'] = link[0]
-        d['dst'] = link[1]
-        l.append(d)
+    cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, playbook]
 
-    links_dict = {}
-    links_dict["links"] = l
+    r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    jsonified_links = json.dumps(links_dict, indent=4)
+    decoded_out = r.stdout.decode("utf-8")
+    play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
+    decoded_err = r.stderr.decode("utf-8")
 
-    with open ('/home/mfuser/services/owl/config/links.json', 'w') as json_out:
-        json_out.write(jsonified_links)
+    if r.returncode == 0:
+        ret_val["success"] =  True
+        ret_val["msg"] = "start_owl.yaml script ran successfully."
+    else:
+        ret_val["success"] =  False
+        ret_val["msg"] = "start_owl.yaml script run FAILED."
 
-
-def start_owl(args):
-    pass
-
+    ret_val["play_recap"] = play_recap
+    print(json.dumps(ret_val))
 
 if __name__ == "__main__":
-    pass
+    start_owl()
+
