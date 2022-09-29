@@ -77,7 +77,7 @@ def main():
     ret_val["play_recap_ptp"] = play_recap_ptp
 
 
-    ret_val["success"] = (r_pip_docker.returncode == 0) and (r_docker.returncode == 0) and (r3.returncode == 0)
+    ret_val["success"] = (r_pip_docker.returncode == 0) and (r_docker.returncode == 0) and (r_ptp.returncode == 0)
 
 
 
