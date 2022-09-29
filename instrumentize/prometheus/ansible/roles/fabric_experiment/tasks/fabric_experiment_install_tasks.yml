@@ -36,10 +36,10 @@
       - prometheus
       - grafana
       - nginx
-      - alertmanager
+      #- alertmanager
       - blackbox
       - docker_exporter
-      - snmp
+      #- snmp
 
 # PROMETHEUS
 # Prometheus consists of several tasks that must be done.
@@ -86,21 +86,22 @@
 #             alertmanager_state: started
 
 
-# SNMP EXPORTER
-- name: Setup SNMP Exporter
-  block:
-    - name: SNMP Directories
-      include_tasks: tasks/SNMPExporter/setup_snmp_directories_tasks.yml
+## SNMP is having problems starting and we are not currently using it so I have disabled it for now 
+# # SNMP EXPORTER
+# - name: Setup SNMP Exporter
+#   block:
+#     - name: SNMP Directories
+#       include_tasks: tasks/SNMPExporter/setup_snmp_directories_tasks.yml
     
-    - name: SNMP Config 
-      include_tasks: tasks/SNMPExporter/add_snmp_config_templates_tasks.yml
-      vars: 
-        snmp_config_template_files: snmp.yml
+#     - name: SNMP Config 
+#       include_tasks: tasks/SNMPExporter/add_snmp_config_templates_tasks.yml
+#       vars: 
+#         snmp_config_template_files: snmp.yml
       
-    - name: SNMP Container 
-      include_tasks: tasks/SNMPExporter/snmp_exporter_container_tasks.yml
-      vars:
-        snmp_state: started
+#     - name: SNMP Container 
+#       include_tasks: tasks/SNMPExporter/snmp_exporter_container_tasks.yml
+#       vars:
+#         snmp_state: started
 
 # BLACKBOX EXPORTER
 - name: Setup Blackbox EXPORTER
