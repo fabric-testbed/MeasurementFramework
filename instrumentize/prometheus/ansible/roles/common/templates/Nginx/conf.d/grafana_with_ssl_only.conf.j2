@@ -9,6 +9,7 @@ server {
         include /etc/nginx/ssl_snippet.conf;
                 
         location /grafana/ {
+                rewrite  ^/grafana/(.*)  /$1 break;
                 #auth_basic "Grafana Access";
                 #auth_basic_user_file /etc/nginx/htpasswd;
                 #added next line for grafana version 9 to work
