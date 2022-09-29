@@ -34,7 +34,7 @@ def main():
     if r.returncode == 0:
         ret_val["msg"] = "Pip & Docker SDK ansible script ran.."
     else:
-        ret_val["msg"] = "Pip & Docker SDK playbook install failed.."
+        ret_val["msg"] = f"Pip & Docker SDK playbook install failed..{decoded_err}"
 
     ret_val["play_recap_pip3_docker_sdk"] = play_recap
 
@@ -53,7 +53,7 @@ def main():
     if r2.returncode == 0:
         ret_val["msg"] = "Docker installs OK.."
     else:
-        ret_val["msg"] = "Docker install failed."
+        ret_val["msg"] = f"Docker install failed...{decoded_err2}"
 
     ret_val["play_recap_docker"] = play_recap2
 
@@ -72,7 +72,7 @@ def main():
     if r3.returncode == 0:
         ret_val["msg"] = "Docker installs OK.."
     else:
-        ret_val["msg"] = "Docker install failed."
+        ret_val["msg"] = f"Docker install failed...{decoded_err3}"
 
     ret_val["play_recap_ptp"] = play_recap3
 
