@@ -21,6 +21,7 @@ def main():
 
     
     # PIP + DOCKER SDK
+    ret_val["pip3_docker_sdk"] = {}
     playbook = "/home/mfuser/mf_git/instrumentize/experiment_bootstrap/pip3_docker_sdk_playbook.yml"
 
     cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook]
@@ -32,14 +33,17 @@ def main():
     decoded_err_pip_docker = r_pip_docker.stderr.decode("utf-8")
 
     if r_pip_docker.returncode == 0:
-        ret_val["msg"] = "Pip & Docker SDK ansible script ran.."
+        ret_val["pip3_docker_sdk"]["msg"] = "Pip & Docker SDK ansible script ran.."
+        ret_val["pip3_docker_sdk"]["success"] = True
     else:
-        ret_val["msg"] = f"Pip & Docker SDK playbook install failed..{decoded_err_pip_docker}"
+        ret_val["pip3_docker_sdk"]["msg"] = f"Pip & Docker SDK playbook install failed..{decoded_err_pip_docker}"
+        ret_val["pip3_docker_sdk"]["success"] = False
 
-    ret_val["play_recap_pip3_docker_sdk"] = play_recap_pip_docker
+    ret_val["pip3_docker_sdk"]["play_recap"] = play_recap_pip_docker
 
 
     # DOCKER
+    ret_val["docker"] = {}
     playbook = "/home/mfuser/mf_git/instrumentize/experiment_bootstrap/docker_playbook.yml"
 
     cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook]
@@ -51,14 +55,17 @@ def main():
     decoded_err_docker = r_docker.stderr.decode("utf-8")
 
     if r_docker.returncode == 0:
-        ret_val["msg"] = "Docker installs OK.."
+        ret_val["docker"]["msg"] = "Docker installs OK.."
+        ret_val["docker"]["success"] = True
     else:
-        ret_val["msg"] = f"Docker install failed...{decoded_err_docker}"
+        ret_val["docker"]["msg"] = f"Docker install failed...{decoded_err_docker}"
+        ret_val["docker"]["success"] = False
 
-    ret_val["play_recap_docker"] = play_recap_docker
+    ret_val["docker"]["play_recap"] = play_recap_docker
 
 
     # PTP
+    ret_val["ptp"] = {}
     playbook = "/home/mfuser/mf_git/instrumentize/ptp/ansible/playbook_fabric_experiment_ptp.yml"
 
     cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook]
@@ -70,11 +77,13 @@ def main():
     decoded_err_ptp = r_ptp.stderr.decode("utf-8")
 
     if r_ptp.returncode == 0:
-        ret_val["msg"] = "PTP installs OK.."
+        ret_val["ptp"]["msg"] = "PTP installs OK.."
+        ret_val["ptp"]["success"] = True
     else:
-        ret_val["msg"] = f"PTP install failed...{decoded_err_ptp}"
+        ret_val["ptp"]["msg"] = f"PTP install failed...{decoded_err_ptp}"
+        ret_val["ptp"]["success"] = False 
 
-    ret_val["play_recap_ptp"] = play_recap_ptp
+    ret_val["ptp"]["play_recap"] = play_recap_ptp
 
 
     ret_val["success"] = (r_pip_docker.returncode == 0) and (r_docker.returncode == 0) and (r_ptp.returncode == 0)
