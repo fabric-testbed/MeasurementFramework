@@ -25,18 +25,18 @@ def main():
 
     cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook]
 
-    r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    r_pip_docker = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    decoded_out = r.stdout.decode("utf-8")
-    play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
-    decoded_err = r.stderr.decode("utf-8")
+    decoded_out_pip_docker = r_pip_docker.stdout.decode("utf-8")
+    play_recap_pip_docker = decoded_out_pip_docker[decoded_out_pip_docker.find("PLAY RECAP"):]
+    decoded_err_pip_docker = r_pip_docker.stderr.decode("utf-8")
 
-    if r.returncode == 0:
+    if r_pip_docker.returncode == 0:
         ret_val["msg"] = "Pip & Docker SDK ansible script ran.."
     else:
-        ret_val["msg"] = f"Pip & Docker SDK playbook install failed..{decoded_err}"
+        ret_val["msg"] = f"Pip & Docker SDK playbook install failed..{decoded_err_pip_docker}"
 
-    ret_val["play_recap_pip3_docker_sdk"] = play_recap
+    ret_val["play_recap_pip3_docker_sdk"] = play_recap_pip_docker
 
 
     # DOCKER
@@ -44,40 +44,40 @@ def main():
 
     cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook]
 
-    r2 = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    r_docker = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    decoded_out2 = r2.stdout.decode("utf-8")
-    play_recap2 = decoded_out2[decoded_out2.find("PLAY RECAP"):]
-    decoded_err2 = r2.stderr.decode("utf-8")
+    decoded_out_docker = r_docker.stdout.decode("utf-8")
+    play_recap_docker = decoded_out_docker[decoded_out_docker.find("PLAY RECAP"):]
+    decoded_err_docker = r_docker.stderr.decode("utf-8")
 
-    if r2.returncode == 0:
+    if r_docker.returncode == 0:
         ret_val["msg"] = "Docker installs OK.."
     else:
-        ret_val["msg"] = f"Docker install failed...{decoded_err2}"
+        ret_val["msg"] = f"Docker install failed...{decoded_err_docker}"
 
-    ret_val["play_recap_docker"] = play_recap2
+    ret_val["play_recap_docker"] = play_recap_docker
 
 
     # PTP
-    playbook = "/home/mfuser/mf_git/instrumentize/ptp/ansible/playbook_fabric_experiment_ptp.yml "
+    playbook = "/home/mfuser/mf_git/instrumentize/ptp/ansible/playbook_fabric_experiment_ptp.yml"
 
     cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook]
 
-    r3 = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    r_ptp = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    decoded_out3 = r3.stdout.decode("utf-8")
-    play_recap3 = decoded_out3[decoded_out3.find("PLAY RECAP"):]
-    decoded_err3 = r3.stderr.decode("utf-8")
+    decoded_out_ptp = r_ptp.stdout.decode("utf-8")
+    play_recap_ptp = decoded_out_ptp[decoded_out_ptp.find("PLAY RECAP"):]
+    decoded_err_ptp = r_ptp.stderr.decode("utf-8")
 
-    if r3.returncode == 0:
-        ret_val["msg"] = "Docker installs OK.."
+    if r_ptp.returncode == 0:
+        ret_val["msg"] = "PTP installs OK.."
     else:
-        ret_val["msg"] = f"Docker install failed...{decoded_err3}"
+        ret_val["msg"] = f"PTP install failed...{decoded_err_ptp}"
 
-    ret_val["play_recap_ptp"] = play_recap3
+    ret_val["play_recap_ptp"] = play_recap_ptp
 
 
-    ret_val["success"] = (r.returncode == 0) and (r2.returncode == 0) and (r3.returncode == 0)
+    ret_val["success"] = (r_pip_docker.returncode == 0) and (r_docker.returncode == 0) and (r3.returncode == 0)
 
 
 
