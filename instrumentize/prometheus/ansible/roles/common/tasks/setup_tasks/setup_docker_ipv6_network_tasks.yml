@@ -1,0 +1,18 @@
+---
+# Add and ensure docker network is setup for fabric_prometheus containers
+#
+
+- name: Create network in docker for related monitoring containers.
+  community.docker.docker_network:
+          name: "{{ docker_network_name }}"
+          enable_ipv6: yes
+          ipam_config:
+              - subnet: "{{ docker_ipv6_subnet }}"
+                gateway: "{{ docker_ipv6_gateway }}"
+              
+              # # Docker will basically do DHCP for ip4
+              # - subnet: 172.22.0.0/16
+              #   gateway: 172.22.0.1
+  become: yes
+                          
+

@@ -1,0 +1,81 @@
+global:
+  scrape_interval:     30s # Set the scrape interval to every ? seconds. Default is every 1 minute.
+  evaluation_interval: 30s # Evaluate rules every ? seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  {# external_labels:
+      geni_slice:  <maybe add slice name here> #}
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ['{{ install_name }}_alertmanager:{{ alertmanager_port }}']
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - '*_alerts.yml'
+  - '*_rules.yml'
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    #scrape_interval: 5s
+    #scrape_timeout: 5s
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      # by definition this is running on local host
+      - targets: ['localhost:9090']
+      
+### Blackbox Exporters ###
+
+# Ping 
+  - job_name: 'ping'
+    metrics_path: /probe
+    params:
+         module: [icmp_ipv4]
+    file_sd_configs:
+      - files:
+            - '*_ping_targets.yml'
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - target_label: __address__
+              replacement: "{{ install_name }}_blackbox:9115"
+            - source_labels: [node_name]
+              target_label: instance
+
+# Node Exporter 
+  - job_name: 'node'
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: "{{ node_exporter_username }}"
+      password: "{{ node_exporter_password }}"
+    file_sd_configs:
+      - files:
+            - '*_node_targets.yml'
+    relabel_configs:
+            - source_labels: [node_name]
+              target_label: instance
+
+
+
+
+ # Docker Exporter for Local Containers
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['{{ install_name }}_docker_exporter:9417']
+
+
+

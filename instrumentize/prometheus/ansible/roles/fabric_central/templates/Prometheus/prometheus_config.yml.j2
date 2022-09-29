@@ -1,0 +1,306 @@
+global:
+  scrape_interval:     30s # Set the scrape interval to every ? seconds. Default is every 1 minute.
+  evaluation_interval: 30s # Evaluate rules every ? seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+      rack: "{{ hank_name }}"
+  
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - '*_alert_rules.yml'
+  - '*_rules.yml'
+
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ['{{ install_name }}_alertmanager:{{ alertmanager_port }}']
+
+
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    #scrape_interval: 5s
+    #scrape_timeout: 5s
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      # by definition this is running on local host
+      - targets: ['localhost:9090']
+
+
+
+# Jupyter
+  - job_name: 'jupyterhub'
+    bearer_token_file: /etc/prometheus/secrets/jupyterhub
+    scheme: https
+    metrics_path: '/hub/metrics'
+    tls_config:
+            insecure_skip_verify: true
+    static_configs:
+            - targets: ['jupyter.fabric-testbed.net']
+
+  - job_name: 'jupyterhub-beta'
+    bearer_token_file: /etc/prometheus/secrets/jupyterhub_beta
+    scheme: https
+    metrics_path: '/hub/metrics'
+    tls_config:
+            insecure_skip_verify: true
+    static_configs:
+            - targets: ['jupyter-beta.fabric-testbed.net']
+
+# Kafka 
+# Note that these are servers that connect to kafka to get metrics, not the actual kafka servers.
+  - job_name: 'mf-kafka'
+    static_configs:
+      - targets: ['nsoelk.fabric-testbed.net:9308']
+
+
+  - job_name: 'mb-kafka'
+    static_configs:
+      - targets: ['nsoelk.fabric-testbed.net:9309']
+
+
+#######################################
+#         Blackbox Exporters          #
+#######################################
+
+# SMTP, mail
+  - job_name: 'blackbox-smtp'
+    metrics_path: /probe
+    params:
+         module: [smtp_simple]
+    file_sd_configs:
+      - files:
+            - '*_smtp_targets.yml'
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_blackbox:9115"
+
+
+# TCP Connect, tests if allows incoming tcp request
+  - job_name: 'blackbox-tcp'
+    metrics_path: /probe
+    params:
+         module: [tcp_connect]
+    file_sd_configs:
+      - files:
+        - '*_tcp_targets.yml'
+
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_blackbox:9115"
+
+# HTTP, probes http sites for up/down, cert status, etc..
+  - job_name: 'blackbox-http'
+    metrics_path: /probe
+    params:
+         module: [http_2xx]
+    file_sd_configs:
+      - files:
+        - '*_http_targets.yml'
+
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_blackbox:9115"
+
+# DNS
+  - job_name: 'blackbox-dns'
+    metrics_path: /probe
+    params:
+         module: [dns_central_metrics_test]
+
+    file_sd_configs:
+      - files:
+            - '*_dns_targets.yml'
+    
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_blackbox:9115"
+
+# Ping 
+  - job_name: 'ping'
+    metrics_path: /probe
+    params:
+         module: [icmp_ipv4]
+    file_sd_configs:
+      - files:
+            - '*_ping_targets.yml'
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_blackbox:9115"
+
+
+# Ping IPv6
+  - job_name: 'ping6'
+    metrics_path: /probe
+    params:
+         module: [icmp_ipv6]
+    file_sd_configs:
+      - files:
+            - '*_ping6_targets.yml'
+    relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: "{{ install_name }}_blackbox:9115"
+
+# GRPC 
+#  - job_name: 'blackbox-grpc'
+#    metrics_path: /probe
+#    params:
+#        module: [grpc]
+#    file_sd_configs:
+#        - files:
+#              - '*_grpc_targets.yml'
+#    relabel_configs:
+#            - source_labels: [__address__]
+#              target_label: __param_target
+#            - source_labels: [__param_target]
+#              target_label: instance
+#            - target_label: __address__
+#              replacement: "dev_central_prometheus_blackbox:9115"
+
+
+
+
+#######################################
+#      end Blackbox Exporters         #
+#######################################
+
+
+# Alertmanager Exporter 
+# for now only one running 
+  - job_name: 'alertmanager-exporter'
+    scheme: http
+    static_configs: 
+      - targets: 
+        - '{{ install_name }}_alertmanager:{{ alertmanager_port }}'
+
+#########################################
+#          Thanos Exporters             #
+#########################################
+
+# need to relabel to clairify source?
+# Sidecar
+  - job_name: 'thanos_sidecar'
+    scheme: http 
+    static_configs:
+      - targets:
+        - '{{ install_name }}_thanos_sidecar:10902'
+
+# Store 
+  - job_name: 'thanos_store'
+    scheme: http 
+    static_configs:
+      - targets:
+        - '{{ install_name }}_thanos_store:10912'
+
+# Query
+  - job_name: 'thanos_query'
+    scheme: http 
+    static_configs:
+      - targets:
+        - '{{ install_name }}_thanos_query:10922'
+
+# Compact
+#  - job_name: 'thanos_compact'
+#    scheme: http 
+#    static_configs:
+#      - targets:
+#        - '{{ install_name }}_thanos_compact:10902'
+
+#
+
+
+#########################################
+#       end Thanos Exporters            #
+#########################################
+
+
+# Node Exporter 
+  - job_name: 'node'
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: '{{ node_exporter_username }}'
+      password: '{{ node_exporter_password }}'
+    file_sd_configs:
+      - files:
+            - '*_node_targets.yml'
+
+# SNMP
+  - job_name: 'snmp'
+    file_sd_configs:
+      - files:
+          - '*_snmp_targets.yml'
+    metrics_path: /snmp
+    params:
+      module: ['placeholder_module']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target__
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: "{{ install_name }}_snmp:9116"
+      - source_labels: [mib_module]
+        regex: (.*?)
+        replacement: '${1}'
+        target_label: __param_module
+
+
+ # Docker Exporter for Local Containers
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['{{ install_name }}_docker_exporter:9417']
+
+
+
+
+
+
+
+
+# TODO
+# - job_name: 'geni-federate'
+#
+#    honor_labels: true
+#    metrics_path: '/federate'
+#
+#    params:
+#            'match[]':
+#                    - '{job=~"ceph-0|thanos_bucket"}'
+#    static_configs:
+#            - targets: ['172.23.7.230:9090']

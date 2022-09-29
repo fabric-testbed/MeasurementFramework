@@ -1,0 +1,11 @@
+---
+- name: Check if Interface {{ IFACE }} is PTP capable
+  shell: "ethtool -T {{ IFACE }} |grep 'PTP Hardware Clock: '|awk -F ': ' '{print $2}'"
+  register: ptp_devid
+
+# - debug:
+#     var: ptp_devid
+
+- set_fact:
+    PTP_IFACES: "{{ PTP_IFACES|default([]) + [ IFACE ] }}"
+  when: ptp_devid.stdout  != "none"

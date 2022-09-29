@@ -1,0 +1,43 @@
+---
+# file: ssl_alert_rules.yml
+# location: central
+
+groups:
+
+- name: Certificate Alerts
+  rules:
+  
+  - alert: SSLCertExpired
+    expr: (probe_ssl_earliest_cert_expiry - time()) < 0
+    for: 15m
+    labels:
+      severity: critical
+      fabric_system: SSLCertificate
+      fabric_response: services
+    annotations:
+      summary:  "SSL Certificate has expired for {{ $labels.instance }}"   
+      description:  "SSL Certificate has expired for {{ $labels.instance }}.\n  Seconds = {{ $value }}\n  LABELS = {{ $labels }}" 
+
+  - alert: SSLCertExpiringLessThan7Days
+    expr: (probe_ssl_earliest_cert_expiry - time()) < (86400 * 7)
+    for: 15m
+    labels:
+      severity: critical
+      fabric_system: SSLCertificate
+      fabric_response: services
+    annotations:
+      summary:  "SSL Certificate will expire in less than 7 days for {{ $labels.instance }}"   
+      description:  "SSL Certificate will expire in less than 7 days for {{ $labels.instance }}.\n  Seconds = {{ $value }}\n  LABELS = {{ $labels }}" 
+            
+  - alert: SSLCertError
+    expr: probe_http_ssl {check_type="web_site"} == 0
+    for: 15m
+    labels:
+      severity: critical
+      fabric_system: SSLCertificate
+      fabric_response: services
+    annotations:
+      summary:  "SSL Certificate is invalid or missing for {{ $labels.instance }}"   
+      description:  "SSL Certificate is invalid or missing for {{ $labels.instance }}.\n  Seconds = {{ $value }}\n  LABELS = {{ $labels }}" 
+       
+      

@@ -1,0 +1,383 @@
+---
+# Install the central metrics.
+
+
+# Sanity Check
+# - pause:
+#     prompt: "!!!!!!!!!!!!!Setting up Central Metrics Install {{ install_name }} at {{ ansible_host }}. Hit enter to continue.!!!!!!!!!!!!!"
+
+- name: Sanity Check
+  debug: 
+    msg: "!!!!!!!!!!!!!Setting up Central Metrics Install {{ install_name }} at {{ ansible_host }}. Hit enter to continue.!!!!!!!!!!!!!"
+
+
+
+# needed on remote for htpasswd
+- name: passlib
+  become: yes 
+  pip: 
+    name: passlib[bcrypt]
+    executable: pip3 
+    state: present
+
+# # May need this to get to host node exporter on central metrics
+# # Add extra host to Prometheus Container
+# - name: set_etc_var
+#   # Create etc/hosts entries in the Prometheus Container for the rack nodes that will have node exporters running. This makes labeling in Grafaan easier.
+#   set_fact:
+#     extra_node_hosts: "{{ extra_node_hosts | combine({ hostvars[item].hostname : hostvars[item].ansible_host }) }}"
+#   with_items: "{{ # groups[hank_name] }}"
+
+
+####################     
+#      USER        #
+####################
+- name: Setup user for promtheus monitoring system
+  # Create a user to setup all the fab monitoring stuff under.
+  # Get user uid:gid and set to vars
+  include_tasks: setup_tasks/create_prom_user_tasks.yml
+
+
+- name: show IPv6 
+  debug:
+    msg: "{{ ansible_facts.all_ipv6_addresses }}"
+
+
+    
+
+####################
+# Create Base Dirs #
+####################
+- name: Create base install directorie 
+  file:
+    path: "{{ base_install_dir }}"
+    recurse: yes
+    state: directory
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+  become: yes
+
+- name: Create base data directorie 
+  file:
+    path: "{{ base_data_dir }}"
+    recurse: yes
+    state: directory
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+  become: yes
+
+####################
+# SELF-SIGNED CERTS#
+####################
+# Only need this if we are testing and don't have TLS certs on the node.
+- name: Self-signed certs.
+  include_tasks: setup_tasks/self_signed_cert_tasks.yml
+  when:
+    - self_signed_cert_dir is defined
+
+# need to add uky_incommon_root_intermdiate.pem file to the created intermediate cert!!!!!!TODO!!!!!!!!!!!
+
+
+
+####################
+# Remove all previous monitoring docker containers #
+####################
+- name: Remove containers
+  include_tasks: container_tasks/remove_docker_container_tasks.yml  
+  vars:
+    containers_to_act_on: 
+      - prometheus
+      - grafana
+      - nginx
+      - alertmanager
+      - blackbox
+      - docker_exporter
+      - snmp
+      - thanos_sidecar 
+      - thanos_query 
+      - thanos_compact
+      - thanos_store
+      #- loki
+
+####################
+#  DOCKER NETWORK  #
+####################
+# note that taking down the network may affect other containers added by other scripts 
+- name: Takedown the docker network to be used by the monitoring containers.
+  include_tasks: takedown_tasks/remove_docker_network_tasks.yml
+
+
+- name: Setup the docker network to be used by the monitoring containers.
+  include_tasks: setup_tasks/setup_docker_ipv6_network_tasks.yml
+
+# # IPV4 onky test
+# - name: Setup the docker network to be used by the monitoring containers.
+#   include_tasks: setup_tasks/setup_docker_network_tasks.yml
+
+
+####################
+# Usefull Scripts  #
+####################
+
+- name: Add stop script 
+  template:
+    src: "templates/stop_dev_monitoring_containers.sh.j2"
+    dest: "{{ base_install_dir }}/stop_dev_monitoring_containers.sh"
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+  become: yes
+  # when: 
+  #   - dev_site is defined
+  #   - dev_site
+
+
+- name: Add restart script 
+  template:
+    src: "templates/start_dev_monitoring_containers.sh.j2"
+    dest: "{{ base_install_dir }}/start_dev_monitoring_containers.sh"
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+  become: yes
+  # when: 
+  #   - dev_site is defined
+  #   - dev_site
+
+
+# LOKI Testing
+
+# - name: Loki Setup 
+#   block: 
+#   - name: Loki Dirs 
+#     include_tasks: Loki/setup_loki_directories_tasks.yml
+#   - name: Loki 
+#     include_tasks: Loki/default_loki_config_tasks.yml  
+#   - name: Loki container 
+#     include_tasks: Loki/loki_container_tasks.yml
+#   become: yes
+#   when: no
+
+
+####################
+#   PROMETHEUS     #
+####################
+# Prometheus consists of several tasks that must be done.
+- name: Prometheus Setup
+  block:
+  - name: Setup Prometheus Directories
+    include_tasks: Prometheus/setup_prometheus_directories_tasks.yml
+  
+  - name: Setup Promtheus Config Files via templates
+    include_tasks: Prometheus/add_prometheus_config_templates.yml
+    # See vars for templates used
+    
+  - name: Setup Promtheus Config Files via files
+    include_tasks: Prometheus/add_prometheus_config_files.yml
+    # See vars for files used
+
+  - name: Prometheus Alert Rules
+    include_tasks: Prometheus/add_alert_rules.yml
+    # See vars for files used
+
+  - name: Setup Prometheus Secrets
+    include_tasks: Prometheus/add_prometheus_secrets.yml
+
+  - name: Prometheus Container
+    # 3. Start docker container
+    include_tasks: Prometheus/prometheus_container_tasks.yml
+
+
+
+####################
+#     THANOS       #
+####################
+- name: Setup Thanos
+  block:
+    - name: Thanos Directories
+      include_tasks: Thanos/setup_thanos_directories_tasks.yml
+  
+    - name: Thanos Configs
+      include_tasks: Thanos/add_thanos_config_templates_tasks.yml
+      # See vars for templates used
+
+- name: Thanos Containers
+  block:        
+    - name: Thanos Sidecar
+      include_tasks: Thanos/thanos_sidecar_container_tasks.yml
+
+#           vars:
+#             thanos_sidecar_state: absent
+#             thanos_sidecar_ip: "{{ ansible_host }}"
+#             thanos_sidecar_cert: "{{ thanos_cert }}"
+#             thanos_sidecar_key: "{{ thanos_key }}"
+    - name: Thanos Central store  
+      include_tasks: Thanos/thanos_central_store_container_tasks.yml
+#           vars:
+#             thanos_store_state: absent
+#             thanos_store_ip: "{{ ansible_host }}"
+#             thanos_store_cert: "{{ thanos_cert }}"
+#             thanos_store_key: "{{ thanos_key }}"
+    - name: Thanos Central Query
+      include_tasks: Thanos/thanos_central_query_container_tasks.yml
+#           vars:
+#             thanos_query_state: absent
+#             thanos_query_ip: "{{ ansible_host }}"
+#             thanos_query_cert: "{{ thanos_cert }}"
+#             thanos_query_key: "{{ thanos_key }}"
+#             thanos_query_root_ca: "{{ thanos_interm_cert }}"
+
+# #WARNING ONLY ONE CAN RUN DONT DO ON DEV TEST if connecting to production ceph bucket
+    - name: Thanos Central Compact
+      # Important that this is only run in one place.
+      include_tasks: Thanos/thanos_central_compact_container_tasks.yml
+      when: 
+        - use_thanos_compact is defined
+        - use_thanos_compact
+#       vars: 
+#         thanos_compact_state: absent
+#         thanos_cert: "{{ host_cert }}"
+#         thanos_key: "{{ host_key }}"
+#         thanos_interm_cert: "{{ host_interm_cert }}"
+#       when: true
+
+
+
+
+
+####################
+#  ALERTMANAGER    #
+####################  
+- name: Setup Alertmanager
+  block: 
+    - name: Alertmanager Directories
+      include_tasks: Alertmanager/setup_alertmanager_directories_tasks.yml
+
+    - name: Alertmanager Config
+      include_tasks: Alertmanager/config_alertmanager_tasks.yml
+
+    - name: Alertmanager tmpl files
+      include_tasks: Alertmanager/add_alertmanager_tmpl_files_tasks.yml
+
+    - name: Alertmanager Container
+      include_tasks: Alertmanager/alertmanager_container_tasks.yml
+
+####################
+# SNMP EXPORTER    #
+####################
+# - name: Setup SNMP Exporter
+#   block:
+#     - name: SNMP Directories
+#       include_tasks: SNMPExporter/setup_snmp_directories_tasks.yml
+    
+#     - name: SNMP Config 
+#       include_tasks: SNMPExporter/add_snmp_config_templates_tasks.yml
+
+#     # OR
+      
+#     - name: SNMP Config from fragments 
+#       include_tasks: SNMPExporter/combine_snmp_config_task.yml
+      
+#     - name: SNMP Container 
+#       include_tasks: SNMPExporter/snmp_exporter_container_tasks.yml
+
+####################
+# BLACKBOX EXPORTER #
+####################
+- name: Setup Blackbox EXPORTER
+  block:
+    - name: Blackbox Directories 
+      include_tasks: Blackbox/setup_blackbox_directories_tasks.yml
+
+    - name: Blackbox Config 
+      include_tasks: Blackbox/config_blackbox_tasks.yml
+
+    - name: Blackbox Container 
+      include_tasks: Blackbox/blackbox_container_tasks.yml
+
+####################
+# DOCKER EXPORTER  #
+####################
+- name: Setup Docker Exporter
+  block:
+    - name: Docker Exporter Container 
+      include_tasks: DockerExporter/docker_exporter_container_tasks.yml
+
+####################
+#     Grafana      #
+####################
+- name: Setup Grafana
+  block:
+
+    - name: Grafana user.
+      include_tasks: Grafana/grafana_user_tasks.yml
+
+    - name: Grafana Directories
+      include_tasks: Grafana/setup_grafana_directories_tasks.yml
+
+    - name: Grafana Config
+      include_tasks: Grafana/config_grafana_tasks.yml
+      
+    - name: Grafana Container
+      include_tasks: Grafana/grafana_container_tasks.yml
+
+    - name: Grafana Datasources
+      include_tasks: Grafana/grafana_provisioning_tasks.yml
+   
+    - name: Grafana Plugins
+      include_tasks: Grafana/grafana_add_plugins_tasks.yml
+
+####################
+#     NGINX        #
+####################
+- name: Setup Nginx
+  block:
+    # Directories
+    - name: Nginx Directories
+      include_tasks: Nginx/setup_nginx_directories_tasks.yml
+
+    # Config files
+    - name: Nginx Configs
+      include_tasks: Nginx/config_nginx_tasks.yml
+          
+    # Add user to htaccess file
+    # note htpasswd requires passlib to be installed on remote
+    #- name: Nginx htaccess user
+    #  include_tasks: Nginx/add_user_to_htaccess_tasks.yml
+    - name: Nginx htaccess users   
+      include_tasks: Nginx/add_users_to_htaccess_tasks.yml
+      
+    # Confd server files
+    - name: Nginx Add Confd  Files
+      include_tasks: Nginx/confd_nginx_tasks.yml
+
+- name: NGNIX Container
+  include_tasks: Nginx/nginx_container_tasks.yml
+
+
+
+####################
+# Assert Containers#
+####################
+# Ensure that all of the containers are actually up and running
+- name: Ensure all the containers are up and running.
+  include_tasks: container_tasks/inspect_container_tasks.yml 
+  with_items:
+      - prometheus
+      - grafana
+      - nginx
+      - thanos_sidecar
+      - thanos_query
+      #WARNING ONLY ONE CAN RUN DONT DO ON DEV TEST- thanos_compact
+      - thanos_store 
+      - blackbox
+      - docker_exporter
+#      - snmp
+
+
+- name: Ensure thanos compact container is up and running.
+  include_tasks: container_tasks/inspect_container_tasks.yml 
+  with_items:
+      #WARNING ONLY ONE CAN RUN DONT DO ON DEV TEST
+      - thanos_compact
+  when:
+    - use_thanos_compact is defined
+    - use_thanos_compact

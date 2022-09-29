@@ -1,0 +1,11 @@
+---
+# used to turn off all worker node file beats
+- hosts: workers
+  become: true
+  tags: worker_service_management
+  tasks:
+    - name: Metricbeat Service all workers started
+      ansible.builtin.service:
+        name: metricbeat
+        state: started
+        enabled: true # left on as default

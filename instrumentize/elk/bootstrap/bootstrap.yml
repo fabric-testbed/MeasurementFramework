@@ -1,0 +1,112 @@
+---
+# Create temporary SSH key pair for ansible
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: generate SSH key
+      openssh_keypair:
+        path: ~/.ssh/ansible
+        type: rsa
+        size: 2048
+        state: present
+        # force: yes # Recreate key
+        force: no # Reuse key
+
+- hosts: all
+  become: true
+  tasks:
+    # Create ansible user on remote hosts
+    - name: Create ansible user
+      user:
+        name: ansible
+        group: root
+
+    # Add ssh public key to remote hosts
+    - name: Add public ssh key for ansible user
+      authorized_key:
+        user: ansible
+        key: "{{ lookup('file', '~/.ssh/ansible.pub') }}"
+        state: present
+
+    # Make ansible account sudo
+    - name: Add sudoers file for ansible
+      copy:
+        src: sudoer_ansible
+        dest: /etc/sudoers.d/ansible
+        owner: root
+        group: root
+        mode: 0440
+
+    - name: Installing packages for CentOs 8 Machines only
+      become: true
+      tags: packages
+      ansible.builtin.package:
+        name:
+          - epel-release
+        state: present
+        update_cache: yes
+      when:
+          - ansible_facts['distribution'] == "CentOS"
+          - ansible_facts['distribution_major_version'] == "8"
+      # This release is needed further on for the rest of the
+      # play to work.
+
+       # changed from  Measurement_Node
+       # so that the calls could be made
+- hosts: Measurement_Node
+  tasks:
+    # Copy private ssh key to Measurement node only
+    - name: Copy created private ssh key to Measurement node
+      become: true
+      copy:
+        src: ~/.ssh/ansible
+        dest: /home/ansible/.ssh/ansible
+        owner: ansible
+        mode: 0600
+
+    # Install packages (ansible on Measurement node)
+    - name: Installing packages in bootstrap.yml
+      become: true
+      tags: packages
+      ansible.builtin.package:
+        name:
+          - acl
+          - ansible
+          - git
+        state: present
+        update_cache: yes
+
+    # Check if mf git repo are already created
+    - name: Check if mf git repo folders already exists
+      become: true
+      become_user: ansible
+      tags: mfgitrepo
+      stat:
+        path: /home/ansible/mf_git
+      register: r_mf_git_folder_exist
+
+    # Clone MF git repo dev branch
+    - name: Clone mf git repo
+      become: true
+      become_user: ansible
+      tags: mfgitrepo
+      git:
+        repo: https://github.com/fabric-testbed/MeasurementFramework.git
+        dest: /home/ansible/mf_git
+        # NOTE HARDCODED branch. Might interfere with testing.
+        version: main
+        force: true
+
+        
+      #when: r_mf_git_folder_exist.stat.exists == false
+      # force new install for testing
+
+    # Copy host file
+    - name: Update host file
+      become: true
+      become_user: ansible
+      tags: updatehostfile
+      copy:
+        src: ../../hosts
+        dest: /home/ansible/mf_git/elk/hosts
+        mode: 0644

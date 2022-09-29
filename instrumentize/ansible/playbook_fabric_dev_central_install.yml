@@ -1,0 +1,10 @@
+---
+# Creating the Fabric Dev Central monitoring setup.
+- hosts: dev-metrics
+
+  roles:
+    - ../prometheus/ansible/roles/fabric_central
+  
+  # vars_files: 
+  #   - tmp_deployment_files/monitoring/private_vars/dev_central_vars.yml
+    

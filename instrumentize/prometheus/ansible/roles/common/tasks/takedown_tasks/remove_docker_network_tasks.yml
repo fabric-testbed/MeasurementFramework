@@ -1,0 +1,12 @@
+---
+# Add and ensure docker network is setup for fabric_prometheus containers
+#
+
+- name: Remove network in docker for related monitoring containers.
+  community.docker.docker_network:
+          name: "{{ docker_network_name }}"
+          state: absent
+          force: yes
+  become: yes
+                          
+

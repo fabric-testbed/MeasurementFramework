@@ -1,0 +1,211 @@
+---
+# Creating the GENI slice monitoring setup.
+
+
+
+# Sanity Check
+# - pause:
+#     prompt: "Setting up on {{ ansible_host }}. Hit enter to continue."
+
+# needed on remote for htpasswd
+- name: passlib
+  become: yes 
+  pip: 
+    name: passlib[bcrypt]
+    executable: pip3 
+    state: present
+
+
+
+# USER
+- name: Setup user for promtheus monitoring system
+  # Create a user to setup all the fab monitoring stuff under.
+  include_tasks: tasks/setup_tasks/create_prom_user_tasks.yml
+# SELF-SIGNED CERTS
+- name: Self-signed certs.
+  include_tasks: tasks/setup_tasks/self_signed_cert_tasks.yml
+# DOCKER NETWORK
+- name: Setup the docker network to be used by the monitoring containers.
+  include_tasks: tasks/setup_tasks/setup_docker_network_tasks.yml
+
+# Stop all docker containers
+- name: Stop containers
+  include_tasks: tasks/container_tasks/remove_docker_container_tasks.yml
+  vars:
+    containers_to_act_on: 
+      - prometheus
+      - grafana
+      - nginx
+      #- alertmanager
+      - blackbox
+      - docker_exporter
+      #- snmp
+
+# PROMETHEUS
+# Prometheus consists of several tasks that must be done.
+- name: Prometheus Setup
+  block:
+  - name: Setup Prometheus Directories
+    include_tasks: tasks/Prometheus/setup_prometheus_directories_tasks.yml
+    
+  # SELF-SIGNED CERTS
+  # task needs to be done after prom directories have been created
+  - name: Self-signed certs.
+    include_tasks: tasks/setup_tasks/self_signed_cert_tasks.yml
+
+  - name: Setup Promtheus Config Files
+    include_tasks: tasks/Prometheus/add_prometheus_config_templates.yml
+    vars:
+      prometheus_config_template_files: 
+        - prometheus_config.yml
+        - slice_node_targets.yml
+    
+  - name: Prometheus Container
+    include_tasks: tasks/Prometheus/prometheus_container_tasks.yml
+    vars:
+      prometheus_state: started
+
+  - name: Blackbox Templates 
+    include_tasks: tasks/Prometheus/add_prometheus_config_templates.yml
+    vars:
+      prometheus_config_template_files: 
+        - slice_ping_targets.yml
+
+# # ALERTMANAGER
+#     - name: Setup Alertmanager
+#       block: 
+#         - name: Alertmanager Directories
+#           include_tasks: tasks/Alertmanager/setup_alertmanager_directories_tasks.yml
+
+#         - name: Alertmanager Config
+#           include_tasks: tasks/Alertmanager/config_alertmanager_tasks.yml
+
+#         - name: Alertmanager Container
+#           include_tasks: tasks/Alertmanager/alertmanager_container_tasks.yml
+#           vars:
+#             alertmanager_state: started
+
+
+## SNMP is having problems starting and we are not currently using it so I have disabled it for now 
+# # SNMP EXPORTER
+# - name: Setup SNMP Exporter
+#   block:
+#     - name: SNMP Directories
+#       include_tasks: tasks/SNMPExporter/setup_snmp_directories_tasks.yml
+    
+#     - name: SNMP Config 
+#       include_tasks: tasks/SNMPExporter/add_snmp_config_templates_tasks.yml
+#       vars: 
+#         snmp_config_template_files: snmp.yml
+      
+#     - name: SNMP Container 
+#       include_tasks: tasks/SNMPExporter/snmp_exporter_container_tasks.yml
+#       vars:
+#         snmp_state: started
+
+# BLACKBOX EXPORTER
+- name: Setup Blackbox EXPORTER
+  block:
+    - name: Blackbox Directories 
+      include_tasks: tasks/Blackbox/setup_blackbox_directories_tasks.yml
+
+    - name: Blackbox Config 
+      include_tasks: tasks/Blackbox/config_blackbox_tasks.yml
+
+    - name: Blackbox Container 
+      include_tasks: tasks/Blackbox/blackbox_container_tasks.yml
+
+  vars:
+    blackbox_state: started
+  
+
+# DOCKER EXPORTER
+- name: Setup Docker Exporter
+  block:
+    - name: Docker Exporter Container 
+      include_tasks: tasks/DockerExporter/docker_exporter_container_tasks.yml
+  vars:
+    docker_exporter_state: started 
+
+# GRAFANA
+- name: Setup Grafnana
+  block:
+
+    - name: Grafana user.
+      include_tasks: tasks/Grafana/grafana_user_tasks.yml
+
+    - name: Grafana Directories
+      include_tasks: tasks/Grafana/setup_grafana_directories_tasks.yml
+
+    - name: Grafana Config
+      include_tasks: tasks/Grafana/config_grafana_tasks.yml
+      
+    - name: Grafana Container
+      include_tasks: tasks/Grafana/grafana_container_tasks.yml
+
+    - name: Grafana Datasources
+      include_tasks: tasks/Grafana/grafana_provisioning_tasks.yml
+
+    # Renderer
+    - name: Grafana Renderer Container 
+      include_tasks: tasks/GrafanaRenderer/grafana_renderer_container_tasks.yml
+
+
+  vars:
+    # Need to move these defaults somewhere else. 
+    grafana_state: started
+    grafana_cert:  "{{ host_cert }}"
+    grafana_key:  "{{ host_key }}"
+    grafana_user_name: grafana
+    grafana_user_id: 472
+    grafana_group_name: root  
+    
+  when: true
+
+
+
+
+# NGINX
+- name: Setup Nginx
+  block:
+    # Directories
+    - name: Nginx Directories
+      include_tasks: tasks/Nginx/setup_nginx_directories_tasks.yml
+
+    # Config files
+    - name: Nginx Configs
+      include_tasks: tasks/Nginx/config_nginx_tasks.yml
+      vars: 
+        nginx_config_template_files:
+          - ssl_snippet.conf
+          - nginx.conf
+          
+    # Add user to htaccess file
+    # note htpasswd requires passlib to be installed on remote
+    - name: Nginx htaccess user
+      include_tasks: tasks/Nginx/add_user_to_htaccess_tasks.yml
+          
+    # Confd server files
+    - name: Nginx Add Confd  Files
+      include_tasks: tasks/Nginx/confd_nginx_tasks.yml
+      vars:
+        nginx_server_confd_template_files: 
+          - prometheus.conf
+          - grafana_with_ssl_only.conf
+          #- grafana_with_htaccess.conf
+  when: true
+
+- name: NGNIX Container
+  include_tasks: tasks/Nginx/nginx_container_tasks.yml
+  vars:
+    nginx_state: started
+    nginx_cert: "{{ host_cert }}"
+    nginx_key: "{{ host_key }}"
+    nginx_interm_cert: "{{ host_interm_cert }}"
+    nginx_ip_ports:
+      # Note Each port will correspond to a confd file set above.
+      #- 80:80         # Redirected to 443
+      - 443:443       # /grafana for grafana interface
+      - 9090:9090     # prometheus stats
+      ##- "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
+      

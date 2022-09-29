@@ -1,0 +1,579 @@
+---
+
+# Intended to to help the central metrics monitor if worker nodes go down.
+# reason has been changed to infrastructure_check
+
+{# Not really a template anymore, but is kept with templates since this file will vary in the future #}
+# The list of worker nodes to check over the operations network to ensure VPN is active.
+# This is a hand made list since it will change rarely and the fabric-hosts file has 
+# lots of worker nodes listed that are not active or in VPN yet.
+
+# RENC
+- targets:
+        - 192.168.11.11
+  labels:
+        subdomain: renc-w1
+        hank: renc
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: live
+        
+- targets:
+        - 192.168.11.12
+  labels:
+        subdomain: renc-w2
+        hank: renc
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: live
+
+- targets:
+        - 192.168.11.13
+  labels:
+        subdomain: renc-w3
+        hank: renc
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: live
+
+# UKY
+- targets:
+        - 192.168.12.11
+  labels:
+        subdomain: uky-w1
+        hank: uky
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: live
+
+- targets:
+        - 192.168.12.12
+  labels:
+        subdomain: uky-w2
+        hank: uky
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: live
+
+- targets:
+        - 192.168.12.13
+  labels:
+        subdomain: uky-w3
+        hank: uky
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: live
+
+# LBNL      
+- targets:
+        - 192.168.13.11
+  labels:
+        subdomain: lbnl-w1
+        hank: lbnl
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: live
+
+- targets:
+        - 192.168.13.12
+  labels:
+        subdomain: lbnl-w2
+        hank: lbnl
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: live
+
+- targets:
+        - 192.168.13.13
+  labels:
+        subdomain: lbnl-w3
+        hank: lbnl
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: live
+
+# STAR
+- targets:
+        - 192.168.14.11
+  labels:
+        subdomain: star-w1
+        hank: star
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+
+- targets:
+        - 192.168.14.12
+  labels:
+        subdomain: star-w2
+        hank: star
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.14.13
+  labels:
+        subdomain: star-w3
+        hank: star
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.14.14
+  labels:
+        subdomain: star-w4
+        hank: star
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.14.15
+  labels:
+        subdomain: star-w5
+        hank: star
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.14.16
+  labels:
+        subdomain: star-w6
+        hank: star
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+      
+# MAX
+- targets:
+        - 192.168.15.11
+  labels:
+        subdomain: max-w1
+        hank: max
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.15.12
+  labels:
+        subdomain: max-w2
+        hank: max
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.15.13
+  labels:
+        subdomain: max-w3
+        hank: max
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.15.14
+  labels:
+        subdomain: max-w4
+        hank: max
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.15.15
+  labels:
+        subdomain: max-w5
+        hank: max
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+# TACC
+- targets:
+        - 192.168.16.11
+  labels:
+        subdomain: tacc-w1
+        hank: tacc
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.16.12
+  labels:
+        subdomain: tacc-w2
+        hank: tacc
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.16.13
+  labels:
+        subdomain: tacc-w3
+        hank: tacc
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.16.14
+  labels:
+        subdomain: tacc-w4
+        hank: tacc
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.16.15
+  labels:
+        subdomain: tacc-w5
+        hank: tacc
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+
+
+#17 mich 
+
+ # MICH
+- targets:
+        - 192.168.17.11
+  labels:
+        subdomain: mich-w1
+        hank: mich
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.17.12
+  labels:
+        subdomain: mich-w2
+        hank: mich
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.17.13
+  labels:
+        subdomain: mich-w3
+        hank: mich
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+
+
+
+#18 mass
+
+ # MASS
+- targets:
+        - 192.168.18.11
+  labels:
+        subdomain: mass-w1
+        hank: mass
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.18.12
+  labels:
+        subdomain: mass-w2
+        hank: mass
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+#- targets:
+#        - 192.168.18.13
+#  labels:
+#        subdomain: mass-w3
+#        hank: mass
+#        component_type: worker
+#        worker: slownet
+#        network: operations
+#        reason: infrastructure_check
+#        # status: building
+
+
+
+
+# UTAH
+- targets:
+        - 192.168.19.11
+  labels:
+        subdomain: utah-w1
+        hank: utah
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.19.12
+  labels:
+        subdomain: utah-w2
+        hank: utah
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.19.13
+  labels:
+        subdomain: utah-w3
+        hank: utah
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.19.14
+  labels:
+        subdomain: utah-w4
+        hank: utah
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.19.15
+  labels:
+        subdomain: utah-w5
+        hank: utah
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+
+# NCSA
+- targets:
+        - 192.168.20.11
+  labels:
+        subdomain: ncsa-w1
+        hank: ncsa
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.20.12
+  labels:
+        subdomain: ncsa-w2
+        hank: ncsa
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.20.13
+  labels:
+        subdomain: ncsa-w3
+        hank: ncsa
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+
+# 21 
+
+# WASH
+- targets:
+        - 192.168.21.11
+  labels:
+        subdomain: wash-w1
+        hank: wash
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.21.12
+  labels:
+        subdomain: wash-w2
+        hank: wash
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.21.13
+  labels:
+        subdomain: wash-w3
+        hank: wash
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+
+
+
+
+
+
+# 22 
+
+
+# DALL
+- targets:
+        - 192.168.22.11
+  labels:
+        subdomain: dall-w1
+        hank: dall
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.22.12
+  labels:
+        subdomain: dall-w2
+        hank: dall
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.22.13
+  labels:
+        subdomain: dall-w3
+        hank: dall
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+
+
+# 23 salt 
+ # SALT
+- targets:
+        - 192.168.23.11
+  labels:
+        subdomain: salt-w1
+        hank: salt
+        component_type: worker
+        worker: gpu
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.23.12
+  labels:
+        subdomain: salt-w2
+        hank: salt
+        component_type: worker
+        worker: fastnet
+        network: operations
+        reason: infrastructure_check
+        # status: building
+
+- targets:
+        - 192.168.23.13
+  labels:
+        subdomain: salt-w3
+        hank: salt
+        component_type: worker
+        worker: slownet
+        network: operations
+        reason: infrastructure_check
+        # status: building

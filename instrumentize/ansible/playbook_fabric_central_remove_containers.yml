@@ -1,0 +1,29 @@
+---
+# Creating the rack monitoring setup.
+- hosts: metrics
+
+  roles:
+    - ../prometheus/ansible/roles/fabric_prometheus
+
+  vars:
+    install_type: central_shutdown
+    install_name: global_test_prometheus
+    new_docker_state: absent
+    containers_to_act_on:
+      - snmp
+      - blackbox
+      - docker_exporter
+      - prometheus
+      - nginx
+      - thanos_sidecar
+      - thanos_store 
+      - thanos_query 
+      - thanos_compact 
+      - alertmanager
+      - grafana 
+
+
+#    extra_node_hosts: {}
+
+# for dev site use
+# ansible-playbook -i hosts/dev-metrics-hosts.ini playbook_fabric_central_remove_containers.yml --diff

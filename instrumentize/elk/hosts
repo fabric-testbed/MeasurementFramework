@@ -1,0 +1,10 @@
+[elk]
+Meas_Node
+
+[nginx]
+Meas_NGINX
+
+[workers]
+node-1C7
+node-2C8
+node-0U

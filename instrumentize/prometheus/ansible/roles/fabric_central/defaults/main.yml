@@ -1,0 +1,374 @@
+---
+# Central Metrics vars
+# This file contains variables that will be common to all installs. 
+# These vars have the lowest precedenc to and --extra-vars used will over write them.
+
+
+# Empty value to be filled in later as needed.
+extra_node_hosts: {}
+thanos_extra_node_hosts: {}
+grafana_extra_node_hosts: {}
+
+# Some values commented out here will have to be added by the user when calling the role.
+# Otherwise the role will not run.
+
+##########################################
+# Values that must be filled in by user. #
+##########################################
+
+# Name used for prom config external label
+# hank_name: 
+# Name for install directories
+# install_name: 
+
+# TLS SSL key, cert locations
+# host_key: </etc/pki/tls/private/your.key>
+# host_interm_cert: </etc/ssl/certs/your.cer>
+# host_cert: </etc/ssl/certs/your.cer> 
+
+##########################################
+# End Values that must be filled in by user. #
+##########################################
+
+
+
+docker_network_name: "{{ install_name }}"
+base_data_dir: "/opt/data/{{ install_name }}"
+base_install_dir: "/opt/{{ install_name }}" 
+
+add_python_docker_sdk: no
+
+# We need certs on the node to use TLS for various servers.
+# If the node has official certs, we use them, if not
+# ie a temp or test node, we use self-signed certs.
+#### Existing host certs....
+# hostname: "metrics.fabric-testbed.net"
+# host_cert: "/etc/ssl/certs/metrics_fabric-testbed_net.pem"
+# host_key: "/etc/pki/tls/private/metrics_fabric-testbed_net.key"
+# host_interm_cert: "/etc/pki/tls/certs/metrics_fabric-testbed_net_interm.cer"
+
+#### OR Selfsigned host certs....
+# Locations for self signed cert creation.
+# If host aleady has certs, then skip the self-signed task and
+#  just use the cert on the host machine.
+#### TODO check for OS differences
+# this is ubuntu host_csr: /etc/ssl/private/{{ hostname }}.csr
+
+#----------
+# tls_private_dir: /etc/pki/tls/private
+# tls_public_dir: /etc/ssl/certs
+
+# host_csr: "{{ tls_private_dir }}/fab_prom_self_signed_{{ hostname }}.csr"
+# self_signed_cert_dir: "{{ tls_public_dir }}/fab_prom_self_signed_{{ hostname }}"
+
+# host_cert: "{{ tls_public_dir }}/fab_prom_self_signed_{{ hostname }}/fullchain.pem"
+# host_key: "{{ tls_private_dir }}/fab_prom_self_signed_{{ hostname }}/privkey.pem"
+
+# host_interm_cert: "{{ tls_public_dir }}/fab_prom_self_signed_{{ hostname }}/fullchain.pem"
+#=======================
+
+
+
+
+# -----------------------------------------------
+## if we need to create our own self signed certs 
+
+#self_signed_cert_dir: "{{ base_install_dir }}/ssl"
+#self_signed_key_dir: "{{ base_install_dir }}/ssl/private"
+
+#host_csr: "{{ self_signed_cert_dir }}/{{ hostname }}.csr"
+#host_cert: "{{ self_signed_cert_dir }}/{{ hostname }}_fullchain.pem"
+#host_key: "{{ self_signed_key_dir }}/{{ hostname }}_privkey.pem"
+## Used to verify 
+#host_interm_cert: "{{ host_cert }}"
+
+# ------------------------------------------------
+
+prom_user_name: fab-prom
+prom_group_name: fab-prom
+
+
+####################
+#      Ports       #
+####################
+# In case we need to eliminate conficts
+alertmanager_port: 9093    
+
+
+
+docker_ipv6_subnet: fd8d:73ee:3857:1315::/64
+docker_ipv6_gateway: fd8d:73ee:3857:1315::1
+
+
+
+#alertmanager_external_url: https://192.168.12.238:9093
+
+
+
+
+# LOKI Testing
+loki_state: started 
+loki_templates_dir: templates/Loki
+
+
+
+####################
+#    Prometheus    #
+####################
+prometheus_files_dir: files
+prometheus_templates_dir: templates/Prometheus
+        
+prometheus_config_template_files: 
+  - prometheus_config.yml
+
+  # blackbox targets
+  - fabric_dns_targets.yml
+  - fabric_http_targets.yml
+  - fabric_beta_http_targets.yml
+  - fabric_smtp_targets.yml
+  - fabric_tcp_targets.yml
+ 
+   
+  - central_other_ping_targets.yml
+  - central_bastion_ping_targets.yml 
+  - central_bastion_ping6_targets.yml
+
+
+
+
+  # # To check that head nodes are up
+  # - headnode_ping_targets.yml
+  # # To check that worker nodes are up
+  # - workernode_ping_targets.yml
+
+  # aux node exporters and local node exporter
+  - central_node_targets.yml
+
+  # other exporters such as kafka, openstack, jupyter
+  # TODO where?
+
+  # alertmanager rules
+  #- test_alerts.yml
+
+prometheus_config_files: []
+  # need default var even if empty
+
+# # Default alert rules for a rack
+# alert_rule_files:
+# #  - dns_alert_rules.yml
+#   - docker_alert_rules.yml
+#   - mail_alert_rules.yml
+#   - network_alert_rules.yml
+#   - node_alert_rules.yml
+#   - node_ping_alert_rules.yml
+#   - prometheus_alert_rules.yml
+#  # - ssl_alert_rules.yml
+#   - time_alert_rules.yml
+#   # vpn ping only needed on uky/renc racks but do no harm if on others
+#   - vpn_ping_alert_rules.yml
+#  # - web_site_alert_rules.yml
+
+
+prometheus_secrets: []
+
+alert_rule_file_dir: files/alert_rules
+alertmanager_tmpl_file_dir: files/Alertmanager_tmpl
+
+alertmanager_tmpl_files:
+  - slack.tmpl
+
+# Default alert rules for central
+alert_rule_files:
+  - dns_alert_rules.yml
+  - docker_alert_rules.yml
+  - mail_alert_rules.yml
+  - network_alert_rules.yml
+  - node_alert_rules.yml
+  - central_ping_alert_rules.yml
+  - prometheus_alert_rules.yml
+  - ssl_alert_rules.yml
+#  - time_alert_rules.yml
+#  - vpn_ping_alert_rules.yml
+  - web_site_alert_rules.yml
+
+####################
+# Container States #
+####################
+
+# snmp_state: absent
+# blackbox_state: absent
+# docker_exporter_state: absent
+# prometheus_state: absent
+# nginx_state: absent
+# thanos_sidecar_state absent
+
+
+snmp_state: started
+blackbox_state: started
+docker_exporter_state: started
+prometheus_state: started
+nginx_state: started
+thanos_sidecar_state: started
+thanos_store_state: started 
+thanos_query_state: started 
+thanos_compact_state: started 
+alertmanager_state: started
+grafana_state: started 
+
+####################
+#      Thanos      #
+####################
+thanos_templates_dir: templates/Thanos
+thanos_config_templates:
+  # NOTE needs the CEPH vars contained elsehere in this file
+  - object_store_config.yml
+  - stores.yml
+
+
+thanos_cert: "{{ host_cert }}"
+thanos_key: "{{ host_key }}"
+thanos_interm_cert: "{{ host_interm_cert }}"
+
+#### Sidecar ####
+thanos_sidecar_ip: "{{ ansible_host }}"
+thanos_sidecar_cert: "{{ thanos_cert }}"
+thanos_sidecar_key: "{{ thanos_key }}"
+
+#### Store ####
+thanos_store_ip: "{{ ansible_host }}"
+thanos_store_cert: "{{ thanos_cert }}"
+thanos_store_key: "{{ thanos_key }}"
+
+#### Query ###
+thanos_query_ip: "{{ ansible_host }}"
+thanos_query_cert: "{{ thanos_cert }}"
+thanos_query_key: "{{ thanos_key }}"
+thanos_query_root_ca: "{{ thanos_interm_cert }}"
+
+
+
+
+#### Compact ####
+# Only run in one place
+use_thanos_compact: no
+
+####################
+#  ALERTMANAGER    #
+####################
+alertmanager_template_dir: templates
+
+
+####################
+#       SNMP       #
+####################
+
+# NOTE community string is a per rack variable
+# -- Moved to private vars -- # snmp_community_string: <private>
+
+# Currently no snmp on central metrics
+# snmp_templates_dir: templates/rack/SNMP
+# snmp_config_template_files: 
+#   - snmp.yml
+#   # SNMP will probably be the same for all racks
+
+####################
+#    Blackbox      # 
+####################
+blackbox_files_dir: files
+#blackbox_templates_dir: templates #there are no blackbox templates
+
+####################
+#     Grafana      #
+####################
+
+grafana_files_dir: files/Grafana
+grafana_plugin_files: 
+  - flant-statusmap-panel-v0.4.1.zip
+
+grafana_templates_dir: templates/Grafana
+
+grafana_cert:  "{{ host_cert }}"
+grafana_key:  "{{ host_key }}"
+grafana_user_name: grafana
+grafana_user_id: 472
+grafana_group_name: root  
+
+grafana_datasource_template_files: 
+  # Note can only use one default datasorce.
+  #- grafana_local_prometheus_datasource.yml
+  - grafana_thanos_datasource.yml
+
+
+####################
+#      NGINX       #
+####################        
+
+nginx_ip_ports:
+  # Note Each port will correspond to a confd file set above.
+  #- 80:80         # Redirected to 443
+  # 443 for /grafana on both ipv4 and ipv6, order here may matter depending on version of docker 
+  - "[::]:443:443"
+  - 443:443
+  - 9090:9090     # prometheus stats
+  - 10922:10922   # thanos stats
+  - "[::]:{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
+  - "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
+
+nginx_template_dir: templates/Nginx
+
+nginx_server_confd_template_files: 
+  - prometheus_dual.conf
+  - alertmanager_dual.conf
+  - thanos.conf
+  #- grafana_dual.conf
+  - grafana_dual_web_sockets.conf
+  
+  
+  # - prometheus.conf
+  # #- central_welcome.conf
+  # - alertmanager.conf
+  # - thanos.conf
+  # - grafana.conf
+
+nginx_config_template_files:
+  - ssl_snippet.conf
+  - nginx.conf
+
+nginx_cert: "{{ host_cert }}"
+nginx_key: "{{ host_key }}"
+nginx_interm_cert: "{{ host_interm_cert }}"
+
+
+                  
+# Nginx htaccess password to access status pages.
+# -- Moved to private vars -- # fabric_prometheus_ht_user: <private>
+# -- Moved to private vars -- # fabric_prometheus_ht_password: <private>
+
+
+####################
+#  Node Exporter   #  
+####################
+
+node_exporter_tls_server_config:
+  cert_file: /etc/node_exporter/tls.cert
+  key_file: /etc/node_exporter/tls.key
+node_exporter_web_listen_address: "{{ ansible_host }}:9100"
+
+# Universal Rack Node Exporter user & pass
+# -- Moved to private vars -- # node_exporter_username: <private>
+# -- Moved to private vars -- # node_exporter_password: <private>
+
+####################
+#       CEPH       #
+####################
+# -- Moved to private vars -- # ceph_bucket: <private>
+# -- Moved to private vars -- # ceph_endpoint: <private>
+# -- Moved to private vars -- # ceph_access_key: <private>
+# -- Moved to private vars -- # ceph_secret_key: <private>
+
+
+####################
+#  ALERTMANAGER    #
+####################
+# -- Moved to private vars -- # alertmanager_slack_api_url: <https://hooks.slack.com/services/secret-key>
+# etc...
