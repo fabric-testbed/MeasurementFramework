@@ -6,6 +6,7 @@
 import argparse
 from configparser import ConfigParser
 import json
+from pathlib import Path
 
 def generate_owl_config(port=5005, links_file="/owl_config/links.json", send_intvl = 1.0, 
                         capture_mode = 'save', pcap_intvl = 30, output_dir='/owl_output'):
@@ -32,19 +33,10 @@ def generate_links(links):
     '''
     Generate /home/mfuser/services/owl/config/links.json file
     Args:
-        links: [(str, str), ] indicating (source IP, destination IP) for each link
+        links: JSON formatted string
     '''
 
-    #l = []
-    #for link in links:
-    #    d={}
-    #    d['src'] = link[0]
-    #    d['dst'] = link[1]
-    #    l.append(d)
-
-    #links_dict = {}
-    #links_dict["links"] = l
-
+    # TODO: Not exactly needed 
     jsonified_links = json.dumps(links, indent=4)
 
     with open ('/home/mfuser/services/owl/config/links.json', 'w') as json_out:
@@ -65,9 +57,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    Path("/home/mfuser/services/owl/config").mkdir(parents=True, exist_ok=True)
+
     generate_owl_config(port=args.port, links_file=args.links_file, send_intvl=args.send_int, 
                         capture_mode=args.cap_mode, pcap_intvl=args.pcap_int, output_dir=args.output_dir)
 
     generate_links(args.links)
-
-

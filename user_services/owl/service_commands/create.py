@@ -5,28 +5,32 @@
 
 from datetime import datetime
 import os
+from pathlib import Path
 import json
 import subprocess
 
 def main():
+
+    Path("/home/mfuser/services/owl/config").mkdir(parents=True, exist_ok=True)
+
     ret_val = {}
 
-    #playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
-    #ansible_hosts_file = "/home/mfuser/mf_git/elkhosts.ini"
-    #playbook = "/home/mfuser/mf_git/instrumentize/elk/fabric_deploy.yml"
-    #keyfile = "/home/mfuser/.ssh/mfuser"
+    playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
+    ansible_hosts_file = "/home/mfuser/services/common/hosts.ini"
+    playbook = "/home/mfuser/mf_git/user_services/owl/Playbooks/create_owl.yaml"
+    keyfile = "/home/mfuser/.ssh/mfuser_private_key"
 
-    # TODO: These lines will be changed on FABRIC meas-node
-    playbook_exe = "/home/mfuser/MeasurementFramework/user_services/owl/owl-venv/bin/ansible-playbook"
-    ansible_hosts_file = "/etc/ansible/hosts"
-    playbook = "/home/mfuser/MeasurementFramework/user_services/owl/Playbooks/create_owl.yaml"
-    keyfile = "/home/mfuser/.ssh/id_rsa"
+    # For GENI testing only 
+    #playbook_exe = "/home/mfuser/MeasurementFramework/user_services/owl/owl-venv/bin/ansible-playbook"
+    #ansible_hosts_file = "/etc/ansible/hosts"
+    #playbook = "/home/mfuser/MeasurementFramework/user_services/owl/Playbooks/create_owl.yaml"
+    #keyfile = "/home/mfuser/.ssh/id_rsa"
 
 
     # For some reason the local ansible.cfg file is not being used
     os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
 
-    cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, playbook]
+    cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, '-b',  playbook]
     print(cmd)
 
     r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

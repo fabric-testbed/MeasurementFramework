@@ -15,4 +15,3 @@
     ansible.builtin.debug:
       var: result.container['State']
     when: result.exists
-

@@ -11,22 +11,22 @@ import subprocess
 def main():
     ret_val = {}
 
-    #playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
-    #ansible_hosts_file = "/home/mfuser/mf_git/elkhosts.ini"
-    #playbook = "/home/mfuser/mf_git/instrumentize/elk/fabric_deploy.yml"
-    #keyfile = "/home/mfuser/.ssh/mfuser"
+    # For GENI testing
+    #playbook_exe = "/home/mfuser/MeasurementFramework/user_services/owl/owl-venv/bin/ansible-playbook"
+    #ansible_hosts_file = "/etc/ansible/hosts"
+    #playbook = "/home/mfuser/MeasurementFramework/user_services/owl/Playbooks/stop_owl.yaml"
+    #keyfile = "/home/mfuser/.ssh/id_rsa"
 
-    # TODO: These lines will be changed on FABRIC meas-node
-    playbook_exe = "/home/mfuser/MeasurementFramework/user_services/owl/owl-venv/bin/ansible-playbook"
-    ansible_hosts_file = "/etc/ansible/hosts"
-    playbook = "/home/mfuser/MeasurementFramework/user_services/owl/Playbooks/stop_owl.yaml"
-    keyfile = "/home/mfuser/.ssh/id_rsa"
+    playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
+    ansible_hosts_file = "/home/mfuser/services/common/hosts.ini"
+    playbook = "/home/mfuser/mf_git/user_services/owl/Playbooks/stop_owl.yaml"
+    keyfile = "/home/mfuser/.ssh/mfuser_private_key"
 
 
     # For some reason the local ansible.cfg file is not being used
     os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
 
-    cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, playbook]
+    cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, '-b',  playbook]
 
     r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
