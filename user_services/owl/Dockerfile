@@ -13,7 +13,7 @@ RUN mkdir /owl_output
 RUN mkdir /owl_config
 RUN ls -l /
 
-WORKDIR /MeasurementFramework/user_services/owl
+WORKDIR /MeasurementFramework/user_services/owl/owl
 
 ### May be needed later
 #COPY requirements.txt requirements.txt
