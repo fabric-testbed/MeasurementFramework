@@ -5,8 +5,6 @@ import os
 import json
 import subprocess
 import logging
-import socket
-import requests
 
 def main():
 
@@ -28,23 +26,30 @@ def main():
 
     # For some reason the local ansible.cfg file is not being used
     os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
+    os.environ["PYTHONUNBUFFERED"] = "1"
 
     cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook, "-v"]
     logging.info(cmd)
 
-    r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1)
 
-    decoded_out = r.stdout.decode("utf-8")
-    play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
-    decoded_err = r.stderr.decode("utf-8")
+    isRecap = False
+    play_recap = ""
 
-    #logging.info(r)
-    logging.info("STDOUT")
-    logging.info(decoded_out)
-    logging.info("STDERR")
-    logging.error(decoded_err)
+    for line in iter(p.stdout.readline, b''):
+        curLine = line.rstrip().decode("utf-8")
+        logging.info(curLine)
 
-    if r.returncode == 0:
+        if curLine.find("RECAP") > 0:
+            isRecap = True
+
+        if isRecap:
+            play_recap = play_recap + "\n" + curLine
+
+    p.stdout.close()
+    p.wait()
+
+    if p.returncode == 0:
         ret_val["success"] =  True
         ret_val["msg"] = "ELK ansible script ran.."
     else:
@@ -54,31 +59,6 @@ def main():
     ret_val["play_recap"] = play_recap
 
     logging.info("Ansible elk install playbooks completed.")
-
-    # # Should be moved to update.py? or to kibana_manager service?
-    # logging.info("Starting Dashboard Imports")
-    # try:
-    #   meas_node_ip = socket.gethostbyname(socket.gethostname())
-    #   username = "fabric"
-    #   #os.chdir('../../../instrumentize/elk/credentials')
-    #   with open("/home/mfuser/mf_git/instrumentize/elk/credentials/nginx_passwd", "r") as f:
-    #     password = f.readline()
-    #   password = password.rstrip()
-    #   #os.chdir('../dashboards')
-    #   #for file in os.listdir(os.getcwd()):
-    #   for file in os.listdir("/home/mfuser/mf_git/instrumentize/dashboards"):
-    #     if file.endswith('.ndjson'):
-    #       logging.info("Uploading " + file)
-    #       api_ip = 'http://' + meas_node_ip + '/api/saved_objects/_import?createNewCopies=true'
-    #       headers = {'kbn-xsrf': 'true',}
-    #       files = {'file': (file, open(file, 'rb')),}
-    #       response = requests.post(api_ip, headers=headers, files=files, auth=(username, password))
-    #       ret_val["msg"] += f"Uploaded dashboard {file}. "
-    # except Exception as e:
-    #     logging.error(f"Error in importing dashboards: {e}")
-    #     ret_val["msg"] += f"Error in importing dashboards: {e} "
-    
-
 
     logging.info("-----End Ceate Script.-----")
     print(json.dumps(ret_val))
