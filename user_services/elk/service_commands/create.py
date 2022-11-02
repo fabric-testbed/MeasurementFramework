@@ -29,7 +29,7 @@ def main():
     # For some reason the local ansible.cfg file is not being used
     os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
 
-    cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook]
+    cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook, "-v"]
     logging.info(cmd)
 
     r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
