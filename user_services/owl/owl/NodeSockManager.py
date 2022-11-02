@@ -46,8 +46,8 @@ class NodeSockManager():
 
 
     def start(self):
-        _status, _dests = self._read_links()
-        self._start_capturer(_status)
+        _listen_ip, _dests = self._read_links()
+        self._start_capturer(_listen_ip)
         self._start_sender(_dests)
 
 
@@ -85,7 +85,7 @@ class NodeSockManager():
             dests([str,]): destination IPs (for the host node)
         '''
         
-        listener = "DOWN" # Default is down
+        listen_ip = "DOWN" # Default is down
         dests = []
 
         try:
@@ -97,22 +97,23 @@ class NodeSockManager():
                     dests.append(link["dst"])
     
                 if link["dst"] in self.host_ipv4s:
-                    listener = "UP"
+                    listen_ip = link["dst"]
 
         except FileNotFoundError:
             self.logger.error(f"No service request file {self.links} found.")
             # Will return DOWN for receiver status, an empty list for dests
 
         finally:
-            self.logger.info(f"read_links: {listener}, {dests}")
+            self.logger.info(f"read_links: {listen_ip}, {dests}")
 
-        return listener, dests
+        return listen_ip, dests
     
 
-    def _start_capturer(self, status):
+    def _start_capturer(self, listen_ip):
     
-        if status == "UP":
-            self.listen_instance = capturer.TcpdumpOps(self.udp_port)
+        if listen_ip != "DOWN":
+            # If it is a real IP address
+            self.listen_instance = capturer.TcpdumpOps(listen_ip, self.udp_port)
             
             if self.capture_mode == "live":
                 self.logger.info("Starting live capture")

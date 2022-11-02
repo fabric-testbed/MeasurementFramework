@@ -5,31 +5,45 @@ import signal
 import re
 from decimal import *
 import argparse
+import psutil
 
 # This script must be run as root
 
 
 class TcpdumpOps:
-    def __init__(self, port):
+    def __init__(self, ip_addr, port):
+        '''
+        ip_addr(str):
+        port(int):
+        '''
+        
+        self.interface = self.find_interface(ip_addr)
         self.port = port
 
     def start_capture(self, output_dir, pcap_interval):
         cmd = f"tcpdump -vfn -XX -tt  \
-                -i any --direction in \
+                -i {self.interface}  --direction in \
+                -j adapter_unsynced \
                 --time-stamp-precision nano \
                 port {str(self.port)} \
                 -w {output_dir}/%s.pcap \
                 -G {str(pcap_interval)}"
+
+        print("Starting tcpdump session: ", cmd)
+        print("pcap files will be saved in: ", output_dir)
 
         self.p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
         print("Pid: ", self.p.pid)
 
     def start_live_capture(self):
         cmd = f'tcpdump -U  -q -n  -A -tt \
-                -i any --direction in \
+                -i {self.interface} --direction in \
+                -j adapter_unsynced \
                 port {str(self.port)} \
                 --time-stamp-precision nano'
         
+        print(f"Starting tcpdump session: ", cmd)
+
         self.p = subprocess.Popen(cmd.split(),stdout=subprocess.PIPE)
 
         # Set decimal to 9 sub-decimal digits
@@ -78,11 +92,27 @@ class TcpdumpOps:
         self.p.terminate()
 
 
+    def find_interface(self, ip):
+        '''
+        find the interface for a given ip address
+        Returns:
+            str: os interface name ('eth0' etc.) 
+        '''
+
+        addrs = psutil.net_if_addrs()
+        
+        for interface in addrs.keys():
+            for nic in addrs[interface]:
+                if nic.address == ip:
+                    return interface
+
+        return 'any'
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("--ip", type=str, default='10.0.0.1', help="destination IP")
     parser.add_argument("--port", type=int, default=5005, 
                         help="listening port number")
     parser.add_argument("--pcap-sec", type=int, default=45, 
@@ -94,20 +124,22 @@ if __name__ == "__main__":
 
 
     args = parser.parse_args()
+    ip_addr = args.ip
     port = args.port
     interval_pcap = args.pcap_sec
     output_dir = args.outdir 
     sec = args.duration 
 
-    session1 = TcpdumpOps(port)
+    session1 = TcpdumpOps(ip_addr, port)
     session1.start_capture(output_dir, interval_pcap)
     time.sleep(sec)
     session1.stop()
 
     time.sleep(5)
 
-    session2 = TcpdumpOps(port)
+    session2 = TcpdumpOps(ip_addr, port)
     session2.start_live_capture()
     time.sleep(sec)
     session2.stop()
+
 
