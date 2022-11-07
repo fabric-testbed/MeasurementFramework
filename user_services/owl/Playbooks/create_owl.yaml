@@ -24,7 +24,7 @@
 
     - name: Copy Dockerfile
       ansible.builtin.copy:
-        src: /home/mfuser/mf_git/user_services/owl/Dockerfile
+        src: /home/mfuser/services/owl/files/Dockerfile
         dest: /home/mfuser/services/owl/docker/Dockerfile
         mode: '0644'
 
