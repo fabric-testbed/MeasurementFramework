@@ -14,20 +14,14 @@ def main():
         "msg": ""
     }
 
-    # Data is stored in relative dir to this script.
-    service_dir =  os.path.dirname(__file__)
-    infoFilePath = os.path.join( service_dir, "infoFile.txt")
-    configFilePath = os.path.join( service_dir, "configFile.txt")
-
     data = gu.get_data()
 
- 
     default_settings = gu.get_defaults()
 
     interface = gi.GrafanaManager( host = "localhost",
                     username = "admin",
                     password = default_settings['grafana_admin_password'],
-                    infoFilePath = infoFilePath,
+                    infoFilePath = gu.infoFilePath,
                     infoFileDelimiter = ",",
                     key = None
                   ) 
@@ -53,9 +47,12 @@ def main():
         if "ht_password" in data["get"]:
             ret_val["ht_password"] = defaults["fabric_prometheus_ht_password"]
 
-            
+    elif "render" in data:
+        if "url_path" in data["render"]:
+            ret_val["render"] = interface.render(data["render"]["url_path"], gu.rendered_dir )
+
     else:
-        ret_val["help"] = 'Valid request data values include "get": ["all_users_info", "admin_password", "ht_acesss"]. '
+        ret_val["help"] = 'Valid request data values include "get": ["all_users_info", "admin_password", "ht_user", "ht_password"], "render":<render_url_path> '
 
 
     # #def test_FindUser(self):

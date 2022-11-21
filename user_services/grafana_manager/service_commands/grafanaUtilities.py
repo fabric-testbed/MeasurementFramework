@@ -5,9 +5,19 @@ import json
 
 services_dir = os.path.join(os.path.expanduser('~') ,"services")
 
-data_filename = os.path.join(services_dir, "grafana_manager", "data", "data.json" )
+this_service_dir = os.path.join(services_dir, "grafana_manager") 
+
+rendered_dir = os.path.join(this_service_dir, "rendered")
+
+data_filename = os.path.join(this_service_dir, "data", "data.json" )
+
+files_dir = os.path.join(this_service_dir, "files")
+dashboards_dir = os.path.join(this_service_dir, "Dashboards")
 
 prometheus_default_install_vars_file = os.path.join(services_dir, "prometheus", "extra_files", "install_vars.json")
+
+infoFilePath = os.path.join( this_service_dir, "infoFile.txt")
+configFilePath = os.path.join( this_service_dir, "configFile.txt")
 
 def get_data():
     # Get incoming data which will be in the data.json file.

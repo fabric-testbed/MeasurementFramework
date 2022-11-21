@@ -12,8 +12,12 @@ def get_services_list():
     service_list = []
 
     for item in os.listdir(services_dir):
-        if os.path.isdir(os.path.join(services_dir, item)):
-            service_list.append(item)
+        if item == "common":
+            # Hide this one
+            pass
+        else:
+            if os.path.isdir(os.path.join(services_dir, item)):
+                service_list.append(item)
 
     return service_list
 

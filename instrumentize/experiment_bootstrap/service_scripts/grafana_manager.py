@@ -23,4 +23,5 @@ if __name__ == "__main__":
     print(f"Copying files and subfolders from {src_dir} to {args.service_dir}")
     copy_files(src_dir, args.service_dir)
     # Note the files do not need to come from a simple local copy as shown here. They could be pulled from anywhere such as a git repo or auto generated.
-    
+    rendered_dirs = os.path.join(args.service_dir, "rendered")
+    os.makedirs( rendered_dirs )
