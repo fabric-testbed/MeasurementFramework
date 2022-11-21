@@ -34,6 +34,7 @@ server {
 #  index index.html index.htm;
 
   location /grafana/ {
+    rewrite  ^/grafana/(.*)  /$1 break;
     proxy_set_header Host $http_host; 
     #proxy_pass http://localhost:3000/;
     proxy_pass http://{{ install_name }}_grafana:3000/;
