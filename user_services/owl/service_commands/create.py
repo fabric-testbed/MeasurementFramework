@@ -11,7 +11,7 @@ import subprocess
 
 def main():
 
-    Path("/home/mfuser/services/owl/config").mkdir(parents=True, exist_ok=True)
+    #Path("/home/mfuser/services/owl/config").mkdir(parents=True, exist_ok=True)
 
     ret_val = {}
 
