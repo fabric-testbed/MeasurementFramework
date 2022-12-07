@@ -49,6 +49,8 @@ prometheus_config_template_files:
   # snmp exporters for rack devices
   - base_snmp_targets.yml
 
+prometheus_retention_time: 60d
+
 # Note empty list var must have [] Without that is is considered a list of one empty string which then causes the entire directory to be copied instead of nothing.  
 # See add_promethues_config_files.yml task.
 # This was formerly used to copy alert_rules.
