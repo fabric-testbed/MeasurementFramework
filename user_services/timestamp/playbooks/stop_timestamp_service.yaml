@@ -1,0 +1,9 @@
+- name: Stop timesatmp service
+  hosts: Experiment_Nodes
+  tasks:
+    - name: stop timestamp.service
+      systemd:
+        name: timestamp.service
+        state: stopped
+        enabled: no
+      become: yes

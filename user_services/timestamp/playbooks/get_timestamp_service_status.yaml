@@ -1,0 +1,11 @@
+- name: Start timesatmp service
+  hosts: Experiment_Nodes
+  tasks:
+    - name: Get Service Status
+      systemd:
+        name: timestamp.service
+      register: timestamp_service_status
+      become: yes
+
+    - debug:
+      var: timestamp_service_status.status.ActiveState
