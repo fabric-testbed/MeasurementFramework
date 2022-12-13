@@ -97,10 +97,8 @@ class timestamptool():
         pipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
         res = pipe.communicate()
         if (pipe.returncode!=0):
-            print (f"Failed to get status of Elasticsearch")
-            return
+            sys.exit(f"Failed to get status of Elasticsearch. Exit program..")
         else:
-            #print (f"Elasticsearch is running")
             pass
         
     def check_timestamp_service_status(self):
@@ -108,10 +106,9 @@ class timestamptool():
         pipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
         res = pipe.communicate()
         if (pipe.returncode!=0):
-            print (f"Timestamp.service is not running. Start by 'sudo systemctl start timestamp.service'")
-            return
+            sys.exit(f"Timestamp.service is not running. Start by 'sudo systemctl start timestamp.service'")
+            
         else:
-            #print (f"Timestamp.service is running")
             pass
            
         

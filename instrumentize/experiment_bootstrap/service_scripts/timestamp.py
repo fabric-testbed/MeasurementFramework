@@ -28,15 +28,17 @@ if __name__ == "__main__":
     # Copy timestamp service files
     file_src = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, service_name, "service_files")
     file_dst = os.path.join(args.service_dir, "files")
-
-    os.system(f"cp {file_src} {file_dst}")
+    copy_files(file_src, file_dst)
+    
     
     # Copy config file
-    file_src = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, service_name, "config_files")
+    file_src = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, service_name, "config_file")
     file_dst = os.path.join(args.service_dir, "files")
     
-    os.system(f"cp {file_src} {file_dst}")
+    copy_files(file_src, file_dst)
     
     # Copy Elastic index files
     file_src = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, service_name, "elastic_index_files")
     file_dst = os.path.join(args.service_dir, "files")
+    copy_files(file_src, file_dst)
+    

@@ -4,15 +4,15 @@
     - name: reload systemd daemons
       systemd:
         daemon_reload: yes
-      become: yes
+      
       
     - name: enable and start timestamp service
       systemd:
         name: timestamp.service
         state: started
         enabled: yes
-      become: yes
+      
       
     - name: make sure Collector service is really running
       command: systemctl is-active timestamp.service
-      become: yes
+      

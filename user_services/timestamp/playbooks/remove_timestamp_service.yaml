@@ -5,14 +5,14 @@
       file:
         state: absent
         path: /home/mfuser/services/timestamp/
-      become: yes
+      
         
     - name: remove timestamp.service
       file:
         state: absent
         path: /etc/systemd/system/timestamp.service
-      become: yes
+      
       
     - name: reset failed systemd service unit
       command: systemctl reset-failed
-      become: yes
+      

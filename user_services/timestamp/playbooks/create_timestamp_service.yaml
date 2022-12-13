@@ -5,10 +5,11 @@
   hosts: Experiment_Nodes
   tasks:
     - name: Ansible apt install tshark
+      become: yes
       apt:
         name: tshark
         state: present
-      become: yes
+      
   
     - name: Create a directory for timestamp config file
       ansible.builtin.file:
@@ -86,7 +87,7 @@
       ansible.builtin.shell:
         cmd: gcc -fPIC -shared -o get_ptp_time.so get_ptp_time.c
         chdir: /home/mfuser/services/timestamp/service_files/
-      become: yes
+      
     
     
         

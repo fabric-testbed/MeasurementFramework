@@ -5,7 +5,6 @@
       systemd:
         name: timestamp.service
       register: timestamp_service_status
-      become: yes
-
+      
     - debug:
-      var: timestamp_service_status.status.ActiveState
+        var: timestamp_service_status.status.ActiveState
