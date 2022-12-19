@@ -89,7 +89,7 @@ class timestamptool():
             device = result[sindex+3:eindex].strip()   
             return (device)
         else:
-            return ("cannot find running ptp device")
+            return ("Cannot find running ptp device")
         
     
     def check_elastic_status(self, meas_node_ip):
@@ -97,7 +97,7 @@ class timestamptool():
         pipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
         res = pipe.communicate()
         if (pipe.returncode!=0):
-            sys.exit(f"Failed to get status of Elasticsearch. Exit program..")
+            sys.exit(f"Failed to get the status of Elasticsearch. Exit program..")
         else:
             pass
         
@@ -135,7 +135,7 @@ class timestamptool():
     
     
     # Writes the event data along with the ptp time to a file
-    def write_event_data_to_file(self, device_name, output_file):
+    def write_event_data_to_file(self, device_name, output_file, elastic_file):
         self.logger.debug(f"Writing event data to {output_file}")
         data_json={}
         time= self.get_ptp_timestamp(device_name)
@@ -146,6 +146,7 @@ class timestamptool():
             data_json['description']=self.args.description
         else:
             data_json['description']='none'
+        self.reset_file_content(record_file=output_file, elastic_file=elastic_file):
         with open(output_file, "a") as f:
             f.write('{"index":{}}'+"\n")
             f.write(str(json.dumps(data_json)) + "\n")
@@ -225,20 +226,21 @@ class timestamptool():
             self.logger.debug(f"Tcpdump process finished")
             return 0
         else:
-            self.logger.debug(f"Problem running tcpdump")
+            #self.logger.debug(f"Problem running tcpdump")
             return 1
             
     
-    def run_tshark_cmd(self, cmd):
+    def write_packet_data_to_file(self, cmd):
         self.logger.debug(f"Running Tshark to read to pcap file......\n")
         self.logger.debug(f"The tshark command is: {cmd} \n")
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        res = p.communicate()
+        res = p.wait()
         
     # Before each time timestamptool is run, files that record previous results should be cleared    
     def reset_file_content(self, record_file, elastic_file):
         with open (record_file, "w+"):
             pass
+        time.sleep(0.5)
         p = subprocess.Popen(f"sudo rm {elastic_file}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         res = p.communicate()
         
@@ -277,9 +279,9 @@ class timestamptool():
                         json_obj = json.loads(line)
                         result["hits"].append(json_obj)
                     except ValueError:
-                        self.logger.debug('json cannot load %s', line)
-        return result
-        
+                        self.logger.debug('Json cannot load %s', line)
+        print (result)
+        return result    
     
     
     # Wrapper method for all the method
@@ -293,7 +295,7 @@ class timestamptool():
                 args_json[arg]=getattr(self.args, arg)
             self.logger.debug(args_json)         
         if ('type' not in args_json.keys()):
-            self.logger.debug(f"Type not in json keys. return")
+            self.logger.debug(f"Type packet or event not detected. Exit..")
             return
         
         if (args_json['type']=='packet'):
@@ -306,12 +308,16 @@ class timestamptool():
                 tshark_cmd=self.generate_tshark_command()
                 t= self.run_tcpdump_cmd(cmd=tcpdump_cmd)
                 if (t==0):
-                    self.run_tshark_cmd(cmd=tshark_cmd)
+                    while True:
+                        if (os.stat(self.tshark_output_path).st_size == 0):
+                            self.write_packet_data_to_file(cmd=tshark_cmd)
+                            break
+                        else:
+                            time.sleep(0.1)
                 else:
-                    self.logger.debug("Tshark command not run")
-                    return
+                    self.logger.debug("Tcpdump command failed..")
+                    sys.exit(f"Exit")
                 if (self.args.storage=='elasticsearch'):
-                    time.sleep(1)
                     self.upload_to_elastic(meas_node_ip=self.meas_node_ip, index_name=self.packet_index_name, file=self.packet_output_elastic_path)
                 
             elif (args_json['action']=='get'):
@@ -331,10 +337,8 @@ class timestamptool():
             output_file_elastic=self.event_output_elastic_path
             if (args_json['action']=='record'):
                 self.logger.debug(f"Recording event...")
-                self.reset_file_content(record_file=self.event_output_path, elastic_file=self.event_output_elastic_path)
-                self.write_event_data_to_file(device_name=self.ptp_device_name, output_file=self.event_output_path)
+                self.write_event_data_to_file(device_name=self.ptp_device_name, output_file=self.event_output_path, elastic_file=self.event_output_elastic_path)
                 if (self.args.storage=='elasticsearch'):
-                    time.sleep(1)
                     self.upload_to_elastic(meas_node_ip=self.meas_node_ip, index_name=self.event_index_name, file=self.event_output_elastic_path)
             
             elif (args_json['action']=='get'):

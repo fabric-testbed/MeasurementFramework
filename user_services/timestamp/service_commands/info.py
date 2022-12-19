@@ -42,7 +42,7 @@ def main():
     logging.info("STDERR")
     logging.error(decoded_err)
 
-    if p.returncode == 0:
+    if r.returncode == 0:
         ret_val["success"] =  True
         ret_val["msg"] = "Timestamp info playbook ran.."
     else:
