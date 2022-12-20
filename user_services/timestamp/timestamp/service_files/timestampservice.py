@@ -19,6 +19,9 @@ class timestampservice():
         self.meas_node_ip=self.get_meas_node_ip()
         self.event_index_name= self.get_event_index_name()
         self.packet_index_name= self.get_packet_index_name()
+        #for broken lines
+        self.broken_line=[]
+        self.complete_line=True 
        
 
     def convert_epoch(self, time_ns):
@@ -126,13 +129,28 @@ class timestampservice():
         os.chown(self.tshark_output_path, pwd.getpwnam('mfuser').pw_uid, 0)
         tshark_output = self.read_changing_file(file=tshark_file, file_path=self.tshark_output_path)
         for line in tshark_output:
-            #print ('processing %s', line)
+            print ('processing %s', line)
             #print ('\n')
             new_line = ""
-            try:
-                json_obj = json.loads(line)
-            except ValueError:
-                print ('json cannot load %s', line)
+            if (self.complete_line):
+                try:
+                    json_obj = json.loads(line)
+                except ValueError:
+                    self.broken_line.append(line)
+                    self.complete_line=False
+                    print ('json cannot load %s', line)
+                    return
+            else:
+                if (len(self.broken_line)>0):
+                    try:
+                        json_obj = json.loads(''.join(self.broken_line)+line)
+                    except ValueError:
+                        self.broken_line.append(line)
+                        self.complete_line=False
+                        print ('json cannot load %s', line)
+                        return
+                    self.broken_line.clear()
+                    self.complete_line=True 
                 
             if "index" in json_obj.keys():
                 #print("This is index line")

@@ -146,7 +146,7 @@ class timestamptool():
             data_json['description']=self.args.description
         else:
             data_json['description']='none'
-        self.reset_file_content(record_file=output_file, elastic_file=elastic_file):
+        self.reset_file_content(record_file=output_file, elastic_file=elastic_file)
         with open(output_file, "a") as f:
             f.write('{"index":{}}'+"\n")
             f.write(str(json.dumps(data_json)) + "\n")
@@ -240,9 +240,8 @@ class timestamptool():
     def reset_file_content(self, record_file, elastic_file):
         with open (record_file, "w+"):
             pass
-        time.sleep(0.5)
         p = subprocess.Popen(f"sudo rm {elastic_file}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        res = p.communicate()
+        res = p.wait()
         
         
         
@@ -283,6 +282,48 @@ class timestamptool():
         print (result)
         return result    
     
+    def validate_elastic_file(self, file, elasticfile):
+        index_to_remove= []
+        with open(file, 'r') as f:
+            num_flines = sum(1 for line in f) 
+        with open(elasticfile, 'r') as e:
+            num_elines = sum(1 for line in e)
+        
+        #self.logger.debug(num_flines)
+        #self.logger.debug(num_elines)
+        # read elastic output file
+        with open(elasticfile, 'r') as ef:
+            lines = ef.read().splitlines()
+            for i in range(len(lines)-1):
+                if (lines[i]==lines[i+1]):
+                    index_to_remove.append(i)
+            #self.logger.debug(index_to_remove)
+                
+    
+        # Remove consecutive index lines
+        with open(elasticfile, 'w') as ef:
+            # iterate each line
+            for number, line in enumerate(lines):
+                if number not in index_to_remove:
+                    ef.write(line+"\n")
+       
+        with open(file, 'r') as f:
+            num_flines = sum(1 for line in f) 
+        with open(elasticfile, 'r') as e:
+            num_elines = sum(1 for line in e)
+        
+        #self.logger.debug(num_flines)
+        #self.logger.debug(num_elines)
+        # check whether output_file and elastic file has the same unmber of lines
+        if (num_flines!=num_elines):
+            self.logger.debug('Data is missing during the process. Validation fails')
+            sys.exit("Exit..")
+        else:
+            pass
+        
+        
+            
+        
     
     # Wrapper method for all the method
     def process(self):
@@ -308,16 +349,13 @@ class timestamptool():
                 tshark_cmd=self.generate_tshark_command()
                 t= self.run_tcpdump_cmd(cmd=tcpdump_cmd)
                 if (t==0):
-                    while True:
-                        if (os.stat(self.tshark_output_path).st_size == 0):
-                            self.write_packet_data_to_file(cmd=tshark_cmd)
-                            break
-                        else:
-                            time.sleep(0.1)
+                    self.write_packet_data_to_file(cmd=tshark_cmd)
                 else:
                     self.logger.debug("Tcpdump command failed..")
                     sys.exit(f"Exit")
                 if (self.args.storage=='elasticsearch'):
+                    time.sleep(1)
+                    self.validate_elastic_file(file=self.tshark_output_path, elasticfile=self.packet_output_elastic_path)
                     self.upload_to_elastic(meas_node_ip=self.meas_node_ip, index_name=self.packet_index_name, file=self.packet_output_elastic_path)
                 
             elif (args_json['action']=='get'):
@@ -339,6 +377,8 @@ class timestamptool():
                 self.logger.debug(f"Recording event...")
                 self.write_event_data_to_file(device_name=self.ptp_device_name, output_file=self.event_output_path, elastic_file=self.event_output_elastic_path)
                 if (self.args.storage=='elasticsearch'):
+                    time.sleep(1)
+                    self.validate_elastic_file(file=self.event_output_path, elasticfile=self.event_output_elastic_path)
                     self.upload_to_elastic(meas_node_ip=self.meas_node_ip, index_name=self.event_index_name, file=self.event_output_elastic_path)
             
             elif (args_json['action']=='get'):
