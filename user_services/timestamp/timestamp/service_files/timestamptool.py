@@ -89,7 +89,7 @@ class timestamptool():
             device = result[sindex+3:eindex].strip()   
             return (device)
         else:
-            return ("Cannot find running ptp device")
+            sys.exit("Cannot find running ptp device")
         
     
     def check_elastic_status(self, meas_node_ip):

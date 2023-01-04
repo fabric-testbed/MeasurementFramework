@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import time
 import datetime
 import os
@@ -119,18 +119,15 @@ class timestampservice():
                 continue
             yield line
 
-
     def process_packet_file(self):
         if (os.path.exists(self.tshark_output_path)== False):
             with open(self.tshark_output_path, "w+") as ts:
                 pass
         tshark_file = open(self.tshark_output_path, "r+")
-        #os.chmod(self.tshark_output_path, 0o777)
         os.chown(self.tshark_output_path, pwd.getpwnam('mfuser').pw_uid, 0)
         tshark_output = self.read_changing_file(file=tshark_file, file_path=self.tshark_output_path)
         for line in tshark_output:
             print ('processing %s', line)
-            #print ('\n')
             new_line = ""
             if (self.complete_line):
                 try:
@@ -139,7 +136,6 @@ class timestampservice():
                     self.broken_line.append(line)
                     self.complete_line=False
                     print ('json cannot load %s', line)
-                    return
             else:
                 if (len(self.broken_line)>0):
                     try:
@@ -148,7 +144,6 @@ class timestampservice():
                         self.broken_line.append(line)
                         self.complete_line=False
                         print ('json cannot load %s', line)
-                        return
                     self.broken_line.clear()
                     self.complete_line=True 
                 
@@ -191,7 +186,6 @@ class timestampservice():
             new_line = ""
             json_obj = json.loads(line)
             if "index" in json_obj.keys():
-                #print("This is index line")
                 new_line = '{"index":{}}'
                 with open(self.event_output_elastic_path, "a") as f:
                     f.write(new_line + "\n")
