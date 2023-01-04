@@ -54,7 +54,11 @@ class timestampservice():
                 return (name) 
             
     def get_meas_node_ip(self):
-        return ("10.0.0.4")
+        # Suppose the ip of measurement is in the last line of /etc/hosts
+        with open("/etc/hosts", "r") as f:
+            last_line = f.readlines()[-1]
+            meas_ip = last_line.split()[0]
+        return (meas_ip)
     
     def get_event_index_name(self):
         name= self.hostname
