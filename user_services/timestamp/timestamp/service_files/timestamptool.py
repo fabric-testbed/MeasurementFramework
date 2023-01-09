@@ -138,8 +138,8 @@ class timestamptool():
     def write_event_data_to_file(self, device_name, output_file, elastic_file):
         self.logger.debug(f"Writing event data to {output_file}")
         data_json={}
-        time= self.get_ptp_timestamp(device_name)
-        data_json['timestamp']=time
+        ptptime= self.get_ptp_timestamp(device_name)
+        data_json['timestamp']=ptptime
         data_json['name']=self.args.name
         data_json['command']=self.args.command
         if (self.args.description):
@@ -147,6 +147,7 @@ class timestamptool():
         else:
             data_json['description']='none'
         self.reset_file_content(record_file=output_file, elastic_file=elastic_file)
+        time.sleep(0.5)
         with open(output_file, "a") as f:
             f.write('{"index":{}}'+"\n")
             f.write(str(json.dumps(data_json)) + "\n")
@@ -344,6 +345,7 @@ class timestamptool():
             if (args_json['action']=='record'):
                 self.logger.debug(f"Recording packet...")
                 self.reset_file_content(record_file=self.tshark_output_path, elastic_file=self.packet_output_elastic_path)
+                time.sleep(0.5)
                 self.write_packet_name_to_file()
                 tcpdump_cmd=self.generate_tcpdump_command()
                 tshark_cmd=self.generate_tshark_command()

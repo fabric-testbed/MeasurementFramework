@@ -54,7 +54,7 @@ class timestampservice():
                 return (name) 
             
     def get_meas_node_ip(self):
-        # Suppose the ip of measurement is in the last line of /etc/hosts
+        # Suppose the ip of measurement node is in the last line of /etc/hosts
         with open("/etc/hosts", "r") as f:
             last_line = f.readlines()[-1]
             meas_ip = last_line.split()[0]
