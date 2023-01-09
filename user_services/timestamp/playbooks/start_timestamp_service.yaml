@@ -2,8 +2,7 @@
   hosts: Experiment_Nodes
   tasks:
     - name: Run timestampservice.py to create elasticsearch indice
-      ansible.builtin.script: /home/mfuser/services/timestamp/service_files/timestampservice.py
-      args:
-        executable: python3
+      command: sudo python3 /home/mfuser/services/timestamp/service_files/timestampservice.py
+   
       
       
