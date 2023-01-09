@@ -65,11 +65,6 @@
         dest: /home/mfuser/services/timestamp/service_files/timestampservice.py
         mode: '0644'
         
-    - name: Copy timestampservice.py
-      ansible.builtin.copy:
-        src: /home/mfuser/services/timestamp/files/timestamp.service
-        dest: /etc/systemd/system/timestamp.service
-        mode: '0644'
         
     - name: Copy timestamptool.py
       ansible.builtin.copy:

@@ -19,16 +19,6 @@ class timestampservice():
         self.meas_node_ip=self.get_meas_node_ip()
         self.event_index_name= self.get_event_index_name()
         self.packet_index_name= self.get_packet_index_name()
-        #for broken lines
-        self.broken_line=[]
-        self.complete_line=True 
-       
-
-    def convert_epoch(self, time_ns):
-        date_time = datetime.datetime.fromtimestamp(float(time_ns))
-        s = date_time.strftime("%Y-%m-%dT%H:%M:%S")
-        s+= "."+time_ns.split(".")[1]+"Z"
-        return s
     
 
     def read_config(self):
@@ -108,109 +98,20 @@ class timestampservice():
             return
         else:
             print ("create packet index succeed")
-        
-
-
-    def read_changing_file(self, file, file_path):
-        file.seek(0, 2)
-        while True:
-            if (os.path.exists(file_path)):
-                if (os.stat(file_path).st_size == 0):
-                    file.seek(0, 0)
-            line = file.readline().rstrip()
-            if not line:
-                time.sleep(0.2)
-                continue
-            yield line
-
-    def process_packet_file(self):
+            
+            
+    def initialize_files(self):
         if (os.path.exists(self.tshark_output_path)== False):
             with open(self.tshark_output_path, "w+") as ts:
                 pass
-        tshark_file = open(self.tshark_output_path, "r+")
         os.chown(self.tshark_output_path, pwd.getpwnam('mfuser').pw_uid, 0)
-        tshark_output = self.read_changing_file(file=tshark_file, file_path=self.tshark_output_path)
-        for line in tshark_output:
-            print ('processing %s', line)
-            new_line = ""
-            if (self.complete_line):
-                try:
-                    json_obj = json.loads(line)
-                except ValueError:
-                    self.broken_line.append(line)
-                    self.complete_line=False
-                    print ('json cannot load %s', line)
-            else:
-                if (len(self.broken_line)>0):
-                    try:
-                        json_obj = json.loads(''.join(self.broken_line)+line)
-                    except ValueError:
-                        self.broken_line.append(line)
-                        self.complete_line=False
-                        print ('json cannot load %s', line)
-                    self.broken_line.clear()
-                    self.complete_line=True 
-                
-            if "index" in json_obj.keys():
-                #print("This is index line")
-                new_line = '{"index":{}}'
-                with open(self.packet_output_elastic_path,"a") as f:
-                    f.write(new_line + "\n")
-            else:
-                new_json_obj = {}
-                name = ""
-                with open(self.name_path, "r") as n:
-                    for line in n:
-                        name = line.strip()
-                new_json_obj["name"] = name
-                ts = json_obj["layers"]["frame_time_epoch"][0]
-                final_timestamp = self.convert_epoch(time_ns=ts)
-                new_json_obj["timestamp"] = str(final_timestamp)
-                new_json_obj["src_ip"] = json_obj["layers"]["ip_src"][0]
-                new_json_obj["dst_ip"] = json_obj["layers"]["ip_dst"][0]
-                new_json_obj["protocol"] = json_obj["layers"]["frame_protocols"][0]
-                if ("tcp_srcport" in json_obj["layers"].keys()):
-                    new_json_obj["src_port"]=int(json_obj["layers"]["tcp_srcport"][0])
-                    new_json_obj["dst_port"]=int(json_obj["layers"]["tcp_dstport"][0])
-                elif ("udp_srcport" in json_obj["layers"].keys()):
-                    new_json_obj["src_port"]=int(json_obj["layers"]["udp_srcport"][0])
-                    new_json_obj["dst_port"]=int(json_obj["layers"]["udp_dstport"][0])
-                with open(self.packet_output_elastic_path, "a") as f:
-                    f.write(str(json.dumps(new_json_obj)) + "\n")
-
-
-    def process_event_file(self):
+        
         if (os.path.exists(self.event_output_path)== False):
             with open(self.event_output_path, "w+") as ev:
                 pass
-        event_file = open(self.event_output_path, "r+")
-        event_output = self.read_changing_file(file=event_file, file_path=self.event_output_path)
         os.chown(self.event_output_path, pwd.getpwnam('mfuser').pw_uid, 0)
-        for line in event_output:
-            new_line = ""
-            json_obj = json.loads(line)
-            if "index" in json_obj.keys():
-                new_line = '{"index":{}}'
-                with open(self.event_output_elastic_path, "a") as f:
-                    f.write(new_line + "\n")
-            else:
-                new_json_obj = {}
-                ts = json_obj['timestamp']
-                final_timestamp = self.convert_epoch(time_ns=ts)
-                new_json_obj["timestamp"] = str(final_timestamp)
-                new_json_obj["name"] = json_obj["name"]
-                new_json_obj["command"] = json_obj["command"]
-                new_json_obj["description"] = json_obj["description"]
-                with open(self.event_output_elastic_path, "a") as f:
-                    f.write(str(json.dumps(new_json_obj)) + "\n")
-
-    
-
-
 
 if __name__ == "__main__":
     ts=timestampservice()
-    ts.create_event_elastic_index()
-    ts.create_packet_elastic_index()
-    Process(target=ts.process_packet_file).start()
-    Process(target=ts.process_event_file).start()
+    ts.create_elastic_indexes()
+    ts.initialize_files()

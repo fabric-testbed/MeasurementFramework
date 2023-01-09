@@ -23,7 +23,7 @@ class timestamptool():
         self.servicename="timestamp"
         self.read_service_info()
         self.check_elastic_status(meas_node_ip=self.meas_node_ip)
-        self.check_timestamp_service_status()
+        #self.check_timestamp_service_status()
    
 
     # Set args    
@@ -31,8 +31,7 @@ class timestamptool():
         self.args=args
         self.set_up_logger(args=args)
 
-        
-        
+    # Set up logger    
     def set_up_logger(self, args):
         self.logger = logging.getLogger(self.servicename)
         self.logger.setLevel(logging.DEBUG)
@@ -52,7 +51,7 @@ class timestamptool():
         self.logger.addHandler(filehandler)
         self.logger.addHandler(streamhandler)
         
-        
+    # Read file path info     
     def read_service_info(self):
         self.config_file_path=self.timestampservice.config_file_path 
         self.hostname= self.timestampservice.hostname
@@ -147,13 +146,40 @@ class timestamptool():
         else:
             data_json['description']='none'
         self.reset_file_content(record_file=output_file, elastic_file=elastic_file)
-        time.sleep(0.5)
+        #time.sleep(0.5)
         with open(output_file, "a") as f:
             f.write('{"index":{}}'+"\n")
             f.write(str(json.dumps(data_json)) + "\n")
             
+    def process_event_file(self):
+        event_file = open(self.event_output_path, "r")
+        event_output = event_file.readlines()
+        for line in event_output:
+            new_line = ""
+            json_obj = json.loads(line)
+            if "index" in json_obj.keys():
+                new_line = '{"index":{}}'
+                with open(self.event_output_elastic_path, "a") as f:
+                    f.write(new_line + "\n")
+            else:
+                new_json_obj = {}
+                ts = json_obj['timestamp']
+                final_timestamp = self.convert_epoch(time_ns=ts)
+                new_json_obj["timestamp"] = str(final_timestamp)
+                new_json_obj["name"] = json_obj["name"]
+                new_json_obj["command"] = json_obj["command"]
+                new_json_obj["description"] = json_obj["description"]
+                with open(self.event_output_elastic_path, "a") as f:
+                    f.write(str(json.dumps(new_json_obj)) + "\n")
             
+    ###############################################################################        
     ## Packet related methods
+    def convert_epoch(self, time_ns):
+        date_time = datetime.datetime.fromtimestamp(float(time_ns))
+        s = date_time.strftime("%Y-%m-%dT%H:%M:%S")
+        s+= "."+time_ns.split(".")[1]+"Z"
+        return s
+    
     
     # Get the tcpdump command based on the arguments
     def generate_tcpdump_command(self):
@@ -227,7 +253,7 @@ class timestamptool():
             self.logger.debug(f"Tcpdump process finished")
             return 0
         else:
-            #self.logger.debug(f"Problem running tcpdump")
+            self.logger.debug(f"Problem running tcpdump")
             return 1
             
     
@@ -236,6 +262,44 @@ class timestamptool():
         self.logger.debug(f"The tshark command is: {cmd} \n")
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         res = p.wait()
+        
+    def process_packet_file(self):
+        tshark_file = open(self.tshark_output_path, "r")
+        tshark_output = tshark_file.readlines()
+        for line in tshark_output:
+            #print ('processing %s', line)
+            try:
+                json_obj = json.loads(line)
+            except ValueError:
+                print ('json cannot load %s', line)
+                
+            if "index" in json_obj.keys():
+                #print("This is index line")
+                new_line = '{"index":{}}'
+                with open(self.packet_output_elastic_path,"a") as f:
+                    f.write(new_line + "\n")
+            else:
+                new_json_obj = {}
+                name = ""
+                with open(self.name_path, "r") as n:
+                    for line in n:
+                        name = line.strip()
+                new_json_obj["name"] = name
+                ts = json_obj["layers"]["frame_time_epoch"][0]
+                final_timestamp = self.convert_epoch(time_ns=ts)
+                new_json_obj["timestamp"] = str(final_timestamp)
+                new_json_obj["src_ip"] = json_obj["layers"]["ip_src"][0]
+                new_json_obj["dst_ip"] = json_obj["layers"]["ip_dst"][0]
+                new_json_obj["protocol"] = json_obj["layers"]["frame_protocols"][0]
+                if ("tcp_srcport" in json_obj["layers"].keys()):
+                    new_json_obj["src_port"]=int(json_obj["layers"]["tcp_srcport"][0])
+                    new_json_obj["dst_port"]=int(json_obj["layers"]["tcp_dstport"][0])
+                elif ("udp_srcport" in json_obj["layers"].keys()):
+                    new_json_obj["src_port"]=int(json_obj["layers"]["udp_srcport"][0])
+                    new_json_obj["dst_port"]=int(json_obj["layers"]["udp_dstport"][0])
+                with open(self.packet_output_elastic_path, "a") as f:
+                    f.write(str(json.dumps(new_json_obj)) + "\n")
+        
         
     # Before each time timestamptool is run, files that record previous results should be cleared    
     def reset_file_content(self, record_file, elastic_file):
@@ -289,9 +353,7 @@ class timestamptool():
             num_flines = sum(1 for line in f) 
         with open(elasticfile, 'r') as e:
             num_elines = sum(1 for line in e)
-        
-        #self.logger.debug(num_flines)
-        #self.logger.debug(num_elines)
+            
         # read elastic output file
         with open(elasticfile, 'r') as ef:
             lines = ef.read().splitlines()
@@ -313,8 +375,6 @@ class timestamptool():
         with open(elasticfile, 'r') as e:
             num_elines = sum(1 for line in e)
         
-        #self.logger.debug(num_flines)
-        #self.logger.debug(num_elines)
         # check whether output_file and elastic file has the same unmber of lines
         if (num_flines!=num_elines):
             self.logger.debug('Data is missing during the process. Validation fails')
@@ -322,11 +382,7 @@ class timestamptool():
         else:
             pass
         
-        
-            
-        
-    
-    # Wrapper method for all the method
+    # Wrapper method for all the methods
     def process(self):
         args_json={}
         if (self.args is None):
@@ -355,8 +411,9 @@ class timestamptool():
                 else:
                     self.logger.debug("Tcpdump command failed..")
                     sys.exit(f"Exit")
+                self.process_packet_file()
                 if (self.args.storage=='elasticsearch'):
-                    time.sleep(1)
+                    #time.sleep(1)
                     self.validate_elastic_file(file=self.tshark_output_path, elasticfile=self.packet_output_elastic_path)
                     self.upload_to_elastic(meas_node_ip=self.meas_node_ip, index_name=self.packet_index_name, file=self.packet_output_elastic_path)
                 
@@ -365,7 +422,6 @@ class timestamptool():
                 query_name=self.args.name
                 if (self.args.storage=='elasticsearch'):
                     r=self.download_from_elastic(meas_node_ip=self.meas_node_ip, index_name=self.packet_index_name,name=query_name)
-                    #self.get_packet_timestamp(name)
                     return r
                 elif (self.args.storage=='local'):
                     r = self.read_from_local_file(file=self.packet_output_elastic_path)
@@ -378,8 +434,9 @@ class timestamptool():
             if (args_json['action']=='record'):
                 self.logger.debug(f"Recording event...")
                 self.write_event_data_to_file(device_name=self.ptp_device_name, output_file=self.event_output_path, elastic_file=self.event_output_elastic_path)
+                self.process_event_file()
                 if (self.args.storage=='elasticsearch'):
-                    time.sleep(1)
+                    #time.sleep(1)
                     self.validate_elastic_file(file=self.event_output_path, elasticfile=self.event_output_elastic_path)
                     self.upload_to_elastic(meas_node_ip=self.meas_node_ip, index_name=self.event_index_name, file=self.event_output_elastic_path)
             

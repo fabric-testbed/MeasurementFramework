@@ -1,18 +1,9 @@
-- name: Start timesatmp service
+- name: Start timestamp service
   hosts: Experiment_Nodes
   tasks:
-    - name: reload systemd daemons
-      systemd:
-        daemon_reload: yes
+    - name: Run timestampservice.py to create elasticsearch indice
+      ansible.builtin.script: /home/mfuser/services/timestamp/service_files/timestampservice.py
+      args:
+        executable: python3
       
-      
-    - name: enable and start timestamp service
-      systemd:
-        name: timestamp.service
-        state: started
-        enabled: yes
-      
-      
-    - name: make sure Collector service is really running
-      command: systemctl is-active timestamp.service
       
