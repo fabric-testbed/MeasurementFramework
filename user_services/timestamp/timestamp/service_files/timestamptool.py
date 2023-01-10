@@ -37,7 +37,7 @@ class timestamptool():
         self.logger.setLevel(logging.DEBUG)
         filehandler = logging.FileHandler(self.servicename + ".log")
         filehandler.setLevel(logging.DEBUG)
-        streamhandler= logging.StreamHandler()
+        streamhandler= logging.StreamHandler(sys.stdout)
         if args.verbose:
             streamhandler.setLevel(logging.DEBUG)
         else:
