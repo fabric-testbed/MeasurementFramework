@@ -403,20 +403,21 @@ class timestamptool():
                 t= self.run_tcpdump_cmd(cmd=tcpdump_cmd)
                 self.write_packet_data_to_file(cmd=tshark_cmd)    
                 self.process_packet_file()
-                if (self.args.storage=='elasticsearch'):
+                #if (self.args.storage=='elasticsearch'):
                     #time.sleep(1)
-                    self.validate_elastic_file(file=self.tshark_output_path, elasticfile=self.packet_output_elastic_path)
-                    self.upload_to_elastic(meas_node_ip=self.meas_node_ip, index_name=self.packet_index_name, file=self.packet_output_elastic_path)
+                    #self.validate_elastic_file(file=self.tshark_output_path, elasticfile=self.packet_output_elastic_path)
+                    #self.upload_to_elastic(meas_node_ip=self.meas_node_ip, index_name=self.packet_index_name, file=self.packet_output_elastic_path)
                 
             elif (args_json['action']=='get'):
                 self.logger.debug(f"Getting packet...")
                 query_name=self.args.name
-                if (self.args.storage=='elasticsearch'):
-                    r=self.download_from_elastic(meas_node_ip=self.meas_node_ip, index_name=self.packet_index_name,name=query_name)
-                    return r
-                elif (self.args.storage=='local'):
-                    r = self.read_from_local_file(file=self.packet_output_elastic_path)
-                    return r
+                #if (self.args.storage=='elasticsearch'):
+                    #r=self.download_from_elastic(meas_node_ip=self.meas_node_ip, index_name=self.packet_index_name,name=query_name)
+                    #return r
+                #elif (self.args.storage=='local'):
+                    
+                r = self.read_from_local_file(file=self.packet_output_elastic_path)
+                return r
                     
             
         elif (args_json['type']=='event'):
@@ -426,20 +427,20 @@ class timestamptool():
                 self.logger.debug(f"Recording event...")
                 self.write_event_data_to_file(device_name=self.ptp_device_name, output_file=self.event_output_path, elastic_file=self.event_output_elastic_path)
                 self.process_event_file()
-                if (self.args.storage=='elasticsearch'):
+                #if (self.args.storage=='elasticsearch'):
                     #time.sleep(1)
-                    self.validate_elastic_file(file=self.event_output_path, elasticfile=self.event_output_elastic_path)
-                    self.upload_to_elastic(meas_node_ip=self.meas_node_ip, index_name=self.event_index_name, file=self.event_output_elastic_path)
+                    #self.validate_elastic_file(file=self.event_output_path, elasticfile=self.event_output_elastic_path)
+                    #self.upload_to_elastic(meas_node_ip=self.meas_node_ip, index_name=self.event_index_name, file=self.event_output_elastic_path)
             
             elif (args_json['action']=='get'):
                 self.logger.debug(f"Getting event...")
                 query_name=self.args.name
-                if (self.args.storage=='elasticsearch'):
-                    r=self.download_from_elastic(meas_node_ip=self.meas_node_ip, index_name=self.event_index_name,name=query_name)
-                    return r
-                elif (self.args.storage=='local'):
-                    r = self.read_from_local_file(file=self.event_output_elastic_path)
-                    return r
+                #if (self.args.storage=='elasticsearch'):
+                    #r=self.download_from_elastic(meas_node_ip=self.meas_node_ip, index_name=self.event_index_name,name=query_name)
+                    #return r
+                #elif (self.args.storage=='local'):
+                r = self.read_from_local_file(file=self.event_output_elastic_path)
+                return r
         else:
             self.logger.debug(f"The type is not event nor packet. Stop")
             return
@@ -470,8 +471,8 @@ if __name__ == "__main__":
     event_record_parser= type_in_record_parser.add_parser('event', help='event -h')
     required_args_event_record = event_record_parser.add_argument_group('Required named arguments')
     required_args_event_record.add_argument("-n", "--name", required=True, help="set name for the event")
-    required_args_event_record.add_argument("-cmd", "--command",required=True, help="User input command for the event")
-    required_args_event_record.add_argument("-stg", "--storage", required= True, choices=['local', 'elasticsearch'], help="Choose whether to upload the results to elasticsearch or save locally")
+    required_args_event_record.add_argument("-event", "--event",required=True, help="User input command for the event")
+    #required_args_event_record.add_argument("-stg", "--storage", required= True, choices=['local', 'elasticsearch'], help="Choose whether to upload the results to elasticsearch or save locally")
     event_record_parser.add_argument("-desc", "--description", help="Text description")
     event_record_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
     event_record_parser.set_defaults(type='event')
@@ -482,7 +483,7 @@ if __name__ == "__main__":
     required_args_packet_record.add_argument("-i", "--interface", required=True, help="specify the interface name for tcpdump")
     required_args_packet_record.add_argument("-proto", "--protocol", required=True, choices=['tcp','udp'], help="protocol of the packets, select from tcp or udp")
     required_args_packet_record.add_argument("-durn", "--duration", required=True, type=int, help="set duration in seconds to run tcpdump")
-    required_args_packet_record.add_argument("-stg", "--storage", required= True, choices=['local', 'elasticsearch'], help="Choose whether to upload the results to elasticsearch or save locally")
+    #required_args_packet_record.add_argument("-stg", "--storage", required= True, choices=['local', 'elasticsearch'], help="Choose whether to upload the results to elasticsearch or save locally")
     packet_record_parser.add_argument("-port", "--port", help="port of the packets")
     packet_record_parser.add_argument("-host", "--host", help="ip of the host packets are sent to or come from")
     packet_record_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')

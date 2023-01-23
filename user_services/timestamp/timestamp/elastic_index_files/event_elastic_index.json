@@ -8,7 +8,7 @@
         "timestamp": {
           "type": "date_nanos"
         },
-        "command":{
+        "event":{
           "type": "text"
         },
         "description": {
