@@ -14,15 +14,9 @@
 
 struct timespec get_ptp_time(char *DEVICE)
 {
-    //uint64_t diff;
-    //struct timespec start, end;
-    //clock_gettime(CLOCK_REALTIME, &start);
-    //double time_spent = 0.0;
-    //clock_t begin = clock();
     #define CLOCKFD 3
     #define FD_TO_CLOCKID(fd)   ((~(clockid_t) (fd) << 3) | CLOCKFD)
     #define CLOCKID_TO_FD(clk)  ((unsigned int) ~((clk) >> 3))
-    //#define BILLION 1000000000L
     char *device = DEVICE;
     int fd;
     struct timespec ts;

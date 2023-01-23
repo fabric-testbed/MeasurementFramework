@@ -152,6 +152,7 @@ class timestamptool():
             f.write(str(json.dumps(data_json)) + "\n")
             
     def process_event_file(self):
+        self.logger.debug(f"Processing event timestamp......")
         event_file = open(self.event_output_path, "r")
         event_output = event_file.readlines()
         for line in event_output:
@@ -183,14 +184,14 @@ class timestamptool():
     
     # Get the tcpdump command based on the arguments
     def generate_tcpdump_command(self):
-        command= f"sudo tcpdump -v -l -j adapter_unsynced --time-stamp-precision nano "
+        command= f"tcpdump -v -j adapter_unsynced --time-stamp-precision nano "
         name=self.args.name
         interface = self.args.interface
         interface_cmd = f"-i {interface} "
         command+=interface_cmd
         duration = self.args.duration
-        duration_cmd= f"-G {duration} -W 1 "
-        command+= duration_cmd
+        duration_cmd= f"sudo timeout {duration} "
+        command= duration_cmd+command
         write_to_file_cmd = f"-w {self.tcpdump_output_path} "
         command+= write_to_file_cmd
         protocol = self.args.protocol
@@ -248,13 +249,7 @@ class timestamptool():
         self.logger.debug(f"Starting Tcpdump......\n")
         self.logger.debug(f"The tcpdump command is: {cmd} \n")
         p = subprocess.Popen(cmd, shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        res = p.communicate()
-        if (p.returncode==0):
-            self.logger.debug(f"Tcpdump process finished")
-            return 0
-        else:
-            self.logger.debug(f"Problem running tcpdump")
-            return 1
+        res = p.wait()
             
     
     def write_packet_data_to_file(self, cmd):
@@ -264,6 +259,7 @@ class timestamptool():
         res = p.wait()
         
     def process_packet_file(self):
+        self.logger.debug(f"Processing packet timestamps......")
         tshark_file = open(self.tshark_output_path, "r")
         tshark_output = tshark_file.readlines()
         for line in tshark_output:
@@ -320,7 +316,7 @@ class timestamptool():
     def download_from_elastic(self, meas_node_ip, index_name, name):
         self.logger.debug(f"Downloading from elastic...")
         elk_query='{"query": {"match": {"name": "'+name+'"}}}'
-        cmd= f"sudo curl -XGET 'http://{meas_node_ip}:9200/{index_name}/_search?pretty' -H 'Content-Type: application/json' -d'{elk_query}'"
+        cmd= f"sudo curl -XGET 'http://{meas_node_ip}:9200/{index_name}/_search?size=10000&pretty=true' -H 'Content-Type: application/json' -d'{elk_query}'"
         self.logger.debug(f"Running command: {cmd}")
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         data, err = p.communicate()
@@ -328,7 +324,6 @@ class timestamptool():
             json_result = json.loads(data)
             pretty_json = json.dumps(json_result["hits"], indent=2)
             print (pretty_json)
-            return json_result["hits"]
         
     # Read from local file
     def read_from_local_file(self, file):
@@ -406,11 +401,7 @@ class timestamptool():
                 tcpdump_cmd=self.generate_tcpdump_command()
                 tshark_cmd=self.generate_tshark_command()
                 t= self.run_tcpdump_cmd(cmd=tcpdump_cmd)
-                if (t==0):
-                    self.write_packet_data_to_file(cmd=tshark_cmd)
-                else:
-                    self.logger.debug("Tcpdump command failed..")
-                    sys.exit(f"Exit")
+                self.write_packet_data_to_file(cmd=tshark_cmd)    
                 self.process_packet_file()
                 if (self.args.storage=='elasticsearch'):
                     #time.sleep(1)

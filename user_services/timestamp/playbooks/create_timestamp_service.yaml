@@ -82,6 +82,18 @@
       ansible.builtin.shell:
         cmd: gcc -fPIC -shared -o get_ptp_time.so get_ptp_time.c
         chdir: /home/mfuser/services/timestamp/service_files/
+    
+    - name: Copy ptptest.c
+      ansible.builtin.copy:
+        src: /home/mfuser/services/timestamp/files/ptptest.c
+        dest: /home/mfuser/services/timestamp/service_files/ptptest.c
+        mode: '0644'
+
+    - name: Copy ptptest.py
+      ansible.builtin.copy:
+        src: /home/mfuser/services/timestamp/files/ptptest.py
+        dest: /home/mfuser/services/timestamp/service_files/ptptest.py
+        mode: '0644'
       
     
     
