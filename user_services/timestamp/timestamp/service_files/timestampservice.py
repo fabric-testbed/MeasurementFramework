@@ -13,7 +13,7 @@ from os.path import exists
 class timestampservice():
     
     def __init__(self):
-        self.config_file_path="/home/mfuser/services/timestamp/config_file/timestamp.conf"
+        self.config_file_path="/root/services/timestamp/config_file/timestamp.conf"
         self.read_config()
         self.hostname= self.get_hostname()
         self.meas_node_ip=self.get_meas_node_ip()
@@ -104,14 +104,14 @@ class timestampservice():
         if (os.path.exists(self.tshark_output_path)== False):
             with open(self.tshark_output_path, "w+") as ts:
                 pass
-        os.chown(self.tshark_output_path, pwd.getpwnam('mfuser').pw_uid, 0)
+        #os.chown(self.tshark_output_path, pwd.getpwnam('mfuser').pw_uid, 0)
         
         if (os.path.exists(self.event_output_path)== False):
             with open(self.event_output_path, "w+") as ev:
                 pass
-        os.chown(self.event_output_path, pwd.getpwnam('mfuser').pw_uid, 0)
+        #os.chown(self.event_output_path, pwd.getpwnam('mfuser').pw_uid, 0)
 
 if __name__ == "__main__":
     ts=timestampservice()
-    ts.create_elastic_indexes()
+    #ts.create_elastic_indexes()
     ts.initialize_files()
