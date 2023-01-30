@@ -148,7 +148,7 @@ class timestamptool():
         ptptime= self.get_ptp_timestamp(device_name)
         data_json['timestamp']=ptptime
         data_json['name']=self.args.name
-        data_json['command']=self.args.command
+        data_json['event']=self.args.event
         if (self.args.description):
             data_json['description']=self.args.description
         else:
@@ -175,7 +175,7 @@ class timestamptool():
                 final_timestamp = self.convert_epoch(time_ns=ts)
                 new_json_obj["timestamp"] = str(final_timestamp)
                 new_json_obj["name"] = json_obj["name"]
-                new_json_obj["command"] = json_obj["command"]
+                new_json_obj["event"] = json_obj["event"]
                 new_json_obj["description"] = json_obj["description"]
                 with open(self.event_output_elastic_path, "a") as f:
                     f.write(str(json.dumps(new_json_obj)) + "\n")
@@ -461,7 +461,7 @@ if __name__ == "__main__":
     event_record_parser= type_in_record_parser.add_parser('event', help='event -h')
     required_args_event_record = event_record_parser.add_argument_group('Required named arguments')
     required_args_event_record.add_argument("-n", "--name", required=True, help="set name for the event")
-    required_args_event_record.add_argument("-event", "--event",required=True, help="User input command for the event")
+    required_args_event_record.add_argument("-event", "--event",required=True, help="User input event")
     event_record_parser.add_argument("-desc", "--description", help="Text description")
     event_record_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
     event_record_parser.set_defaults(type='event')
@@ -484,14 +484,12 @@ if __name__ == "__main__":
     event_get_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
     required_args_event_get = event_get_parser.add_argument_group('Required named arguments')
     required_args_event_get.add_argument("-n", "--name", required=True, help="name for the event to query")
-    required_args_event_get.add_argument("-stg", "--storage", required= True, choices=['local', 'elasticsearch'], help="Choose whether to download from elasticsearch or read results from local file")
     event_get_parser.set_defaults(type='event')
     
     packet_get_parser= type_in_get_parser.add_parser('packet', help='packet -h')
     packet_get_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
     required_args_packet_get = packet_get_parser.add_argument_group('Required named arguments')
     required_args_packet_get.add_argument("-n", "--name", required=True, help="name for the packet to query")
-    required_args_packet_get.add_argument("-stg", "--storage", required= True, choices=['local', 'elasticsearch'], help="Choose whether to download from elasticsearch or read results from local file")
     packet_get_parser.set_defaults(type='packet')
     
     # General parser
