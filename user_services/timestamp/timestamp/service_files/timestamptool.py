@@ -22,8 +22,6 @@ class timestamptool():
         self.timestampservice= timestampservice()
         self.servicename="timestamp"
         self.read_service_info()
-        self.check_elastic_status(meas_node_ip=self.meas_node_ip)
-        #self.check_timestamp_service_status()
    
 
     # Set args    
@@ -56,7 +54,6 @@ class timestamptool():
         self.config_file_path=self.timestampservice.config_file_path 
         self.hostname= self.timestampservice.hostname
         self.meas_node_ip = self.timestampservice.meas_node_ip
-        self.ptp_device_name=self.get_ptp_device_name()
         self.event_index_name= self.timestampservice.event_index_name
         self.packet_index_name= self.timestampservice.packet_index_name
         self.tcpdump_output_path = self.timestampservice.tcpdump_output_path
@@ -68,7 +65,7 @@ class timestamptool():
         self.packet_elastic_index_path = self.timestampservice.packet_elastic_index_path
         self.event_elastic_index_path = self.timestampservice.event_elastic_index_path
         self.ptp_routine = self.timestampservice.ptp_routine
-        self.executable_alias_path = self.timestampservice.executable_alias_path
+        self.ptp_clock_name_path= self.timestampservice.ptp_clock_name_path
 
         
         
@@ -89,6 +86,17 @@ class timestamptool():
             return (device)
         else:
             sys.exit("Cannot find running ptp device")
+            
+    def read_ptp_device_name_from_file(self, file):
+        if (os.stat(file).st_size == 0):
+            sys.exit("Cannot find running ptp device")
+        else:
+            with open(file, 'r') as f:
+                for line in f:
+                    name = line.strip()
+                    return (name)
+            
+        
         
     
     def check_elastic_status(self, meas_node_ip):
@@ -122,7 +130,7 @@ class timestamptool():
     ##############################################################
     
     ## Event related methods..
-    
+        
     # Gets the system ptp time by calling the C routine
     def get_ptp_timestamp(self, device_name):
         self.logger.debug(f"Calling C routine to get ptp time from device {device_name}")
@@ -146,7 +154,6 @@ class timestamptool():
         else:
             data_json['description']='none'
         self.reset_file_content(record_file=output_file, elastic_file=elastic_file)
-        #time.sleep(0.5)
         with open(output_file, "a") as f:
             f.write('{"index":{}}'+"\n")
             f.write(str(json.dumps(data_json)) + "\n")
@@ -216,7 +223,7 @@ class timestamptool():
                    
     # generate tshark command to read the pcap file
     def generate_tshark_command(self):
-        command = f"sudo -u mfuser tshark -T ek "
+        command = f"sudo tshark -T ek "
         pcap_file_path= self.tcpdump_output_path
         read_pcap_file_cmd= f"-r {pcap_file_path} "
         tshark_output_path= self.tshark_output_path
@@ -355,7 +362,6 @@ class timestamptool():
             for i in range(len(lines)-1):
                 if (lines[i]==lines[i+1]):
                     index_to_remove.append(i)
-            #self.logger.debug(index_to_remove)
                 
     
         # Remove consecutive index lines
@@ -392,7 +398,6 @@ class timestamptool():
             return
         
         if (args_json['type']=='packet'):
-            #self.read_config_file()
             if (args_json['action']=='record'):
                 self.logger.debug(f"Recording packet...")
                 self.reset_file_content(record_file=self.tshark_output_path, elastic_file=self.packet_output_elastic_path)
@@ -403,19 +408,10 @@ class timestamptool():
                 t= self.run_tcpdump_cmd(cmd=tcpdump_cmd)
                 self.write_packet_data_to_file(cmd=tshark_cmd)    
                 self.process_packet_file()
-                #if (self.args.storage=='elasticsearch'):
-                    #time.sleep(1)
-                    #self.validate_elastic_file(file=self.tshark_output_path, elasticfile=self.packet_output_elastic_path)
-                    #self.upload_to_elastic(meas_node_ip=self.meas_node_ip, index_name=self.packet_index_name, file=self.packet_output_elastic_path)
                 
             elif (args_json['action']=='get'):
                 self.logger.debug(f"Getting packet...")
-                query_name=self.args.name
-                #if (self.args.storage=='elasticsearch'):
-                    #r=self.download_from_elastic(meas_node_ip=self.meas_node_ip, index_name=self.packet_index_name,name=query_name)
-                    #return r
-                #elif (self.args.storage=='local'):
-                    
+                query_name=self.args.name   
                 r = self.read_from_local_file(file=self.packet_output_elastic_path)
                 return r
                     
@@ -425,20 +421,14 @@ class timestamptool():
             output_file_elastic=self.event_output_elastic_path
             if (args_json['action']=='record'):
                 self.logger.debug(f"Recording event...")
+                self.ptp_device_name=self.read_ptp_device_name_from_file(self.ptp_clock_name_path)
                 self.write_event_data_to_file(device_name=self.ptp_device_name, output_file=self.event_output_path, elastic_file=self.event_output_elastic_path)
                 self.process_event_file()
-                #if (self.args.storage=='elasticsearch'):
-                    #time.sleep(1)
-                    #self.validate_elastic_file(file=self.event_output_path, elasticfile=self.event_output_elastic_path)
-                    #self.upload_to_elastic(meas_node_ip=self.meas_node_ip, index_name=self.event_index_name, file=self.event_output_elastic_path)
+                
             
             elif (args_json['action']=='get'):
                 self.logger.debug(f"Getting event...")
                 query_name=self.args.name
-                #if (self.args.storage=='elasticsearch'):
-                    #r=self.download_from_elastic(meas_node_ip=self.meas_node_ip, index_name=self.event_index_name,name=query_name)
-                    #return r
-                #elif (self.args.storage=='local'):
                 r = self.read_from_local_file(file=self.event_output_elastic_path)
                 return r
         else:
@@ -472,7 +462,6 @@ if __name__ == "__main__":
     required_args_event_record = event_record_parser.add_argument_group('Required named arguments')
     required_args_event_record.add_argument("-n", "--name", required=True, help="set name for the event")
     required_args_event_record.add_argument("-event", "--event",required=True, help="User input command for the event")
-    #required_args_event_record.add_argument("-stg", "--storage", required= True, choices=['local', 'elasticsearch'], help="Choose whether to upload the results to elasticsearch or save locally")
     event_record_parser.add_argument("-desc", "--description", help="Text description")
     event_record_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
     event_record_parser.set_defaults(type='event')
@@ -483,7 +472,6 @@ if __name__ == "__main__":
     required_args_packet_record.add_argument("-i", "--interface", required=True, help="specify the interface name for tcpdump")
     required_args_packet_record.add_argument("-proto", "--protocol", required=True, choices=['tcp','udp'], help="protocol of the packets, select from tcp or udp")
     required_args_packet_record.add_argument("-durn", "--duration", required=True, type=int, help="set duration in seconds to run tcpdump")
-    #required_args_packet_record.add_argument("-stg", "--storage", required= True, choices=['local', 'elasticsearch'], help="Choose whether to upload the results to elasticsearch or save locally")
     packet_record_parser.add_argument("-port", "--port", help="port of the packets")
     packet_record_parser.add_argument("-host", "--host", help="ip of the host packets are sent to or come from")
     packet_record_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
@@ -509,8 +497,6 @@ if __name__ == "__main__":
     # General parser
     parser.add_argument("-conf_path", "--config_file_path", action='store_const', const="/home/mfuser/services/timestamp/config_file/timestamp.conf", default="/home/mfuser/services/timestamp/config_file/timestamp.conf", help="show config file path")
     args = parser.parse_args()
-    #if (args.config_file_path):
-        #print (f"The default config file is at  {args.config_file_path}")
     t.set_args(args=args)
     t.process()
 

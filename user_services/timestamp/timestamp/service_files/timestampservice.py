@@ -33,7 +33,7 @@ class timestampservice():
         self.packet_elastic_index_path = config['PACKET_ELASTIC_INDEX']['Dir']
         self.event_elastic_index_path = config['EVENT_ELASTIC_INDEX']['Dir']
         self.ptp_routine = config['PTP_ROUTINE']['Dir']
-        self.executable_alias_path = config['ALIAS']['Dir']
+        self.ptp_clock_name_path= config['PTP_CLOCK_NAME']['Out_dir']
     
     def get_hostname(self):
         file="/etc/hostname"
@@ -104,14 +104,13 @@ class timestampservice():
         if (os.path.exists(self.tshark_output_path)== False):
             with open(self.tshark_output_path, "w+") as ts:
                 pass
-        #os.chown(self.tshark_output_path, pwd.getpwnam('mfuser').pw_uid, 0)
+        
         
         if (os.path.exists(self.event_output_path)== False):
             with open(self.event_output_path, "w+") as ev:
                 pass
-        #os.chown(self.event_output_path, pwd.getpwnam('mfuser').pw_uid, 0)
+        
 
 if __name__ == "__main__":
     ts=timestampservice()
-    #ts.create_elastic_indexes()
     ts.initialize_files()
