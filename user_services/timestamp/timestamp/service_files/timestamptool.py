@@ -346,8 +346,9 @@ class timestamptool():
                         result["hits"].append(json_obj)
                     except ValueError:
                         self.logger.debug('Json cannot load %s', line)
-        print (result)
-        return result    
+        pretty_json = json.dumps(result["hits"], indent=2)
+        print (pretty_json)
+        return (pretty_json)    
     
     def validate_elastic_file(self, file, elasticfile):
         index_to_remove= []
