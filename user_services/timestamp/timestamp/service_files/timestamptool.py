@@ -76,7 +76,7 @@ class timestamptool():
         
     # Gets the system ptp device    
     def get_ptp_device_name(self):
-        result=os.popen("ps -ef |grep phc2sys").read()
+        result=os.popen("sudo ps -ef |grep phc2sys").read()
         start="-s"
         end=" -c CLOCK_REALTIME"
         if (end in result):
@@ -422,7 +422,7 @@ class timestamptool():
             output_file_elastic=self.event_output_elastic_path
             if (args_json['action']=='record'):
                 self.logger.debug(f"Recording event...")
-                self.ptp_device_name=self.read_ptp_device_name_from_file(self.ptp_clock_name_path)
+                self.ptp_device_name=self.get_ptp_device_name()
                 self.write_event_data_to_file(device_name=self.ptp_device_name, output_file=self.event_output_path, elastic_file=self.event_output_elastic_path)
                 self.process_event_file()
                 
