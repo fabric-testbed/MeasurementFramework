@@ -1,6 +1,7 @@
 FROM python:3.9-slim-buster
 RUN apt-get update && \
     apt-get install -y tcpdump git && \
+    apt-get -y install procps && \
     apt-get -y install gcc mono-mcs && \
     apt-get -y install sudo nano && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y tshark && \
@@ -17,7 +18,6 @@ RUN mkdir /root/services/timestamp/pcap_file
 RUN mkdir /root/services/timestamp/service_files
 RUN mv /MeasurementFramework/user_services/timestamp/timestamp/service_files/* /root/services/timestamp/service_files
 RUN gcc -fPIC -shared -o /root/services/timestamp/service_files/get_ptp_time.so /root/services/timestamp/service_files/get_ptp_time.c
-#RUN mkdir /root/services/timestamp/output_files
 
 WORKDIR /root/services/timestamp/service_files
 
