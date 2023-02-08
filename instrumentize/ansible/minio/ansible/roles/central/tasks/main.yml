@@ -1,5 +1,19 @@
 ---
 
+
+
+
+##############################
+#  Setup OPT/DATA Directory  #
+##############################
+- name: Install Fabric-Prometheus setup 
+  block:
+  - name: Install Fabric Rack
+    import_tasks: create_mount_data_dir_tasks.yml
+  when: 
+    - mount_data_drive is defined 
+    - mount_data_drive #== yes
+
 ################
 #  USER SETUP  #
 ################
@@ -80,7 +94,7 @@
 
   - name: Create Data Directory for Minio
     file: 
-      path: "{{ base_data_dir }}/minio"
+      path: "{{ base_data_dir }}/minio/data"
       recurse: yes
       state: directory 
       mode: 0755
@@ -158,15 +172,15 @@
 
 
 
-# start docker-compose
+# # start docker-compose
 
-# - name: Start docker compose 
-#   community.docker.docker_compose:
-#     project_src: "{{ base_install_dir }}/docker-compose.yml"
-#     state: present 
+# # - name: Start docker compose 
+# #   community.docker.docker_compose:
+# #     project_src: "{{ base_install_dir }}/docker-compose.yml"
+# #     state: present 
 
 
-# - name: Start docker compose 
-#   shell:
-#     cmd: "docker compose -f {{ base_install_dir }}/docker_compose.yml up -d"
-#   become: yes
+# # - name: Start docker compose 
+# #   shell:
+# #     cmd: "docker compose -f {{ base_install_dir }}/docker_compose.yml up -d"
+# #   become: yes
