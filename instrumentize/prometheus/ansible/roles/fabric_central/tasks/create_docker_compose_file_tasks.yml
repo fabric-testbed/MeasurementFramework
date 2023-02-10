@@ -1,0 +1,158 @@
+---
+# Creates docker-compose files.
+# Important! Assumes dirs have been setup, network created etc...
+
+# Will need the prom user uid & gid (note this task is a repeat from create_prom_user_tasks.yml)
+# GET USER fab-prom  uid:gid #
+- name: "Get Fabric Prometheus User"
+  block:
+    - name: "Get Fabric Prometheus user ids"
+      getent:
+        database: passwd
+        key: "{{ prom_user_name }}"
+    - debug:
+       var: ansible_facts.getent_passwd
+
+    - set_fact:
+        prom_user_uid: "{{ getent_passwd['fab-prom'][1] }}"
+        prom_user_gid: "{{ getent_passwd['fab-prom'][2] }}"
+    # the need to assign it to a var so we can use in later
+  become: yes
+    
+####################
+#  BASE DIRECTORY  #
+####################
+
+
+# Create the base directories needed for creating docker compose file
+- name: Create Docker-compose Directory
+  block:
+      
+    - name: "Create Docker-compose directories"
+      file:
+        path: "{{ base_install_dir }}/docker_compose"
+        state: directory
+        recurse: yes
+        owner: "{{ prom_user_name }}"
+        group: "{{ prom_group_name }}"
+      
+  become: yes
+
+####################
+#  BASE FRAGMENT   #
+####################
+
+- name: Add docker-compose base fragment
+  template:
+    src: "templates/docker_compose_base_fragment.yml.j2"
+    dest: "{{ base_install_dir }}/docker_compose/AAAdocker-compose.yml"
+  become: yes
+
+
+####################
+#  DOCKER NETWORK  #
+####################
+
+
+
+
+####################
+#   PROMETHEUS     #
+####################
+
+- name: Add Prometheus fragment
+  template:
+    src: "{{ prometheus_templates_dir }}/docker_compose_prometheus_fragment.yml.j2"
+    dest: "{{ base_install_dir }}/docker_compose/prometheus.yml"
+  become: yes
+
+
+
+####################
+#     THANOS       #
+####################
+
+- name: Add thanos fragment
+  template:
+    src: "{{ thanos_templates_dir }}/docker_compose_store_fragment.yml.j2"
+    dest: "{{ base_install_dir }}/docker_compose/thanos_store.yml"
+  become: yes
+
+- name: Add thanos fragment
+  template:
+    src: "{{ thanos_templates_dir }}/docker_compose_query_fragment.yml.j2"
+    dest: "{{ base_install_dir }}//docker_compose/thanos_query.yml"
+  become: yes
+
+
+####################
+#  ALERTMANAGER    #
+####################  
+
+- name: Add Alertmanager fragment
+  template:
+    src: "{{ alertmanager_template_dir }}/docker_compose_alertmanager_fragment.yml.j2"
+    dest: "{{ base_install_dir }}/docker_compose/alertmanager.yml"
+  become: yes
+
+####################
+# SNMP EXPORTER    #
+####################
+# snmp is currently not on central metrics
+# - name: Add SNMP Exporter fragment
+#   template:
+#     src: "{{ snmp_templates_dir }}/docker_compose_snmp_fragment.yml.j2"
+#     dest: "{{ base_install_dir }}/docker_compose/snmp.yml"
+#   become: yes
+
+
+####################
+# BLACKBOX EXPORTER #
+####################
+
+- name: Add Blackbox fragment
+  template:
+    src: "{{ blackbox_templates_dir }}/docker_compose_blackbox_fragment.yml.j2"
+    dest: "{{ base_install_dir }}/docker_compose/blackbox.yml"
+  become: yes
+
+####################
+# DOCKER EXPORTER  #
+####################
+
+####################
+#     Grafana      #
+####################
+- name: Add Grafana fragment
+  template:
+    src: "{{ grafana_templates_dir }}/docker_compose_grafana_fragment.yml.j2"
+    dest: "{{ base_install_dir }}/docker_compose/grafana.yml"
+  become: yes
+
+
+####################
+#     NGINX        #
+####################
+
+- name: Add NGINX fragment
+  template:
+    # TODO change to nginx_templates_dir for consistency
+    src: "{{ nginx_template_dir }}/docker_compose_nginx_fragment.yml.j2"
+    dest: "{{ base_install_dir }}/docker_compose/nginx.yml"
+  become: yes
+
+
+
+
+####################
+#  COMBINE FILES   #
+####################
+# Combine all fragments in docker_compose dir to create docker-compose.yml file. 
+# Files will be added in alphabetical order.
+- name: Assemble docker-commpose fragments
+  ansible.builtin.assemble:
+    src: "{{ base_install_dir }}/docker_compose"
+    dest: "{{ base_install_dir }}/docker-compose.yml"
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+  become: yes

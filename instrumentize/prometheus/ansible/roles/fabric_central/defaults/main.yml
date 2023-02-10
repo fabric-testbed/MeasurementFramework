@@ -255,7 +255,7 @@ use_thanos_compact: no
 ####################
 #  ALERTMANAGER    #
 ####################
-alertmanager_template_dir: templates
+alertmanager_template_dir: templates/Alertmanager-dev
 
 
 ####################
@@ -275,7 +275,7 @@ alertmanager_template_dir: templates
 #    Blackbox      # 
 ####################
 blackbox_files_dir: files
-#blackbox_templates_dir: templates #there are no blackbox templates
+blackbox_templates_dir: templates/Blackbox
 
 ####################
 #     Grafana      #
@@ -307,11 +307,11 @@ nginx_ip_ports:
   # Note Each port will correspond to a confd file set above.
   #- 80:80         # Redirected to 443
   # 443 for /grafana on both ipv4 and ipv6, order here may matter depending on version of docker 
-  - "[::]:443:443"
+  # appears this is automatically added with ipv6 network set - "[::]:443:443"
   - 443:443
   - 9090:9090     # prometheus stats
   - 10922:10922   # thanos stats
-  - "[::]:{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
+  # appears this is automatically added with ipv6 network set  - "[::]:{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
   - "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
 
 nginx_template_dir: templates/Nginx

@@ -5,77 +5,87 @@
 # This section contains the tasks needed for installing the 
 #   central metrics site.
 
-- name: Install Fabric Central setup 
+- name: Create docker-compose file 
+  # Note this is experiemntal. Containers are actually setup using python docker SDK
   block:
-  - name: Install python sdk to manage docker
+  - name: Creating docker-compose fragments & file.
     become: yes
-    import_tasks: install_docker_python_sdk_tasks.yml
-    when: 
-      - add_python_docker_sdk is defined
-      - add_python_docker_sdk
+    import_tasks: create_docker_compose_file_tasks.yml
+#     when:  
+#       - add_docker_compose_file is defined
+#       - add_docker_compose_file
 
-  
-  - name: Install Fabric Central Metrics
-    import_tasks: fabric_central_install_tasks.yml
-
-  # when: 
-  #   - install_type is defined
-  #   - install_type == 'central'
-
-
-##############################
-#  Node Exporter Install     #
-##############################
-- name: Install node_exporter 
-  # Install the node exporter on the central 
-  block:
-  - name: Install Node_exporter
-    import_tasks: install_node_exporter_tasks.yml
-  when: 
-    - install_node_exporters is defined
-    - install_node_exporters 
-
-
-
-
-
-
-
-# - name: Change State of Fabric Central Docker Containers 
+# - name: Install Fabric Central setup 
 #   block:
+#   - name: Install python sdk to manage docker
+#     become: yes
+#     import_tasks: install_docker_python_sdk_tasks.yml
+#     when: 
+#       - add_python_docker_sdk is defined
+#       - add_python_docker_sdk
+
   
-#   - name: Change Container
-#     import_tasks: container_tasks/change_docker_container_states_tasks.yml
-#     #vars: 
-#     # new_docker_state: absent - removes it | stopped - stops it | started - starts existing container
-#     # containers_to_act_on
-  
+#   - name: Install Fabric Central Metrics
+#     import_tasks: fabric_central_install_tasks.yml
+
+#   # when: 
+#   #   - install_type is defined
+#   #   - install_type == 'central'
+
+
+# ##############################
+# #  Node Exporter Install     #
+# ##############################
+# - name: Install node_exporter 
+#   # Install the node exporter on the central 
+#   block:
+#   - name: Install Node_exporter
+#     import_tasks: install_node_exporter_tasks.yml
 #   when: 
-#     - install_type is defined
-#     - install_type == 'central_shutdown'
+#     - install_node_exporters is defined
+#     - install_node_exporters 
 
 
-# - name: Update Prometheus Alert Rules 
-#   block: 
-#   - name: Update prom config.
-#     become: yes 
-#     import_tasks: Prometheus/add_prometheus_config_templates.yml 
 
-#   - name: Update Alertmanager.
-#     become: yes 
-#     import_tasks: Alertmanager/config_alertmanager_tasks.yml
 
-#   - name: Stop Alertmanager. 
-#     become: yes 
-#     import_tasks: Alertmanager/alertmanager_container_tasks.yml
-#     vars:
-#       alertmanager_state: absent
-#   - name: Restart Alertmanager. 
-#     become: yes 
-#     import_tasks: Alertmanager/alertmanager_container_tasks.yml
-#   when:
-#     - update_alerts is defined  
-#     - update_alerts
+
+
+
+# # - name: Change State of Fabric Central Docker Containers 
+# #   block:
+  
+# #   - name: Change Container
+# #     import_tasks: container_tasks/change_docker_container_states_tasks.yml
+# #     #vars: 
+# #     # new_docker_state: absent - removes it | stopped - stops it | started - starts existing container
+# #     # containers_to_act_on
+  
+# #   when: 
+# #     - install_type is defined
+# #     - install_type == 'central_shutdown'
+
+
+# # - name: Update Prometheus Alert Rules 
+# #   block: 
+# #   - name: Update prom config.
+# #     become: yes 
+# #     import_tasks: Prometheus/add_prometheus_config_templates.yml 
+
+# #   - name: Update Alertmanager.
+# #     become: yes 
+# #     import_tasks: Alertmanager/config_alertmanager_tasks.yml
+
+# #   - name: Stop Alertmanager. 
+# #     become: yes 
+# #     import_tasks: Alertmanager/alertmanager_container_tasks.yml
+# #     vars:
+# #       alertmanager_state: absent
+# #   - name: Restart Alertmanager. 
+# #     become: yes 
+# #     import_tasks: Alertmanager/alertmanager_container_tasks.yml
+# #   when:
+# #     - update_alerts is defined  
+# #     - update_alerts
 
 
 
