@@ -7,7 +7,6 @@ import time
 import json
 import subprocess
 import datetime
-import json
 import configparser
 from timestampservice import timestampservice
 from ctypes import *
@@ -60,8 +59,8 @@ class timestamptool():
         self.tshark_output_path = self.timestampservice.tshark_output_path
         self.event_output_path= self.timestampservice.event_output_path
         self.name_path= self.timestampservice.name_path
-        self.packet_output_elastic_path = self.timestampservice.packet_output_elastic_path
-        self.event_output_elastic_path = self.timestampservice.event_output_elastic_path
+        self.packet_output_influx_path = self.timestampservice.packet_output_influx_path
+        self.event_output_influx_path = self.timestampservice.event_output_influx_path
         self.packet_elastic_index_path = self.timestampservice.packet_elastic_index_path
         self.event_elastic_index_path = self.timestampservice.event_elastic_index_path
         self.ptp_routine = self.timestampservice.ptp_routine
@@ -167,7 +166,7 @@ class timestamptool():
             json_obj = json.loads(line)
             if "index" in json_obj.keys():
                 new_line = '{"index":{}}'
-                with open(self.event_output_elastic_path, "a") as f:
+                with open(self.event_output_influx_path, "a") as f:
                     f.write(new_line + "\n")
             else:
                 new_json_obj = {}
@@ -177,7 +176,7 @@ class timestamptool():
                 new_json_obj["name"] = json_obj["name"]
                 new_json_obj["event"] = json_obj["event"]
                 new_json_obj["description"] = json_obj["description"]
-                with open(self.event_output_elastic_path, "a") as f:
+                with open(self.event_output_influx_path, "a") as f:
                     f.write(str(json.dumps(new_json_obj)) + "\n")
             
     ###############################################################################        
@@ -279,7 +278,7 @@ class timestamptool():
             if "index" in json_obj.keys():
                 #print("This is index line")
                 new_line = '{"index":{}}'
-                with open(self.packet_output_elastic_path,"a") as f:
+                with open(self.packet_output_influx_path,"a") as f:
                     f.write(new_line + "\n")
             else:
                 new_json_obj = {}
@@ -300,7 +299,7 @@ class timestamptool():
                 elif ("udp_srcport" in json_obj["layers"].keys()):
                     new_json_obj["src_port"]=int(json_obj["layers"]["udp_srcport"][0])
                     new_json_obj["dst_port"]=int(json_obj["layers"]["udp_dstport"][0])
-                with open(self.packet_output_elastic_path, "a") as f:
+                with open(self.packet_output_influx_path, "a") as f:
                     f.write(str(json.dumps(new_json_obj)) + "\n")
         
         
@@ -401,7 +400,7 @@ class timestamptool():
         if (args_json['type']=='packet'):
             if (args_json['action']=='record'):
                 self.logger.debug(f"Recording packet...")
-                self.reset_file_content(record_file=self.tshark_output_path, elastic_file=self.packet_output_elastic_path)
+                self.reset_file_content(record_file=self.tshark_output_path, elastic_file=self.packet_output_influx_path)
                 time.sleep(0.5)
                 self.write_packet_name_to_file()
                 tcpdump_cmd=self.generate_tcpdump_command()
@@ -413,24 +412,24 @@ class timestamptool():
             elif (args_json['action']=='get'):
                 self.logger.debug(f"Getting packet...")
                 query_name=self.args.name   
-                r = self.read_from_local_file(file=self.packet_output_elastic_path)
+                r = self.read_from_local_file(file=self.packet_output_influx_path)
                 return r
                     
             
         elif (args_json['type']=='event'):
             output_file= self.event_output_path
-            output_file_elastic=self.event_output_elastic_path
+            output_file_elastic=self.event_output_influx_path
             if (args_json['action']=='record'):
                 self.logger.debug(f"Recording event...")
                 self.ptp_device_name=self.get_ptp_device_name()
-                self.write_event_data_to_file(device_name=self.ptp_device_name, output_file=self.event_output_path, elastic_file=self.event_output_elastic_path)
+                self.write_event_data_to_file(device_name=self.ptp_device_name, output_file=self.event_output_path, elastic_file=self.event_output_influx_path)
                 self.process_event_file()
                 
             
             elif (args_json['action']=='get'):
                 self.logger.debug(f"Getting event...")
                 query_name=self.args.name
-                r = self.read_from_local_file(file=self.event_output_elastic_path)
+                r = self.read_from_local_file(file=self.event_output_influx_path)
                 return r
         else:
             self.logger.debug(f"The type is not event nor packet. Stop")
@@ -498,11 +497,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
     t.set_args(args=args)
     t.process()
-
-    
-
-    
-
-    
-
- 

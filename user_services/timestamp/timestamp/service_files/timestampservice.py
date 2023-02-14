@@ -28,8 +28,8 @@ class timestampservice():
         self.tshark_output_path = config['TSHARK']['Out_dir']
         self.event_output_path=config['EVENT']['Out_dir']
         self.name_path=config['PACKETNAME']['Out_dir']
-        self.packet_output_elastic_path = config['PACKET_ELASTIC']['Out_dir']
-        self.event_output_elastic_path = config['EVENT_ELASTIC']['Out_dir']
+        self.packet_output_influx_path = config['PACKET_ELASTIC']['Out_dir']
+        self.event_output_influx_path = config['EVENT_ELASTIC']['Out_dir']
         self.packet_elastic_index_path = config['PACKET_ELASTIC_INDEX']['Dir']
         self.event_elastic_index_path = config['EVENT_ELASTIC_INDEX']['Dir']
         self.ptp_routine = config['PTP_ROUTINE']['Dir']
@@ -58,7 +58,7 @@ class timestampservice():
         index_name=name+"-event-timestamp"
         return (index_name)
     
-    # Gets the static elastic packet index to push to
+
     def get_packet_index_name(self):
         name= self.hostname
         index_name=name+"-packet-timestamp"
