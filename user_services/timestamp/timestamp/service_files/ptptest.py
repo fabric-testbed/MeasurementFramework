@@ -15,5 +15,6 @@ def get_ptp_timestamp(device_name):
 
 
 if __name__ == "__main__":
+    # Input your ptp device name e.g, "/dev/ptp2"
     print ("clock time is "+get_ptp_timestamp("/dev/ptp2"))
 

@@ -1,0 +1,22 @@
+# Start influxdb container
+---
+- name: Start influxdb container
+  hosts: Meas_Node
+  tasks:
+  - name: Start influxdb container
+    community.general.docker_container:
+      name: influxdb
+      image: influxdb:2.0 
+      ports:
+        - "8086:8086"
+      env:
+        DOCKER_INFLUXDB_INIT_MODE: "setup"
+        DOCKER_INFLUXDB_INIT_USERNAME: "my-user" 
+        DOCKER_INFLUXDB_INIT_PASSWORD: "my-password" 
+        DOCKER_INFLUXDB_INIT_ORG: "my-org" 
+        DOCKER_INFLUXDB_INIT_BUCKET: "my-bucket" 
+      state: started
+      restart: yes
+      privileged: yes
+      volumes:
+        - /home/mfuser/influxdb:/var/lib/influxdb2

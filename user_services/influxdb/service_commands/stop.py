@@ -1,33 +1,29 @@
-# Remove timestamp service by running remove_timestamp_service.yaml
-  
-from datetime import datetime
+# Stop Influxdb serivice by running stop_influxdb.yaml
 import os
+from os.path import exists
 import json
-import subprocess
 import logging
+import subprocess
 
 def main():
-
     ret_val = {}
     ret_val['msg'] = ""
 
     playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
     ansible_hosts_file = "/home/mfuser/services/common/hosts.ini"
-    playbook = "/home/mfuser/mf_git/user_services/timestamp/playbooks/remove_timestamp_service.yaml"
+    playbook = "/home/mfuser/mf_git/user_services/timestamp/playbooks/stop_influxdb.yaml"
     keyfile = "/home/mfuser/.ssh/mfuser_private_key"
-
 
     # Data is stored in relative dir to this script.
     service_dir =  os.path.dirname(__file__)
-    logFilePath = os.path.join(service_dir, "log", "delete.log")
+    logFilePath = os.path.join(service_dir, "log", "stop.log")
     logging.basicConfig(filename=logFilePath, format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level="INFO")
-    logging.info("-----Start Timestamp Delete Script.-----")
-
+    logging.info("-----Start Timestamp Start Script.-----")
 
     # For some reason the local ansible.cfg file is not being used
     os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
 
-    cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook, "-v"]
+    cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, "-b", playbook]
     logging.info(cmd)
 
     r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -44,16 +40,16 @@ def main():
 
     if r.returncode == 0:
         ret_val["success"] =  True
-        ret_val["msg"] = "Timestamp delete playbook ran.."
+        ret_val["msg"] = "Influxdb stop playbook ran.."
     else:
         ret_val["success"] =  False
-        ret_val["msg"] = "Timestamp delete playbook install failed.."
+        ret_val["msg"] += "Influxdb stop playbook install failed.."
     logging.info(ret_val['msg'])
     ret_val["play_recap"] = play_recap
 
-    logging.info("Timestamp delete.yaml playbook completed.")
+    logging.info("Influxdb stop.yaml playbook completed.")
 
-    logging.info("-----End Timestamp Delete Script.-----")
+    logging.info("-----End Influxdb Stop Script.-----")
     print(json.dumps(ret_val))
 
 if __name__ == "__main__":

@@ -1,10 +1,17 @@
-- name: Remove timesatmp service
+# Remove timestamp docker container and image
+---
+- name: Remove timestamp container
   hosts: Experiment_Nodes
   tasks:
-    - name: remove service directory
-      file:
+    - name: Remove timestamp container
+      community.general.docker_container:
+        name: timestamp
         state: absent
-        path: /home/mfuser/services/timestamp/
-      
+
+    - name: Remove timestamp docker image
+      community.general.docker_image:
+        name: timestamp
+        tag: 0.1.0
+        state: absent
 
       

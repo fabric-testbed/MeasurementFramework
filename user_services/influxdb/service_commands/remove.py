@@ -1,4 +1,4 @@
-# Remove timestamp service by running remove_timestamp_service.yaml
+# Remove influxdb service by running remove_influxdb.yaml
   
 from datetime import datetime
 import os
@@ -13,7 +13,7 @@ def main():
 
     playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
     ansible_hosts_file = "/home/mfuser/services/common/hosts.ini"
-    playbook = "/home/mfuser/mf_git/user_services/timestamp/playbooks/remove_timestamp_service.yaml"
+    playbook = "/home/mfuser/mf_git/user_services/timestamp/playbooks/remove_influxdb.yaml"
     keyfile = "/home/mfuser/.ssh/mfuser_private_key"
 
 
@@ -44,16 +44,16 @@ def main():
 
     if r.returncode == 0:
         ret_val["success"] =  True
-        ret_val["msg"] = "Timestamp delete playbook ran.."
+        ret_val["msg"] = "Influxdb delete playbook ran.."
     else:
         ret_val["success"] =  False
-        ret_val["msg"] = "Timestamp delete playbook install failed.."
+        ret_val["msg"] = "Influxdb delete playbook install failed.."
     logging.info(ret_val['msg'])
     ret_val["play_recap"] = play_recap
 
-    logging.info("Timestamp delete.yaml playbook completed.")
+    logging.info("Influxdb delete.yaml playbook completed.")
 
-    logging.info("-----End Timestamp Delete Script.-----")
+    logging.info("-----End Influxdb Delete Script.-----")
     print(json.dumps(ret_val))
 
 if __name__ == "__main__":

@@ -1,101 +1,26 @@
-# Install tshark on all experiment nodes
-# Create directories and copy files
+# Creates the timestamp service by putting the timestamp Dockerfile on each experiment node
+# Currently copies the Dockerfile from the measurement node to each experiment node and finish the build 
 ---
 - name: Create timesatmp service
   hosts: Experiment_Nodes
-  tasks:
-    - name: Ansible apt install tshark
-      become: yes
-      apt:
-        name: tshark
-        state: present
-      
-  
-    - name: Create a directory for timestamp config file
+  tasks:  
+    - name: Create a directory for Dockerfile
       ansible.builtin.file:
-        path: /home/mfuser/services/timestamp/config_file
-        state: directory
-        mode: '0755'
-  
-    - name: Create a directory for timestamp elasticsearch index files 
-      ansible.builtin.file:
-        path: /home/mfuser/services/timestamp/elastic_index_files 
+        path: /home/mfuser/services/timestamp/dockerfile
         state: directory
         mode: '0755'
 
-    - name: Create a directory for timestamp pcap file
-      ansible.builtin.file:
-        path: /home/mfuser/services/timestamp/pcap_file
-        state: directory
-        mode: '0755'
-        
-    - name: Create a directory for timestamp service files
-      ansible.builtin.file:
-        path: /home/mfuser/services/timestamp/service_files
-        state: directory
-        mode: '0755'
-        
-    - name: Create a directory for timestamp output files
-      ansible.builtin.file:
-        path: /home/mfuser/services/timestamp/output_files
-        state: directory
-        mode: '0755'
-
-    - name: Copy timestamp.conf
+    - name: Copy Dockerfile
       ansible.builtin.copy:
-        src: /home/mfuser/services/timestamp/files/timestamp.conf
-        dest: /home/mfuser/services/timestamp/config_file/timestamp.conf
+        src: /home/mfuser/services/timestamp/files/Dockerfile
+        dest: /home/mfuser/services/timestamp/dockerfile/Dockerfile
         mode: '0644'
         
-    - name: Copy elasticsearch packet index file
-      ansible.builtin.copy:
-        src: /home/mfuser/services/timestamp/files/packet_elastic_index.json
-        dest: /home/mfuser/services/timestamp/elastic_index_files/packet_elastic_index.json
-        mode: '0644'
-        
-    - name: Copy elasticsearch event index file
-      ansible.builtin.copy:
-        src: /home/mfuser/services/timestamp/files/event_elastic_index.json
-        dest: /home/mfuser/services/timestamp/elastic_index_files/event_elastic_index.json
-        mode: '0644'
-        
-    - name: Copy timestampservice.py
-      ansible.builtin.copy:
-        src: /home/mfuser/services/timestamp/files/timestampservice.py
-        dest: /home/mfuser/services/timestamp/service_files/timestampservice.py
-        mode: '0644'
-        
-        
-    - name: Copy timestamptool.py
-      ansible.builtin.copy:
-        src: /home/mfuser/services/timestamp/files/timestamptool.py
-        dest: /home/mfuser/services/timestamp/service_files/timestamptool.py
-        mode: '0644'
-    
-    - name: Copy get_ptp_time.c
-      ansible.builtin.copy:
-        src: /home/mfuser/services/timestamp/files/get_ptp_time.c
-        dest: /home/mfuser/services/timestamp/service_files/get_ptp_time.c
-        mode: '0644'
-        
-    - name: Compile the C routine and make it callable by Python
-      ansible.builtin.shell:
-        cmd: gcc -fPIC -shared -o get_ptp_time.so get_ptp_time.c
-        chdir: /home/mfuser/services/timestamp/service_files/
-    
-    - name: Copy ptptest.c
-      ansible.builtin.copy:
-        src: /home/mfuser/services/timestamp/files/ptptest.c
-        dest: /home/mfuser/services/timestamp/service_files/ptptest.c
-        mode: '0644'
-
-    - name: Copy ptptest.py
-      ansible.builtin.copy:
-        src: /home/mfuser/services/timestamp/files/ptptest.py
-        dest: /home/mfuser/services/timestamp/service_files/ptptest.py
-        mode: '0644'
-      
-    
-    
-        
-    
+    - name: Build owl container image
+      community.general.docker_image:
+        name: timestamp:0.1.0
+        build:
+          path: /home/mfuser/services/timestamp/dockerfile
+          pull: yes
+          network: host
+        source: build

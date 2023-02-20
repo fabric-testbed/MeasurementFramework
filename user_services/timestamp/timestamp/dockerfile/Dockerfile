@@ -19,6 +19,7 @@ RUN mkdir /root/services/timestamp/service_files
 RUN mv /MeasurementFramework/user_services/timestamp/timestamp/service_files/* /root/services/timestamp/service_files
 RUN gcc -fPIC -shared -o /root/services/timestamp/service_files/get_ptp_time.so /root/services/timestamp/service_files/get_ptp_time.c
 RUN pip install 'influxdb-client[ciso]'
+RUN pip install 'pandas'
 
 WORKDIR /root/services/timestamp/service_files
 

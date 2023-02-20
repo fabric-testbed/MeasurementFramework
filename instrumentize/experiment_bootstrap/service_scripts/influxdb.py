@@ -1,4 +1,4 @@
-# Timestamp bootstrap
+# Influxdb bootstrap
 
 import argparse
 import os
@@ -17,28 +17,9 @@ if __name__ == "__main__":
     
     # src_dir is the path to the folder containing the files for controlling the service from mflib.
     # In this simple case all the files are in one folder. 
-    service_name = "timestamp"
+    service_name = "influxdb"
     this_script_dir = os.path.dirname(os.path.realpath(__file__))
 
     # For the timestamp service commands
     src_dir = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, "service_commands")
     copy_files(src_dir, args.service_dir)
-    
-
-    # Copy timestamp Dockerfile
-    file_src = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, service_name, "dockerfile")
-    file_dst = os.path.join(args.service_dir, "files")
-    copy_files(file_src, file_dst)
-    
-    
-    # Copy config file
-    #file_src = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, service_name, "config_file")
-    #file_dst = os.path.join(args.service_dir, "files")
-    
-    #copy_files(file_src, file_dst)
-    
-    # Copy Elastic index files
-    #file_src = os.path.join(this_script_dir, "..","..","..", "user_services", service_name, service_name, "elastic_index_files")
-    #file_dst = os.path.join(args.service_dir, "files")
-    #copy_files(file_src, file_dst)
-    

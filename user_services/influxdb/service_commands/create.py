@@ -1,4 +1,4 @@
-# Remove timestamp service by running remove_timestamp_service.yaml
+# Create timestamp service by running create_influxdb.yaml
   
 from datetime import datetime
 import os
@@ -13,15 +13,15 @@ def main():
 
     playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
     ansible_hosts_file = "/home/mfuser/services/common/hosts.ini"
-    playbook = "/home/mfuser/mf_git/user_services/timestamp/playbooks/remove_timestamp_service.yaml"
+    playbook = "/home/mfuser/mf_git/user_services/timestamp/playbooks/create_influxdb.yaml"
     keyfile = "/home/mfuser/.ssh/mfuser_private_key"
 
 
     # Data is stored in relative dir to this script.
     service_dir =  os.path.dirname(__file__)
-    logFilePath = os.path.join(service_dir, "log", "delete.log")
+    logFilePath = os.path.join(service_dir, "log", "create.log")
     logging.basicConfig(filename=logFilePath, format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level="INFO")
-    logging.info("-----Start Timestamp Delete Script.-----")
+    logging.info("-----Start Timestamp Create Script.-----")
 
 
     # For some reason the local ansible.cfg file is not being used
@@ -44,16 +44,16 @@ def main():
 
     if r.returncode == 0:
         ret_val["success"] =  True
-        ret_val["msg"] = "Timestamp delete playbook ran.."
+        ret_val["msg"] = "Influxdb create playbook ran.."
     else:
         ret_val["success"] =  False
-        ret_val["msg"] = "Timestamp delete playbook install failed.."
+        ret_val["msg"] = "Influxdb create playbook install failed.."
     logging.info(ret_val['msg'])
     ret_val["play_recap"] = play_recap
 
-    logging.info("Timestamp delete.yaml playbook completed.")
+    logging.info("Influxdb create.yaml playbook completed.")
 
-    logging.info("-----End Timestamp Delete Script.-----")
+    logging.info("-----End Influxdb Create Script.-----")
     print(json.dumps(ret_val))
 
 if __name__ == "__main__":
