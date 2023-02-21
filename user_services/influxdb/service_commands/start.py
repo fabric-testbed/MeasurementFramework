@@ -11,7 +11,7 @@ def main():
 
     playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
     ansible_hosts_file = "/home/mfuser/services/common/hosts.ini"
-    playbook = "/home/mfuser/mf_git/user_services/timestamp/playbooks/start_influxdb.yaml"
+    playbook = "/home/mfuser/mf_git/user_services/influxdb/playbooks/start_influxdb.yaml"
     keyfile = "/home/mfuser/.ssh/mfuser_private_key"
 
     # Data is stored in relative dir to this script.

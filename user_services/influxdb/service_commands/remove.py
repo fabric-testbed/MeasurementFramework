@@ -13,7 +13,7 @@ def main():
 
     playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
     ansible_hosts_file = "/home/mfuser/services/common/hosts.ini"
-    playbook = "/home/mfuser/mf_git/user_services/timestamp/playbooks/remove_influxdb.yaml"
+    playbook = "/home/mfuser/mf_git/user_services/influxdb/playbooks/remove_influxdb.yaml"
     keyfile = "/home/mfuser/.ssh/mfuser_private_key"
 
 

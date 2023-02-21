@@ -21,6 +21,6 @@
         name: timestamp:0.1.0
         build:
           path: /home/mfuser/services/timestamp/dockerfile
-          pull: yes
+          pull: true
           network: host
         source: build

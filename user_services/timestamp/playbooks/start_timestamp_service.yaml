@@ -8,8 +8,11 @@
       name: timestamp
       image: timestamp:0.1.0 
       state: started
-      restart: yes
-      privileged: yes
+      restart: true
+      privileged: true
+      detach: true
+      interactive: true
+      tty: true
       network_mode: host
       pid_mode: host
       volumes:

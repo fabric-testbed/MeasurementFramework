@@ -16,7 +16,8 @@
         DOCKER_INFLUXDB_INIT_ORG: "my-org" 
         DOCKER_INFLUXDB_INIT_BUCKET: "my-bucket" 
       state: started
-      restart: yes
-      privileged: yes
+      restart: true
+      privileged: true
+      detach: true
       volumes:
         - /home/mfuser/influxdb:/var/lib/influxdb2
