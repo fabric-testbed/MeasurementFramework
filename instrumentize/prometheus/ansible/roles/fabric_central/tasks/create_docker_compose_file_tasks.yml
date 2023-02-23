@@ -72,13 +72,20 @@
 #     THANOS       #
 ####################
 
-- name: Add thanos fragment
+
+- name: Add thanos sidecar fragment
+  template:
+    src: "{{ thanos_templates_dir }}/docker_compose_sidecar_fragment.yml.j2"
+    dest: "{{ base_install_dir }}/docker_compose/thanos_sidecar.yml"
+  become: yes
+
+- name: Add thanos store fragment
   template:
     src: "{{ thanos_templates_dir }}/docker_compose_store_fragment.yml.j2"
     dest: "{{ base_install_dir }}/docker_compose/thanos_store.yml"
   become: yes
 
-- name: Add thanos fragment
+- name: Add thanos query fragment
   template:
     src: "{{ thanos_templates_dir }}/docker_compose_query_fragment.yml.j2"
     dest: "{{ base_install_dir }}//docker_compose/thanos_query.yml"
