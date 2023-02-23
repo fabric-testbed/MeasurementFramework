@@ -3,7 +3,7 @@
 # Ansible generated ping targets for all Fabric public Bastion hosts.
 
 # Bastion
-{% for b in ["bastion-1", "bastion-2"] %}
+{% for b in ["bastion-uky-1", "bastion-renc-1"] %}
 - targets:
         - {{ hostvars[b].host_public_ipv4_address }}
   labels:
