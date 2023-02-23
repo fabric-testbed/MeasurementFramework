@@ -40,15 +40,18 @@ tls_client_key = /etc/grafana/certs/key
 {% endif %}
 
 [smtp]
-enabled = true
-host = mail.fabric-testbed.net:25
-from_address = no-reply_{{ hank_name }}_alerts@metrics.fabric-testbed.net
-from_name = {{ hank_name }} Grafana Alert
-skip_verify = true
-ehlo_identity = metrics.fabric-testbed.net
-startTLS_policy = “MandatoryStartTLS”
-user =
-password =
+
+# No longer use grafana email alerts 
+# CHANGEME is place holder for former hank_name var 
+#enabled = true
+#host = mail.fabric-testbed.net:25
+#from_address = no-reply_CHANGEME_alerts@metrics.fabric-testbed.net
+#from_name = CHANGEME Grafana Alert
+#skip_verify = true
+#ehlo_identity = metrics.fabric-testbed.net
+#startTLS_policy = “MandatoryStartTLS”
+#user =
+#password =
 
 #enabled = false
 #host = mail.fabric-testbed.net:25
