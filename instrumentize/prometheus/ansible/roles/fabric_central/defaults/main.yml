@@ -3,6 +3,7 @@
 # This file contains variables that will be common to all installs. 
 # These vars have the lowest precedenc to and --extra-vars used will over write them.
 
+ansible_python_interpreter: /usr/bin/python3
 
 # Empty value to be filled in later as needed.
 extra_node_hosts: {}
@@ -121,17 +122,18 @@ prometheus_templates_dir: templates/Prometheus
 prometheus_config_template_files: 
   - prometheus_config.yml
 
-  # blackbox targets
-  - fabric_dns_targets.yml
-  - fabric_http_targets.yml
-  - fabric_beta_http_targets.yml
-  - fabric_smtp_targets.yml
-  - fabric_tcp_targets.yml
+# # Commented out since we aren't able to send over the management network
+  # # blackbox targets
+  # - fabric_dns_targets.yml
+  # - fabric_http_targets.yml
+  # - fabric_beta_http_targets.yml
+  # - fabric_smtp_targets.yml
+  # - fabric_tcp_targets.yml
  
    
-  - central_other_ping_targets.yml
-  - central_bastion_ping_targets.yml 
-  - central_bastion_ping6_targets.yml
+  # - central_other_ping_targets.yml
+  # - central_bastion_ping_targets.yml 
+  # - central_bastion_ping6_targets.yml
 
 
 
@@ -311,6 +313,7 @@ nginx_ip_ports:
   - 443:443
   - 9090:9090     # prometheus stats
   - 10922:10922   # thanos stats
+  - 10912:10912   # Store stats
   # appears this is automatically added with ipv6 network set  - "[::]:{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
   - "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
 
@@ -319,7 +322,7 @@ nginx_template_dir: templates/Nginx
 nginx_server_confd_template_files: 
   - prometheus_dual.conf
   - alertmanager_dual.conf
-  - thanos.conf
+  - thanos_dual.conf
   #- grafana_dual.conf
   - grafana_dual_web_sockets.conf
   
