@@ -6,7 +6,9 @@ global:
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
   external_labels:
-      rack: "{{ hank_name }}"
+      rack: "{{ external_rack_label }}"
+      prometheus_src: {{ prometheus_name }}
+      
   
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
@@ -57,16 +59,16 @@ scrape_configs:
     static_configs:
             - targets: ['jupyter-beta.fabric-testbed.net']
 
-# Kafka 
-# Note that these are servers that connect to kafka to get metrics, not the actual kafka servers.
-  - job_name: 'mf-kafka'
-    static_configs:
-      - targets: ['nsoelk.fabric-testbed.net:9308']
+## Kafka 
+## Note that these are servers that connect to kafka to get metrics, not the actual kafka servers.
+#  - job_name: 'mf-kafka'
+#    static_configs:
+#      - targets: ['nsoelk.fabric-testbed.net:9308']
 
 
-  - job_name: 'mb-kafka'
-    static_configs:
-      - targets: ['nsoelk.fabric-testbed.net:9309']
+#  - job_name: 'mb-kafka'
+#    static_configs:
+#      - targets: ['nsoelk.fabric-testbed.net:9309']
 
 
 #######################################
