@@ -12,7 +12,7 @@
 
     volumes:
       # Map root ca for client certification.
-      - "{{ thanos_query_root_ca }}:/etc/thanos_certs/root-ca"
+      # nolonger needed with skip-verify  - "{{ thanos_query_root_ca }}:/etc/thanos_certs/root-ca"
       # Map stores.yml file with the list of stores for easier live updates.
       - "{{ base_install_dir }}/thanos/config/stores.yml:/etc/thanos_stores/stores.yml"
 
@@ -26,9 +26,14 @@
       # Connect to local and remote stores. Automatically check stores config file for updates.
       - '--store.sd-files=/etc/thanos_stores/stores.yml'
       - '--store.sd-interval=5m'
+      - '--store.response-timeout=0ms'
+
       # Handle certs
       - '--grpc-client-tls-secure'  # use tls to talk to remote store server
-      - '--grpc-client-tls-ca=/etc/thanos_certs/root-ca' # root ca for verifying remote server. I was unable to get igore to work so we must have root ca for all TLS servers. Just combine into a single file if more than one. This makes selfsigned certs pretty much unusable.
+      #- '--grpc-client-tls-ca=/etc/thanos_certs/root-ca' # root ca for verifying remote server. I was unable to get igore to work so we must have root ca for all TLS servers. Just combine into a single file if more than one. This makes selfsigned certs pretty much unusable.
+      # Thanos finally added the skip option so no longer need to use above cert
+      - '--grpc-client-tls-skip-verify'
+
       # Optional debuging
       - '--log.level=info'  # debug, info
       - '--log.format=json' # logfmt logfmt or json                          
