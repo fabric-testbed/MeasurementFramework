@@ -5,32 +5,23 @@
 # This section contains the tasks needed for installing the 
 #   central metrics site.
 
-- name: Create docker-compose file 
-  # Note this is experiemntal. Containers are actually setup using python docker SDK
-  block:
-  - name: Creating docker-compose fragments & file.
-    become: yes
-    import_tasks: create_docker_compose_file_tasks.yml
-#     when:  
-#       - add_docker_compose_file is defined
-#       - add_docker_compose_file
 
-# - name: Install Fabric Central setup 
-#   block:
-#   - name: Install python sdk to manage docker
-#     become: yes
-#     import_tasks: install_docker_python_sdk_tasks.yml
-#     when: 
-#       - add_python_docker_sdk is defined
-#       - add_python_docker_sdk
+- name: Install Fabric Central setup 
+  block:
+  # - name: Install python sdk to manage docker
+  #   #become: yes
+  #   import_tasks: install_docker_python_sdk_tasks.yml
+  #   when: 
+  #     - add_python_docker_sdk is defined
+  #     - add_python_docker_sdk
 
   
-#   - name: Install Fabric Central Metrics
-#     import_tasks: fabric_central_install_tasks.yml
+  - name: Install Fabric Central Metrics
+    import_tasks: fabric_central_install_tasks.yml
 
-#   # when: 
-#   #   - install_type is defined
-#   #   - install_type == 'central'
+  # when: 
+  #   - install_type is defined
+  #   - install_type == 'central'
 
 
 # ##############################
@@ -46,6 +37,15 @@
 #     - install_node_exporters 
 
 
+- name: Create docker-compose file 
+  # Note this is experiemntal. Containers are actually setup using python docker SDK
+  block:
+  - name: Creating docker-compose fragments & file.
+    become: yes
+    import_tasks: create_docker_compose_file_tasks.yml
+#     when:  
+#       - add_docker_compose_file is defined
+#       - add_docker_compose_file
 
 
 
