@@ -8,46 +8,78 @@
     
     # Go to host machine, may have to add hostname to etc_hosts in container
     # thanos sidecar
-    - {{ hostname }}:10901
+    - {{ server_hostname }}:10901
     # thanos store/gateway
-    - {{ hostname }}:10911
-    
-    # Racks
-    
-    # 11
-    - renc-hn.fabric-testbed.net:10901
-    # 12
-    - uky-hn.fabric-testbed.net:10901
-    # 13
-    - lbnl-hn.fabric-testbed.net:10901
-    # 14 
-    - star-hn.fabric-testbed.net:10901
-    # 15
-    - max-hn.fabric-testbed.net:10901
-    # 16
-    - tacc-hn.fabric-testbed.net:10901
-    # 17
-    - mich-hn.fabric-testbed.net:10901
-    # 18
-    - mass-hn.fabric-testbed.net:10901
-    # 19
-    - utah-hn.fabric-testbed.net:10901
-    # 20
-    - ncsa-hn.fabric-testbed.net:10901
-    # 21
-    - wash-hn.fabric-testbed.net:10901
-    # 22
-    - dall-hn.fabric-testbed.net:10901
-    # 23
-    - salt-hn.fabric-testbed.net:10901
-    # 24
-    - ucsd-hn.fabric-testbed.net:10901
-    # 25
-    - gpn-hn.fabric-testbed.net:10901
-    # 26
-    - fiu-hn.fabric-testbed.net:10901
-    # 27
-    - clem-hn.fabric-testbed.net:10901
+    - {{ server_hostname }}:10911
+
+
+#############    
+#   Racks   #
+#############
+
+# Following Targets are for rack head nodes where Thanos sidecar is running on port 10901.
+# Racks may be IPV 4, 6, or both 4 & 6.  IPv6 Addresses are used if available.
+# Thanos docker images is based on Prometheus/busybox which appears to not be able to get both DNS entries.
+#  It is not clear if that is the problem but that version fo busybox does not get the DNS entries correctly, the busybox:glibc version does.
+#  see https://github.com/prometheus/busybox/issues/18
+# Thanos docker image Query itself may use both ips if they were both returned, which would be another problem. 
+#  see https://github.com/thanos-io/thanos/issues/1527 
+# So the values here are hardcode with the ip values for the rack head nodes.
+# Also included in the list is if they are IPv4 and/or IPv6.
+
+- targets:
+    # 11 RENC   ipv     4       6
+    #- renc-hn.fabric-testbed.net:10901
+    - "[2600:2701:5000:a902::51]:10901"
+    # 12 UKY    ipv     4       6
+    #- uky-hn.fabric-testbed.net:10901
+    - "[2610:1e0:1700:201::51]:10901"
+    # 13 LBNL   ipv     x       6
+    #    - lbnl-hn.fabric-testbed.net:10901
+    - "[2001:400:a100:10d0::51]:10901"
+    # 14 STAR   ipv     x       6
+    #- star-hn.fabric-testbed.net:10901
+    - "[2001:400:a100:1030::51]:10901"
+    # 15 MAX ipv        4       6
+    #- max-hn.fabric-testbed.net:10901
+    - "[2001:468:c00:ffdd::51]:10901"
+    # 16 TACC ipv       4       x
+    #- tacc-hn.fabric-testbed.net:10901
+    - "129.114.110.65:10901"
+    # 17 MICH ipv       4       6
+    #- mich-hn.fabric-testbed.net:10901
+    - "[2607:f018:110:10::51]:10901"
+    # 18 MASS ipv       4       x
+    #- mass-hn.fabric-testbed.net:10901
+    - "205.172.170.66:10901"
+    # 19 UTAH ipv       4       6
+    #- utah-hn.fabric-testbed.net:10901
+    - "[2001:1948:417:6::51]:10901"
+    # 20 NCSA ipv       4       6
+    #- ncsa-hn.fabric-testbed.net:10901
+    - "[2620:0:c80:1000::51]:10901"
+    # 21 WASH ipv       x       6
+    #- wash-hn.fabric-testbed.net:10901
+    - "[2001:400:a100:1020::51]:10901"
+    # 22 DALL ipv       x       6
+    #- dall-hn.fabric-testbed.net:10901
+    - "[2001:400:a100:1000::51]:10901"
+    # 23 SALT ipv       x       6
+    #- salt-hn.fabric-testbed.net:10901
+    - "[2001:400:a100:1010::51]:10901"
+    # 24 UCSD ipv       4       x
+    #- ucsd-hn.fabric-testbed.net:10901
+    - "132.249.252.133:10901"
+    # 25 GPN ipv        4       6
+    #- gpn-hn.fabric-testbed.net:10901
+    - "[2610:e0:a04c:fab1::51]:10901"
+    # 26 FIU ipv        4       x
+    #- fiu-hn.fabric-testbed.net:10901
+    - "131.94.57.11:10901"
+    # 27 CLEM ipv       4       6
+    #- clem-hn.fabric-testbed.net:10901
+    - "[2620:103:a006:0011::51]:10901"
+
     # 28
     #gatech-hn.fabric-testbed.net:10901
     # 29
