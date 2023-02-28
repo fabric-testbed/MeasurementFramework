@@ -81,16 +81,17 @@
 - name: Create Minio Directories 
   block:
 
-  - name: Create Minio config dirs
-    file: 
-      path: "{{ base_install_dir }}/{{ item }}"
-      recurse: yes
-      state: directory 
-      mode: 0755
-      owner: "{{ minio_user_uid }}"
-      group: "{{ minio_user_gid }}"
-    with_items: ["minio", "minio/config"]
-    become: yes
+  # Currently there is no use for the config.
+  # - name: Create Minio config dirs
+  #   file: 
+  #     path: "{{ base_install_dir }}/{{ item }}"
+  #     recurse: yes
+  #     state: directory 
+  #     mode: 0755
+  #     owner: "{{ minio_user_uid }}"
+  #     group: "{{ minio_user_gid }}"
+  #   with_items: ["minio", "minio/config"]
+  #   become: yes
 
   - name: Create Data Directory for Minio
     file: 
@@ -107,14 +108,16 @@
 # MINIO CONFIGs  #
 ##################
 
-# Copy minio config files
-- name: Add minio config file
-  template:
-    src: "minio.config.j2"
-    dest: "{{ base_install_dir }}/minio/config/config.json"
-    owner: "{{ minio_user_uid }}"
-    group: "{{ minio_user_gid }}"
-  become: yes
+
+# Currently there is no use for the config.
+# # Copy minio config files
+# - name: Add minio config file
+#   template:
+#     src: "minio.config.j2"
+#     dest: "{{ base_install_dir }}/minio/config/config.json"
+#     owner: "{{ minio_user_uid }}"
+#     group: "{{ minio_user_gid }}"
+#   become: yes
 
 
 ##################
@@ -172,12 +175,12 @@
 
 
 
-# # start docker-compose
+# start docker-compose
 
-# # - name: Start docker compose 
-# #   community.docker.docker_compose:
-# #     project_src: "{{ base_install_dir }}/docker-compose.yml"
-# #     state: present 
+# - name: Start docker compose 
+#   community.docker.docker_compose:
+#     project_src: "{{ base_install_dir }}/docker-compose.yml"
+#     state: present 
 
 
 # # - name: Start docker compose 
