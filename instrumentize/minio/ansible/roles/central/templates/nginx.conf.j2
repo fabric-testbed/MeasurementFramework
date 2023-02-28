@@ -38,7 +38,7 @@ http {
     server {
         listen       9000 ssl http2;
         listen  [::]:9000 ssl http2;
-        server_name  minio-p.fabric-testbed.net;
+        server_name  {{ server_name }};
 
         include /etc/nginx/ssl_snippet.conf;
 
@@ -72,7 +72,7 @@ http {
     server {
         listen       9099 ssl http2;
         listen  [::]:9099 ssl http2;
-        server_name  minio-p.fabric-testbed.net;
+        server_name  {{ server_name }};
 
         include /etc/nginx/ssl_snippet.conf;
 
