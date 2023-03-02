@@ -31,9 +31,10 @@
        # Optional debuging
       - '--log.level=info'  # debug, info
       - '--log.format=json' # logfmt logfmt or json                          
-
-    ports:
-      - "{{ thanos_sidecar_ip | ansible.netcommon.ipwrap +':10901:10901' }}"
+      
+# Ports are not exposed since no outside process will be accessing the central metric sidecar.
+#    ports:
+#      - "{{ thanos_sidecar_ip | ansible.netcommon.ipwrap +':10901:10901' }}"
 
     logging:
       driver: json-file

@@ -19,15 +19,16 @@
       - '--http-address=0.0.0.0:10912'
       - '--data-dir=/tmp/thanos/store'
       - '--objstore.config-file=/etc/thanos/object_store_config.yml'
-      # Unfortunatly certs are needed since we have to use TLS everywhere for thanos :(
+      # Unfortunately certs are needed since we have to use TLS everywhere for thanos :(
       - '--grpc-server-tls-cert=/etc/thanos_certs/cert' ##
       - '--grpc-server-tls-key=/etc/thanos_certs/key' ##
       - '--index-cache-size=32GB'
       - '--log.level=debug'
 
-    ports:
-      - "{{ thanos_store_ip }}:10911:10911"
-      - "{{ thanos_store_ip }}:10912:10912"
+# Ports are no longer exposed here. Can now use insecure_skip_verify to allow us to use inter-docker networking.
+#    ports:
+#      - "{{ thanos_store_ip }}:10911:10911"
+#      # proxied via ngnix with htaccess for web status ui - "{{ thanos_store_ip }}:10912:10912"
 
     logging:
       driver: json-file
