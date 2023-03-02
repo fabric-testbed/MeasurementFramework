@@ -53,7 +53,8 @@
 #  DOCKER NETWORK  #
 ####################
 
-# Done in docker compose
+# Default container network defined in docker compose. 
+# Docker network setup done in previous task. Docker compose uses that external network for the default network.
 
 
 ####################
