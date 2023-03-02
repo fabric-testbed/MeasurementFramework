@@ -66,7 +66,7 @@
 ####################
 # Create Base Dirs #
 ####################
-- name: Create base install directorie 
+- name: Create base install directories
   file:
     path: "{{ base_install_dir }}"
     recurse: yes
@@ -93,16 +93,6 @@
 #   when:
 #     - self_signed_cert_dir is defined
 
-# need to add uky_incommon_root_intermdiate.pem file to the created intermediate cert!!!!!!TODO!!!!!!!!!!!
-
-
-
-
-
-# ####################
-# # Remove all previous monitoring docker containers #
-# ####################
-#TODO change to docker-compose down
 
 ####################
 #  DOCKER NETWORK  #
