@@ -8,9 +8,16 @@
     
     # Go to host machine, may have to add hostname to etc_hosts in container
     # thanos sidecar
-    - {{ server_hostname }}:10901
+    # No longer need to use public port 
+    #- {{ server_hostname }}:10901
+    - {{ install_name }}_thanos_sidecar:10901
+
+
     # thanos store/gateway
-    - {{ server_hostname }}:10911
+    # No longer need to use public port 
+    #- {{ server_hostname }}:10911
+    - {{ install_name }}_thanos_store:10911
+    
 
 
 #############    
