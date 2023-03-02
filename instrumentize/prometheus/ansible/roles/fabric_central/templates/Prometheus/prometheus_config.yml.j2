@@ -38,6 +38,21 @@ scrape_configs:
       # by definition this is running on local host
       - targets: ['localhost:9090']
 
+# MinIO
+  - job_name: minio-p
+    bearer_token: {{ minio_p_scrape_token }} 
+    metrics_path: /minio/v2/metrics/cluster
+    scheme: https
+    static_configs:
+      - targets: ['minio-p.fabric-testbed.net:9000']
+
+## MinIO
+#  - job_name: minio-b
+#    bearer_token: ####minio_b_scrape_token####
+#    metrics_path: /minio/v2/metrics/cluster
+#    scheme: https
+#    static_configs:
+#    - targets: ['minio-b.fabric-testbed.net:9000']    
 
 
 # Jupyter

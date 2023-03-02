@@ -53,7 +53,7 @@
 #  DOCKER NETWORK  #
 ####################
 
-
+# Done in docker compose
 
 
 ####################
@@ -126,6 +126,12 @@
 ####################
 # DOCKER EXPORTER  #
 ####################
+
+- name: Add Docker Exporter fragment
+  template:
+    src: "{{ docker_exporter_templates_dir }}/docker_compose_docker_exporter_fragment.yml.j2"
+    dest: "{{ base_install_dir }}/docker_compose/docker_exporter.yml"
+  become: yes
 
 ####################
 #     Grafana      #

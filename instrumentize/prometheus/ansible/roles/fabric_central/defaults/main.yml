@@ -193,29 +193,7 @@ alert_rule_files:
 #  - vpn_ping_alert_rules.yml
   - web_site_alert_rules.yml
 
-####################
-# Container States #
-####################
 
-# snmp_state: absent
-# blackbox_state: absent
-# docker_exporter_state: absent
-# prometheus_state: absent
-# nginx_state: absent
-# thanos_sidecar_state absent
-
-
-snmp_state: started
-blackbox_state: started
-docker_exporter_state: started
-prometheus_state: started
-nginx_state: started
-thanos_sidecar_state: started
-thanos_store_state: started 
-thanos_query_state: started 
-thanos_compact_state: started 
-alertmanager_state: started
-grafana_state: started 
 
 ####################
 #      Thanos      #
@@ -273,6 +251,14 @@ alertmanager_template_dir: templates/Alertmanager-dev
 #   - snmp.yml
 #   # SNMP will probably be the same for all racks
 
+
+
+####################
+# Docker Exporter  # 
+####################
+docker_exporter_templates_dir: templates/DockerExporter
+
+
 ####################
 #    Blackbox      # 
 ####################
@@ -325,13 +311,7 @@ nginx_server_confd_template_files:
   - thanos_dual.conf
   #- grafana_dual.conf
   - grafana_dual_web_sockets.conf
-  
-  
-  # - prometheus.conf
-  # #- central_welcome.conf
-  # - alertmanager.conf
-  # - thanos.conf
-  # - grafana.conf
+  # moved into grafana since it is listening on prot 443- welcome.conf
 
 nginx_config_template_files:
   - ssl_snippet.conf
@@ -351,6 +331,7 @@ nginx_interm_cert: "{{ host_interm_cert }}"
 ####################
 #  Node Exporter   #  
 ####################
+install_node_exporters: yes
 
 node_exporter_tls_server_config:
   cert_file: /etc/node_exporter/tls.cert
