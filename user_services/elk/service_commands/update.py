@@ -37,9 +37,41 @@ def main():
 # testing dashboard single loading
 
     command_found = False
+    elastic_dump_installed = False
     if "commands" in data:
         # Ensure certain commands are run in the needed order
 
+        for cmd in data["commands"]:
+            if "cmd" in cmd and cmd["cmd"] == "export_index":
+                if not elastic_dump_installed:
+                    # TODO: Automate this, make flag work correctly.
+                    #os.system('sudo apt-get install npm -y')
+                    #os.system('sudo npm install elasticdump -g')
+
+                    elastic_dump_installed = True
+                if "indices" in cmd and cmd["indices"]:
+                    # Confirm dependencies are installed
+                    # TODO: Actually check for this
+                    os.system('echo "\nConfirming npm and elasticdump are installed:"')
+                    os.system('echo "npm version:"')
+                    os.system('npm --version')
+                    os.system('echo "elasticdump version:"')
+                    os.system('elasticdump --version')
+
+                    # Exporting all indices
+                    os.system('echo "\nData export started."')
+                    for index in cmd["indices"]:
+                        os.system('echo "exporting ' + index + '..."')
+                        os.system('sudo elasticdump --input="http://localhost:9200/' + index + '/" --output="' + eu.files_dir + '/indices/' + index + '.json" --type=data')
+
+                    # Returning success
+                    ret_val['export_index'] = "Indices exported to Measurement node in the directory: " + eu.files_dir + "/indices/"
+
+                    # TODO: Returning failure
+                    #ret_val['export_index'] = "Indices not exported. Something went wrong."
+                else:
+                    ret_val['success'] = False
+                    ret_val['export_index'] = "Failed to export any indices: Missing index names."
 
         for cmd in data["commands"]:
             if "cmd" in cmd and cmd["cmd"] == "upload_dashboards":
