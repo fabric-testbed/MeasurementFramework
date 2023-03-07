@@ -216,7 +216,7 @@
     ansible.builtin.package:
       name: /tmp/packetbeat-{{ packetbeat_version }}-x86_64.rpm
       state: present
-  when: ansible_facts['distribution'] == [ "CentOS","Rocky" ]
+  when: ansible_facts['distribution'] in [ "CentOS","Rocky" ]
 
 # > .deb install
 - block:
