@@ -24,9 +24,6 @@
     stat:
       path: /tmp/filebeat-{{ filebeat_version }}-x86_64.rpm
     register: r_filebeat_package_exist
-    when: 
-      - ansible_facts['distribution'] == "CentOS"
-      - ansible_facts['distribution_major_version'] == "7"
 
   # Download Filebeat for CentOs
   - name: Download Filebeat CentOS
@@ -46,7 +43,6 @@
 
   when:
       - ansible_facts['distribution'] in [ "CentOS", "Rocky" ]
-      - ansible_facts['distribution_major_version'] == "8"
 
 
 # > .deb install
@@ -79,7 +75,7 @@
       deb: /tmp/filebeat-{{ filebeat_version }}-amd64.deb
       state: present
 
-  when: ansible_facts['distribution'] in [ "Ubuntu". "Debian" ]
+  when: ansible_facts['distribution'] in [ "Ubuntu","Debian" ]
 
 # normal run
 
@@ -220,7 +216,7 @@
     ansible.builtin.package:
       name: /tmp/packetbeat-{{ packetbeat_version }}-x86_64.rpm
       state: present
-  when: ansible_facts['distribution'] == [ "CentOS"."Rocky" ]
+  when: ansible_facts['distribution'] == [ "CentOS","Rocky" ]
 
 # > .deb install
 - block:
