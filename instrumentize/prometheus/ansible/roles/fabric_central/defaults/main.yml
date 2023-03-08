@@ -107,9 +107,9 @@ docker_ipv6_gateway: fd8d:73ee:3857:1315::1
 
 
 
-# LOKI Testing
-loki_state: started 
-loki_templates_dir: templates/Loki
+# # LOKI Testing
+# loki_state: started 
+# loki_templates_dir: templates/Loki
 
 
 
@@ -181,17 +181,17 @@ alertmanager_tmpl_files:
 
 # Default alert rules for central
 alert_rule_files:
-  - dns_alert_rules.yml
+  #- dns_alert_rules.yml
   - docker_alert_rules.yml
-  - mail_alert_rules.yml
-  - network_alert_rules.yml
+  #- mail_alert_rules.yml
+  #- network_alert_rules.yml
   - node_alert_rules.yml
-  - central_ping_alert_rules.yml
+  #- central_ping_alert_rules.yml
   - prometheus_alert_rules.yml
-  - ssl_alert_rules.yml
+  #- ssl_alert_rules.yml
 #  - time_alert_rules.yml
 #  - vpn_ping_alert_rules.yml
-  - web_site_alert_rules.yml
+  #- web_site_alert_rules.yml
 
 
 

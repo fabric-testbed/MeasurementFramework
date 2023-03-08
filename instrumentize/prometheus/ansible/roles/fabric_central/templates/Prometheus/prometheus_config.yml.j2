@@ -55,24 +55,24 @@ scrape_configs:
 #    - targets: ['minio-b.fabric-testbed.net:9000']    
 
 
-# Jupyter
-  - job_name: 'jupyterhub'
-    bearer_token_file: /etc/prometheus/secrets/jupyterhub
-    scheme: https
-    metrics_path: '/hub/metrics'
-    tls_config:
-            insecure_skip_verify: true
-    static_configs:
-            - targets: ['jupyter.fabric-testbed.net']
-
-  - job_name: 'jupyterhub-beta'
-    bearer_token_file: /etc/prometheus/secrets/jupyterhub_beta
-    scheme: https
-    metrics_path: '/hub/metrics'
-    tls_config:
-            insecure_skip_verify: true
-    static_configs:
-            - targets: ['jupyter-beta.fabric-testbed.net']
+## Jupyter
+#  - job_name: 'jupyterhub'
+#    bearer_token_file: /etc/prometheus/secrets/jupyterhub
+#    scheme: https
+#    metrics_path: '/hub/metrics'
+#    tls_config:
+#            insecure_skip_verify: true
+#    static_configs:
+#            - targets: ['jupyter.fabric-testbed.net']
+#
+#  - job_name: 'jupyterhub-beta'
+#    bearer_token_file: /etc/prometheus/secrets/jupyterhub_beta
+#    scheme: https
+#    metrics_path: '/hub/metrics'
+#    tls_config:
+#            insecure_skip_verify: true
+#    static_configs:
+#            - targets: ['jupyter-beta.fabric-testbed.net']
 
 ## Kafka 
 ## Note that these are servers that connect to kafka to get metrics, not the actual kafka servers.
@@ -302,22 +302,3 @@ scrape_configs:
   - job_name: 'docker'
     static_configs:
       - targets: ['{{ install_name }}_docker_exporter:9417']
-
-
-
-
-
-
-
-
-# TODO
-# - job_name: 'geni-federate'
-#
-#    honor_labels: true
-#    metrics_path: '/federate'
-#
-#    params:
-#            'match[]':
-#                    - '{job=~"ceph-0|thanos_bucket"}'
-#    static_configs:
-#            - targets: ['172.23.7.230:9090']
