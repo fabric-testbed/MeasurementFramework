@@ -225,10 +225,9 @@
 
     - name: Grafana Datasources
       include_tasks: Grafana/grafana_provisioning_tasks.yml
-
-#####temp to see if we can move on...   
-    # - name: Grafana Plugins
-    #   include_tasks: Grafana/grafana_add_plugins_tasks.yml
+ 
+    - name: Grafana Plugins
+      include_tasks: Grafana/grafana_add_plugins_tasks.yml
 
 ####################
 #     NGINX        #

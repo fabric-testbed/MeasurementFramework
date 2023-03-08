@@ -271,7 +271,7 @@ blackbox_templates_dir: templates/Blackbox
 
 grafana_files_dir: files/Grafana
 grafana_plugin_files: 
-  - flant-statusmap-panel-v0.4.1.zip
+  - flant-statusmap-panel-v0.4.1.tar
 
 grafana_templates_dir: templates/Grafana
 
