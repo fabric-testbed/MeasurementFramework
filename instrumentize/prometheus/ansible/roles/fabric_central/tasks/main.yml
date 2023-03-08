@@ -8,10 +8,16 @@
 
 - name: Stop Docker Compose 
   block:
+  - name: Check if docker-compose.yml exists 
+    stat: 
+      path: "{{ base_install_dir }}/docker-compose.yml"
+    register: docker_compose_file_status
+
   - name: Start Docker compose file
     shell: docker-compose down 
     args:
       chdir: "{{ base_install_dir }}"
+    when: docker_compose_file_status.stat.exists
 
 
 - name: Install Fabric Central setup 
