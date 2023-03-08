@@ -9,7 +9,7 @@ def main():
     ret_val['msg'] = ""
 
     playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
-    ansible_hosts_file = "/home/mfuser/mf_git/elkhosts.ini"
+    ansible_hosts_file = "/home/mfuser/services/common/hosts.ini"
     playbook = "/home/mfuser/mf_git/instrumentize/elk/fabric_start.yml"
     keyfile = "/home/mfuser/.ssh/mfuser_private_key"
 
