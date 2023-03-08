@@ -10,7 +10,8 @@
     name: "{{ install_name }}_thanos_compact"
     network_mode: "{{ docker_network_name }}"
     #image: quay.io/thanos/thanos:v0.14.0
-    image: quay.io/thanos/thanos:v0.25.0
+    #image: quay.io/thanos/thanos:v0.25.0
+    image: quay.io/thanos/thanos:v0.29.0
     volumes:
       # Config files. Same as for Sidecar
       - "{{ base_install_dir }}/thanos/config/:/etc/thanos/"

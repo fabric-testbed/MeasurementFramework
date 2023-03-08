@@ -12,7 +12,8 @@
     name: "{{ install_name }}_thanos_query"
     network_mode: "{{ docker_network_name }}"  
     #image: quay.io/thanos/thanos:v0.14.0
-    image: quay.io/thanos/thanos:v0.25.0
+    #image: quay.io/thanos/thanos:v0.25.0
+    image: quay.io/thanos/thanos:v0.29.0
     volumes:
       # Map root ca for client certification.
       - "{{ thanos_query_root_ca }}:/etc/thanos_certs/root-ca"

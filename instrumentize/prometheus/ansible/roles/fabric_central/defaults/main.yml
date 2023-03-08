@@ -3,6 +3,7 @@
 # This file contains variables that will be common to all installs. 
 # These vars have the lowest precedenc to and --extra-vars used will over write them.
 
+ansible_python_interpreter: /usr/bin/python3
 
 # Empty value to be filled in later as needed.
 extra_node_hosts: {}
@@ -106,9 +107,9 @@ docker_ipv6_gateway: fd8d:73ee:3857:1315::1
 
 
 
-# LOKI Testing
-loki_state: started 
-loki_templates_dir: templates/Loki
+# # LOKI Testing
+# loki_state: started 
+# loki_templates_dir: templates/Loki
 
 
 
@@ -121,17 +122,18 @@ prometheus_templates_dir: templates/Prometheus
 prometheus_config_template_files: 
   - prometheus_config.yml
 
-  # blackbox targets
-  - fabric_dns_targets.yml
-  - fabric_http_targets.yml
-  - fabric_beta_http_targets.yml
-  - fabric_smtp_targets.yml
-  - fabric_tcp_targets.yml
+# # Commented out since we aren't able to send over the management network
+  # # blackbox targets
+  # - fabric_dns_targets.yml
+  # - fabric_http_targets.yml
+  # - fabric_beta_http_targets.yml
+  # - fabric_smtp_targets.yml
+  # - fabric_tcp_targets.yml
  
    
-  - central_other_ping_targets.yml
-  - central_bastion_ping_targets.yml 
-  - central_bastion_ping6_targets.yml
+  # - central_other_ping_targets.yml
+  # - central_bastion_ping_targets.yml 
+  # - central_bastion_ping6_targets.yml
 
 
 
@@ -179,41 +181,19 @@ alertmanager_tmpl_files:
 
 # Default alert rules for central
 alert_rule_files:
-  - dns_alert_rules.yml
+  #- dns_alert_rules.yml
   - docker_alert_rules.yml
-  - mail_alert_rules.yml
-  - network_alert_rules.yml
+  #- mail_alert_rules.yml
+  #- network_alert_rules.yml
   - node_alert_rules.yml
-  - central_ping_alert_rules.yml
+  #- central_ping_alert_rules.yml
   - prometheus_alert_rules.yml
-  - ssl_alert_rules.yml
+  #- ssl_alert_rules.yml
 #  - time_alert_rules.yml
 #  - vpn_ping_alert_rules.yml
-  - web_site_alert_rules.yml
-
-####################
-# Container States #
-####################
-
-# snmp_state: absent
-# blackbox_state: absent
-# docker_exporter_state: absent
-# prometheus_state: absent
-# nginx_state: absent
-# thanos_sidecar_state absent
+  #- web_site_alert_rules.yml
 
 
-snmp_state: started
-blackbox_state: started
-docker_exporter_state: started
-prometheus_state: started
-nginx_state: started
-thanos_sidecar_state: started
-thanos_store_state: started 
-thanos_query_state: started 
-thanos_compact_state: started 
-alertmanager_state: started
-grafana_state: started 
 
 ####################
 #      Thanos      #
@@ -255,7 +235,7 @@ use_thanos_compact: no
 ####################
 #  ALERTMANAGER    #
 ####################
-alertmanager_template_dir: templates
+alertmanager_template_dir: templates/Alertmanager-dev
 
 
 ####################
@@ -271,11 +251,19 @@ alertmanager_template_dir: templates
 #   - snmp.yml
 #   # SNMP will probably be the same for all racks
 
+
+
+####################
+# Docker Exporter  # 
+####################
+docker_exporter_templates_dir: templates/DockerExporter
+
+
 ####################
 #    Blackbox      # 
 ####################
 blackbox_files_dir: files
-#blackbox_templates_dir: templates #there are no blackbox templates
+blackbox_templates_dir: templates/Blackbox
 
 ####################
 #     Grafana      #
@@ -283,7 +271,7 @@ blackbox_files_dir: files
 
 grafana_files_dir: files/Grafana
 grafana_plugin_files: 
-  - flant-statusmap-panel-v0.4.1.zip
+  - flant-statusmap-panel-v0.4.1.tar
 
 grafana_templates_dir: templates/Grafana
 
@@ -307,11 +295,12 @@ nginx_ip_ports:
   # Note Each port will correspond to a confd file set above.
   #- 80:80         # Redirected to 443
   # 443 for /grafana on both ipv4 and ipv6, order here may matter depending on version of docker 
-  - "[::]:443:443"
+  # appears this is automatically added with ipv6 network set - "[::]:443:443"
   - 443:443
   - 9090:9090     # prometheus stats
   - 10922:10922   # thanos stats
-  - "[::]:{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
+  - 10912:10912   # Store stats
+  # appears this is automatically added with ipv6 network set  - "[::]:{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
   - "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
 
 nginx_template_dir: templates/Nginx
@@ -319,16 +308,10 @@ nginx_template_dir: templates/Nginx
 nginx_server_confd_template_files: 
   - prometheus_dual.conf
   - alertmanager_dual.conf
-  - thanos.conf
+  - thanos_dual.conf
   #- grafana_dual.conf
   - grafana_dual_web_sockets.conf
-  
-  
-  # - prometheus.conf
-  # #- central_welcome.conf
-  # - alertmanager.conf
-  # - thanos.conf
-  # - grafana.conf
+  # moved into grafana since it is listening on prot 443- welcome.conf
 
 nginx_config_template_files:
   - ssl_snippet.conf
@@ -348,6 +331,7 @@ nginx_interm_cert: "{{ host_interm_cert }}"
 ####################
 #  Node Exporter   #  
 ####################
+install_node_exporters: yes
 
 node_exporter_tls_server_config:
   cert_file: /etc/node_exporter/tls.cert

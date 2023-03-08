@@ -1,15 +1,11 @@
----
-# Thanos - Sidecar
-- name: Control Thanos Sidecar
-  become: yes
-  community.docker.docker_container:
-    state: "{{ thanos_sidecar_state }}"
-    name: "{{ install_name }}_thanos_sidecar"
-    network_mode: "{{ docker_network_name }}"
-    # Exports Prometheus data to remote S3 compatible object store.
-    #image: quay.io/thanos/thanos:v0.14.0
-    #image: quay.io/thanos/thanos:v0.25.0
+
+# Central Thanos - Sidecar
+
+  thanos_sidecar:
+    container_name: "{{ install_name }}_thanos_sidecar"
+
     image: quay.io/thanos/thanos:v0.29.0
+
     volumes:
       # config files
       - "{{ base_install_dir }}/thanos/config/:/etc/thanos/"
@@ -18,11 +14,6 @@
       # Map certs on head node.
       - "{{ thanos_sidecar_cert }}:/etc/thanos_certs/cert:ro"
       - "{{ thanos_sidecar_key }}:/etc/thanos_certs/key:ro"
-
-    container_default_behavior: no_defaults
-    log_driver: json-file
-    log_options:
-      max-size: 1024m
 
     command:
       - 'sidecar'
@@ -35,7 +26,20 @@
 
       - '--http-address=0.0.0.0:10902'
       - '--objstore.config-file=/etc/thanos/object_store_config.yml'
-    ports:
-            - "{{ thanos_sidecar_ip | ansible.netcommon.ipwrap +':10901:10901' }}"
-            #- "{{ thanos_sidecar_ip }}:10902:10902"
-    restart_policy: always
+      
+      
+       # Optional debuging
+      - '--log.level=info'  # debug, info
+      - '--log.format=json' # logfmt logfmt or json                          
+      
+# Ports are not exposed since no outside process will be accessing the central metric sidecar.
+#    ports:
+#      - "{{ thanos_sidecar_ip | ansible.netcommon.ipwrap +':10901:10901' }}"
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "1024m" 
+        max-file: "5"
+
+    restart: always

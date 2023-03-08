@@ -3,7 +3,8 @@
 # Ansible generated ping targets for all Fabric devices on all racks.
 
 # Set of racks to ping is hard coded here to prevent incomplete racks from being pinged. 
-{% for hank_name in ["dall", "lbnl", "mass", "max", "mich", "ncsa", "renc", "salt", "star", "tacc", "uky", "utah", "wash"] %}
+# all phase 1 racks in alpahbetical order ["clem","dall","fiu","gpn","lbnl","mass","max","mich","ncsa","renc","salt","star","tacc","ucsd","uky","utah","wash"] 
+{% for hank_name in  ["clem","dall","fiu","gpn","lbnl","mass","max","mich","ncsa","renc","salt","star","tacc","ucsd","uky","utah","wash"] %}
 
 # Head Node
 {% for h in groups[hank_name+"_head"] %}

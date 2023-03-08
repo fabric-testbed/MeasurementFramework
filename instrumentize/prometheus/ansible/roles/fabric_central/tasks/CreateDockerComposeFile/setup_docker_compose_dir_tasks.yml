@@ -1,0 +1,13 @@
+# Create the base directories needed for creating docker compose file
+- name: Create Docker-compose Directory
+  block:
+      
+    - name: "Create Docker-compose directories"
+      file:
+        path: "{{ base_install_dir }}/docker_compose"
+        state: directory
+        recurse: yes
+        owner: "{{ prom_user_name }}"
+        group: "{{ prom_group_name }}"
+      
+  become: yes

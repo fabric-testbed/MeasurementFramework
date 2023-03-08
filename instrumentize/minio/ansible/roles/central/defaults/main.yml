@@ -1,0 +1,13 @@
+#ansible_python_interpreter: /usr/bin/python3
+
+
+docker_network_name: "{{ install_name }}"
+base_data_dir: "/opt/data/{{ install_name }}"
+base_install_dir: "/opt/{{ install_name }}" 
+
+mount_data_drive: no
+minio_username: fab_minio
+
+
+minio_port: 9000
+minio_console_port: 9099

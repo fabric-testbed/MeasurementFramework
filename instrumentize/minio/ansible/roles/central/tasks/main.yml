@@ -1,0 +1,189 @@
+---
+
+
+
+
+##############################
+#  Setup OPT/DATA Directory  #
+##############################
+- name: Install Fabric-Prometheus setup 
+  block:
+  - name: Install Fabric Rack
+    import_tasks: create_mount_data_dir_tasks.yml
+  when: 
+    - mount_data_drive is defined 
+    - mount_data_drive #== yes
+
+################
+#  USER SETUP  #
+################
+
+# CREATE USER minio_user #
+- name: "Setup Minio User"
+  block:
+    - name: "Create Minio user as minio_user"
+      user:
+        name: "{{ minio_username }}"
+        shell: /usr/sbin/nologin
+        system: true
+        create_home: false
+        home: /
+  become: yes
+
+# GET USER minio  uid:gid #
+- name: "Get Minio User"
+  block:
+    - name: "Get Fabric Prometheus user ids"
+      getent:
+        database: passwd
+        key: fab-minio
+    - debug:
+       var: ansible_facts.getent_passwd
+
+    - set_fact:
+        minio_user_uid: "{{ getent_passwd['fab-minio'][1] }}"
+        minio_user_gid: "{{ getent_passwd['fab-minio'][2] }}"
+    # the need to assign it to a var so we can use in later
+  become: yes
+
+
+#################
+#   BASE DIRs   #
+#################
+
+- name: Create Base Directories 
+  block:
+
+  - name: Create Base Directory
+    file: 
+      path: "{{ base_install_dir }}"
+      recurse: yes
+      state: directory 
+      mode: 0755
+      owner: "{{ minio_user_uid }}"
+      group: "{{ minio_user_gid }}"
+    become: yes
+
+  - name: Create Data Directory
+    file: 
+      path: "{{ base_data_dir }}"
+      recurse: yes
+      state: directory 
+      mode: 0755
+      owner: "{{ minio_user_uid }}"
+      group: "{{ minio_user_gid }}"
+    become: yes
+
+
+#################
+#  MINIO DIRs   #
+#################
+- name: Create Minio Directories 
+  block:
+
+  # Currently there is no use for the config.
+  # - name: Create Minio config dirs
+  #   file: 
+  #     path: "{{ base_install_dir }}/{{ item }}"
+  #     recurse: yes
+  #     state: directory 
+  #     mode: 0755
+  #     owner: "{{ minio_user_uid }}"
+  #     group: "{{ minio_user_gid }}"
+  #   with_items: ["minio", "minio/config"]
+  #   become: yes
+
+  - name: Create Data Directory for Minio
+    file: 
+      path: "{{ base_data_dir }}/minio/data"
+      recurse: yes
+      state: directory 
+      mode: 0755
+      owner: "{{ minio_user_uid }}"
+      group: "{{ minio_user_gid }}"
+    become: yes
+
+
+##################
+# MINIO CONFIGs  #
+##################
+
+
+# Currently there is no use for the config.
+# # Copy minio config files
+# - name: Add minio config file
+#   template:
+#     src: "minio.config.j2"
+#     dest: "{{ base_install_dir }}/minio/config/config.json"
+#     owner: "{{ minio_user_uid }}"
+#     group: "{{ minio_user_gid }}"
+#   become: yes
+
+
+##################
+#     NGINX      #
+##################
+- name: Create NGNIX Directories 
+  block:
+  - name: Create Directories for NGINX configs
+    file: 
+      path: "{{ base_install_dir }}/{{ item }}"
+      recurse: yes
+      state: directory 
+      mode: 0755
+      owner: "{{ minio_user_uid }}"
+      group: "{{ minio_user_gid }}"
+    with_items: ["nginx", "nginx/config"]
+    become: yes
+
+##################
+# NGINX CONFIGs  #
+##################
+
+# Copy nginx conf files
+- name: Add nginx conf file
+  template:
+    src: "nginx.conf.j2"
+    dest: "{{ base_install_dir }}/nginx/config/nginx.conf"
+    owner: "{{ minio_user_uid }}"
+    group: "{{ minio_user_gid }}"
+  become: yes
+
+- name: Add nginx ssl snippet file
+  template:
+    src: "nginx_ssl_snippet.conf.j2"
+    dest: "{{ base_install_dir }}/nginx/config/ssl_snippet.conf"
+    owner: "{{ minio_user_uid }}"
+    group: "{{ minio_user_gid }}"
+  become: yes
+
+#######################
+#   DOCKER COMPOSER   #
+#######################
+
+# copy docker-compose file
+
+- name: Add docker-compose file
+  template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ base_install_dir }}/docker-compose.yml"
+    owner: "{{ minio_user_uid }}"
+    group: "{{ minio_user_gid }}"
+    mode: 0644
+  become: yes
+
+
+
+
+# start docker-compose
+
+# - name: Start docker compose 
+#   community.docker.docker_compose:
+#     project_src: "{{ base_install_dir }}/docker-compose.yml"
+#     state: present 
+
+
+# # - name: Start docker compose 
+# #   shell:
+# #     cmd: "docker compose -f {{ base_install_dir }}/docker_compose.yml up -d"
+# #   become: yes
