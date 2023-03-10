@@ -1,0 +1,8 @@
+{% include './docker_compose_' + 'base' +  '_fragment.yml.j2' %}
+
+# now comes the containers 
+{% include './docker_compose_' + 'cadvisor' +  '_fragment.yml.j2' %}
+{% include './docker_compose_' + 'prometheus' +  '_fragment.yml.j2' %}
+{% include './docker_compose_' + 'thanos_sidecar' +  '_fragment.yml.j2' %}
+{% include './docker_compose_' + 'nginx' +  '_fragment.yml.j2' %}
+{% include './docker_compose_' + 'blackbox_exporter' +  '_fragment.yml.j2' %}
