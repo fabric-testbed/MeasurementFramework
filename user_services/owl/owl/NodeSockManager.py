@@ -29,9 +29,10 @@ class NodeSockManager():
         self.udp_port = int(config['GENERAL']['UdpPort'])
         self.pcap_interval = int(config['receiver']['PcapInterval'])
         self.capture_mode = config['receiver']['CaptureMode']
-        self.send_interval = float(config['sender']['SendInterval'])
         self.output_dir = config['receiver']['OutputDir']
-
+        self.send_interval = float(config['sender']['SendInterval'])
+        self.ptp_device = config['sender']['PtpDevice']
+        self.ptp_so_file = config['sender']['PtpSoFilePath']
 
         logging.basicConfig(filename=f'{self.output_dir}/owl.log',
                         level=logging.DEBUG, 
@@ -133,7 +134,12 @@ class NodeSockManager():
             if dest_ip not in self.sender_instances.keys():
                 self.logger.info(f"new destination IP  found: {str(dest_ip)} ")
                 self.sender_instances[dest_ip] = sender.UDP_sender(
-                                self.send_interval, dest_ip, self.udp_port, seq_n)
+                                                    self.ptp_device,
+                                                    self.ptp_so_file,
+                                                    self.send_interval, 
+                                                    dest_ip, 
+                                                    self.udp_port, 
+                                                    seq_n)
    
 
 ##################################################################################
