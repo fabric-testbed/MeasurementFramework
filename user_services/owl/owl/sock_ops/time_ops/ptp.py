@@ -33,4 +33,4 @@ if __name__ == "__main__":
         exit(1)
 
     else: 
-         print(get_ptp_timestamp(sys.argv[i]))
+         print(get_ptp_timestamp(sys.argv[1]))
