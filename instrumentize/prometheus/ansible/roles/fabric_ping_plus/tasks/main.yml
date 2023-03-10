@@ -26,24 +26,24 @@
 
 
 
-# - name: Install Fabric Central Ping-Plus setup 
-#   block:
+- name: Install Fabric Central Ping-Plus setup 
+  block:
 
-#   - name: Install Fabric Central Ping-Plus Metrics
-#     import_tasks: fabric_central_ping_plus_install_tasks.yml
+  - name: Install Fabric Central Ping-Plus Metrics
+    import_tasks: fabric_central_ping_plus_install_tasks.yml
 
 
-# ##############################
-# #  Node Exporter Install     #
-# ##############################
-# - name: Install node_exporter 
-#   # Install the node exporter on the central 
-#   block:
-#   - name: Install Node_exporter
-#     import_tasks: install_node_exporter_tasks.yml
-#   when: 
-#     - install_node_exporters is defined
-#     - install_node_exporters 
+##############################
+#  Node Exporter Install     #
+##############################
+- name: Install node_exporter 
+  # Install the node exporter on the central 
+  block:
+  - name: Install Node_exporter
+    import_tasks: install_node_exporter_tasks.yml
+  when: 
+    - install_node_exporters is defined
+    - install_node_exporters 
 
 
 - name: Add Docker Compose file 
@@ -53,13 +53,6 @@
         src: "templates/DockerCompose/docker_compose_complete.yml.j2"
         dest: "{{ base_install_dir }}/docker-compose.yml"
   become: yes
-
-
-# - name: Create docker-compose file 
-#   block:
-#   - name: Creating docker-compose fragments & file.
-#     become: yes
-#     import_tasks: create_docker_compose_file_tasks.yml
 
 
 - name: Start Docker Compose 
