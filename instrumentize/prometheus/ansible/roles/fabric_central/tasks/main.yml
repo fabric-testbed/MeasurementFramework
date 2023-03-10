@@ -13,7 +13,7 @@
       path: "{{ base_install_dir }}/docker-compose.yml"
     register: docker_compose_file_status
 
-  - name: Start Docker compose file
+  - name: Stop Docker compose file
     shell: docker-compose down 
     args:
       chdir: "{{ base_install_dir }}"
