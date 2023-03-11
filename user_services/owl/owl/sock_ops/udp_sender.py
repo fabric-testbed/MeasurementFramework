@@ -31,7 +31,7 @@ class UDP_sender(object):
         self.is_running = False
         self.start()
 
-        #current_timestamp = (time.time()):.9f
+        #current_timestamp = time.time_ns() 
         current_timestamp = ptp.get_ptp_timestamp(
                             device_name = self.ptp_device,
                             so_file=self.ptp_so_file)

@@ -5,11 +5,18 @@ import logging
 import time
 import socket
 import subprocess
-from sock_ops import udp_sender as sender
-from sock_ops import udp_capturer as capturer
+import sys
+import os
 from random import randrange
 from threading import Timer
 
+# hideous but needed to ues udp_sender from here?
+
+cwd = os.getcwd()
+sys.path.insert(0, f'{cwd}/sock_ops')
+
+from sock_ops import udp_sender as sender
+from sock_ops import udp_capturer as capturer
 
 
 class NodeSockManager():
@@ -68,7 +75,8 @@ class NodeSockManager():
                 time.sleep(1)
                 self.sender_instances[dest_ip] = None
 
-    
+        sleep(2)
+
         assert self.listen_instance is None
         assert len(self.sender_instances) == 0
 
