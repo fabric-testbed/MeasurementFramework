@@ -1,0 +1,9 @@
+---
+# Creating the Fabric Central Minio Backup object store setup.
+- hosts: minio-b
+
+  roles:
+    - ../minio/ansible/roles/central
+  vars:
+    install_name: minio_b
+    
