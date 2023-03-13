@@ -17,6 +17,16 @@ services:
 
     command: server /data --console-address ":9099"
 
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "1024m" 
+        max-file: "5"
+
+    restart: always
+
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -41,3 +51,12 @@ services:
     ports:
       - "{{minio_port}}:9000"
       - "{{minio_console_port}}:9099"
+
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "1024m" 
+        max-file: "5"
+
+    restart: always
