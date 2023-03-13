@@ -1,9 +1,0 @@
-# Combine all fragments in docker_compose dir to create docker-compose.yml file. 
-# Files will be added in alphabetical order.
-- name: Assemble docker-commpose fragments
-  ansible.builtin.assemble:
-    src: "{{ base_install_dir }}/docker_compose"
-    dest: "{{ base_install_dir }}/docker-compose.yml"
-    owner: "{{ prom_user_name }}"
-    group: "{{ prom_group_name }}"
-  become: yes

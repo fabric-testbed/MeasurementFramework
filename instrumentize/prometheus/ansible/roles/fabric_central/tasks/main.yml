@@ -39,12 +39,13 @@
     - install_node_exporters is defined
     - install_node_exporters 
 
-
-- name: Create docker-compose file 
+- name: Add Docker Compose file 
   block:
-  - name: Creating docker-compose fragments & file.
-    become: yes
-    import_tasks: create_docker_compose_file_tasks.yml
+    - name: Create docker-compose.yml 
+      template:
+        src: "templates/DockerCompose/docker_compose_complete.yml.j2"
+        dest: "{{ base_install_dir }}/docker-compose.yml"
+  become: yes
 
 
 - name: Start Docker Compose 

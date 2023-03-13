@@ -140,24 +140,6 @@
       # See vars for templates used
 
 
-# # #WARNING ONLY ONE CAN RUN DONT DO ON DEV TEST if connecting to production ceph bucket
-#     - name: Thanos Central Compact
-#       # Important that this is only run in one place.
-#       include_tasks: Thanos/thanos_central_compact_container_tasks.yml
-#       when: 
-#         - use_thanos_compact is defined
-#         - use_thanos_compact
-# #       vars: 
-# #         thanos_compact_state: absent
-# #         thanos_cert: "{{ host_cert }}"
-# #         thanos_key: "{{ host_key }}"
-# #         thanos_interm_cert: "{{ host_interm_cert }}"
-# #       when: true
-
-
-
-
-
 ####################
 #  ALERTMANAGER    #
 ####################  
