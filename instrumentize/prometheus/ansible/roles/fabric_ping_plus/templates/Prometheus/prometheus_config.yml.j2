@@ -15,13 +15,18 @@ rule_files:
   - '*_alert_rules.yml'
   - '*_rules.yml'
 
-
-# Alertmanager configuration
 alerting:
   alertmanagers:
-  - static_configs:
-    - targets: ['{{ install_name }}_alertmanager:{{ alertmanager_port }}']
-
+    - scheme: https
+      tls_config:
+        insecure_skip_verify: true
+      basic_auth:
+        username: "{{ alertmanager_ht_user }}"
+        password: "{{ alertmanager_ht_password }}"
+      
+      static_configs:
+        - targets: 
+          - "{{ alertmanager_url }}"
 
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
@@ -201,14 +206,6 @@ scrape_configs:
 #######################################
 
 
-## Alertmanager Exporter 
-## for now only one running 
-#  - job_name: 'alertmanager-exporter'
-#    scheme: http
-#    static_configs: 
-#      - targets: 
-#        - '{{ install_name }}_alertmanager:{{ alertmanager_port }}'
-
 #########################################
 #          Thanos Exporters             #
 #########################################
@@ -220,29 +217,6 @@ scrape_configs:
     static_configs:
       - targets:
         - '{{ install_name }}_thanos_sidecar:10902'
-
-## Store 
-#  - job_name: 'thanos_store'
-#    scheme: http 
-#    static_configs:
-#      - targets:
-#        - '{{ install_name }}_thanos_store:10912'
-
-# Query
-#  - job_name: 'thanos_query'
-#    scheme: http 
-#    static_configs:
-#      - targets:
-#        - '{{ install_name }}_thanos_query:10922'
-
-# Compact
-#  - job_name: 'thanos_compact'
-#    scheme: http 
-#    static_configs:
-#      - targets:
-#        - '{{ install_name }}_thanos_compact:10902'
-
-#
 
 
 #########################################
@@ -283,26 +257,10 @@ scrape_configs:
 #        target_label: __param_module
 
 
- # Docker Exporter for Local Containers
-  - job_name: 'docker'
+ # Cadvisor for Local Docker Containers
+
+  - job_name: cadvisor
+    scrape_interval: 30s
     static_configs:
-      - targets: ['{{ install_name }}_docker_exporter:9417']
-
-
-
-
-
-
-
-
-# TODO
-# - job_name: 'geni-federate'
-#
-#    honor_labels: true
-#    metrics_path: '/federate'
-#
-#    params:
-#            'match[]':
-#                    - '{job=~"ceph-0|thanos_bucket"}'
-#    static_configs:
-#            - targets: ['172.23.7.230:9090']
+    - targets:
+      - ping-plus_cadvisor:8080

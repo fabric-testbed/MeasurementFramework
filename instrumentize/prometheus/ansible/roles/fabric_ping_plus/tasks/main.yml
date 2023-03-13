@@ -37,7 +37,7 @@
 #  Node Exporter Install     #
 ##############################
 - name: Install node_exporter 
-  # Install the node exporter on the central 
+  # Install the node exporter for ping-plus vm 
   block:
   - name: Install Node_exporter
     import_tasks: install_node_exporter_tasks.yml

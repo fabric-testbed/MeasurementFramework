@@ -1,6 +1,5 @@
 ---
-# Central Metrics vars
-# This file contains variables that will be common to all installs. 
+# Ping-plus vars
 # These vars have the lowest precedenc to and --extra-vars used will over write them.
 
 ansible_python_interpreter: /usr/bin/python3
@@ -16,9 +15,7 @@ grafana_extra_node_hosts: {}
 ##########################################
 # Values that must be filled in by user. #
 ##########################################
-
-# Name used for prom config external label
-# hank_name: 
+# See fabric-deployment repo anisible host files for theses values.
 # Name for install directories
 # install_name: 
 
@@ -31,85 +28,18 @@ grafana_extra_node_hosts: {}
 # End Values that must be filled in by user. #
 ##########################################
 
-
-
 docker_network_name: "{{ install_name }}"
 base_data_dir: "/opt/data/{{ install_name }}"
 base_install_dir: "/opt/{{ install_name }}" 
 
 add_python_docker_sdk: no
 
-# We need certs on the node to use TLS for various servers.
-# If the node has official certs, we use them, if not
-# ie a temp or test node, we use self-signed certs.
-#### Existing host certs....
-# hostname: "metrics.fabric-testbed.net"
-# host_cert: "/etc/ssl/certs/metrics_fabric-testbed_net.pem"
-# host_key: "/etc/pki/tls/private/metrics_fabric-testbed_net.key"
-# host_interm_cert: "/etc/pki/tls/certs/metrics_fabric-testbed_net_interm.cer"
-
-#### OR Selfsigned host certs....
-# Locations for self signed cert creation.
-# If host aleady has certs, then skip the self-signed task and
-#  just use the cert on the host machine.
-#### TODO check for OS differences
-# this is ubuntu host_csr: /etc/ssl/private/{{ hostname }}.csr
-
-#----------
-# tls_private_dir: /etc/pki/tls/private
-# tls_public_dir: /etc/ssl/certs
-
-# host_csr: "{{ tls_private_dir }}/fab_prom_self_signed_{{ hostname }}.csr"
-# self_signed_cert_dir: "{{ tls_public_dir }}/fab_prom_self_signed_{{ hostname }}"
-
-# host_cert: "{{ tls_public_dir }}/fab_prom_self_signed_{{ hostname }}/fullchain.pem"
-# host_key: "{{ tls_private_dir }}/fab_prom_self_signed_{{ hostname }}/privkey.pem"
-
-# host_interm_cert: "{{ tls_public_dir }}/fab_prom_self_signed_{{ hostname }}/fullchain.pem"
-#=======================
-
-
-
-
-# -----------------------------------------------
-## if we need to create our own self signed certs 
-
-#self_signed_cert_dir: "{{ base_install_dir }}/ssl"
-#self_signed_key_dir: "{{ base_install_dir }}/ssl/private"
-
-#host_csr: "{{ self_signed_cert_dir }}/{{ hostname }}.csr"
-#host_cert: "{{ self_signed_cert_dir }}/{{ hostname }}_fullchain.pem"
-#host_key: "{{ self_signed_key_dir }}/{{ hostname }}_privkey.pem"
-## Used to verify 
-#host_interm_cert: "{{ host_cert }}"
-
-# ------------------------------------------------
-
 prom_user_name: fab-prom
 prom_group_name: fab-prom
 
 
-####################
-#      Ports       #
-####################
-# In case we need to eliminate conficts
-alertmanager_port: 9093    
-
-
-
 docker_ipv6_subnet: fd8d:73ee:3857:1315::/64
 docker_ipv6_gateway: fd8d:73ee:3857:1315::1
-
-
-
-#alertmanager_external_url: https://192.168.12.238:9093
-
-
-
-
-# # LOKI Testing
-# loki_state: started 
-# loki_templates_dir: templates/Loki
 
 
 
@@ -122,64 +52,35 @@ prometheus_templates_dir: templates/Prometheus
 prometheus_config_template_files: 
   - prometheus_config.yml
 
-# # Commented out since we aren't able to send over the management network
   # blackbox targets
   - fabric_dns_targets.yml
   - fabric_http_targets.yml
   - fabric_beta_http_targets.yml
   - fabric_smtp_targets.yml
   - fabric_tcp_targets.yml
- 
-   
-  - central_other_ping_targets.yml
-  - central_bastion_ping_targets.yml 
-  - central_bastion_ping6_targets.yml
 
-
-
-
-  # # To check that head nodes are up
-  # - headnode_ping_targets.yml
-  # # To check that worker nodes are up
-  # - workernode_ping_targets.yml
-
-  # aux node exporters and local node exporter
-#  - central_node_targets.yml
-
-  # other exporters such as kafka, openstack, jupyter
-  # TODO where?
-
-  # alertmanager rules
-  #- test_alerts.yml
+  - ping-plus_other_ping_targets.yml
+  - ping-plus_bastion_ping_targets.yml 
+  - ping-plus_bastion_ping6_targets.yml
+    
+  - ping-plus_node_targets.yml
 
 prometheus_config_files: []
   # need default var even if empty
 
-# # Default alert rules for a rack
-# alert_rule_files:
-# #  - dns_alert_rules.yml
-#   - docker_alert_rules.yml
-#   - mail_alert_rules.yml
-#   - network_alert_rules.yml
-#   - node_alert_rules.yml
-#   - node_ping_alert_rules.yml
-#   - prometheus_alert_rules.yml
-#  # - ssl_alert_rules.yml
-#   - time_alert_rules.yml
-#   # vpn ping only needed on uky/renc racks but do no harm if on others
-#   - vpn_ping_alert_rules.yml
-#  # - web_site_alert_rules.yml
-
-
 prometheus_secrets: []
 
+
+####################
+#   Alertmanager   #
+####################
+
+alertmanager_url: metrics.fabric-testbed.net:9093
+
+
 alert_rule_file_dir: files/alert_rules
-# alertmanager_tmpl_file_dir: files/Alertmanager_tmpl
 
-# alertmanager_tmpl_files:
-#   - slack.tmpl
-
-# Default alert rules for central
+# Default alert rules for ping-plus
 alert_rule_files:
   - dns_alert_rules.yml
   - docker_alert_rules.yml
@@ -230,7 +131,6 @@ thanos_sidecar_key: "{{ thanos_key }}"
 ####################
 # Docker Exporter  # 
 ####################
-docker_exporter_templates_dir: templates/DockerExporter
 
 
 ####################
@@ -254,11 +154,6 @@ nginx_template_dir: templates/Nginx
 nginx_server_confd_template_files: 
   - prometheus_dual.conf
   - thanos_sidecar_grpc.conf
-  #- alertmanager_dual.conf
-  #- thanos_dual.conf
-  #- grafana_dual.conf
-  #- grafana_dual_web_sockets.conf
-  # moved into grafana since it is listening on prot 443- welcome.conf
 
 nginx_config_template_files:
   - ssl_snippet.conf
@@ -284,22 +179,3 @@ node_exporter_tls_server_config:
   cert_file: /etc/node_exporter/tls.cert
   key_file: /etc/node_exporter/tls.key
 node_exporter_web_listen_address: "{{ ansible_host }}:9100"
-
-# Universal Rack Node Exporter user & pass
-# -- Moved to private vars -- # node_exporter_username: <private>
-# -- Moved to private vars -- # node_exporter_password: <private>
-
-####################
-#       CEPH       #
-####################
-# -- Moved to private vars -- # ceph_bucket: <private>
-# -- Moved to private vars -- # ceph_endpoint: <private>
-# -- Moved to private vars -- # ceph_access_key: <private>
-# -- Moved to private vars -- # ceph_secret_key: <private>
-
-
-####################
-#  ALERTMANAGER    #
-####################
-# -- Moved to private vars -- # alertmanager_slack_api_url: <https://hooks.slack.com/services/secret-key>
-# etc...
