@@ -1,0 +1,7 @@
+---
+# Creating the Fabric Central Minio object store setup.
+- hosts: ping-plus
+  roles:
+    - ../prometheus/ansible/roles/fabric_ping_plus
+  vars:
+    install_name: ping-plus    
