@@ -3,7 +3,7 @@
 FROM python:3.9-slim-buster
 EXPOSE 5005
 
-RUN apt-get update && apt-get install -y tcpdump git \
+RUN apt-get update && apt-get install -y tcpdump git build-essential \
         && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
