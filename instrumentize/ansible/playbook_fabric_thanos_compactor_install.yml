@@ -1,0 +1,9 @@
+---
+# Creating the Fabric Central Minio Production object store setup.
+- hosts: compactor-p
+
+  roles:
+    - ../prometheus/ansible/roles/fabric_compactor
+  vars:
+    install_name: compactor
+    
