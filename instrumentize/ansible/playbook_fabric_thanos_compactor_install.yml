@@ -4,6 +4,8 @@
 
   roles:
     - ../prometheus/ansible/roles/fabric_compactor
-  vars:
-    install_name: compactor
+
+  # moved to hosts file
+  # vars:
+  #   install_name: compactor
     

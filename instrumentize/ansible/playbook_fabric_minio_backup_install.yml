@@ -4,6 +4,8 @@
 
   roles:
     - ../minio/ansible/roles/central
-  vars:
-    install_name: minio_b
+
+  # moved to hosts file
+  # vars:
+  #   install_name: minio_b
     
