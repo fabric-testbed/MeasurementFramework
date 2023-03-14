@@ -13,17 +13,11 @@
       - "{{ base_data_dir }}/prometheus:/prometheus"
     # ports: 
     #   - 9090:9090
-    
-    # TODO setup logging to ensure we dont use up drive space
-    #log_driver: json-file
-    #log_options:
-    #  max-size: 1024m
 
     extra_hosts:
       {{ extra_node_hosts  | default(omit) }}
 
-      
-      
+
     command:
       - '--config.file=/etc/prometheus/config/prometheus_config.yml'
       - '--storage.tsdb.path=/prometheus'

@@ -14,3 +14,12 @@
         # limit cpu & memory usage by cadvisor container
       - '--housekeeping_interval=10s'
       - '--docker_only=true'
+
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "1024m" 
+        max-file: "5"
+
+    restart: always
