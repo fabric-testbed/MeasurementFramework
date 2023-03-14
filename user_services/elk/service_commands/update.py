@@ -1,6 +1,7 @@
 from gettext import install
 import os
 import json
+import datetime;
 
 import elk_utilities as eu
 import custom_dashboards
@@ -59,10 +60,15 @@ def main():
                     os.system('elasticdump --version')
 
                     # Exporting all indices
-                    os.system('echo "\nData export started."')
+                    os.system('echo Data export started. Files will be placed in ' + eu.files_dir + '/indices')
+
+                    ## Changes datetime format to year-month-day_hour:minute:second
+                    time_stamp = str(datetime.datetime.now()).split(".")[0].replace(" ", "_")
                     for index in cmd["indices"]:
-                        os.system('echo "exporting ' + index + '..."')
-                        os.system('sudo elasticdump --input="http://localhost:9200/' + index + '/" --output="' + eu.files_dir + '/indices/' + index + '.json" --type=data')
+                        output_location = eu.files_dir + '/indices/' + index + "_" + time_stamp + ".json"
+
+                        os.system('echo exporting ' + index + ' as ' + index + "_" + time_stamp + ".json")
+                        os.system('sudo elasticdump --input="http://localhost:9200/' + index + '/" --output="' + eu.files_dir + '/indices/' + index + "_exported_" + time_stamp + '.json.download" --type=data')
 
                     # Returning success
                     ret_val['export_index'] = "Indices exported to Measurement node in the directory: " + eu.files_dir + "/indices/"

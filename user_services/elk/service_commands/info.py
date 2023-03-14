@@ -1,17 +1,17 @@
 import os
 import json
+import subprocess
 
 import elk_utilities as eu
 
 def main():
-    ret_val = { "success":True, "msg":"" }
+    ret_val = { "success":True}
     data = eu.get_data()
-    
+
     if "get" in data:
         try:
             with open(eu.nginx_password_filename, 'r') as f:
                 nginx_password = f.read().strip()
-            
             if "nginx_password" in data["get"]:
                 ret_val["nginx_password"] = nginx_password          
             if "nginx_id" in data["get"]:
@@ -19,9 +19,19 @@ def main():
 
         except IOError:
             ret_val["error"] = "Nginx credential file does not appear to exist."
-        
-
-
+    elif "fetch" in data:
+        try:
+            # Calls index name API
+            r = subprocess.run(["curl","-XGET","http://localhost:9200/_cat/indices/?h=index"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            # Gathers all external user indices, ignoring internal "." prefixed indices.
+            indices = []
+            for line in r.stdout.splitlines():
+                if line[0] != ".":
+                    indices.append(line)
+            indices = tuple(indices)
+            ret_val["index_names"] = indices
+        except:
+            ret_val = { "success":False, "ERROR":"Failed to fetch ELK index data."}
     else:
         try:
             with open(eu.nginx_password_filename, 'r') as f:
