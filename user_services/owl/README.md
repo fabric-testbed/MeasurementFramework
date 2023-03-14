@@ -1,80 +1,104 @@
-# OWL One Way Latency
+# OWL(One Way Latency)
 
-## Current owl.conf file format
-Sample config and links files are round under `sample)owl_config`.
+Program for measuring one-way latency between nodes. Though it is written 
+specifically for FABRIC Testbed, it should work in a general setting with 
+minimal edits, if at all.
 
+As outlined below, it can run natively (not recommended), using Docker containers,
+or as part of the Measurement Framework environment.
+
+
+# Architecture
+TODO
+
+# How to Run
+
+## 1. As part of Measurement Framework
+TODO
+
+
+## 2. Using Docker containers
+
+### Prerequisites
+
+- Docker daemon (ipv6 enabled if necessary)
+- Directory on the host machine for owl config files (owl.conf, links.json)
+- Directory on the host machine for owl output files (\*.pcap)
+
+### Usage
+
+1. Build a container using the Dockerfile. 
 
 ```
-[GENERAL]
-LinkCheckInterval = <sec (int)>
-UdpPort = <port>
-ServiceRequestFile = <links>.json
-
-[receiver]
-PcapInterval = <sec (int)>
-CaptureMode = "live" or "save"
-Output_Dir = <path/to/dir/for/pcap/files> (no trailing '/')
-
-[sender]
-SendInterval= <sec (float)>
+# Example:
+$  sudo docker build -t owl-app MeasurementFramework/user_services/owl/
 ```
 
-## Current json links file format
+2. Run the container with the following.
+
+
+#### Using NodeSockManager.py
+
+Requires owl.conf and links.json files
+
 ```
-{
-  "links":[ 
-            {
-	      "src": "10.10.2.2",
-	      "dst": "10.10.2.1"
-	    },
-            {
-	      "src": "10.10.2.1",
-	      "dst": "10.10.3.1"
-	    }
-  ]
-}
+$ docker run [--rm] -dp 5005:5005 \
+$ sudo docker run --rm -dp 5005:5005 \
+--mount type=bind,source=<path/to/local/config/dir>,target=/owl_config \
+--mount type=bind,source=<path/to/local/output/dir>,target=/owl_output  \
+--network="host"  \
+--privileged \
+owl-app NodeSockManager.py /owl_config/owl.conf
 ```
 
-## About Ansible Playbooks
-These Playbooks are for temporary usage. Make sure to check the file source path in `setup_owl.yaml`. 
+#### Using socket operation scripts
 
-## Checking Output pcap files on Experiment_Nodes.
 ```
-ls -l /var/lib/docker/volumes/owl-output/vol/_data
+$sudo docker run --rm -dp 5005:5005 \
+--network="host"  \
+--privileged \
+owl-app  sock_ops/udp_sender.py [options]
 ```
 
-## Current Limitations
+## 3. Natively
+
+### Prerequisites
+
+- tcpdump
+- gcc
+- scapy (`pip install --pre scapy[basic]`)
+- psutil (`pip install psutil`)
+- `ptp_time.so` file placed in the same directory as `ptp_time.c`
+
+In addition, Python scripts must be run with `sudo` privilege to perform 
+necessary socket operations.
+
+### Usage
+
+The simplest experiment can be performed with 
+
+```
+# Sender side 
+sudo python3 owl/sock_ops/udp_sender.py [options]
+
+# Example
+sudo python3 owl/sock_ops/udp_sender.py --ptp-device "/dev/ptp1"  --dest-ip "10.0.0.2" \
+--frequency 0.1 --seq-n 123 --duration 60
+
+# Receiver side
+sudo python3 owl/sock_ops/udp_capturer.py [options]
+```
+
+Alternatively use `NodeSockManager` on multiple nodes with config and links files.
+
+```
+sudo python3 owl/NodeSockManager.py <path/to/config/file>
+```
+
+
+# Current Limitations
 - IPV4 only
+- "static" capture only (capturer side saves tcpdump output to .pcap files)
 - Assumes end points are non-routing devices with only 1 experimenter's network interface.
 
-
-## how to run the docker container (WIP)
-```
-docker run -dp 5005:5005 -v "$(pwd):/owl_app" --network="host"  --privileged owl-app owl.conf
-```
-still needs debugging.
-
-
-## Useful Tcpdump command
-```
-$ sudo tcpdump -vfn -XX -tt  -i eth1 port 5005
-tcpdump: listening on eth1, link-type EN10MB (Ethernet), capture size 262144 bytes
-1637724059.954885 IP (tos 0x0, ttl 64, id 50479, offset 0, flags [DF], proto UDP (17), length 55)
-    10.10.2.1.46829 > 10.10.2.2.5005: UDP, length 27
-	0x0000:  02ff cdea 320d 020a ec84 3976 0800 4500  ....2.....9v..E.
-	0x0010:  0037 c52f 4000 4011 5d70 0a0a 0201 0a0a  .7./@.@.]p......
-	0x0020:  0202 b6ed 138d 0023 184b 3136 3337 3732  .......#.K163772
-	0x0030:  3430 3539 2e39 3534 3034 3632 2c32 3032  4059.9540462,202
-	0x0040:  3131 3132 33
-```
-### For reading pcap files using tcpdump (with the payload in HEX and ASCII)
-```
-sudo tcpdump -qn -tt  -XX -r <file>.pcap
-```
-## Scapy installation (tentative) 
-This is needed only for parsing pcap files. Will likely be changed to `pip`
-installation.
-```
-sudo apt install python3-scapy
-```
 
