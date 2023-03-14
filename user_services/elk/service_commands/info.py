@@ -9,36 +9,31 @@ def main():
     data = eu.get_data()
 
     if "get" in data:
-        try:
-            with open(eu.nginx_password_filename, 'r') as f:
-                nginx_password = f.read().strip()
-            if "nginx_password" in data["get"]:
-                ret_val["nginx_password"] = nginx_password          
-            if "nginx_id" in data["get"]:
-                ret_val["nginx_id"] = "fabric"
-
-        except IOError:
-            ret_val["error"] = "Nginx credential file does not appear to exist."
-    elif "fetch" in data:
-        try:
-            # Calls index name API
-            r = subprocess.run(["curl","-XGET","http://localhost:9200/_cat/indices/?h=index"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            # Gathers all external user indices, ignoring internal "." prefixed indices.
-            indices = []
-            for line in r.stdout.splitlines():
-                if line[0] != ".":
-                    indices.append(line)
-            indices = tuple(indices)
-            ret_val["index_names"] = indices
-        except:
-            ret_val = { "success":False, "ERROR":"Failed to fetch ELK index data."}
+        if "nginx_password" in data["get"] or "nginx_id" in data["get"]:
+            try:
+                with open(eu.nginx_password_filename, 'r') as f:
+                    nginx_password = f.read().strip()
+                if "nginx_password" in data["get"]:
+                    ret_val["nginx_password"] = nginx_password
+                if "nginx_id" in data["get"]:
+                    ret_val["nginx_id"] = "fabric"
+            except IOError:
+                ret_val["error"] = "Nginx credential file does not appear to exist."
+        if "index_names" in data["get"]:
+            try:
+                # Calls index name API
+                r = subprocess.run(["curl","-XGET","http://localhost:9200/_cat/indices/?h=index"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                # Gathers all external user indices, ignoring internal "." prefixed indices.
+                indices = []
+                for line in r.stdout.splitlines():
+                    if line[0] != ".":
+                        indices.append(line)
+                indices = tuple(indices)
+                ret_val["index_names"] = indices
+            except:
+                ret_val = {"success": False, "ERROR": "Failed to fetch ELK index data."}
     else:
-        try:
-            with open(eu.nginx_password_filename, 'r') as f:
-                ret_val["nginx_password"] = f.read().strip()
-            ret_val["nginx_id"] = "fabric"
-        except IOError:
-            ret_val["error"] = "File does not appear to exist."
+        ret_val["info"] = "Pass in a dictionary with the info you want to get. For example: data['get'] = ['info_type']. info types include nginx_id, nginx_password, and index_names"
 
     print(eu.get_json_string(ret_val))
     #print(json.dumps(ret_val))
