@@ -1,7 +1,9 @@
 from gettext import install
 import os
 import json
-import datetime;
+import datetime
+import subprocess
+import time
 
 import elk_utilities as eu
 import custom_dashboards
@@ -53,28 +55,50 @@ def main():
                 if "indices" in cmd and cmd["indices"]:
                     # Confirm dependencies are installed
                     # TODO: Actually check for this
-                    os.system('echo "\nConfirming npm and elasticdump are installed:"')
+                    os.system('echo "Confirming npm and elasticdump are installed:"')
                     os.system('echo "npm version:"')
                     os.system('npm --version')
                     os.system('echo "elasticdump version:"')
                     os.system('elasticdump --version')
+                    os.system("echo")
 
                     # Exporting all indices
                     os.system('echo Data export started. Files will be placed in ' + eu.files_dir + '/indices')
+                    os.system("echo ------------------------------------------------------------------------------------")
+                    os.system("echo")
 
-                    ## Changes datetime format to year-month-day_hour:minute:second
+                    # Changes datetime format to year-month-day_hour:minute:second
                     time_stamp = str(datetime.datetime.now()).split(".")[0].replace(" ", "_")
+                    total, successful = 0, 0
                     for index in cmd["indices"]:
-                        output_location = eu.files_dir + '/indices/' + index + "_" + time_stamp + ".json"
+                        total += 1
+                        file_name = index + "_exported_" + time_stamp + ".json"
+                        output_dir = eu.files_dir + '/indices/'
+                        cmd = ['sudo', 'elasticdump', '--input=http://localhost:9200/' + index, '--output=' +
+                               output_dir + file_name + '.download', '--type=data']
 
-                        os.system('echo exporting ' + index + ' as ' + index + "_" + time_stamp + ".json")
-                        os.system('sudo elasticdump --input="http://localhost:9200/' + index + '/" --output="' + eu.files_dir + '/indices/' + index + "_exported_" + time_stamp + '.json.download" --type=data')
+                        os.system("echo -n Exporting " + index)
+                        # print('Exporting ' + index + ' as ' + file_name)
+                        export_process = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                                          stderr=subprocess.PIPE, text=True)
+                        while export_process.poll() is None:
+                            os.system("echo -n .")
+                            time.sleep(1)
+                        os.system("echo")
+                        if export_process.poll() == 0:
+                            os.system("echo Exported successfully as " + file_name)
+                            os.system("sudo mv " + output_dir + file_name + ".download " + output_dir + file_name)
+                            successful += 1
+                        else:
+                            os.system("echo Export failed. Dumping output for troubleshooting:")
+                            os.system("echo " + str(export_process.communicate()))
+                        os.system("echo \n")
 
-                    # Returning success
-                    ret_val['export_index'] = "Indices exported to Measurement node in the directory: " + eu.files_dir + "/indices/"
+                    os.system("echo ------------------------------------------------------------------------------------")
+                    # Returning results
+                    ret_val['export_results'] = str(successful) + "/" + str(total) + " indices exported successfully."
+                    ret_val['export_location'] = eu.files_dir + "/indices"
 
-                    # TODO: Returning failure
-                    #ret_val['export_index'] = "Indices not exported. Something went wrong."
                 else:
                     ret_val['success'] = False
                     ret_val['export_index'] = "Failed to export any indices: Missing index names."
