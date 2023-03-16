@@ -46,45 +46,13 @@ scrape_configs:
     static_configs:
       - targets: ['minio-p.fabric-testbed.net:9000']
 
-## MinIO
-#  - job_name: minio-b
-#    bearer_token: ####minio_b_scrape_token####
-#    metrics_path: /minio/v2/metrics/cluster
-#    scheme: https
-#    static_configs:
-#    - targets: ['minio-b.fabric-testbed.net:9000']    
-
-
-## Jupyter
-#  - job_name: 'jupyterhub'
-#    bearer_token_file: /etc/prometheus/secrets/jupyterhub
-#    scheme: https
-#    metrics_path: '/hub/metrics'
-#    tls_config:
-#            insecure_skip_verify: true
-#    static_configs:
-#            - targets: ['jupyter.fabric-testbed.net']
-#
-#  - job_name: 'jupyterhub-beta'
-#    bearer_token_file: /etc/prometheus/secrets/jupyterhub_beta
-#    scheme: https
-#    metrics_path: '/hub/metrics'
-#    tls_config:
-#            insecure_skip_verify: true
-#    static_configs:
-#            - targets: ['jupyter-beta.fabric-testbed.net']
-
-## Kafka 
-## Note that these are servers that connect to kafka to get metrics, not the actual kafka servers.
-#  - job_name: 'mf-kafka'
-#    static_configs:
-#      - targets: ['nsoelk.fabric-testbed.net:9308']
-
-
-#  - job_name: 'mb-kafka'
-#    static_configs:
-#      - targets: ['nsoelk.fabric-testbed.net:9309']
-
+# MinIO
+  - job_name: minio-b
+    bearer_token: {{ minio_b_scrape_token }} 
+    metrics_path: /minio/v2/metrics/cluster
+    scheme: https
+    static_configs:
+    - targets: ['minio-b.fabric-testbed.net:9000']    
 
 #######################################
 #         Blackbox Exporters          #
@@ -304,4 +272,4 @@ scrape_configs:
     scrape_interval: 30s
     static_configs:
     - targets:
-      - ping-plus_cadvisor:8080
+      - "{{ install_name }}_cadvisor:8080"
