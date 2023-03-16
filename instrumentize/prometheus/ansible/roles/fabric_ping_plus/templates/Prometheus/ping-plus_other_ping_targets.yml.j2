@@ -4,10 +4,17 @@
 
 # Set of racks to ping is hard coded here to prevent incomplete racks from being pinged. 
 # all phase 1 racks in alpahbetical order ["clem","dall","fiu","gpn","lbnl","mass","max","mich","ncsa","renc","salt","star","tacc","ucsd","uky","utah","wash"] 
-{% for hank_name in  ["clem","dall","fiu","gpn","lbnl","mass","max","mich","ncsa","renc","salt","star","tacc","ucsd","uky","utah","wash"] %}
+
+# Second phase ? cern,losa,gatech,indi,newy,sri
+{% for hank_name in  ["cern","clem","dall","fiu","gatech","gpn","indi","lbnl", "losa","mass","max","mich","ncsa","newy","renc","salt","sri","star","tacc","ucsd","uky","utah","wash"] %}
+
+
 
 # Head Node
 {% for h in groups[hank_name+"_head"] %}
+
+##### {{ hank_name }} #####################################################################
+
 - targets:
         - {{ hostvars[h].ansible_host }}
   labels:
@@ -56,6 +63,7 @@
 
 
 # Storage
+{% if groups[hank_name+"_storage"] is defined %}
 {% for h in groups[hank_name+"_storage"] %}
 - targets:
         - {{ hostvars[h].ansible_host }}
@@ -70,7 +78,9 @@
         network: operations
         reason: infrastructure_check
 {% endfor %}
-
+{% else %}
+# None at {{ hank_name }}
+{% endif %}
 
 # Others
 {% for h in groups[hank_name+"_others"] %}
