@@ -12,7 +12,7 @@ def main():
     ret_val['msg'] = ""
 
     playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
-    ansible_hosts_file = "/home/mfuser/services/hosts.ini"
+    ansible_hosts_file = "/home/mfuser/services/common/hosts.ini"
     playbook = "/home/mfuser/mf_git/instrumentize/elk/fabric_deploy.yml"
     keyfile = "/home/mfuser/.ssh/mfuser_private_key"
 
