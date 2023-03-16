@@ -263,4 +263,4 @@ scrape_configs:
     scrape_interval: 30s
     static_configs:
     - targets:
-      - ping-plus_cadvisor:8080
+      - "{{ install_name }}_cadvisor:8080"
