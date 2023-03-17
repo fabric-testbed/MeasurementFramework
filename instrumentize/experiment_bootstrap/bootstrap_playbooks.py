@@ -14,7 +14,7 @@ def main():
 
     # For some reason the local ansible.cfg file is not being used
     os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
-    os.environ["ANSIBLE_SSH_RETRIES"] = 5
+    os.environ["ANSIBLE_SSH_RETRIES"] = "5"
 
     # PIP + DOCKER SDK
     ret_val["pip3_docker_sdk"] = {}
