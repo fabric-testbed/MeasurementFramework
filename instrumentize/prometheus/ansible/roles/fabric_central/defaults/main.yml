@@ -122,32 +122,11 @@ prometheus_templates_dir: templates/Prometheus
 prometheus_config_template_files: 
   - prometheus_config.yml
 
-# # Commented out since we aren't able to send over the management network
-  # # blackbox targets
-  # - fabric_dns_targets.yml
-  # - fabric_http_targets.yml
-  # - fabric_beta_http_targets.yml
-  # - fabric_smtp_targets.yml
-  # - fabric_tcp_targets.yml
- 
-   
-  # - central_other_ping_targets.yml
-  # - central_bastion_ping_targets.yml 
-  # - central_bastion_ping6_targets.yml
-
-
-
-
-  # # To check that head nodes are up
-  # - headnode_ping_targets.yml
-  # # To check that worker nodes are up
-  # - workernode_ping_targets.yml
+    # blackbox targets
+  - fabric_http_targets.yml
 
   # aux node exporters and local node exporter
   - central_node_targets.yml
-
-  # other exporters such as kafka, openstack, jupyter
-  # TODO where?
 
   # alertmanager rules
   #- test_alerts.yml
@@ -191,7 +170,7 @@ alert_rule_files:
   #- ssl_alert_rules.yml
 #  - time_alert_rules.yml
 #  - vpn_ping_alert_rules.yml
-  #- web_site_alert_rules.yml
+  - web_site_alert_rules.yml
 
 
 
