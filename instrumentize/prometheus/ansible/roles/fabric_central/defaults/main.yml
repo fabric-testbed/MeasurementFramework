@@ -148,7 +148,7 @@ prometheus_config_files: []
 #   # vpn ping only needed on uky/renc racks but do no harm if on others
 #   - vpn_ping_alert_rules.yml
    - web_site_alert_rules.yml
-
+# TODO Add cadvisor alerts   - cadvisor_alert_rules.yml
 
 prometheus_secrets: []
 
