@@ -4,6 +4,7 @@ import csv
 import sys
 from decimal import Decimal
 import datetime
+import argparse
 
 class PcapProcessor:
     def __init__(self, pcapfiles, outfile="out.csv", delete_pcap=False, verbose=True):
@@ -74,14 +75,20 @@ class PcapProcessor:
 
 
 if __name__ == "__main__":
-   
-    n = len(sys.argv)
-    pcap_files = []
 
-    for i in range(1,n):
-        pcap_files.append(sys.argv[i])
+    parser = argparse.ArgumentParser()
 
-    processor = PcapProcessor(pcap_files)
+    parser.add_argument("--outfile", type=str, default="out.csv")
+    parser.add_argument("--delete-pcap", action='store_true', default=False)
+    parser.add_argument("--verbose", action='store_true', default=False)
+    parser.add_argument("--pcap-files", type=str, nargs='+')
+
+    args = parser.parse_args()
+    
+    processor = PcapProcessor(args.pcap_files, 
+                             outfile = args.outfile,
+                             delete_pcap = args.delete_pcap, 
+                             verbose = args.verbose)
     processor.process()
 
 
