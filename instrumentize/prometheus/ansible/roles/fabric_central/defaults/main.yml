@@ -128,27 +128,11 @@ prometheus_config_template_files:
   # aux node exporters and local node exporter
   - central_node_targets.yml
 
-  # alertmanager rules
-  #- test_alerts.yml
+
 
 prometheus_config_files: []
   # need default var even if empty
 
-# # Default alert rules for a rack
-# alert_rule_files:
-# #  - dns_alert_rules.yml
-#   - docker_alert_rules.yml
-#   - mail_alert_rules.yml
-#   - network_alert_rules.yml
-   - node_alert_rules.yml
-#   - node_ping_alert_rules.yml
-#   - prometheus_alert_rules.yml
-#  # - ssl_alert_rules.yml
-#   - time_alert_rules.yml
-#   # vpn ping only needed on uky/renc racks but do no harm if on others
-#   - vpn_ping_alert_rules.yml
-   - web_site_alert_rules.yml
-# TODO Add cadvisor alerts   - cadvisor_alert_rules.yml
 
 prometheus_secrets: []
 
@@ -171,7 +155,7 @@ alert_rule_files:
 #  - time_alert_rules.yml
 #  - vpn_ping_alert_rules.yml
   - web_site_alert_rules.yml
-
+# # TODO Add cadvisor alerts   - cadvisor_alert_rules.yml
 
 
 ####################

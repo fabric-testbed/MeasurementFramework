@@ -23,6 +23,10 @@
 
 {% include './docker_compose_' + 'alertmanager' +  '_fragment.yml.j2' %}
 
+##### BLACKBOX #############################################################
+
+{% include './docker_compose_' + 'blackbox_exporter' +  '_fragment.yml.j2' %}
+
 ##### CADVISOR #############################################################
 
 {% include './docker_compose_' + 'cadvisor' +  '_fragment.yml.j2' %}
