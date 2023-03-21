@@ -8,12 +8,20 @@ As outlined below, it can be used either within the Measurement Framework
 environment or as a stand-alone application possibly running inside a Docker
 contaier.
 
+Under all circumstances, the sender and receiver nodes must have PTP (Precision
+time Protocol) service running. To verify this and to look up the PTP clock path, 
+run the following command:
+
+```
+px -ef | grep phc2sys
+```
+
 
 # How to Collect OWL data
 
 ## 1. As part of Measurement Framework
 
-Refer to the Jupyter Notebook example.
+Refer to the Jupyter Notebook examples.
 
 
 ## 2. Using Docker containers
@@ -49,7 +57,7 @@ $  sudo docker build -t owl-app .
 Requires owl.conf and links.json files
 
 ```
-$ sudo docker run --rm -dp 5005:5005 \
+$ sudo docker run --rm -dp <port_num>:<port_num> \
 --mount type=bind,source=<path/to/local/config/dir>,target=/owl_config \
 --mount type=bind,source=<path/to/local/output/dir>,target=/owl_output  \
 --network="host"  \
@@ -61,23 +69,50 @@ owl-app NodeSockManager.py /owl_config/owl.conf
 
 ```
 # sender side
-$sudo docker run --rm -dp 5005:5005 \
+$sudo docker run --rm -dp <port_num>:<port_num> \
 --network="host"  \
 --privileged \
 owl-app  sock_ops/udp_sender.py [options]
 
 # receiver 
-$sudo docker run --rm -dp 5005:5005 \
+$sudo docker run --rm -dp <port_num>:<port_num> \
 --mount type=bind,source=<path/to/local/output/dir>,target=/owl_output \
 --network="host"  \
 --privileged \
 owl-app  sock_ops/udp_capturer.py [options]
 ```
 
+##### Examples
+
+```
+# On Node 1
+
+    # sender side
+    sudo docker run -dp 5005:5005 \
+    --network="host"  \
+    --privileged \
+    owl-app  sock_ops/udp_sender.py --ptp-device "/dev/ptp1" \
+    --ptp-so-file "/MeasurementFramework/user_services/owl/owl/sock_ops/time_ops/ptp_time.so" \
+    --dest-ip "10.0.0.2" --dest-port 5005 --frequency 0.1 \
+    --seq-n 5452 --duration 60
+
+# On Node 2
+
+    # receiver
+    sudo docker run -dp 5005:5005 \
+    --mount type=bind,source=/tmp/owl/,target=/owl_output \
+    --network="host"  \
+    --privileged \
+    owl-app  sock_ops/udp_capturer.py \
+    --ip "10.0.0.2" --port 5005 --pcap-sec 60 \
+    --outdir /owl_output --duration 60
+```
+
+
+
 ## 3. Natively (Not recommended)
 
 ### Prerequisites
-
 - PTP (Precision Time Protocol) service 
 - tcpdump
 - gcc
@@ -127,7 +162,7 @@ sudo python3 owl/NodeSockManager.py <path/to/config/file>
 
 ```
 python3 owl/data_ops/read_pcap.py <options>
-
+```
 
 
 # Current Limitations
