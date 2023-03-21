@@ -1,0 +1,11 @@
+---
+version: '3.5'
+
+# Seems Docker version 3 does not support createing ipv6 networks so we must use a external network
+networks:
+  default:
+    name: "{{ docker_network_name }}"  
+    external: true
+
+services:
+

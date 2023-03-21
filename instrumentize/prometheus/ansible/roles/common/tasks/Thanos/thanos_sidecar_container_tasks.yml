@@ -8,7 +8,8 @@
     network_mode: "{{ docker_network_name }}"
     # Exports Prometheus data to remote S3 compatible object store.
     #image: quay.io/thanos/thanos:v0.14.0
-    image: quay.io/thanos/thanos:v0.25.0
+    #image: quay.io/thanos/thanos:v0.25.0
+    image: quay.io/thanos/thanos:v0.29.0
     volumes:
       # config files
       - "{{ base_install_dir }}/thanos/config/:/etc/thanos/"

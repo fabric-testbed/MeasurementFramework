@@ -1,6 +1,6 @@
 ---
 # Creating the Fabric Central monitoring setup.
-- hosts: metrics
+- hosts: metrics-p
 
   roles:
     - ../prometheus/ansible/roles/fabric_central
