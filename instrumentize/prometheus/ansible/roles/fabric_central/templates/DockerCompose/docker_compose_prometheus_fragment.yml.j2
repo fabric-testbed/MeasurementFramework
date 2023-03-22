@@ -14,10 +14,6 @@
     # ports: 
     #   - 9090:9090
 
-    extra_hosts:
-      {{ extra_node_hosts  | default(omit) }}
-
-
     command:
       - '--config.file=/etc/prometheus/config/prometheus_config.yml'
       - '--storage.tsdb.path=/prometheus'
