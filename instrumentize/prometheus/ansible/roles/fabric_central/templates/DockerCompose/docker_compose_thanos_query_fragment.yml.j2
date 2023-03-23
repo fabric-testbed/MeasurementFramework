@@ -46,10 +46,3 @@
 
     restart: always
       
-
-    # Thanos needs to make calls to sidecar and store via host node for the central node. 
-    # I can use the self-signed cert if we give the host name.
-    extra_hosts:
-      {{ thanos_extra_node_hosts  | default(omit) }}
-
-      
