@@ -7,13 +7,16 @@
   tasks:  
   # Installs Pip3
   - name: Install PIP3
-    apt:
+    package:
       name: python3-pip
       state: present
-      update_cache: yes
 
   # Installs Python Docker SDK
   - name: Install Python Docker SDK
     pip:
-      name: docker
+      name: "{{ item }}"
       executable: pip3
+      state: latest    
+    with_items:
+        - 'pip'
+        - 'docker'

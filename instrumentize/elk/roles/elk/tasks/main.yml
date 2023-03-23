@@ -39,7 +39,7 @@
     state: present
     update_cache: yes
   when:
-    - ansible_facts['distribution'] == "CentOS"
+    - ansible_facts['distribution'] in [ "CentOS", "Rocky" ]
     - ansible_facts['distribution_major_version'] == "8"
 
 - name: Installing packages in elk/tasks/main.yml for Ubuntu
@@ -76,7 +76,7 @@
     dest: /etc/yum.repos.d/docer-ce.repo
     mode: 0644
   when:
-    - ansible_facts['distribution'] == "CentOS"
+    - ansible_facts['distribution'] in [ "CentOS", "Rocky" ]
     - docker_valid.failed == true
 
 - name: Add an apt signing key for Docker for Ubuntu
