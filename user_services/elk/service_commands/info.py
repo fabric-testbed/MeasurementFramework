@@ -32,6 +32,28 @@ def main():
                 ret_val["index_names"] = indices
             except:
                 ret_val = {"success": False, "ERROR": "Failed to fetch ELK index data."}
+        if "index_downloads" in data["get"]:
+            files = subprocess.run(["ls", "/home/mfuser/services/elk/files/indices"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            full = []
+            partial = []
+            for file in files.stdout.splitlines():
+                if ".download" not in file:
+                    full.append(file)
+                else:
+                    partial.append(file)
+            print("Files finished exporting")
+            print("------------------------")
+            for file in full:
+                print(file)
+            print()
+            print("Export in progress")
+            print("------------------------")
+            for file in partial:
+                print(file)
+            print()
+            ret_val["Export Complete"] = full
+            ret_val["Export In Progress"] = partial
+
     else:
         ret_val["info"] = "Pass in a dictionary with the info you want to get. For example: data['get'] = ['info_type']. info types include nginx_id, nginx_password, and index_names"
 
