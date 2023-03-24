@@ -296,8 +296,12 @@ class timestamptool():
                 ts = json_obj["layers"]["frame_time_epoch"][0]
                 final_timestamp = self.convert_epoch(time_ns=ts)
                 new_json_obj["timestamp"] = str(final_timestamp)
-                new_json_obj["src_ip"] = json_obj["layers"]["ip_src"][0]
-                new_json_obj["dst_ip"] = json_obj["layers"]["ip_dst"][0]
+                if (self.args.ipversion=="4"):
+                    new_json_obj["src_ip"] = json_obj["layers"]["ip_src"][0]
+                    new_json_obj["dst_ip"] = json_obj["layers"]["ip_dst"][0]
+                elif (self.args.ipversion=="6"):
+                    new_json_obj["src_ip"] = json_obj["layers"]["ipv6_src"][0]
+                    new_json_obj["dst_ip"] = json_obj["layers"]["ipv6_dst"][0]
                 new_json_obj["protocol"] = json_obj["layers"]["frame_protocols"][0]
                 if ("tcp_srcport" in json_obj["layers"].keys()):
                     new_json_obj["src_port"]=int(json_obj["layers"]["tcp_srcport"][0])
