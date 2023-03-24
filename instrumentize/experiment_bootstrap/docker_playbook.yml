@@ -8,3 +8,14 @@
   - name: Install Docker
     include_role:
       name: geerlingguy.docker
+
+  - name: Enable Docker IPv6 repos
+    copy:
+      dest: "/etc/docker/daemon.json"
+      content: |
+        {"registry-mirrors": ["https://registry.ipv6.docker.com"]}
+
+  - name: Restart Docker
+    systemd:
+      state: restarted
+      name: docker
