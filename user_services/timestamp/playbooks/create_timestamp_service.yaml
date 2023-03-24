@@ -16,7 +16,7 @@
         dest: /home/mfuser/services/timestamp/dockerfile/Dockerfile
         mode: '0644'
         
-    - name: Build owl container image
+    - name: Build timestamp container image
       community.general.docker_image:
         name: timestamp:0.1.0
         build:

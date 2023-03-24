@@ -230,7 +230,10 @@ class timestamptool():
         default_filters=[]
         if (self.args.protocol):
             if (self.args.protocol=="tcp"):
-                default_filters = ["ip.src", "ip.dst", "frame.protocols", "tcp.srcport", "tcp.dstport", "frame.time_epoch"]
+                if (self.args.ipversion=="4"):
+                    default_filters = ["ip.src", "ip.dst", "frame.protocols", "tcp.srcport", "tcp.dstport", "frame.time_epoch"]
+                elif (self.args.ipversion=="6"):
+                    default_filters = ["ipv6.src", "ipv6.dst", "frame.protocols", "tcp.srcport", "tcp.dstport", "frame.time_epoch"]
                 filter_protocol_cmd = "-Y 'tcp' "
                 base=""
                 for f in default_filters:
@@ -239,7 +242,10 @@ class timestamptool():
                 #print ("\n tshark command is: "+filter_cmd)
                 return (filter_cmd)
             elif (self.args.protocol=="udp"):
-                default_filters = ["ip.src", "ip.dst", "frame.protocols", "udp.srcport", "udp.dstport", "frame.time_epoch"]
+                if (self.args.ipversion=="4"):
+                    default_filters = ["ip.src", "ip.dst", "frame.protocols", "tcp.srcport", "tcp.dstport", "frame.time_epoch"]
+                elif (self.args.ipversion=="6"):
+                    default_filters = ["ipv6.src", "ipv6.dst", "frame.protocols", "tcp.srcport", "tcp.dstport", "frame.time_epoch"]
                 filter_protocol_cmd = "-Y '{udp}' "
                 base=""
                 for f in default_filters:
@@ -470,6 +476,7 @@ if __name__ == "__main__":
     required_args_packet_record = packet_record_parser.add_argument_group('Required named arguments')
     required_args_packet_record.add_argument("-n", "--name", required=True, help="set name for the packet dump")
     required_args_packet_record.add_argument("-i", "--interface", required=True, help="specify the interface name for tcpdump")
+    required_args_packet_record.add_argument("-ipv", "--ipversion", required=True, choices=['4','6'],help="set ip version for the packet dump")
     required_args_packet_record.add_argument("-proto", "--protocol", required=True, choices=['tcp','udp'], help="protocol of the packets, select from tcp or udp")
     required_args_packet_record.add_argument("-durn", "--duration", required=True, type=int, help="set duration in seconds to run tcpdump")
     packet_record_parser.add_argument("-port", "--port", help="port of the packets")
