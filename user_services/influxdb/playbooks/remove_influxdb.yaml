@@ -13,3 +13,8 @@
         name: influxdb
         tag: 2.0
         state: absent
+        
+    - name: Recursively remove volume directory
+      ansible.builtin.file:
+        path: /home/mfuser/influxdb
+        state: absent
