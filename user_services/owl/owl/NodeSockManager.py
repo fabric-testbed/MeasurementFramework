@@ -30,7 +30,6 @@ class NodeSockManager():
         self.pcap_interval = int(config['receiver']['PcapInterval'])
         self.capture_mode = config['receiver']['CaptureMode']
         self.send_interval = float(config['sender']['SendInterval'])
-        self.ptp_device = config['sender']['PtpDevice']
 
         self.links = Path('/owl_config/links.json')   
         self.output_dir = Path('/owl_output')
@@ -141,7 +140,6 @@ class NodeSockManager():
             if dest_ip not in self.sender_instances.keys():
                 self.logger.info(f"new destination IP  found: {str(dest_ip)} ")
                 self.sender_instances[dest_ip] = sender.UDP_sender(
-                                                    self.ptp_device,
                                                     self.ptp_so_file,
                                                     self.send_interval, 
                                                     dest_ip, 

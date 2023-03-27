@@ -54,7 +54,9 @@ $  sudo docker build -t owl-app .
 
 #### Using NodeSockManager.py
 
-Requires owl.conf and links.json files
+Useful when measurements on multiple source-destination pairs are to be recorded
+concurrently. Set options in `owl.conf`, list source-destination pairs in `links.json`,
+and save them in the same directory (`local/config/dir` below).  
 
 ```
 $ sudo docker run --rm -dp <port_num>:<port_num> \
@@ -81,6 +83,9 @@ owl-app NodeSockManager.py /owl_config/owl.conf
 
 #### Using socket operation scripts
 
+When recording the latency between two endpoints, it may be simpler to run sender
+and receiver scripts rather than creating config files and using `NodeSockManager`.
+
 ```
 # sender side
 $sudo docker run --rm -dp <port_num>:<port_num> \
@@ -105,7 +110,7 @@ owl-app  sock_ops/udp_capturer.py [options]
     sudo docker run -dp 5005:5005 \
     --network="host"  \
     --privileged \
-    owl-app  sock_ops/udp_sender.py --ptp-device "/dev/ptp1" \
+    owl-app  sock_ops/udp_sender.py  \
     --ptp-so-file "/MeasurementFramework/user_services/owl/owl/sock_ops/time_ops/ptp_time.so" \
     --dest-ip "10.0.0.2" --dest-port 5005 --frequency 0.1 \
     --seq-n 5452 --duration 60
@@ -153,8 +158,8 @@ gcc -fPIC -shared -o owl/sock_ops/time_ops/ptp_time.so owl/sock_ops/time_ops/ptp
 sudo python3 owl/sock_ops/udp_sender.py [options]
 
 # Example
-sudo python3 owl/sock_ops/udp_sender.py --ptp-device "/dev/ptp1" 
-		--ptp-so-file "owl/sock_ops/time_ops/ptp_time.so" \
+sudo python3 owl/sock_ops/udp_sender.py \
+ 		--ptp-so-file "owl/sock_ops/time_ops/ptp_time.so" \
 	 	--dest-ip "10.0.0.2" --dest-port 5005 --frequency 0.1 \
 		--seq-n 5452 --duration 60
 

@@ -1,3 +1,5 @@
+import os
+import sys
 import socket
 import time
 import json
@@ -13,8 +15,8 @@ from time_ops import ptp
 from threading import Timer
 
 class UDP_sender(object):
-    def __init__(self, ptp_device, ptp_so_file, interval, dst_ip, dst_port, start_num):
-        self.ptp_device = ptp_device
+    def __init__(self, ptp_so_file, interval, dst_ip, dst_port, start_num):
+        self.ptp_device = self.find_ptp_device_name()
         self.ptp_so_file = ptp_so_file
         self._timer     = None
         self.interval   = interval
@@ -26,6 +28,20 @@ class UDP_sender(object):
         self.seq_n = start_num
         
         self.start()
+
+    def find_ptp_device_name(self):
+        result=os.popen("sudo ps -ef |grep phc2sys").read()
+        start="-s"
+        end=" -c CLOCK_REALTIME"
+        
+        if (end in result):
+            sindex= result.rfind(start)
+            eindex= result.rfind(end)
+            device = result[sindex+3:eindex].strip()   
+            return (device)
+
+        else:
+            sys.exit("Cannot find running ptp device")
 
     def _run(self):
         self.is_running = False
@@ -56,8 +72,6 @@ class UDP_sender(object):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ptp-device", type=str, default="/dev/ptp1", 
-                        help='PTP device path')
     parser.add_argument("--ptp-so-file", type=str, default="./time_ops/ptp_time.so", 
                         help='destination IP')
     parser.add_argument("--dest-ip", type=str, default="10.10.1.1", 
@@ -72,7 +86,6 @@ if __name__ == "__main__":
                         help="number of seconds to run")
     args = parser.parse_args()
     
-    ptp_device = args.ptp_device
     ptp_so_file = args.ptp_so_file
     send_interval = args.frequency
     dest_ip = args.dest_ip
@@ -80,7 +93,7 @@ if __name__ == "__main__":
     seq_n = args.seq_n
     duration = args.duration
 
-    owl_sender = UDP_sender(ptp_device, ptp_so_file, send_interval, 
+    owl_sender = UDP_sender(ptp_so_file, send_interval, 
                             dest_ip, dest_port, seq_n)
     try:
         time.sleep(duration) # function should run during this time
