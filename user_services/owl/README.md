@@ -65,6 +65,20 @@ $ sudo docker run --rm -dp <port_num>:<port_num> \
 owl-app NodeSockManager.py /owl_config/owl.conf
 ```
 
+##### Example
+
+```
+# On all nodes
+
+$ sudo docker run --rm -dp 5005:5005 \
+--mount type=bind,source=~/mydir/owl/config,target=/owl_config \
+--mount type=bind,source=~/mydir/owl/output,target=/owl_output  \
+--network="host"  \
+--privileged \
+owl-app NodeSockManager.py /owl_config/owl.conf
+
+```
+
 #### Using socket operation scripts
 
 ```
@@ -158,16 +172,16 @@ Alternatively use `NodeSockManager` on multiple nodes with config and links file
 sudo python3 owl/NodeSockManager.py <path/to/config/file>
 ```
 
-# How to Process Collected Data (Converting pcap to .csv)
+# How to Convert Collected data (`.pcap` files) to a CSV file  
 
-```
-python3 owl/data_ops/read_pcap.py <options>
-```
+(Work in Progress)
+Use either `owl/data_ops/read_pcap.py` or `owl/DataProcessManager.py`
+
 
 
 # Current Limitations
 - IPV4 only
 - "static" capture only (capturer side saves tcpdump output to .pcap files)
-- Assumes end points are non-routing devices with only 1 experimenter's network interface.
+- Assumes hosts are (non-routing) endpoints.
 
 
