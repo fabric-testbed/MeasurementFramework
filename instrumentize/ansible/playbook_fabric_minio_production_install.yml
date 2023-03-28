@@ -1,0 +1,11 @@
+---
+# Creating the Fabric Central Minio Production object store setup.
+- hosts: minio-p
+
+  roles:
+    - ../minio/ansible/roles/central
+
+  # moved to hosts file
+  # vars:
+  #   install_name: minio_p
+    

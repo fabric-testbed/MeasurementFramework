@@ -6,7 +6,9 @@ global:
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
   external_labels:
-      rack: "{{ hank_name }}"
+      rack: "{{ external_rack_label }}"
+      prometheus_src: {{ prometheus_name }}
+      
   
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
@@ -36,38 +38,21 @@ scrape_configs:
       # by definition this is running on local host
       - targets: ['localhost:9090']
 
-
-
-# Jupyter
-  - job_name: 'jupyterhub'
-    bearer_token_file: /etc/prometheus/secrets/jupyterhub
+# MinIO
+  - job_name: minio-p
+    bearer_token: {{ minio_p_scrape_token }} 
+    metrics_path: /minio/v2/metrics/cluster
     scheme: https
-    metrics_path: '/hub/metrics'
-    tls_config:
-            insecure_skip_verify: true
     static_configs:
-            - targets: ['jupyter.fabric-testbed.net']
+      - targets: ['minio-p.fabric-testbed.net:9000']
 
-  - job_name: 'jupyterhub-beta'
-    bearer_token_file: /etc/prometheus/secrets/jupyterhub_beta
+# MinIO
+  - job_name: minio-b
+    bearer_token: {{ minio_b_scrape_token }} 
+    metrics_path: /minio/v2/metrics/cluster
     scheme: https
-    metrics_path: '/hub/metrics'
-    tls_config:
-            insecure_skip_verify: true
     static_configs:
-            - targets: ['jupyter-beta.fabric-testbed.net']
-
-# Kafka 
-# Note that these are servers that connect to kafka to get metrics, not the actual kafka servers.
-  - job_name: 'mf-kafka'
-    static_configs:
-      - targets: ['nsoelk.fabric-testbed.net:9308']
-
-
-  - job_name: 'mb-kafka'
-    static_configs:
-      - targets: ['nsoelk.fabric-testbed.net:9309']
-
+    - targets: ['minio-b.fabric-testbed.net:9000']    
 
 #######################################
 #         Blackbox Exporters          #
@@ -281,26 +266,10 @@ scrape_configs:
         target_label: __param_module
 
 
- # Docker Exporter for Local Containers
-  - job_name: 'docker'
+ # Cadvisor for Local Docker Containers
+
+  - job_name: cadvisor
+    scrape_interval: 30s
     static_configs:
-      - targets: ['{{ install_name }}_docker_exporter:9417']
-
-
-
-
-
-
-
-
-# TODO
-# - job_name: 'geni-federate'
-#
-#    honor_labels: true
-#    metrics_path: '/federate'
-#
-#    params:
-#            'match[]':
-#                    - '{job=~"ceph-0|thanos_bucket"}'
-#    static_configs:
-#            - targets: ['172.23.7.230:9090']
+    - targets:
+      - "{{ install_name }}_cadvisor:8080"

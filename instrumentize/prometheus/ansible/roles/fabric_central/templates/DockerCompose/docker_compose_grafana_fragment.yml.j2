@@ -1,0 +1,31 @@
+  grafana:
+    container_name: "{{ install_name }}_grafana"
+    image: grafana/grafana:8.3.2 
+    # TODO update to grafana 9 
+
+    user: "grafana:root"
+
+
+    volumes:
+      # data base dir
+      - "{{ base_data_dir }}/grafana/data:/var/lib/grafana"
+      # provisioning dirs for default datasources and dashboards  
+      - "{{ base_install_dir }}/grafana/provisioning/:/etc/grafana/provisioning/"
+      # plugin dirs 
+      - "{{ base_install_dir }}/grafana/plugins/:/var/lib/grafana/plugins"
+      # custom init settings dir
+      - "{{ base_install_dir }}/grafana/custom:/etc/grafana/custom/"
+      # Map the node certs for CiLogon TLS in  custom.ini.
+      - "{{ grafana_cert }}:/etc/grafana/certs/cert:ro"
+      - "{{ grafana_key }}:/etc/grafana/certs/key:ro"
+
+    env_file:
+      - "{{ base_install_dir }}/grafana/env_file"
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "1024m" 
+        max-file: "5"
+
+    restart: always

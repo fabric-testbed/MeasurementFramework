@@ -12,13 +12,31 @@
 
 
 
+- name: Install docker Python SDK
+  ansible.builtin.pip:
+    name: docker 
+    executable: pip3
+    state: present
+  become: yes
+
+# - name: Install requests for Python docker SDK
+#   ansible.builtin.pip:
+#     name: requests 
+#     executable: pip3.9
+#     state: absent
+
+
 # needed on remote for htpasswd
 - name: passlib
-  become: yes 
-  pip: 
-    name: passlib[bcrypt]
-    executable: pip3 
+  #become: yes 
+  ansible.builtin.pip: 
+    # bycrypt is no longer needed -  mdf is being used instead. encrypted starts with $apr1$
+    # Confusion if bycrypt is still needed for htaccess
+    #name: passlib[bcrypt]
+    name: passlib
+    executable: pip3
     state: present
+  become: yes
 
 # # May need this to get to host node exporter on central metrics
 # # Add extra host to Prometheus Container
@@ -48,7 +66,7 @@
 ####################
 # Create Base Dirs #
 ####################
-- name: Create base install directorie 
+- name: Create base install directories
   file:
     path: "{{ base_install_dir }}"
     recurse: yes
@@ -70,91 +88,18 @@
 # SELF-SIGNED CERTS#
 ####################
 # Only need this if we are testing and don't have TLS certs on the node.
-- name: Self-signed certs.
-  include_tasks: setup_tasks/self_signed_cert_tasks.yml
-  when:
-    - self_signed_cert_dir is defined
+# - name: Self-signed certs.
+#   include_tasks: setup_tasks/self_signed_cert_tasks.yml
+#   when:
+#     - self_signed_cert_dir is defined
 
-# need to add uky_incommon_root_intermdiate.pem file to the created intermediate cert!!!!!!TODO!!!!!!!!!!!
-
-
-
-####################
-# Remove all previous monitoring docker containers #
-####################
-- name: Remove containers
-  include_tasks: container_tasks/remove_docker_container_tasks.yml  
-  vars:
-    containers_to_act_on: 
-      - prometheus
-      - grafana
-      - nginx
-      - alertmanager
-      - blackbox
-      - docker_exporter
-      - snmp
-      - thanos_sidecar 
-      - thanos_query 
-      - thanos_compact
-      - thanos_store
-      #- loki
 
 ####################
 #  DOCKER NETWORK  #
 ####################
 # note that taking down the network may affect other containers added by other scripts 
-- name: Takedown the docker network to be used by the monitoring containers.
-  include_tasks: takedown_tasks/remove_docker_network_tasks.yml
-
-
 - name: Setup the docker network to be used by the monitoring containers.
   include_tasks: setup_tasks/setup_docker_ipv6_network_tasks.yml
-
-# # IPV4 onky test
-# - name: Setup the docker network to be used by the monitoring containers.
-#   include_tasks: setup_tasks/setup_docker_network_tasks.yml
-
-
-####################
-# Usefull Scripts  #
-####################
-
-- name: Add stop script 
-  template:
-    src: "templates/stop_dev_monitoring_containers.sh.j2"
-    dest: "{{ base_install_dir }}/stop_dev_monitoring_containers.sh"
-    owner: "{{ prom_user_name }}"
-    group: "{{ prom_group_name }}"
-  become: yes
-  # when: 
-  #   - dev_site is defined
-  #   - dev_site
-
-
-- name: Add restart script 
-  template:
-    src: "templates/start_dev_monitoring_containers.sh.j2"
-    dest: "{{ base_install_dir }}/start_dev_monitoring_containers.sh"
-    owner: "{{ prom_user_name }}"
-    group: "{{ prom_group_name }}"
-  become: yes
-  # when: 
-  #   - dev_site is defined
-  #   - dev_site
-
-
-# LOKI Testing
-
-# - name: Loki Setup 
-#   block: 
-#   - name: Loki Dirs 
-#     include_tasks: Loki/setup_loki_directories_tasks.yml
-#   - name: Loki 
-#     include_tasks: Loki/default_loki_config_tasks.yml  
-#   - name: Loki container 
-#     include_tasks: Loki/loki_container_tasks.yml
-#   become: yes
-#   when: no
 
 
 ####################
@@ -181,11 +126,6 @@
   - name: Setup Prometheus Secrets
     include_tasks: Prometheus/add_prometheus_secrets.yml
 
-  - name: Prometheus Container
-    # 3. Start docker container
-    include_tasks: Prometheus/prometheus_container_tasks.yml
-
-
 
 ####################
 #     THANOS       #
@@ -198,49 +138,6 @@
     - name: Thanos Configs
       include_tasks: Thanos/add_thanos_config_templates_tasks.yml
       # See vars for templates used
-
-- name: Thanos Containers
-  block:        
-    - name: Thanos Sidecar
-      include_tasks: Thanos/thanos_sidecar_container_tasks.yml
-
-#           vars:
-#             thanos_sidecar_state: absent
-#             thanos_sidecar_ip: "{{ ansible_host }}"
-#             thanos_sidecar_cert: "{{ thanos_cert }}"
-#             thanos_sidecar_key: "{{ thanos_key }}"
-    - name: Thanos Central store  
-      include_tasks: Thanos/thanos_central_store_container_tasks.yml
-#           vars:
-#             thanos_store_state: absent
-#             thanos_store_ip: "{{ ansible_host }}"
-#             thanos_store_cert: "{{ thanos_cert }}"
-#             thanos_store_key: "{{ thanos_key }}"
-    - name: Thanos Central Query
-      include_tasks: Thanos/thanos_central_query_container_tasks.yml
-#           vars:
-#             thanos_query_state: absent
-#             thanos_query_ip: "{{ ansible_host }}"
-#             thanos_query_cert: "{{ thanos_cert }}"
-#             thanos_query_key: "{{ thanos_key }}"
-#             thanos_query_root_ca: "{{ thanos_interm_cert }}"
-
-# #WARNING ONLY ONE CAN RUN DONT DO ON DEV TEST if connecting to production ceph bucket
-    - name: Thanos Central Compact
-      # Important that this is only run in one place.
-      include_tasks: Thanos/thanos_central_compact_container_tasks.yml
-      when: 
-        - use_thanos_compact is defined
-        - use_thanos_compact
-#       vars: 
-#         thanos_compact_state: absent
-#         thanos_cert: "{{ host_cert }}"
-#         thanos_key: "{{ host_key }}"
-#         thanos_interm_cert: "{{ host_interm_cert }}"
-#       when: true
-
-
-
 
 
 ####################
@@ -257,12 +154,10 @@
     - name: Alertmanager tmpl files
       include_tasks: Alertmanager/add_alertmanager_tmpl_files_tasks.yml
 
-    - name: Alertmanager Container
-      include_tasks: Alertmanager/alertmanager_container_tasks.yml
-
 ####################
 # SNMP EXPORTER    #
 ####################
+### Not currently needed on Central ###
 # - name: Setup SNMP Exporter
 #   block:
 #     - name: SNMP Directories
@@ -290,16 +185,10 @@
     - name: Blackbox Config 
       include_tasks: Blackbox/config_blackbox_tasks.yml
 
-    - name: Blackbox Container 
-      include_tasks: Blackbox/blackbox_container_tasks.yml
-
-####################
-# DOCKER EXPORTER  #
-####################
-- name: Setup Docker Exporter
-  block:
-    - name: Docker Exporter Container 
-      include_tasks: DockerExporter/docker_exporter_container_tasks.yml
+# ####################
+# # DOCKER EXPORTER  #
+# ####################
+# Nothing to setup, just use the docker-compose fragment
 
 ####################
 #     Grafana      #
@@ -315,13 +204,10 @@
 
     - name: Grafana Config
       include_tasks: Grafana/config_grafana_tasks.yml
-      
-    - name: Grafana Container
-      include_tasks: Grafana/grafana_container_tasks.yml
 
     - name: Grafana Datasources
       include_tasks: Grafana/grafana_provisioning_tasks.yml
-   
+ 
     - name: Grafana Plugins
       include_tasks: Grafana/grafana_add_plugins_tasks.yml
 
@@ -337,6 +223,11 @@
     # Config files
     - name: Nginx Configs
       include_tasks: Nginx/config_nginx_tasks.yml
+
+    # Config files
+    - name: Nginx HTML files
+      include_tasks: Nginx/html_nginx_tasks.yml
+          
           
     # Add user to htaccess file
     # note htpasswd requires passlib to be installed on remote
@@ -348,36 +239,3 @@
     # Confd server files
     - name: Nginx Add Confd  Files
       include_tasks: Nginx/confd_nginx_tasks.yml
-
-- name: NGNIX Container
-  include_tasks: Nginx/nginx_container_tasks.yml
-
-
-
-####################
-# Assert Containers#
-####################
-# Ensure that all of the containers are actually up and running
-- name: Ensure all the containers are up and running.
-  include_tasks: container_tasks/inspect_container_tasks.yml 
-  with_items:
-      - prometheus
-      - grafana
-      - nginx
-      - thanos_sidecar
-      - thanos_query
-      #WARNING ONLY ONE CAN RUN DONT DO ON DEV TEST- thanos_compact
-      - thanos_store 
-      - blackbox
-      - docker_exporter
-#      - snmp
-
-
-- name: Ensure thanos compact container is up and running.
-  include_tasks: container_tasks/inspect_container_tasks.yml 
-  with_items:
-      #WARNING ONLY ONE CAN RUN DONT DO ON DEV TEST
-      - thanos_compact
-  when:
-    - use_thanos_compact is defined
-    - use_thanos_compact

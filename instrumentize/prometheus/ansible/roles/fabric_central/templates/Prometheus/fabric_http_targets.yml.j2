@@ -1,27 +1,9 @@
 ---
 
 - targets:
-    - https://jupyter.fabric-testbed.net
-    - https://ceph-0.metrics.fabric-testbed.net
-    - https://whatisfabric.net
-    - https://fabric-testbed.net
-    # must have the login without it there is a redirect that is not liked?
+      # specifically for grafana 
     - https://metrics.fabric-testbed.net/grafana/login
-
-    # user information service
-    - https://uis.fabric-testbed.net/version
-    # credential manager
-    - https://cm.fabric-testbed.net/version
-    # project-registry
-    # No longer in use
-    #- https://pr.fabric-testbed.net/version
-    #  orchestrator
-    - https://orchestrator.fabric-testbed.net/version 
-
-    - https://learn.fabric-testbed.net
-    # 
-    - https://portal.fabric-testbed.net 
-
+    - https://metrics.fabric-testbed.net 
 
   labels:
     job: blackbox-http

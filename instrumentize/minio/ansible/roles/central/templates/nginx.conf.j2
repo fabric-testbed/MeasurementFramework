@@ -1,0 +1,111 @@
+user  nginx;
+worker_processes  auto;
+
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+events {
+    worker_connections  4096;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+    sendfile        on;
+    keepalive_timeout  65;
+
+    # include /etc/nginx/conf.d/*.conf;
+
+    # S3 Interface
+    upstream minio_s3 {
+            keepalive 20;
+            server {{ install_name }}_minio:9000;
+    }
+    # Web Console Interface
+    upstream minio_console {
+            keepalive 20;
+            server {{ install_name }}_minio:9099;
+    }
+
+
+    # S3 Interface
+    server {
+        listen       9000 ssl http2;
+        listen  [::]:9000 ssl http2;
+        server_name  {{ server_name }};
+
+        include /etc/nginx/ssl_snippet.conf;
+
+        # To allow special characters in headers
+        ignore_invalid_headers off;
+        # Allow any size file to be uploaded.
+        # Set to a value such as 1000m; to restrict file size to a specific value
+        client_max_body_size 0;
+        # To disable buffering
+        proxy_buffering off;
+        proxy_request_buffering off;
+
+        location / {
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            #proxy_connect_timeout 300;
+            #proxy_connect_timeout 10;
+            # Default is HTTP/1, keepalive is only enabled in HTTP/1.1
+            proxy_http_version 1.1;
+            proxy_set_header Connection "";
+            chunked_transfer_encoding off;
+
+            proxy_pass http://minio_s3;
+        }
+    }
+
+    # Web Console Interface
+    server {
+        listen       9099 ssl http2;
+        listen  [::]:9099 ssl http2;
+        server_name  {{ server_name }};
+
+        include /etc/nginx/ssl_snippet.conf;
+
+        # To allow special characters in headers
+        ignore_invalid_headers off;
+        # Allow any size file to be uploaded.
+        # Set to a value such as 1000m; to restrict file size to a specific value
+        client_max_body_size 0;
+        # To disable buffering
+        proxy_buffering off;
+        proxy_request_buffering off;
+
+        location / {
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-NginX-Proxy true;
+
+            # This is necessary to pass the correct IP to be hashed
+            real_ip_header X-Real-IP;
+
+            #proxy_connect_timeout 300;
+
+            # To support websocket
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+
+            chunked_transfer_encoding off;
+
+            proxy_pass http://minio_console;
+        }
+    }
+
+}
