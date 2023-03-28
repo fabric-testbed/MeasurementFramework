@@ -1,0 +1,19 @@
+# Thanos sidecar - just proxy to container
+
+map $upstream_trailer_grpc_status $grpc_status {
+    default $upstream_trailer_grpc_status; # grpc-status is usually a trailer
+    ''      $sent_http_grpc_status; # Else use the header, whatever its source
+}
+
+# Thanos sidecar - just proxy to container
+server {
+        listen  10901 ssl http2;
+        listen  [::]:10901 ssl http2;
+        server_name {{ server_hostname }};
+
+        include /etc/nginx/ssl_snippet.conf;
+
+        location / {
+                grpc_pass grpc://{{ install_name }}_thanos_sidecar:10901;
+        }
+}

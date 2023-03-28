@@ -1,0 +1,48 @@
+
+# Central Thanos - Query
+# Only needs to be run on central node or similar node that needs to connect
+#   to the rack promethice to get the current data and to the s3 for 
+#   long term data.
+# In this case there needs to be a root ca to contact remote stores with TLS.
+#   I couldn't get thanos to work without verifying server certs.
+  thanos_query:
+    container_name: "{{ install_name }}_thanos_query"
+
+    image: quay.io/thanos/thanos:v0.29.0
+
+    volumes:
+      # Map root ca for client certification.
+      # nolonger needed with skip-verify  - "{{ thanos_query_root_ca }}:/etc/thanos_certs/root-ca"
+      # Map stores.yml file with the list of stores for easier live updates.
+      - "{{ base_install_dir }}/thanos/config/stores.yml:/etc/thanos_stores/stores.yml"
+
+    command:
+      - 'query'
+      # grpc is not needed, but could be used by a remote system
+      #- '--grpc-address=0.0.0.0:10921'
+      # http called by grafana for datasource
+      - '--http-address=0.0.0.0:10922'
+      - '--query.replica-label=replica'
+      # Connect to local and remote stores. Automatically check stores config file for updates.
+      - '--store.sd-files=/etc/thanos_stores/stores.yml'
+      - '--store.sd-interval=5m'
+      - '--store.response-timeout=0ms'
+
+      # Handle certs
+      - '--grpc-client-tls-secure'  # use tls to talk to remote store server
+      #- '--grpc-client-tls-ca=/etc/thanos_certs/root-ca' # root ca for verifying remote server. I was unable to get igore to work so we must have root ca for all TLS servers. Just combine into a single file if more than one. This makes selfsigned certs pretty much unusable.
+      # Thanos finally added the skip option so no longer need to use above cert
+      - '--grpc-client-tls-skip-verify'
+
+      # Optional debuging
+      - '--log.level=info'  # debug, info
+      - '--log.format=json' # logfmt logfmt or json                          
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "1024m" 
+        max-file: "5"
+
+    restart: always
+      
