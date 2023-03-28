@@ -20,4 +20,4 @@
       privileged: true
       detach: true
       volumes:
-        - /home/ubuntu/influxdb:/var/lib/influxdb2
+        - /home/mfuser/influxdb:/var/lib/influxdb2
