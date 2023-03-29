@@ -33,4 +33,4 @@ if __name__ == "__main__":
         exit(1)
 
     else: 
-         print(get_ptp_timestamp(device_name=sys.argv[1]), so_file=sys.argv[2])
+         print(get_ptp_timestamp(device_name=sys.argv[1], so_file=sys.argv[2]))
