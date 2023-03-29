@@ -45,7 +45,7 @@ class NodeSockManager():
 
         # Find all the IPV4 addresses on the node
         self.host_ipv4s = self._find_IPs()
-        self.logger.info(f"IP addresses on this node: {self.host_ivp4s}")
+        self.logger.info(f"IP addresses on this node: {self.host_ipv4s}")
 
         # Go ahead and start
         self.start()
