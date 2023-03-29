@@ -21,6 +21,7 @@
       command: ["NodeSockManager.py", "/owl_config/owl.conf"]
       privileged: yes
       network_mode: host
+      pid_mode: host
       #ports:
       #  - "5005:5005"
       volumes:
