@@ -28,9 +28,9 @@ def get_ptp_timestamp(device_name="/dev/ptp1", so_file="./ptp_time.so"):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) != 2:
-        print("Usage: python3 pyp.py '<device path>'")
+    if len(sys.argv) != 3:
+        print("Usage: python3 pyp.py '<device path>' '<so_file_path>'")
         exit(1)
 
     else: 
-         print(get_ptp_timestamp(sys.argv[1]))
+         print(get_ptp_timestamp(device_name=sys.argv[1]), so_file=sys.argv[2])
