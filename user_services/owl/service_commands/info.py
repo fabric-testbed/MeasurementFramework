@@ -1,48 +1,34 @@
 ######
-# Get OWL container status on experiments' nodes
-# get_owl_status.yaml script
+# Get contents of owl.conf and link.json stored on the meas_node
 #######
 
-import os
-from datetime import datetime
-import subprocess
 import json
-from pathlib import Path
+import configparser
 
-def get_owl_status():
-    ret_val = {}
 
-    # For GENI testing only 
-    #playbook_exe = "/home/mfuser/MeasurementFramework/user_services/owl/owl-venv/bin/ansible-playbook"
-    #ansible_hosts_file = "/etc/ansible/hosts"
-    #playbook = "/home/mfuser/MeasurementFramework/user_services/owl/Playbooks/start_owl.yaml"
-    #keyfile = "/home/mfuser/.ssh/id_rsa"
+def get_owl_files():
+    config = configparser.ConfigParser()
 
-    playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
-    ansible_hosts_file = "/home/mfuser/services/common/hosts.ini"
-    playbook = "/home/mfuser/mf_git/user_services/owl/Playbooks/get_owl_status.yaml"
-    keyfile = "/home/mfuser/.ssh/mfuser_private_key"
+    conf_path = '/home/mfuser/services/owl/files/owl.conf'
+    links_path = '/home/mfuser/services/owl/files/links.json'
 
-    # For some reason the local ansible.cfg file is not being used
-    os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
+    config.read(conf_path)
 
-    cmd = [playbook_exe, "-i", ansible_hosts_file, "--key-file", keyfile, '-b', playbook]
+    conf_file = {}
+    for section in config.sections():
+        conf_file[section] = {}
+        for option in config.options(section):
+            conf_file[section][option] = config.get(section, option)
 
-    r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    links_file = {}
+    with open(links_path) as json_file:
+        links_file = json.load(json_file)
+    
+    # Add links info to config file dictionary 
+    conf_file.update(links_file)
+    
+    print(json.dumps(conf_file))
 
-    decoded_out = r.stdout.decode("utf-8")
-    play_recap = decoded_out[decoded_out.find("PLAY RECAP"):]
-    decoded_err = r.stderr.decode("utf-8")
-
-    if r.returncode == 0:
-        ret_val["success"] =  True
-        ret_val["msg"] = "get_owl_status.yaml script ran successfully."
-    else:
-        ret_val["success"] =  False
-        ret_val["msg"] = "get_owl_status.yaml script run FAILED."
-
-    ret_val["play_recap"] = play_recap
-    print(json.dumps(ret_val))
 
 if __name__ == "__main__":
-    get_owl_status()
+    get_owl_files()
