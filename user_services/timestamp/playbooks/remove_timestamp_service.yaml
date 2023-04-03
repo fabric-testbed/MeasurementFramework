@@ -13,5 +13,10 @@
         name: timestamp
         tag: 0.1.0
         state: absent
+        
+    - name: Recursively remove volume directory
+      ansible.builtin.file:
+        path: /home/mfuser/services/timestamp/output
+        state: absent
 
       

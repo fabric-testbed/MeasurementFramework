@@ -3,24 +3,8 @@
 ---
 - name: Create timesatmp service
   hosts: Experiment_Nodes
-  tasks:  
-    - name: Create a directory for Dockerfile
-      ansible.builtin.file:
-        path: /home/mfuser/services/timestamp/dockerfile
-        state: directory
-        mode: '0755'
-
-    - name: Copy Dockerfile
-      ansible.builtin.copy:
-        src: /home/mfuser/services/timestamp/files/Dockerfile
-        dest: /home/mfuser/services/timestamp/dockerfile/Dockerfile
-        mode: '0644'
-        
-    - name: Build timestamp container image
-      community.general.docker_image:
-        name: timestamp:0.1.0
-        build:
-          path: /home/mfuser/services/timestamp/dockerfile
-          pull: true
-          network: host
-        source: build
+  tasks:      
+    - name: Pull timestamp docker image from docker hub
+      community.docker.docker_image:
+        name: fabrictestbed/timestamp:0.1.0
+        source: pull
