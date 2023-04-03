@@ -6,7 +6,7 @@ sudo apt install -y python3-pip
 pip3 --version 
 echo "-----Installing python requirements-----"
 
-pip3 install -r /home/mfuser/mf_git/instrumentize/prometheus/ansible/roles/fabric_experiment/meta/requirements.txt
+##pip3 install -r /home/mfuser/mf_git/instrumentize/prometheus/ansible/roles/fabric_experiment/meta/requirements.txt
 
 #pip install ansible 
 # Not sure why need to hard code full path here
@@ -15,10 +15,13 @@ pip3 install -r /home/mfuser/mf_git/instrumentize/prometheus/ansible/roles/fabri
 #/home/mfuser/.local/bin/ansible-galaxy --version 
  
 
-echo "-----Install Galaxy Roles-----"
-/home/mfuser/.local/bin/ansible-galaxy install -r /home/mfuser/mf_git/instrumentize/prometheus/ansible/roles/fabric_experiment/meta/requirements.yml
-echo "-----Install Galaxy Collections----"
-/home/mfuser/.local/bin/ansible-galaxy collection install -r /home/mfuser/mf_git/instrumentize/prometheus/ansible/roles/fabric_experiment/meta/requirements.yml
+##echo "-----Install Galaxy Roles-----"
+##/home/mfuser/.local/bin/ansible-galaxy install -r /home/mfuser/mf_git/instrumentize/prometheus/ansible/roles/fabric_experiment/meta/requirements.yml
+##echo "-----Install Galaxy Collections----"
+##/home/mfuser/.local/bin/ansible-galaxy collection install -r /home/mfuser/mf_git/instrumentize/prometheus/ansible/roles/fabric_experiment/meta/requirements.yml
+
+tar xzf /home/mfuser/mf_git/instrumentize/experiment_bootstrap/meas_node_binaries.tgz
+chown -R mfuser:mfuser /home/mfuser/.local /home/mfuser/.ansible
 
 echo "pip freeze:"
 pip freeze
