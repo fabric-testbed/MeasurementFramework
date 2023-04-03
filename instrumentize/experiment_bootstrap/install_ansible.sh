@@ -20,7 +20,7 @@ echo "-----Installing python requirements-----"
 ##echo "-----Install Galaxy Collections----"
 ##/home/mfuser/.local/bin/ansible-galaxy collection install -r /home/mfuser/mf_git/instrumentize/prometheus/ansible/roles/fabric_experiment/meta/requirements.yml
 
-tar xzf /home/mfuser/mf_git/instrumentize/experiment_bootstrap/meas_node_binaries.tgz
+tar xzf /home/mfuser/mf_git/instrumentize/experiment_bootstrap/meas_node_binaries.tgz -C /
 chown -R mfuser:mfuser /home/mfuser/.local /home/mfuser/.ansible
 
 echo "pip freeze:"
