@@ -3,6 +3,7 @@
 # Installs Docker
 - name: Install Docker 
   hosts: all
+  gather_facts: False
   tasks:
   # Installs the Docker.
   - name: Install Docker
