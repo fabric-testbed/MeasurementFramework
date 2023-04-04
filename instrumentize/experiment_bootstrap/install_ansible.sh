@@ -1,10 +1,10 @@
 #!/bin/bash
-echo "-----Updating apt-----"
-sudo apt update   
-echo "-----Installing pip3-----"
-sudo apt install -y python3-pip   
-pip3 --version 
-echo "-----Installing python requirements-----"
+#echo "-----Updating apt-----"
+#sudo apt update   
+#echo "-----Installing pip3-----"
+#sudo apt install -y python3-pip   
+#pip3 --version 
+#echo "-----Installing python requirements-----"
 
 ##pip3 install -r /home/mfuser/mf_git/instrumentize/prometheus/ansible/roles/fabric_experiment/meta/requirements.txt
 
@@ -23,7 +23,7 @@ echo "-----Installing python requirements-----"
 tar xzf /home/mfuser/mf_git/instrumentize/experiment_bootstrap/meas_node_binaries.tgz -C /
 chown -R mfuser:mfuser /home/mfuser/.local /home/mfuser/.ansible
 
-echo "pip freeze:"
-pip freeze
+#echo "pip freeze:"
+#pip freeze
 
 echo "-----Finished!-----" 

@@ -7,7 +7,7 @@ import json
 def main():
     ret_val = {}
 
-    home_base = "/homes/mfuser"
+    home_base = "/home/mfuser"
     playbook_exe = home_base + "/.local/bin/ansible-playbook"
     ansible_hosts_file = home_base + "/services/common/hosts.ini"
 
@@ -19,7 +19,7 @@ def main():
     os.environ["ANSIBLE_CONFIG"] = home_base + "/mf_git/instrumentize/experiment_bootstrap/ansible.cfg"
 
     ret_val["ansible_bootstrap"] = {}
-    playbook = home_bsae + "/mf_git/instrumentize/experiment_bootstrap/bootstrap.yml"
+    playbook = home_base + "/mf_git/instrumentize/experiment_bootstrap/bootstrap.yml"
 
     cmd = [
         playbook_exe,

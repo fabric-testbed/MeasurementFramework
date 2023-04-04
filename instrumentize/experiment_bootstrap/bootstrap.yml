@@ -1,40 +1,55 @@
 ---
-  hosts: all
-  strategy: free
+  - hosts: all
+    strategy: free
+    vars:
+      #      pip_install_packages:
+      #        - name: docker
+      docker_daemon_options:
+          registry-mirrors: 
+            - "https://registry.ipv6.docker.com"
+    tasks:
+    - fail:
 
-  roles:
-    - role: /home/mfuser/mf_git/instrumentize/ptp/ansible/roles/linuxptp
+    # Install LinuxPTP package
+    - name: Install LinuxPTP
+      include_role:
+        name: /home/mfuser/mf_git/instrumentize/ptp/ansible/roles/linuxptp
 
-  tasks:
-  # Installs the Docker.
-  - name: Install Docker
-    include_role:
-      name: geerlingguy.docker
+    # Install pip3
+    - name: Install PIP3
+      package:
+        name: python3-pip
+        state: present
 
-  - name: Enable Docker IPv6 repos
-    copy:
-      dest: "/etc/docker/daemon.json"
-      content: |
-        {"registry-mirrors": ["https://registry.ipv6.docker.com"]}
+    # Installs Python Docker SDK
+    - name: Install Python Docker SDK
+      pip:
+        name: "{{ item }}"
+        executable: pip3
+        state: latest    
+      with_items:
+          - 'pip'
+            #          - 'docker'
 
-  - name: Restart Docker
-    systemd:
-      state: restarted
-      name: docker
+    # Install Docker.
+    - name: Install Docker and Docker SDK
+      include_role:
+          name: '{{ roleinputvar }}'
+      loop:
+        - 'geerlingguy.docker'
+          #        - 'geerlingguy.pip'
+      loop_control:
+        loop_var: roleinputvar
 
-#Install pip3 and python docker sdk 
-  # Installs Pip3
-  - name: Install PIP3
-    package:
-      name: python3-pip
-      state: present
+          #    - name: Enable Docker IPv6 repos
+          #      copy:
+          #        dest: "/etc/docker/daemon.json"
+          #        content: |
+          #          {"registry-mirrors": ["https://registry.ipv6.docker.com"]}
 
-  # Installs Python Docker SDK
-  - name: Install Python Docker SDK
-    pip:
-      name: "{{ item }}"
-      executable: pip3
-      state: latest    
-    with_items:
-        - 'pip'
-        - 'docker'
+          #    - name: Restart Docker
+          #      systemd:
+          #        state: restarted
+          #        name: docker
+
+
