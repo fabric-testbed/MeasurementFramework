@@ -58,7 +58,6 @@ class NodeSockManager():
 
 
     def stop(self):
-     
         # Clean up!
         if self.listen_instance:
             self.logger.info("stopping tcpdump")

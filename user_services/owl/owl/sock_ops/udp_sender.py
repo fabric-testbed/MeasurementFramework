@@ -16,7 +16,7 @@ from threading import Timer
 
 class UDP_sender(object):
     def __init__(self, interval, dst_ip, dst_port, start_num, 
-                 ptp_so_file=None, sys_clock=True):
+                 ptp_so_file=None, sys_clock=False):
         
         if sys_clock:
             self.ptp_device = None

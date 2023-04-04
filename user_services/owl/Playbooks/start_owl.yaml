@@ -15,7 +15,7 @@
   - name: Start OWL container
     community.general.docker_container:
       name: owl
-      image: owl:0.1.1 
+      image: fabrictestbed/owl:0.1.1 
       state: started
       restart: yes
       command: ["NodeSockManager.py", "/owl_config/owl.conf"]
