@@ -8,7 +8,6 @@
           registry-mirrors: 
             - "https://registry.ipv6.docker.com"
     tasks:
-    - fail:
 
     # Install LinuxPTP package
     - name: Install LinuxPTP
