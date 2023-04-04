@@ -1,8 +1,10 @@
-# Installs Docker
-- name: Install Docker 
+---
   hosts: all
+  strategy: free
+
   roles:
     - role: /home/mfuser/mf_git/instrumentize/ptp/ansible/roles/linuxptp
+
   tasks:
   # Installs the Docker.
   - name: Install Docker

@@ -7,17 +7,19 @@ import json
 def main():
     ret_val = {}
 
-    playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
-    ansible_hosts_file = "/home/mfuser/services/common/hosts.ini"
+    home_base = "/homes/mfuser"
+    playbook_exe = home_base + "/.local/bin/ansible-playbook"
+    ansible_hosts_file = home_base + "/services/common/hosts.ini"
 
-    keyfile = "/home/mfuser/.ssh/mfuser_private_key"
+    keyfile = home_base + "/.ssh/mfuser_private_key"
 
     # For some reason the local ansible.cfg file is not being used
     os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
     os.environ["ANSIBLE_SSH_RETRIES"] = "5"
+    os.environ["ANSIBLE_CONFIG"] = home_base + "/mf_git/instrumentize/experiment_bootstrap/ansible.cfg"
 
     ret_val["ansible_bootstrap"] = {}
-    playbook = "/home/mfuser/mf_git/instrumentize/experiment_bootstrap/bootstrap.yml"
+    playbook = home_bsae + "/mf_git/instrumentize/experiment_bootstrap/bootstrap.yml"
 
     cmd = [
         playbook_exe,
