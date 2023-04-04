@@ -139,11 +139,12 @@ class NodeSockManager():
             if dest_ip not in self.sender_instances.keys():
                 self.logger.info(f"new destination IP  found: {str(dest_ip)} ")
                 self.sender_instances[dest_ip] = sender.UDP_sender(
-                                                    self.ptp_so_file,
                                                     self.send_interval, 
                                                     dest_ip, 
                                                     self.udp_port, 
-                                                    seq_n)
+                                                    seq_n,
+                                                    self.ptp_so_file,
+                                                    sys_clock=False)
    
 
 
