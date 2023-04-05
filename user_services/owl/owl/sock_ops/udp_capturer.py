@@ -34,6 +34,9 @@ class TcpdumpOps:
 
         self.p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
         print("Pid: ", self.p.pid)
+       
+        # without this, capturer may exit (when sender is not running)
+        self.p.wait()
 
     def start_live_capture(self):
         cmd = f'tcpdump -U  -q -n  -A -tt \
