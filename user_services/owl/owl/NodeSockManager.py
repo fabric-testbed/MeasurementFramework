@@ -89,6 +89,10 @@ class NodeSockManager():
 
 
     def _find_IPs(self):
+        '''
+        Find IP addresses on the host interfaces
+        '''
+
         s = subprocess.check_output(["hostname", "-I"])
         return s.decode('UTF-8').split()
 
@@ -100,7 +104,7 @@ class NodeSockManager():
             dests([str,]): destination IPs (for the host node)
         '''
         
-        listen_ip = "DOWN" # Default is down
+        listen_ip = None # Default 
         dests = []
 
         try:
@@ -116,7 +120,7 @@ class NodeSockManager():
 
         except FileNotFoundError:
             self.logger.error(f"No service request file {self.links} found.")
-            # Will return DOWN for receiver status, an empty list for dests
+            # Will return None for receiver status, an empty list for dests
 
         finally:
             self.logger.info(f"read_links: {listen_ip}, {dests}")
@@ -126,8 +130,8 @@ class NodeSockManager():
 
     def _start_capturer(self, listen_ip):
     
-        if listen_ip != "DOWN":
-            # If it is a real IP address
+        if listen_ip:
+            # If 
             self.listen_instance = capturer.TcpdumpOps(listen_ip, self.udp_port)
             
             if self.capture_mode == "live":
@@ -137,7 +141,7 @@ class NodeSockManager():
                 self.logger.info(f"Starting capture. Pcap files in {self.output_dir}")
                 self.listen_instance.start_capture(self.output_dir, self.pcap_interval)
 
-        else: # DOWN
+        else: # no need to capture packets
             pass
     
 
