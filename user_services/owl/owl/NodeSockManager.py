@@ -8,7 +8,7 @@ import subprocess
 import sys
 import os
 from random import randrange
-from threading import Timer
+from threading 
 from pathlib import Path
 
 # hideous but needed to ues udp_sender from here?
@@ -21,7 +21,7 @@ from sock_ops import udp_capturer as capturer
 
 
 class NodeSockManager():
-    def __init__(self, config_file='/owl_config/owl.conf'):
+    def __init__(self, config_file='/owl_config/owl.conf', sys_clock=False):
 
         config = configparser.ConfigParser()
         config.read(config_file)
@@ -34,6 +34,7 @@ class NodeSockManager():
         self.links = Path('/owl_config/links.json')   
         self.output_dir = Path('/owl_output')
         self.ptp_so_file = Path('sock_ops/time_ops/ptp_time.so')
+        self.sys_clock = sys_clock
 
         logging.basicConfig(filename=f'{self.output_dir}/owl.log',
                         level=logging.DEBUG, 
@@ -53,8 +54,16 @@ class NodeSockManager():
 
     def start(self):
         _listen_ip, _dests = self._read_links()
-        self._start_capturer(_listen_ip)
-        self._start_sender(_dests)
+
+
+        capturer_thread = threading.Thread(target=self._start_capturer, args=(_listen_ip,))
+        capturer_thread.start()
+        sender_thread = threading.Thread(target=self._start_sender, args=(_dests,))
+        sender_thread.start()
+
+
+        #self._start_capturer(_listen_ip)
+        #self._start_sender(_dests)
 
 
     def stop(self):
@@ -144,7 +153,7 @@ class NodeSockManager():
                                                     self.udp_port, 
                                                     seq_n,
                                                     self.ptp_so_file,
-                                                    sys_clock=False)
+                                                    sys_clock=self.sys_clock)
    
 
 
@@ -152,10 +161,12 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('conf', type=str, help='path to config file')
+    parser.add_argument('--sys-clock', action=argparse.BooleanOptionalAction,
+                        help='uses Python time module (mostly for debugging)')
     parser.add_argument('--duration', type=int, default=0,  help='number of seconds to run')
     args = parser.parse_args()
 
-    manager = NodeSockManager(args.conf)
+    manager = NodeSockManager(args.conf, sys_clock=args.sys_clock)
 
     # Stop the program at a certain interval only if the arg is given.
     if args.duration:
