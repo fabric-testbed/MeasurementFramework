@@ -19,7 +19,7 @@ px -ef | grep phc2sys
 
 # How to Collect OWL data
 
-## 1. As part of Measurement Framework
+## 1. As part of FABRIC Measurement Framework
 
 Refer to the Jupyter Notebook examples.
 
@@ -60,11 +60,12 @@ and save them in the same directory (`local/config/dir` below).
 
 ```
 $ sudo docker run --rm -dp <port_num>:<port_num> \
---mount type=bind,source=<path/to/local/config/dir>,target=/owl_config \
---mount type=bind,source=<path/to/local/output/dir>,target=/owl_output  \
+--mount type=bind,source=<absolute/path/to/local/config/dir>,target=/owl_config \
+--mount type=bind,source=<absolute/path/to/local/output/dir>,target=/owl_output  \
 --network="host"  \
+--pid="host" \
 --privileged \
-owl-app NodeSockManager.py /owl_config/owl.conf
+owl-app:latest NodeSockManager.py /owl_config/owl.conf
 ```
 
 ##### Example
@@ -73,11 +74,12 @@ owl-app NodeSockManager.py /owl_config/owl.conf
 # On all nodes
 
 $ sudo docker run --rm -dp 5005:5005 \
---mount type=bind,source=~/mydir/owl/config,target=/owl_config \
---mount type=bind,source=~/mydir/owl/output,target=/owl_output  \
+--mount type=bind,source=/home/me/mydir/owl/config,target=/owl_config \
+--mount type=bind,source=/home/me/mydir/owl/output,target=/owl_output  \
 --network="host"  \
+--pid="host" \
 --privileged \
-owl-app NodeSockManager.py /owl_config/owl.conf
+owl-app:latest NodeSockManager.py /owl_config/owl.conf [--sys-clock]
 
 ```
 
@@ -90,13 +92,15 @@ and receiver scripts rather than creating config files and using `NodeSockManage
 # sender side
 $sudo docker run --rm -dp <port_num>:<port_num> \
 --network="host"  \
+--pid="host" \
 --privileged \
-owl-app  sock_ops/udp_sender.py [options]
+owl-app:latest  sock_ops/udp_sender.py [options]
 
 # receiver 
 $sudo docker run --rm -dp <port_num>:<port_num> \
 --mount type=bind,source=<path/to/local/output/dir>,target=/owl_output \
 --network="host"  \
+--pid="host"
 --privileged \
 owl-app  sock_ops/udp_capturer.py [options]
 ```
@@ -106,30 +110,37 @@ owl-app  sock_ops/udp_capturer.py [options]
 ```
 # On Node 1
 
-    # sender side
-    sudo docker run -dp 5005:5005 \
-    --network="host"  \
-    --privileged \
-    owl-app  sock_ops/udp_sender.py  \
-    --ptp-so-file "/MeasurementFramework/user_services/owl/owl/sock_ops/time_ops/ptp_time.so" \
-    --dest-ip "10.0.0.2" --dest-port 5005 --frequency 0.1 \
-    --seq-n 5452 --duration 60
+# sender side
+sudo docker run -dp 5005:5005 \
+--network="host"  \
+--pid="host" \
+--privileged \
+owl-app:latest  sock_ops/udp_sender.py  \
+--ptp-so-file "/MeasurementFramework/user_services/owl/owl/sock_ops/time_ops/ptp_time.so" \
+--dest-ip "10.0.0.2" 
+--dest-port 5005 \
+--frequency 0.1 \
+--seq-n 5452 \
+--duration 60
 
 # On Node 2
 
-    # receiver
-    sudo docker run -dp 5005:5005 \
-    --mount type=bind,source=/tmp/owl/,target=/owl_output \
-    --network="host"  \
-    --privileged \
-    owl-app  sock_ops/udp_capturer.py \
-    --ip "10.0.0.2" --port 5005 --pcap-sec 60 \
-    --outdir /owl_output --duration 60
+# receiver
+sudo docker run -dp 5005:5005 \
+--mount type=bind,source=/tmp/owl/,target=/owl_output \
+--network="host"  \
+--pid="host" \
+--privileged \
+owl-app  sock_ops/udp_capturer.py \
+--ip "10.0.0.2" \
+--port 5005 \
+--pcap-sec 60 \
+--outdir /owl_output \
+--duration 60
 ```
 
 
-
-## 3. Natively (Not recommended)
+## 3. Natively (not recommended: only if strongly desired)
 
 ### Prerequisites
 - PTP (Precision Time Protocol) service 
@@ -157,18 +168,10 @@ gcc -fPIC -shared -o owl/sock_ops/time_ops/ptp_time.so owl/sock_ops/time_ops/ptp
 # Run the sender 
 sudo python3 owl/sock_ops/udp_sender.py [options]
 
-# Example
-sudo python3 owl/sock_ops/udp_sender.py \
- 		--ptp-so-file "owl/sock_ops/time_ops/ptp_time.so" \
-	 	--dest-ip "10.0.0.2" --dest-port 5005 --frequency 0.1 \
-		--seq-n 5452 --duration 60
 
 # Run the receiver
 sudo python3 owl/sock_ops/udp_capturer.py [options]
 
-# Example
-sudo python3 owl/sock_ops/udp_capturer.py --ip "10.0.0.2" --port 5005 --pcap-sec 60 \
-		--outdir /home/username/owl_output --duration 60
 ```
 
 Alternatively use `NodeSockManager` on multiple nodes with config and links files.
