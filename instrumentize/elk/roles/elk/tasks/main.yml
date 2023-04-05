@@ -167,7 +167,7 @@
 - name: Check if file already exists
   tags: elksetup
   stat:
-    path: ~/mf_git/elk/docker-images/elk/docker-compose.yml
+    path: ~/mf_git/instrumentize/elk/docker-images/elk/docker-compose.yml
   register: r_git_code_exist
 
 #- name: Clone fabric git repo
