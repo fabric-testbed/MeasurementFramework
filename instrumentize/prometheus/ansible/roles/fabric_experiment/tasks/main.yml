@@ -14,6 +14,8 @@
     block:
     - name: Install Prometheus
       import_tasks: fabric_experiment_install_tasks.yml
+    tags:
+    - monitor
       
   ###############################
   #   Node Exporter Install     #
@@ -23,9 +25,9 @@
     block:
     - name: Install Node_exporter
       import_tasks: install_node_exporter_tasks.yml
-      when: 
-        - yes
-   
+    tags:
+    - monitor
+    - exporters
 
 ##############################################################
 #                   end Fabric Slice                         #
