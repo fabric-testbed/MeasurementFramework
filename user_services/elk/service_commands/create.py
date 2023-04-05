@@ -33,7 +33,7 @@ def main():
     os.environ["ANSIBLE_SSH_RETRIES"] = "5"
     os.environ["PYTHONUNBUFFERED"] = "1"
     os.environ["ANSIBLE_CONFIG"] = (
-        home_base + "/mf_git/services/common/ansible.cfg"
+        home_base + "/services/common/ansible.cfg"
     )
 
     cmd = [
