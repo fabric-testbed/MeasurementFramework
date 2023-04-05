@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get install -y tcpdump git build-essential && \
     apt-get install -y procps && \
     apt-get install -y gcc mono-mcs && \
-    apt-get install -y sudo nano && \
+    apt-get install -y sudo nano vim && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
