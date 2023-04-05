@@ -30,7 +30,7 @@ def main():
     os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
     os.environ["ANSIBLE_SSH_RETRIES"] = "5"
     os.environ["ANSIBLE_CONFIG"] = (
-        home_base + "/mf_git/instrumentize/experiment_bootstrap/ansible.cfg"
+        home_base + "/mf_git/services/common/ansible.cfg"
     )
 
     cmd = [
