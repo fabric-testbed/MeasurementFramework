@@ -8,6 +8,7 @@
           registry-mirrors: 
             - "https://registry.ipv6.docker.com"
     tasks:
+    - fail:
 
     # Install LinuxPTP package
     - name: Install LinuxPTP
@@ -36,7 +37,7 @@
           name: '{{ roleinputvar }}'
       loop:
         - 'geerlingguy.docker'
-          #        - 'geerlingguy.pip'
+        - 'geerlingguy.pip'
       loop_control:
         loop_var: roleinputvar
 
