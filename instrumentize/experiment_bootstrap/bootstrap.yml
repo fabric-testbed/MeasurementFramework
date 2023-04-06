@@ -26,4 +26,4 @@
 
     - name: Install Docker
       include_role:
-        - 'geerlingguy.docker'
+        name: 'geerlingguy.docker'
