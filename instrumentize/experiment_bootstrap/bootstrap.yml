@@ -2,54 +2,28 @@
   - hosts: all
     strategy: free
     vars:
-      #      pip_install_packages:
-      #        - name: docker
       docker_daemon_options:
           registry-mirrors: 
             - "https://registry.ipv6.docker.com"
     tasks:
-    - fail:
-
-    # Install LinuxPTP package
     - name: Install LinuxPTP
       include_role:
         name: /home/mfuser/mf_git/instrumentize/ptp/ansible/roles/linuxptp
 
-    # Install pip3
     - name: Install PIP3
       package:
         name: python3-pip
         state: present
 
-    # Installs Python Docker SDK
-    - name: Install Python Docker SDK
+    - name: Upgrade pip3 to latest version and install Python Docker SDK
       pip:
         name: "{{ item }}"
         executable: pip3
         state: latest    
       with_items:
           - 'pip'
-            #          - 'docker'
+          - 'docker'
 
-    # Install Docker.
-    - name: Install Docker and Docker SDK
+    - name: Install Docker
       include_role:
-          name: '{{ roleinputvar }}'
-      loop:
         - 'geerlingguy.docker'
-        - 'geerlingguy.pip'
-      loop_control:
-        loop_var: roleinputvar
-
-          #    - name: Enable Docker IPv6 repos
-          #      copy:
-          #        dest: "/etc/docker/daemon.json"
-          #        content: |
-          #          {"registry-mirrors": ["https://registry.ipv6.docker.com"]}
-
-          #    - name: Restart Docker
-          #      systemd:
-          #        state: restarted
-          #        name: docker
-
-
