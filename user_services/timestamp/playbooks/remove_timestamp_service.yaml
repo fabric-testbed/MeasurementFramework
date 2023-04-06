@@ -10,7 +10,7 @@
 
     - name: Remove timestamp docker image
       community.general.docker_image:
-        name: timestamp
+        name: fabrictestbed/timestamp
         tag: 0.1.0
         state: absent
         
