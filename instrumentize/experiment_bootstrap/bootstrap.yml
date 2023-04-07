@@ -1,29 +1,83 @@
 ---
-  - hosts: all
-    strategy: free
-    tasks:
-    - name: Install LinuxPTP
-      include_role:
-        name: /home/mfuser/mf_git/instrumentize/ptp/ansible/roles/linuxptp
-
+- name: Boot Strapping Process
+  hosts: all
+  vars:
+    docker_daemon_config: '/etc/docker/daemon.json'
+    pip_packages:
+      - { name: 'pip', min_version: '21.3.1' }
+      - { name: 'docker', min_version: '5.0.3' }
+    docker_daemon_options:
+      registry-mirrors:
+        - "{{ 'https://registry.' + management_ip_type | lower + '.docker.com' }}"
+  tasks:
     - name: Install PIP3
-      package:
+      ansible.builtin.package:
         name: python3-pip
         state: present
 
+    - name: Check pip package versions
+      community.general.pip_package_info:
+        clients : ['pip3']
+      register: pip_package_info
+
     - name: Upgrade pip3 to latest version and install Python Docker SDK
-      pip:
-        name: "{{ item }}"
+      ansible.builtin.pip:
+        name: "{{ item.name }}"
         executable: pip3
-        state: latest    
-      with_items:
-          - 'pip'
-          - 'docker'
+        state: latest
+      with_items: "{{ pip_packages }}"
+      when: (pip_package_info.packages.pip3.{{item.name}})[0].version is ansible.builtin.version('{{item.min_version}}','lt')
+
+    - name: Install LinuxPTP
+      ansible.builtin.include_role:
+        name: /home/mfuser/mf_git/instrumentize/ptp/ansible/roles/linuxptp
+
+    - name: Check If Docker Is Installed
+      ansible.builtin.command:
+        cmd: docker --version
+      register: docker_valid
+      ignore_errors: true
 
     - name: Install Docker
-      include_role:
+      ansible.builtin.include_role:
         name: 'geerlingguy.docker'
-      vars:
-        docker_daemon_options:
-            registry-mirrors: 
-              - "{{ 'https://registry.'+management_ip_type|lower+'.docker.com' }}"
+      when: docker_valid.failed
+
+    - name: Run when Docker daemon is already present
+      when: not docker_valid.failed
+      block:
+        - name: Read contents of docker daemon config
+          shell: "{{ 'cat '+ docker_daemon_config }}"
+          register: docker_daemon_config_data
+          ignore_errors: true
+
+        - name: Read docker daemon config registry is present
+          ansible.builtin.set_fact:
+            docker_daemon_config_json: "{{ (docker_daemon_config_data.stdout if docker_daemon_config_data.rc != 1 else '{ \"registry-mirrors\" : \"\" }' ) | from_json }}"
+
+        - name: Check registry mirror value if present and update if needed
+          ansible.utils.update_fact:
+            updates:
+              - path: "docker_daemon_config_json['registry-mirrors']"
+                value: "{{ docker_daemon_options['registry-mirrors'] }}"
+          register: facts_updated
+
+        - name: Save contents of docker daemon config back to file
+          ansible.builtin.copy:
+            dest: "{{ docker_daemon_config }}"
+            content: "{{ facts_updated.docker_daemon_config_json | to_nice_json }}"
+          notify:
+            - Restart Docker Daemon
+          when: facts_updated.changed
+
+        - name: Ensure Docker daemon is enabled
+          ansible.builtin.systemd:
+            name: docker
+            enabled: true
+  handlers:
+    - name: Restart Docker Daemon
+      ansible.builtin.systemd:
+        name: docker
+        state: restarted
+        enabled: true
+
