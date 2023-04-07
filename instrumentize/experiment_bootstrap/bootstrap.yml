@@ -1,10 +1,6 @@
 ---
   - hosts: all
     strategy: free
-    vars:
-      docker_daemon_options:
-          registry-mirrors: 
-            - "https://registry.ipv6.docker.com"
     tasks:
     - name: Install LinuxPTP
       include_role:
@@ -27,3 +23,7 @@
     - name: Install Docker
       include_role:
         name: 'geerlingguy.docker'
+      vars:
+        docker_daemon_options:
+            registry-mirrors: 
+              - "{{ 'https://registry.'+management_ip_type|lower+'.docker.com' }}"
