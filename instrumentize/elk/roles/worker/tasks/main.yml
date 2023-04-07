@@ -6,6 +6,10 @@
       - curl
     state: present
 
+- name: Check if filebeat already installed and the correct version
+  shell: filebeat version|awk '{print $3}'
+  register: filebeat_check
+
 - block:
   - name: Adding GPG key for CentOS 8
     rpm_key:
@@ -43,6 +47,7 @@
 
   when:
       - ansible_facts['distribution'] in [ "CentOS", "Rocky" ]
+      - filebeat_check.stdout == "" or filebeat_check.stdout is version(filebeat_version, '<')
 
 
 # > .deb install
@@ -75,7 +80,9 @@
       deb: /tmp/filebeat-{{ filebeat_version }}-amd64.deb
       state: present
 
-  when: ansible_facts['distribution'] in [ "Ubuntu","Debian" ]
+  when: 
+      - ansible_facts['distribution'] in [ "Ubuntu","Debian" ]
+      - filebeat_check.stdout == "" or filebeat_check.stdout is version(filebeat_version, '<')
 
 # normal run
 
@@ -116,6 +123,10 @@
 
 # > .rpm install for metricbeat
 
+- name: Check if metricbeat already installed and the correct version
+  shell: metricbeat version|awk '{print $3}'
+  register: metricbeat_check
+
 - block:
 
   - name: Check if metricbeat package exists CentOS
@@ -139,7 +150,9 @@
     ansible.builtin.package:
       name: /tmp/metricbeat-{{ metricbeat_version }}-x86_64.rpm
       state: present
-  when: ansible_facts['distribution'] in [ "CentOS", "Rocky" ]
+  when:
+      - ansible_facts['distribution'] in [ "CentOS", "Rocky" ]
+      - metricbeat_check.stdout == "" or metricbeat_check.stdout is version(metricbeat_version, '<')
 
 # > .deb install
 - block:
@@ -164,7 +177,9 @@
     ansible.builtin.package:
       deb: /tmp/metricbeat-{{ metricbeat_version }}-amd64.deb
       state: present
-  when: ansible_facts['distribution'] in [ "Ubuntu","Debian"]
+  when: 
+      - ansible_facts['distribution'] in [ "Ubuntu","Debian"]
+      - metricbeat_check.stdout == "" or metricbeat_check.stdout is version(metricbeat_version, '<')
 
 # normal run
 
@@ -194,6 +209,10 @@
 # Check if Packetbeat package is already downloaded
 # > .rpm install for packetbeat
 
+- name: Check if packetbeat already installed and the correct version
+  shell: packetbeat version|awk '{print $3}'
+  register: packetbeat_check
+
 - block:
   - name: Check if packetbeat package exists CentOS
     tags: packetbeat
@@ -216,7 +235,9 @@
     ansible.builtin.package:
       name: /tmp/packetbeat-{{ packetbeat_version }}-x86_64.rpm
       state: present
-  when: ansible_facts['distribution'] in [ "CentOS","Rocky" ]
+  when:
+      - ansible_facts['distribution'] in [ "CentOS","Rocky" ]
+      - packetbeat_check.stdout == "" or packetbeat_check.stdout is version(packetbeat_version, '<')
 
 # > .deb install
 - block:
@@ -241,7 +262,9 @@
     ansible.builtin.package:
       deb: /tmp/packetbeat-{{ packetbeat_version }}-amd64.deb
       state: present
-  when: ansible_facts['distribution'] in ["Ubuntu","Debian"]
+  when: 
+      - ansible_facts['distribution'] in ["Ubuntu","Debian"]
+      - packetbeat_check.stdout == "" or packetbeat_check.stdout is version(packetbeat_version, '<')
 
 # normal run
 # Copy the packetbeat.yml
