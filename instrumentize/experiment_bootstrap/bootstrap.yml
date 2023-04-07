@@ -1,5 +1,6 @@
 ---
 - name: Boot Strapping Process
+  strategy: free
   hosts: all
   vars:
     docker_daemon_config: '/etc/docker/daemon.json'
@@ -26,7 +27,8 @@
         executable: pip3
         state: latest
       with_items: "{{ pip_packages }}"
-      when: (pip_package_info.packages.pip3.{{item.name}})[0].version is ansible.builtin.version('{{item.min_version}}','lt')
+      when: 
+        - (item.name not in (pip_package_info.packages.pip3).keys()) or (pip_package_info.packages.pip3.{{item.name}})[0].version is ansible.builtin.version('{{item.min_version}}','lt')
 
     - name: Install LinuxPTP
       ansible.builtin.include_role:
