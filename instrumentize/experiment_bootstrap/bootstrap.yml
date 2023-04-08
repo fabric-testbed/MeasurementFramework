@@ -11,6 +11,24 @@
       registry-mirrors:
         - "{{ 'https://registry.' + management_ip_type | lower + '.docker.com' }}"
   tasks:
+    - name: Update Package Cache (apt/Ubuntu)
+      apt:
+        update_cache: yes
+      changed_when: false
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Update Package Cache (dnf/CentOS)
+      dnf:
+        update_cache: yes
+      changed_when: false
+      when: ansible_distribution == "CentOS"
+
+    - name: Update Package Cache (yum/Amazon)
+      yum:
+        update_cache: yes
+      changed_when: false
+      when: ansible_distribution == "Amazon"
+
     - name: Install PIP3
       ansible.builtin.package:
         name: python3-pip
