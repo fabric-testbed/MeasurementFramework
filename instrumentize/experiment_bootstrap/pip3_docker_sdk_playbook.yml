@@ -3,7 +3,7 @@
 
 - name: Install pip3 and python docker sdk 
   hosts: all
-
+  gather_facts: False
   tasks:  
   # Installs Pip3
   - name: Install PIP3

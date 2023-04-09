@@ -9,10 +9,11 @@ def main():
     ret_val = {}
     ret_val["msg"] = ""
 
-    playbook_exe = "/home/mfuser/.local/bin/ansible-playbook"
-    ansible_hosts_file = "/home/mfuser/services/common/hosts.ini"
-    playbook = "/home/mfuser/mf_git/instrumentize/elk/fabric_stop.yml"
-    keyfile = "/home/mfuser/.ssh/mfuser_private_key"
+    home_base = "/home/mfuser"
+    playbook_exe = home_base + "/.local/bin/ansible-playbook"
+    ansible_hosts_file = home_base + "/services/common/hosts.ini"
+    playbook = home_base + "/mf_git/instrumentize/elk/fabric_stop.yml"
+    keyfile = home_base + "/.ssh/mfuser_private_key"
 
     # Data is stored in relative dir to this script.
     service_dir = os.path.dirname(__file__)
@@ -28,6 +29,9 @@ def main():
     # For some reason the local ansible.cfg file is not being used
     os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
     os.environ["ANSIBLE_SSH_RETRIES"] = "5"
+    os.environ["ANSIBLE_CONFIG"] = (
+        home_base + "/services/common/ansible.cfg"
+    )
 
     cmd = [
         playbook_exe,
