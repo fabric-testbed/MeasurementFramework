@@ -63,6 +63,8 @@ class timestamptool():
         self.event_output_influx_path = self.timestampservice.event_output_influx_path
         self.packet_elastic_index_path = self.timestampservice.packet_elastic_index_path
         self.event_elastic_index_path = self.timestampservice.event_elastic_index_path
+        self.packet_influx_download_path = self.timestampservice.packet_influx_download_path 
+        self.event_influx_download_path = self.timestampservice.event_influx_download_path
         self.ptp_routine = self.timestampservice.ptp_routine
         self.ptp_clock_name_path= self.timestampservice.ptp_clock_name_path
 
