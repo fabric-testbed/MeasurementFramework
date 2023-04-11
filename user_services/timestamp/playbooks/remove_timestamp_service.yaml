@@ -16,7 +16,7 @@
         
     - name: Recursively remove volume directory
       ansible.builtin.file:
-        path: /home/mfuser/services/timestamp/output
+        path: /home/rocky/services/timestamp/output
         state: absent
 
       
