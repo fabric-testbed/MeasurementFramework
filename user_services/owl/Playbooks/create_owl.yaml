@@ -21,13 +21,14 @@
         name: fabrictestbed/owl:0.1.2
         source: pull
 
-    - name: Create docker build directory
-      ansible.builtin.file:
-        path: /home/mfuser/services/owl/docker
-        state: directory
-        mode: '0755'
 
     # Below only for debugging
+    #- name: Create docker build directory
+    #  ansible.builtin.file:
+    #    path: /home/mfuser/services/owl/docker
+    #    state: directory
+    #    mode: '0755'
+
     #- name: Copy Dockerfile
     #  ansible.builtin.copy:
     #    src: /home/mfuser/services/owl/files/Dockerfile
