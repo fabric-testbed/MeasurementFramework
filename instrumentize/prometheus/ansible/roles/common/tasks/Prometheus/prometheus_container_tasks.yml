@@ -42,6 +42,6 @@
       # breaks connection to sidecar - '--web.external-url={{ ansible_host }}'  # This maybe correct for fabric racks etc, but maybe not for other cases
     restart_policy: always
 
-- name: Print the extra_node_hosts
-  debug:
-    var: extra_node_hosts
+# - name: Print the extra_node_hosts
+#   debug:
+#     var: extra_node_hosts

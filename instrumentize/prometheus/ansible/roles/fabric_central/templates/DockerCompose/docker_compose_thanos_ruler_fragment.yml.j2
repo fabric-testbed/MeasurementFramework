@@ -1,0 +1,46 @@
+
+# Central Thanos - Ruler
+# Only needs to be run on central node or similar node that needs to connect
+#   to the rack promethice to get the current data and to the s3 for 
+#   long term data.
+
+  thanos_ruler:
+    container_name: "{{ install_name }}_thanos_ruler"
+
+    image: quay.io/thanos/thanos:v0.29.0
+
+    volumes:
+      # Map stores.yml file with the list of stores for easier live updates.
+      - "{{ base_install_dir }}/thanos/config/stores.yml:/etc/thanos_stores/stores.yml"
+      # Config files. Same as for Sidecar
+      - "{{ base_install_dir }}/thanos/config/:/etc/thanos/"
+      # Rule files 
+      - "{{ base_install_dir }}/thanos/config:/etc/thanos/rule_files"
+
+    command:
+      - 'rule'
+      - '--objstore.config-file=/etc/thanos/object_store_config.yml'
+#??    --data-dir             "/path/to/data" \
+      - '--eval-interval=30s'
+      - '--rule-file=/etc/thanos/*_rules.yml'
+#??    --alert.query-url      "http://0.0.0.0:9090" \ # This tells what query URL to link to in UI.
+      - '--alertmanagers.url={{ alertmanager_url }}'
+#    --query                "query.example.org" \
+#    --query                "query2.example.org" \
+
+      - '--label="rack=podc"'
+      - '--label="ruler=central"'
+
+
+      # Optional debuging
+      - '--log.level=info'  # debug, info
+      - '--log.format=json' # logfmt logfmt or json                          
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "1024m" 
+        max-file: "5"
+
+    restart: always
+      
