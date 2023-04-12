@@ -114,14 +114,16 @@ class influxdb_manager():
                 query=f'from(bucket:"{bucket_final}")|> range(start: 0, stop: now())|> filter(fn: (r) => r._measurement == "{self.host_name}-packet-timestamp" and r.name == "{self.args.name}")'
                 query_results = query_api.query(query)
                 output = query_results.to_json(indent=2)
-                with open(self.packet_influx_download_path, 'w', encoding='utf-8') as f:
-                    json.dump(data, f)
+                #with open(self.packet_influx_download_path, 'w', encoding='utf-8') as f:
+                    #json.dump(data, f)
+                print (output)
             elif (args_json['type']=='event_data'):
                 query=f'from(bucket:"{bucket_final}")|> range(start: 0, stop: now())|> filter(fn: (r) => r._measurement == "{self.host_name}-event-timestamp" and r.name == "{self.args.name}")'
                 query_results = query_api.query(query)
                 output = query_results.to_json(indent=2)
-                with open(self.event_influx_download_path, 'w', encoding='utf-8') as f:
-                    json.dump(data, f)
+                #with open(self.event_influx_download_path, 'w', encoding='utf-8') as f:
+                    #json.dump(data, f)
+                print (output)
         """
         Close client
         """
