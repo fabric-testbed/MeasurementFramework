@@ -10,8 +10,13 @@
 
     - name: Remove timestamp docker image
       community.general.docker_image:
-        name: timestamp
+        name: fabrictestbed/timestamp
         tag: 0.1.0
+        state: absent
+        
+    - name: Recursively remove volume directory
+      ansible.builtin.file:
+        path: /home/rocky/services/timestamp/output
         state: absent
 
       

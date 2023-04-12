@@ -6,7 +6,7 @@
   - name: Start timestamp container
     community.general.docker_container:
       name: timestamp
-      image: timestamp:0.1.0 
+      image: fabrictestbed/timestamp:0.1.0
       state: started
       restart: true
       privileged: true
@@ -16,6 +16,6 @@
       network_mode: host
       pid_mode: host
       volumes:
-        - /home/mfuser/services/timestamp/output:/root/services/timestamp/output_files
+        - /home/rocky/services/timestamp/output:/root/services/timestamp/output_files
       
       

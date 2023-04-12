@@ -12,6 +12,7 @@
 
 # Installing Filebeat / Packetbeat on workers
 - hosts: workers
+  strategy: free
   become: true
   tags: worker
   vars:

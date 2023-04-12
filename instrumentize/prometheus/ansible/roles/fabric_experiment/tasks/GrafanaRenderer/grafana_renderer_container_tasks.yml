@@ -1,6 +1,6 @@
 ---
 # Start-stop Grafana container
-- name: Control Grafana Docker Container
+- name: Control Grafana Renderer Docker Container
   become: yes
   community.docker.docker_container:
     state: "{{ grafana_state }}"

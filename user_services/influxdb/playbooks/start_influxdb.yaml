@@ -7,8 +7,6 @@
     community.general.docker_container:
       name: influxdb
       image: influxdb:2.0 
-      ports:
-        - "8086:8086"
       env:
         DOCKER_INFLUXDB_INIT_MODE: "setup"
         DOCKER_INFLUXDB_INIT_USERNAME: "my-user" 
@@ -18,6 +16,7 @@
       state: started
       restart: true
       privileged: true
+      network_mode: host
       detach: true
       volumes:
         - /home/mfuser/influxdb:/var/lib/influxdb2
