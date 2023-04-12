@@ -31,9 +31,9 @@ def dependency_check():
     os.system("echo Checking dependencies...")
 
     # Checking for indices directory
-    if "cannot access" in subprocess.run(["ls", "/home/mfuser/services/elk/files/indices"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True).stderr:
-        subprocess.run(["sudo", "mkdir", "/home/mfuser/services/elk/files/indices"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
+    if not os.path.isdir("/home/mfuser/services/elk/files/indices"):
+        os.mkdir("/home/mfuser/services/elk/files/indices")
+    
     # Checking for NPM package
     try:
         subprocess.run(["npm", "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -95,7 +95,7 @@ def main():
                                                           stderr=subprocess.PIPE, text=True)
                         while export_process.poll() is None:
                             os.system("echo -n .")
-                            time.sleep(1)
+                            time.sleep(5)
                         os.system("echo")
                         if export_process.poll() == 0:
                             os.system("echo Imported successfully")
@@ -141,7 +141,7 @@ def main():
                         # Check if export process is finished every second.
                         while export_process.poll() is None:
                             os.system("echo -n .")
-                            time.sleep(1)
+                            time.sleep(5)
                         os.system("echo")
 
                         # Once finished, check if succeeded or failed
