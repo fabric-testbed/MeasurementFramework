@@ -506,7 +506,7 @@ if __name__ == "__main__":
     packet_get_parser.set_defaults(type='packet')
     
     # General parser
-    parser.add_argument("-conf_path", "--config_file_path", action='store_const', const="/home/mfuser/services/timestamp/config_file/timestamp.conf", default="/home/mfuser/services/timestamp/config_file/timestamp.conf", help="show config file path")
+    parser.add_argument("-conf_path", "--config_file_path", action='store_const', const="/root/services/timestamp/config_file/timestamp.conf", default="/root/services/timestamp/config_file/timestamp.conf", help="show config file path")
     args = parser.parse_args()
     t.set_args(args=args)
     t.process()

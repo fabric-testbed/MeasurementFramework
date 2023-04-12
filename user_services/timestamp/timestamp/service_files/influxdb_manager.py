@@ -3,6 +3,7 @@ from influxdb_client import Point, InfluxDBClient
 from influxdb_client.client.util.date_utils_pandas import PandasDateTimeHelper
 from influxdb_client.client.write_api import SYNCHRONOUS
 from timestampservice import timestampservice
+from ipaddress import ip_address, IPv4Address
 import json
 import time
 import datetime
@@ -73,9 +74,14 @@ class influxdb_manager():
                     except ValueError:
                         sys.exit(f"failed to load {line}")
         return (records)
+    
+    def validIPAddress(IP: str) -> str:
+        try:
+            return "IPv4" if type(ip_address(IP)) is IPv4Address else "IPv6"
+        except ValueError:
+            return "Invalid"
             
                     
-        
     def process(self):
         args_json={}
         if (self.args is None):
@@ -85,7 +91,10 @@ class influxdb_manager():
                 args_json[arg]=getattr(self.args, arg)
     
         if (self.args.influxdb_ip):
-            url_final=f"http://{self.args.influxdb_ip}:8086"
+            if (self.validIPAddress(self.args.influxdb_ip)=="IPv4"):
+                url_final=f"http://{self.args.influxdb_ip}:8086"
+            elif (self.validIPAddress(self.args.influxdb_ip)=="IPv6"):
+                url_final=f"http://[{self.args.influxdb_ip}]:8086"
         else:
             url_final = f"http://{self.meas_ip}:8086"
         
