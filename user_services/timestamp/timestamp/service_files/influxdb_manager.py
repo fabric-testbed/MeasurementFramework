@@ -75,7 +75,7 @@ class influxdb_manager():
                         sys.exit(f"failed to load {line}")
         return (records)
     
-    def validIPAddress(IP: str) -> str:
+    def validIPAddress(self, IP):
         try:
             return "IPv4" if type(ip_address(IP)) is IPv4Address else "IPv6"
         except ValueError:
@@ -91,9 +91,9 @@ class influxdb_manager():
                 args_json[arg]=getattr(self.args, arg)
     
         if (self.args.influxdb_ip):
-            if (self.validIPAddress(self.args.influxdb_ip)=="IPv4"):
+            if (self.validIPAddress(IP=self.args.influxdb_ip)=="IPv4"):
                 url_final=f"http://{self.args.influxdb_ip}:8086"
-            elif (self.validIPAddress(self.args.influxdb_ip)=="IPv6"):
+            elif (self.validIPAddress(IP=self.args.influxdb_ip)=="IPv6"):
                 url_final=f"http://[{self.args.influxdb_ip}]:8086"
         else:
             url_final = f"http://{self.meas_ip}:8086"
