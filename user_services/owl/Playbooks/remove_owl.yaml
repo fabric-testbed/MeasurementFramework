@@ -10,5 +10,5 @@
     - name: Remove owl image
       community.general.docker_image:
         name: owl
-        tag: 0.1.1
+        tag: 0.1.2
         state: absent
