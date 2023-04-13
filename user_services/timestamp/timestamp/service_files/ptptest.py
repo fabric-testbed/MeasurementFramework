@@ -6,7 +6,7 @@ class TIMESPEC(Structure):
     ]
 
 def get_ptp_timestamp(device_name):
-    func = CDLL("/home/mfuser/services/timestamp/service_files/get_ptp_time.so")
+    func = CDLL("/root/services/timestamp/service_files/get_ptp_time.so")
     func.get_ptp_time.restype = type(TIMESPEC())
     test=func.get_ptp_time(bytes(device_name, encoding='utf-8'))
     #timestamp_str= str(test.tv_sec)+"."+str(test.tv_nsec)

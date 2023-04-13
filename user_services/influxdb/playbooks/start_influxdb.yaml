@@ -19,4 +19,4 @@
       network_mode: host
       detach: true
       volumes:
-        - /home/mfuser/influxdb:/var/lib/influxdb2
+        - /home/ubuntu/influxdb:/var/lib/influxdb2

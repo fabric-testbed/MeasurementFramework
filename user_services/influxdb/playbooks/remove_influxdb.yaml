@@ -16,5 +16,5 @@
         
     - name: Recursively remove volume directory
       ansible.builtin.file:
-        path: /home/mfuser/influxdb
+        path: /home/ubuntu/influxdb
         state: absent
