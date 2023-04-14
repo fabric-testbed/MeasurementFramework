@@ -38,6 +38,7 @@ struct timespec get_ptp_time(char *DEVICE)
         //clock_gettime(CLOCK_REALTIME, &end);
         //diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
         //printf("elapsed time in the routine = %llu nanoseconds\n", (long long unsigned int) diff);
+        close(fd);
         return ts;
     }
 }

@@ -63,6 +63,8 @@ class timestamptool():
         self.event_output_influx_path = self.timestampservice.event_output_influx_path
         self.packet_elastic_index_path = self.timestampservice.packet_elastic_index_path
         self.event_elastic_index_path = self.timestampservice.event_elastic_index_path
+        self.packet_influx_download_path = self.timestampservice.packet_influx_download_path 
+        self.event_influx_download_path = self.timestampservice.event_influx_download_path
         self.ptp_routine = self.timestampservice.ptp_routine
         self.ptp_clock_name_path= self.timestampservice.ptp_clock_name_path
 
@@ -136,7 +138,8 @@ class timestamptool():
         func = CDLL(self.ptp_routine)
         func.get_ptp_time.restype = type(self.TIMESPEC())
         test=func.get_ptp_time(bytes(device_name, encoding='utf-8'))
-        timestamp_str= str(test.tv_sec)+"."+str(test.tv_nsec)    
+        #timestamp_str= str(test.tv_sec)+"."+str(test.tv_nsec)
+        timestamp_str=f"{test.tv_sec}.{test.tv_nsec:09}"
         return (timestamp_str)
     
     
@@ -504,7 +507,7 @@ if __name__ == "__main__":
     packet_get_parser.set_defaults(type='packet')
     
     # General parser
-    parser.add_argument("-conf_path", "--config_file_path", action='store_const', const="/home/mfuser/services/timestamp/config_file/timestamp.conf", default="/home/mfuser/services/timestamp/config_file/timestamp.conf", help="show config file path")
+    parser.add_argument("-conf_path", "--config_file_path", action='store_const', const="/root/services/timestamp/config_file/timestamp.conf", default="/root/services/timestamp/config_file/timestamp.conf", help="show config file path")
     args = parser.parse_args()
     t.set_args(args=args)
     t.process()

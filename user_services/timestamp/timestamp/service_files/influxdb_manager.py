@@ -3,6 +3,7 @@ from influxdb_client import Point, InfluxDBClient
 from influxdb_client.client.util.date_utils_pandas import PandasDateTimeHelper
 from influxdb_client.client.write_api import SYNCHRONOUS
 from timestampservice import timestampservice
+from ipaddress import ip_address, IPv4Address
 import json
 import time
 import datetime
@@ -23,6 +24,8 @@ class influxdb_manager():
         self.host_name= self.timestampservice.get_hostname()
         self.packet_output_influx_path= self.timestampservice.packet_output_influx_path
         self.event_output_influx_path= self.timestampservice.event_output_influx_path
+        self.packet_influx_download_path = self.timestampservice.packet_influx_download_path 
+        self.event_influx_download_path = self.timestampservice.event_influx_download_path
     
     # Set args    
     def set_args(self, args):
@@ -71,9 +74,14 @@ class influxdb_manager():
                     except ValueError:
                         sys.exit(f"failed to load {line}")
         return (records)
+    
+    def validIPAddress(self, IP):
+        try:
+            return "IPv4" if type(ip_address(IP)) is IPv4Address else "IPv6"
+        except ValueError:
+            return "Invalid"
             
                     
-        
     def process(self):
         args_json={}
         if (self.args is None):
@@ -81,7 +89,15 @@ class influxdb_manager():
         else:
             for arg in vars(self.args):
                 args_json[arg]=getattr(self.args, arg)
-        url_final = f"http://{self.meas_ip}:8086"
+    
+        if (self.args.influxdb_ip):
+            if (self.validIPAddress(IP=self.args.influxdb_ip)=="IPv4"):
+                url_final=f"http://{self.args.influxdb_ip}:8086"
+            elif (self.validIPAddress(IP=self.args.influxdb_ip)=="IPv6"):
+                url_final=f"http://[{self.args.influxdb_ip}]:8086"
+        else:
+            url_final = f"http://{self.meas_ip}:8086"
+        
         bucket_final=self.args.bucket
         client = InfluxDBClient(url=url_final, token=self.args.token, org=self.args.org)
         write_api = client.write_api(write_options=SYNCHRONOUS)
@@ -98,11 +114,15 @@ class influxdb_manager():
                 query=f'from(bucket:"{bucket_final}")|> range(start: 0, stop: now())|> filter(fn: (r) => r._measurement == "{self.host_name}-packet-timestamp" and r.name == "{self.args.name}")'
                 query_results = query_api.query(query)
                 output = query_results.to_json(indent=2)
+                #with open(self.packet_influx_download_path, 'w', encoding='utf-8') as f:
+                    #json.dump(data, f)
                 print (output)
             elif (args_json['type']=='event_data'):
                 query=f'from(bucket:"{bucket_final}")|> range(start: 0, stop: now())|> filter(fn: (r) => r._measurement == "{self.host_name}-event-timestamp" and r.name == "{self.args.name}")'
                 query_results = query_api.query(query)
                 output = query_results.to_json(indent=2)
+                #with open(self.event_influx_download_path, 'w', encoding='utf-8') as f:
+                    #json.dump(data, f)
                 print (output)
         """
         Close client
@@ -126,6 +146,7 @@ if __name__ == "__main__":
     required_args_event_upload.add_argument("-b", "--bucket", required=True, help="which influx bucket to write to")
     required_args_event_upload.add_argument("-o", "--org", required=True, help="org name")
     required_args_event_upload.add_argument("-t", "--token", required=True, help="token for authorization")
+    event_upload_parser.add_argument("-ip", "--influxdb_ip", help="IP of the node where influxdb is installed")
     event_upload_parser.set_defaults(type='event_data')
     
     packet_upload_parser= type_in_upload_parser.add_parser('packet_data')
@@ -133,6 +154,7 @@ if __name__ == "__main__":
     required_args_packet_upload.add_argument("-b", "--bucket", required=True, help="which influx bucket to write to")
     required_args_packet_upload.add_argument("-o", "--org", required=True, help="org name")
     required_args_packet_upload.add_argument("-t", "--token", required=True, help="token for authorization")
+    packet_upload_parser.add_argument("-ip", "--influxdb_ip", help="IP of the node where influxdb is installed")
     packet_upload_parser.set_defaults(type='packet_data')
     
     type_in_download_parser = download_parser.add_subparsers(help='Choose a type', dest='type')
@@ -140,9 +162,9 @@ if __name__ == "__main__":
     required_args_event_download = event_download_parser.add_argument_group('Required named arguments')
     required_args_event_download.add_argument("-b", "--bucket", required=True, help="which influx bucket to query from")
     required_args_event_download.add_argument("-o", "--org", required=True, help="org name")
-    #required_args_event_download.add_argument("-tf", "--timefilter", required=True, help="time filter e.g, 7d for 7 days, 15m for 15minutes")
     required_args_event_download.add_argument("-t", "--token", required=True, help="token for authorization")
     required_args_event_download.add_argument("-n", "--name", required=True, help="name for the data")
+    event_download_parser.add_argument("-ip", "--influxdb_ip", help="IP of the node where influxdb is installed")
     event_download_parser.set_defaults(type='event_data')
     
     
@@ -150,9 +172,9 @@ if __name__ == "__main__":
     required_args_packet_download = packet_download_parser.add_argument_group('Required named arguments')
     required_args_packet_download.add_argument("-b", "--bucket", required=True, help="which influx bucket to query from")
     required_args_packet_download.add_argument("-o", "--org", required=True, help="org name")
-    #required_args_packet_download.add_argument("-tf", "--timefilter", required=True, help="time filter e.g, 7d for 7 days, 15m for 15minutes")
     required_args_packet_download.add_argument("-t", "--token", required=True, help="token for authorization")
     required_args_packet_download.add_argument("-n", "--name", required=True, help="name for the data")
+    packet_download_parser.add_argument("-ip", "--influxdb_ip", help="IP of the node where influxdb is installed")
     packet_download_parser.set_defaults(type='packet_data')
     
     

@@ -6,7 +6,7 @@
   - name: Start timestamp container
     community.general.docker_container:
       name: timestamp
-      image: fabrictestbed/timestamp:0.1.0
+      image: fabrictestbed/timestamp:0.1.1
       state: started
       restart: true
       privileged: true
