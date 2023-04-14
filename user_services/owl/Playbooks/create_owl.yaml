@@ -18,7 +18,7 @@
         
     - name: Pull fabrictestbed/owl image from DockerHub
       community.general.docker_image:
-        name: fabrictestbed/owl:0.1.2
+        name: fabrictestbed/owl:0.1.3
         source: pull
 
 
@@ -37,16 +37,10 @@
 
     #- name: Build owl container image
     #  community.general.docker_image:
-    #    name: owl:0.1.1
+    #    name: owl:0.1.3
     #    build:
     #      path: /home/mfuser/services/owl/docker
     #      pull: yes
     #      network: host
     #    source: build
-
-    #- name: Create owl container
-    #  community.general.docker_container:
-    #    name: owl
-    #    image: owl:0.1.2
-    #    state: present
 
