@@ -51,6 +51,8 @@ services:
     ports:
       - "{{minio_port}}:9000"
       - "{{minio_console_port}}:9099"
+      - "443:443"
+      # 443 is added to allow access via fabric bastion
 
 
     logging:

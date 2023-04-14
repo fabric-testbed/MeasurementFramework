@@ -1,0 +1,9 @@
+# Create influxdb service
+---
+- name: Create influxdb service
+  hosts: Meas_Node
+  tasks:  
+  - name: Pull infludb 2.0 image
+    community.docker.docker_image:
+      name: influxdb:2.0
+      source: pull

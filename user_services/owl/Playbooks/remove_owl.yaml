@@ -1,0 +1,14 @@
+---
+- name: Remove OWL (including the output data)
+  hosts: Experiment_Nodes
+  tasks:
+    - name: Remove owl container
+      community.general.docker_container:
+        name: owl
+        state: absent
+
+    - name: Remove owl image
+      community.general.docker_image:
+        name: owl
+        tag: 0.1.1
+        state: absent

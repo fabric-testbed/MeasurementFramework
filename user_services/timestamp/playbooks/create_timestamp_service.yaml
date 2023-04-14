@@ -1,0 +1,10 @@
+# Creates the timestamp service by putting the timestamp Dockerfile on each experiment node
+# Currently copies the Dockerfile from the measurement node to each experiment node and finish the build 
+---
+- name: Create timesatmp service
+  hosts: Experiment_Nodes
+  tasks:      
+    - name: Pull timestamp docker image from docker hub
+      community.docker.docker_image:
+        name: fabrictestbed/timestamp:0.1.0
+        source: pull

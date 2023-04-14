@@ -1,0 +1,18 @@
+---
+- name: Delete csv files on Docker Volume
+  hosts: Experiment_Nodes 
+  tasks:
+  - name: Delete saved csv files
+    community.general.docker_container:
+      name: owl
+      image: fabrictestbed/owl:0.1.0 
+      state: started
+      restart: yes
+      command: ["DataProcessManager.py", "delete_csv", "/owl_output"]
+      privileged: yes
+      network_mode: host
+      #ports:
+      #  - "5005:5005"
+      volumes:
+        - /home/mfuser/services/owl/output:/owl_output
+        - /home/mfuser/services/owl/config:/owl_config

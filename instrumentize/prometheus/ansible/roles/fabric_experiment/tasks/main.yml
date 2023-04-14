@@ -11,21 +11,26 @@
   # Fabric Experiment Prometheus#
   ###############################
   - name: Install Prometheus setup on a Fabric Experiment 
+    tags: monitor
     block:
     - name: Install Prometheus
       import_tasks: fabric_experiment_install_tasks.yml
-      
+    when:
+      - install_prometheus_system is defined
+      - install_prometheus_system == true
+
   ###############################
   #   Node Exporter Install     #
   ###############################
   - name: Install node_exporter for fabric experiment
     # need each node to have node_exporter
+    tags: monitor, exporters
     block:
     - name: Install Node_exporter
       import_tasks: install_node_exporter_tasks.yml
-      when: 
-        - yes
-   
+    when:
+      - install_node_exporter is defined
+      - install_node_exporter == true
 
 ##############################################################
 #                   end Fabric Slice                         #

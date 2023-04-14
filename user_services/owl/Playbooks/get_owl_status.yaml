@@ -1,0 +1,17 @@
+---
+- name: Get OWL container status 
+  hosts: Experiment_Nodes 
+  tasks:
+  - name: Get infos on container
+    community.general.docker_container_info:
+      name: owl
+    register: result
+  
+  - name: Does container exist?
+    ansible.builtin.debug:
+      msg: "The container {{ 'exists' if result.exists else 'does not exist' }}"
+  
+  - name: Print information about container
+    ansible.builtin.debug:
+      var: result.container['State']
+    when: result.exists

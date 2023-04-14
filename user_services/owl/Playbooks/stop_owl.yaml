@@ -1,0 +1,8 @@
+---
+- name: Stop OWL
+  hosts: Experiment_Nodes 
+  tasks:
+  - name: Stop OWL container
+    community.general.docker_container:
+      name: owl
+      state: stopped

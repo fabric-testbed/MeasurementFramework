@@ -3,8 +3,7 @@
 # Only needs to be run on central node or similar node that needs to connect
 #   to the rack promethice to get the current data and to the s3 for 
 #   long term data.
-# In this case there needs to be a root ca to contact remote stores with TLS.
-#   I couldn't get thanos to work without verifying server certs.
+
   thanos_query:
     container_name: "{{ install_name }}_thanos_query"
 
