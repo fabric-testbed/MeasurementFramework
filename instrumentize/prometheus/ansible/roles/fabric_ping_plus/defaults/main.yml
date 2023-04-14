@@ -68,7 +68,17 @@ prometheus_config_template_files:
 prometheus_config_files: []
   # need default var even if empty
 
-prometheus_secrets: []
+prometheus_secrets:
+    # secrets found in fabric deployment host vars
+  - name: jupyterhub 
+    secret: "{{ jupyterhub_secret }}"
+  - name: jupyterhub_beta
+    secret: "{{ jupyterhub_beta_secret }}"
+
+
+# prometheus_secrets: 
+#   - name: jupyterhub
+#    secret:  adsjhgauifyohj
 
 
 ####################
