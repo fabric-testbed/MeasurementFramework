@@ -26,6 +26,9 @@ def main():
     if data and "readme_format" in data:
         readme_format = data["readme_format"] 
 
+    if data and "get_service_list" in data:
+        retVal["services"] = ou.get_services_list()
+        return
     print(readme_format)
     try:
         retVal["data_recieved"] = ou.get_data()
