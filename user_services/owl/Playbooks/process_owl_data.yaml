@@ -5,7 +5,7 @@
   - name: Extract information from pcap files on a Docker volume and append to a csv file.
     community.general.docker_container:
       name: owl
-      image: fabrictestbed/owl:0.1.0
+      image: fabrictestbed/owl:0.1.3
       state: started
       restart: yes
       command: ["DataProcessManager.py", "process", "/owl_output", "out.csv"]
