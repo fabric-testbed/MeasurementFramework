@@ -46,12 +46,12 @@ class timestampservice():
                 return (name) 
             
     def get_meas_node_ip(self):
-        # Find the line with _meas_node
+        # Find the line with meas-node
         meas_ip=""
         with open("/etc/hosts", "r") as f:
             lines = f.readlines()
             for line in lines:
-                if ("_meas_node" in line):
+                if ("meas-node" in line):
                     meas_ip = line.split()[0]
         return (meas_ip)
     
