@@ -18,16 +18,16 @@
   vars:
     filebeat_version: 7.13.2
     filebeat_template_file: filebeat.yml.j2
-    filebeat_output_elasticsearch_hosts: "{{ hostvars['_meas_node'].ansible_host }}"
-    filebeat_setup_kibana_host: "{{ hostvars['_meas_node'].ansible_host }}"
+    filebeat_output_elasticsearch_hosts: "{{ hostvars['meas-node'].ansible_host }}"
+    filebeat_setup_kibana_host: "{{ hostvars['meas-node'].ansible_host }}"
     metricbeat_version: 7.13.2
     metricbeat_template_file: metricbeat.yml.j2
-    metricbeat_output_elasticsearch_hosts: "{{ hostvars['_meas_node'].ansible_host }}"
-    metricbeat_setup_kibana_host: "{{ hostvars['_meas_node'].ansible_host }}"
+    metricbeat_output_elasticsearch_hosts: "{{ hostvars['meas-node'].ansible_host }}"
+    metricbeat_setup_kibana_host: "{{ hostvars['meas-node'].ansible_host }}"
     packetbeat_version: 7.13.2
     packetbeat_template_file: packetbeat.yml.j2
-    packetbeat_output_elasticsearch_hosts: "{{ hostvars['_meas_node'].ansible_host }}"
-    packetbeat_setup_kibana_host: "{{ hostvars['_meas_node'].ansible_host }}"
+    packetbeat_output_elasticsearch_hosts: "{{ hostvars['meas-node'].ansible_host }}"
+    packetbeat_setup_kibana_host: "{{ hostvars['meas-node'].ansible_host }}"
   roles:
     - worker
 
