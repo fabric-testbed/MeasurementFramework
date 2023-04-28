@@ -15,8 +15,8 @@ class timestampservice():
     def __init__(self):
         self.config_file_path="/root/services/timestamp/config_file/timestamp.conf"
         self.read_config()
-        self.hostname= self.get_hostname()
-        self.meas_node_ip=self.get_meas_node_ip()
+        self.hostname= self.get_hostname_new()
+        self.meas_node_ip=self.get_meas_node_ip_new()
         self.event_index_name= self.get_event_index_name()
         self.packet_index_name= self.get_packet_index_name()
     
@@ -42,8 +42,17 @@ class timestampservice():
         with open(file, "r") as h:
             for line in h:
                 line_no_space= line.strip()
-                name= line_no_space.rsplit("-",1)[1]
-                return (name) 
+                host_name= line_no_space.rsplit("-",1)[1]
+                return (host_name) 
+    
+    # function to adapt to the new format of hostname(Node1)
+    def get_hostname_new(self):
+        file="/etc/hostname"
+        with open(file, "r") as h:
+            for line in h:
+                host_name= line.strip()
+                return (host_name) 
+        
             
     def get_meas_node_ip(self):
         # Find the line with _meas_node
@@ -54,6 +63,18 @@ class timestampservice():
                 if ("_meas_node" in line):
                     meas_ip = line.split()[0]
         return (meas_ip)
+    
+    # function to adpat to mflib meas node hostname change
+    def get_meas_node_ip_new(self):
+        # Find the line with meas-node
+        meas_ip=""
+        with open("/etc/hosts", "r") as f:
+            lines = f.readlines()
+            for line in lines:
+                if ("meas-node" in line):
+                    meas_ip = line.split()[0]
+        return (meas_ip)
+    
     
     def get_event_index_name(self):
         name= self.hostname
@@ -92,7 +113,6 @@ class timestampservice():
             return
         else:
             print ("create event index succeed")
-        
         
         
     def create_packet_elastic_index(self):

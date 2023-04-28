@@ -95,10 +95,7 @@ class timestamptool():
             with open(file, 'r') as f:
                 for line in f:
                     name = line.strip()
-                    return (name)
-            
-        
-        
+                    return (name)      
     
     def check_elastic_status(self, meas_node_ip):
         cmd=f"sudo curl -XGET http://{meas_node_ip}:9200/"
@@ -193,7 +190,7 @@ class timestamptool():
     
     # Get the tcpdump command based on the arguments
     def generate_tcpdump_command(self):
-        command= f"tcpdump -v -j adapter_unsynced --time-stamp-precision nano "
+        command= f"tcpdump -v -j adapter_unsynced --time-stamp-precision nano --direction in "
         name=self.args.name
         interface = self.args.interface
         interface_cmd = f"-i {interface} "
