@@ -233,7 +233,7 @@ scrape_configs:
             - target_label: __address__
               replacement: "{{ install_name }}_snmp:9116"
 
-{% if hostvars[hank_name + '-storage'] is defined and 'ansible_host' in (hostvars[hank_name + '-storage']).keys() %}
+{% if hostvars[hank_name + '-time'] is defined and 'ansible_host' in (hostvars[hank_name + '-time']).keys() %}
 
 # PTU
 # OK
