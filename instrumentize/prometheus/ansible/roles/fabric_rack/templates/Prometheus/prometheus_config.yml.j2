@@ -254,3 +254,13 @@ scrape_configs:
 
 {% endif %}
 
+# Get the metrics for the snmp exporter          
+  - job_name: 'snmp_metrics'
+    static_configs:
+            - targets:
+              - "fabric_prometheus_snmp:9116"
+# Get the metrics for the blackbox exporter          
+  - job_name: 'blackbox_metrics'
+    static_configs:
+            - targets:
+              - "fabric_prometheus_blackbox:9115"
