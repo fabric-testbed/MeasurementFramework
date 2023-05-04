@@ -66,13 +66,13 @@ setup.template.settings:
 
 output.kafka:
   enabled: true
-  hosts: ["mfkfk1-1.fabric-testbed.net:19094","mfkfk1-2.fabric-testbed.net:29094","mfkfk1-3.fabric-testbed.net:39094"]
+  hosts: ["mfbr1-p.fabric-testbed.net:9094","mfbr2-p.fabric-testbed.net:9094","mfbr3-p.fabric-testbed.net:9094"]
   topic: '{{ mfkfk_topic_name }}'
   username: {{ mfkfk_username }}
   password: {{ mfkfk_password }}
   sasl.mechanism: SCRAM-SHA-256
   ssl.verification_mode: certificate
-  ssl.certificate_authorities: ["/usr/share/packetbeat/certs/ca/mfkfk1-1_fabric-testbed_net_interm.cer"]
+  ssl.certificate_authorities: ["/etc/packetbeat/mfbr1-p_fabric-testbed_net_interm.cer"]
 
 processors:
   - # Add forwarded to tags when processing data from a network tap or mirror.

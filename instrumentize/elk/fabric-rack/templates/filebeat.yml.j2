@@ -1,14 +1,63 @@
 filebeat.inputs:
-- type: log
-  enabled: false
-  paths:
-    #- c:\programdata\elasticsearch\logs\*
 
-- type: filestream
-  enabled: true
-  paths:
-     - /home/nrig-service/ControlFramework/fabric_cf/*/*/logs/*.log
-    #- c:\programdata\elasticsearch\logs\*
+{% if component_type == 'head' %}
+  - type: filestream
+    enabled: true
+    id: {{ hank_name }}-am
+    paths:
+       - /home/nrig-service/ControlFramework/fabric_cf/authority/{{ hank_name }}-am/logs/*.log
+
+  - type: filestream
+    enabled: true
+    id: {{ hank_name }}-data-sw
+    paths:
+       - /var/log/remote/192.168.{{ hank_id }}.3/*.log
+
+  - type: filestream
+    enabled: true
+    id: {{ hank_name }}-mgt-sw
+    paths:
+       - /var/log/remote/192.168.{{ hank_id }}.2/*.log
+
+  - type: filestream
+    enabled: true
+    id: {{ hank_name }}-vpn
+    paths:
+       - /var/log/remote/192.168.{{ hank_id }}.1/*.log
+
+  - type: filestream
+    enabled: true
+    id: {{ hank_name }}-storage
+    paths:
+       - /var/log/remote/192.168.{{ hank_id }}.110/*.log
+       - /var/log/remote/192.168.{{ hank_id }}.111/*.log
+
+{% end if %}
+
+  - type: filestream
+    enabled: true
+    id: {{ hank_name }}-nova
+    paths:
+       - /var/log/nova/*.log
+
+  - type: filestream
+    enabled: true
+    id: {{ hank_name }}-neutron
+    paths:
+       - /var/log/neutron/*.log
+
+  - type: filestream
+    enabled: true
+    id: linuxptp
+    paths:
+       - /var/log/ptp4l.log
+       - /var/log/phc2sys.log
+
+  - type: filestream
+    enabled: true
+    id: dnf
+    paths:
+       - /var/log/dnf*.log
 
 filebeat.modules:
   - module: system
@@ -20,6 +69,27 @@ filebeat.modules:
       enabled: {{ system_enable }}
       var.paths: ["/var/log/secure*"]
       var.convert_timezone: false
+
+{% if component_type == 'head' %}
+
+  - module: rabbitmq
+    log:
+      enabled: true
+      var.paths: ["/var/log/rabbitmq/rabbit@{{ hank_name }}-hn.log"]
+
+  - module: apache
+    access:
+      enabled: true
+      var.paths: 
+        - "/var/log/httpd/*access.log"
+        - "/var/log/httpd/access_log"
+    error:
+      enabled: true
+      var.paths: 
+        - "/var/log/httpd/*error.log"
+        - "/var/log/httpd/error_log"
+
+{% endif %}
 
   #- module: zeek
   #  capture_loss:
