@@ -14,7 +14,7 @@
   tags: rsyslog
   become: true
   template:
-    src: "{{ rsyslog_conf_template_file }}"
+    src: rsyslog.conf.j2
     dest: /etc/rsyslog.conf
 
 # Restart rsyslog
