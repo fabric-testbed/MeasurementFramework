@@ -27,6 +27,6 @@ services:
 
 secrets:
   filebeat.yml:
-    file: filebeat-docker.yml
+    file: ./filebeat-docker.yml
   mfbr1-p_fabric-testbed_net_interm.cer:
-    file: mfbr1-p_fabric-testbed_net_interm.cer
+    file: ./mfbr1-p_fabric-testbed_net_interm.cer
