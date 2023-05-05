@@ -1,0 +1,4 @@
+- name: Start docker-compose for Filebeats
+  shell: docker-compose up -d filebeat
+  args:
+    chdir: /opt/beats/

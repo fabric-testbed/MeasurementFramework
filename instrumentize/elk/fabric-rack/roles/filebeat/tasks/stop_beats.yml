@@ -1,0 +1,4 @@
+- name: Stop docker-compose for Filebeats
+  shell: docker-compose stop
+  args:
+    chdir: /opt/beats/

@@ -9,26 +9,6 @@
   fail: msg="docker-compose is missing"
   when: is_docker_compose_install.rc != 0
 
-# # Replace rsyslog.conf file
-# - name: Copy Filebeat template file
-#   tags: rsyslog
-#   become: true
-#   template:
-#     src: rsyslog.conf.j2
-#     dest: /etc/rsyslog.conf
-
-# # Restart rsyslog
-# - name: Restart rsyslog
-#   become: true
-#   service:
-#     name: rsyslog
-#     state: restarted
-
-# # Rotate syslog (prevent pushing too much syslog to Kafka)
-# - name: Rotate syslog
-#   become: true
-#   shell: logrotate -f /etc/logrotate.d/syslog
-
 # Copy required files
 - name: Copy required files
   become: true

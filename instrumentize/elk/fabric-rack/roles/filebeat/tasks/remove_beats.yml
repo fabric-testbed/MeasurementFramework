@@ -1,0 +1,4 @@
+- name: Remove docker-compose for Filebeats
+  shell: docker-compose down
+  args:
+    chdir: /opt/beats/
