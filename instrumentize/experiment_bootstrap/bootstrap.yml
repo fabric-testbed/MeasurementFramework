@@ -94,6 +94,16 @@
           ansible.builtin.systemd:
             name: docker
             enabled: true
+
+
+    - name: Downgrade urllib3
+      ansible.builtin.pip:
+        name: "urllib3"
+        version: "1.26.15"
+        executable: pip3
+        state: "forcereinstall"
+
+
   handlers:
     - name: Restart Docker Daemon
       ansible.builtin.systemd:
