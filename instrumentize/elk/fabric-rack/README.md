@@ -14,9 +14,11 @@ The user needs to create two files (`hosts` and `.vault_key_beats`) under `beats
 
 - zeek_enable (true or false): If true, it enables Filebeat's zeek module that collect zeek log data. This supposed to be enabled only for head nodes.
 
+- elk_destination ('ODC' or 'GMP'): Defaults to 'ODC' if not present (settings.yml). Redirects logs to the ELK on the GMP Rack or ODC rack based on this value.
+
 ```yml
 [filebeats]
-fabric-hn ansible_ssh_host=192.168.1.10 ansible_port=22 system_enable=true zeek_enable=true
+fabric-hn ansible_ssh_host=192.168.1.10 ansible_port=22 system_enable=true zeek_enable=true elk_destination='GMP'
 fabric-w1 ansible_ssh_host=192.168.1.10 ansible_port=22 system_enable=true zeek_enable=true
 
 [packetbeats]
@@ -26,7 +28,7 @@ fabric-w1 ansible_ssh_host=192.168.1.10 ansible_port=22
 
 ## 1.2. `.vault_key_beats` file
 
-`.vault_key_beats` file contains ansible vault secret to decrypt `group_vars/all/settings.yml` file. You can find password on the `Software Systems` on `1Password`. Create the `.vault_key_beats` file anywhere but make it sure give the correct path when you run ansible-playbook later.
+`.vault_key_beats` file contains ansible vault secret to decrypt the variable `mfkfk_password` in `group_vars/all/settings.yml` file. You can find password on the `Software Systems` on `1Password`. Create the `.vault_key_beats` file anywhere but make it sure give the correct path when you run ansible-playbook later.
 
 # 2. Deploy Beats
 
@@ -116,11 +118,13 @@ ansible-playbook --vault-password-file .vault_key_beats deploy_packetbeat.yml --
 Encrypt with ansible vault key.
 
 ```shell
-ansible-vault encrypt --vault-password-file .vault_key_beats group_vars/all/settings.yml
+ansible-vault encrypt_string --vault-password-file .vault_key_beats <STRING TO ENCRYPT>
 ```
 
 Decrypt with ansible vault key.
 
 ```shell
-ansible-vault decrypt --vault-password-file .vault_key_beats group_vars/all/settings.yml
+ansible localhost -e '@group_vars/all/settings.yml' --vault-password-file .vault_key_beats  -m debug -a 'var=ODC.mfkfk_password'
+ansible localhost -e '@group_vars/all/settings.yml' --vault-password-file .vault_key_beats  -m debug -a 'var=GMP.mfkfk_password'
 ```
+
