@@ -1,12 +1,35 @@
+# Check if docker-compose is installed
+- name: Check if Docker Compose is installed
+  tags: docker-compose
+  shell: command -v docker-compose >/dev/null 2>&1
+  register: is_docker_compose_install
 
-include_task: install_beats.yml
-when: op == 'install'
+# If docker-compose is not installed, quit
+- name: Exit if docker-compose is missing
+  fail: msg="docker-compose is missing"
+  when: is_docker_compose_install.rc != 0
 
-include_task: remove_beats.yml
-when: op == 'remove'
+# Copy required files
+- name: Copy required files
+  become: true
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: "docker-compose.yml", dest: "/opt/beats/" }
+    - { src: "../../files/mfbr1-p_fabric-testbed_net_interm.cer", dest: "/opt/beats/" }
 
-include_task: start_beats.yml
-when: op == 'start'
+# Copy the filebeat.yml
+- name: Copy Filebeat template file
+  tags: filebeat
+  become: true
+  template:
+    src: filebeat.yml.j2
+    dest: /opt/beats/filebeat-docker.yml
 
-include_task: stop_beats.yml
-when: op == 'stop'
+# Start Filebeat
+- name: Start Filebeat
+  tags: filebeat
+  shell: docker-compose up -d filebeat
+  args:
+    chdir: /opt/beats/
