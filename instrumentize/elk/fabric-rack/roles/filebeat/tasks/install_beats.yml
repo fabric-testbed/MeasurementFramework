@@ -9,6 +9,15 @@
   fail: msg="docker-compose is missing"
   when: is_docker_compose_install.rc != 0
 
+- block:
+  - name: Ensure docker daemon is started and enabled
+    systemd:
+      name: docker
+      enabled: true
+      state: 'started'
+  when: component_type == 'worker'
+
+
 # Copy required files
 - name: Copy required files
   become: true
