@@ -105,13 +105,13 @@ setup.template.settings:
 # -------------------------------- Kafka Output --------------------------------
 output.kafka:
   enabled: true
-  hosts: "{{ lookup('vars', elk_destination + '.mfkfk_hosts') }}"
-  topic: "{{ '\+lookup('vars', elk_destination + '.mfkfk_topic_name')+\' }}"
-  username: "{{ lookup('vars', elk_destination + '.mfkfk_username') }}"
-  password: "{{ lookup('vars', elk_destination + '.mfkfk_password') }}"
+  hosts: "{{ hostvars[inventory_hostname][elk_destination + '.mfkfk_hosts'] }}"
+  topic: "{{ hostvars[inventory_hostname][elk_destination + '.mfkfk_topic_name'] }}"
+  username: "{{ hostvars[inventory_hostname][elk_destination + '.mfkfk_username'] }}"
+  password: "{{ hostvars[inventory_hostname][elk_destination + '.mfkfk_password'] }}"
   sasl.mechanism: SCRAM-SHA-256
   ssl.verification_mode: certificate
-  ssl.certificate_authorities: "{{ lookup('vars', elk_destination + '.ssl.certificate_authorities') }}"
+  ssl.certificate_authorities: "{{ hostvars[inventory_hostname][elk_destination + '.ssl.certificate_authorities'] }}"
 
 processors:
   - add_host_metadata:
