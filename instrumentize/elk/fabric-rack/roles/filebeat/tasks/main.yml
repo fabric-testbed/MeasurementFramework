@@ -1,12 +1,12 @@
 
-- include_task: install_beats.yml
+- include: install_beats.yml
   when: op == 'install'
 
-- include_task: remove_beats.yml
+- include: remove_beats.yml
   when: op == 'remove'
 
-- include_task: start_beats.yml
+- include: start_beats.yml
   when: op == 'start'
 
-- include_task: stop_beats.yml
+- include: stop_beats.yml
   when: op == 'stop'
