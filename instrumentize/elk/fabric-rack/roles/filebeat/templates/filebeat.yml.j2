@@ -1,5 +1,13 @@
 filebeat.inputs:
 
+{% if elk_destination == 'ODC' and hostname in ODC.AM_logs_to_monitor %}
+  - type: filestream
+    enabled: true
+    id: {{ hostname }}
+    paths:
+       - /home/nrig-service/ControlFramework/fabric_cf/*/*/logs/*.log
+{% endif %}
+
 {% if component_type == 'head' %}
   - type: filestream
     enabled: true
@@ -97,13 +105,13 @@ setup.template.settings:
 # -------------------------------- Kafka Output --------------------------------
 output.kafka:
   enabled: true
-  hosts: ["mfbr1-p.fabric-testbed.net:9094","mfbr2-p.fabric-testbed.net:9094","mfbr3-p.fabric-testbed.net:9094"]
-  topic: '{{ mfkfk_topic_name }}'
-  username: {{ mfkfk_username }}
-  password: {{ mfkfk_password }}
+  hosts: "{{ lookup('vars', elk_destination + '.mfkfk_hosts') }}"
+  topic: "{{ '\+lookup('vars', elk_destination + '.mfkfk_topic_name')+\' }}"
+  username: "{{ lookup('vars', elk_destination + '.mfkfk_username') }}"
+  password: "{{ lookup('vars', elk_destination + '.mfkfk_password') }}"
   sasl.mechanism: SCRAM-SHA-256
   ssl.verification_mode: certificate
-  ssl.certificate_authorities: ["/etc/filebeat/mfbr1-p_fabric-testbed_net_interm.cer"]
+  ssl.certificate_authorities: "{{ lookup('vars', elk_destination + '.ssl.certificate_authorities') }}"
 
 processors:
   - add_host_metadata:
