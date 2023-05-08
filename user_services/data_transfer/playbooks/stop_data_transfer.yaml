@@ -1,0 +1,9 @@
+# Stop data transfer service
+---
+- name: Stop transfer container
+  hosts: Meas_Node 
+  tasks:
+  - name: Stop data transfer container
+    community.general.docker_container:
+      name: data_transfer
+      state: stopped

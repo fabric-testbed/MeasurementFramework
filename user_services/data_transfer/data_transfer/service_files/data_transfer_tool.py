@@ -1,0 +1,270 @@
+#!/usr/bin/python3
+import argparse
+import os
+import re
+import sys
+import time
+import json
+import subprocess
+import logging
+import configparser
+
+
+class data_transfer_tool():
+    
+    def __init__(self):
+        self.config_file_path="/root/services/data_transfer/config_file/data_transfer.conf"
+        self.args=None
+        self.logger=None
+        self.servicename="data_transfer"
+        self.read_config()
+        
+    def read_config(self):
+        config = configparser.ConfigParser()
+        c= config.read(self.config_file_path)
+        self.prometheus_mapping_path = config['PROMETHEUS_MAPPING']['Dir'] 
+        self.elk_mapping_path = config['ELK_MAPPING']['Dir']
+        self.prometheus_rclone_download_path=config['PROMETHEUS_DOWNLOAD']['Dir']
+        self.elk_rclone_download_path=config['ELK_DOWNLOAD']['Dir']
+
+    # Set args    
+    def set_args(self, args):
+        self.args=args
+        self.set_up_logger(args=args)
+
+    # Set up logger    
+    def set_up_logger(self, args):
+        self.logger = logging.getLogger(self.servicename)
+        self.logger.setLevel(logging.DEBUG)
+        filehandler = logging.FileHandler(self.servicename + ".log")
+        filehandler.setLevel(logging.DEBUG)
+        streamhandler= logging.StreamHandler(sys.stdout)
+        if args.verbose:
+            streamhandler.setLevel(logging.DEBUG)
+        else:
+            streamhandler.setLevel(logging.INFO)
+        filehandler.setFormatter(logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        ))
+        streamhandler.setFormatter(logging.Formatter(
+            '%(message)s'
+        ))
+        self.logger.addHandler(filehandler)
+        self.logger.addHandler(streamhandler)     
+                   
+    
+    ##############################################################
+    ## For prometheus, generate a snapshot using the curl command.
+    ## For elastic, generate a json file
+    ##
+    ####################
+    
+    # Prometheus
+    def generate_prometheus_snapshot(self, ht_user, ht_password):
+        self.logger.debug(f"Generating snapshot to in prometheus on meas node")
+        prometheus_snapshot_url = "https://localhost:9090/api/v1/admin/tsdb/snapshot"
+        cmd = f"sudo curl -k -u {ht_user}:{ht_password} {prometheus_snapshot_url}"
+        self.logger.debug(f"Running command: {cmd}")
+        self.logger.debug(f"If successful, you should see a snapshot created in {self.prometheus_mapping_path}")
+        p = subprocess.Popen(cmd, shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        res = p.wait()
+        
+        
+    
+    # Elasticsearch (to be implemented by Jack)
+    def generate_elk_json(self):
+        # to be store in self.elk_mapping_path (/root/services/data_transfer/elk) in the container
+        # which maps /home/ubuntu/elk
+        # as defined in the start_data_transfer.yaml playbook
+        return
+    
+    
+    # Check rclone
+    def check_rclone_status(self):
+        self.logger.debug(f"Checking whether rclone is installed...")
+        cmd = f"sudo rclone -V"
+        pipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+        res = pipe.communicate()
+        if (pipe.returncode!=0):
+            sys.exit(f"Failed to get the status of rclone. Exit program..")
+        else:
+            self.logger.debug(f"rclone is installed")
+        
+    def create_remote_dir_using_rclone(self, storage, remote_dir):
+        self.logger.debug(f"using rclone to create remote dir {storage}:{remote_dir}")
+        cmd = f"sudo rclone mkdir {storage}:{remote_dir}"
+        self.logger.debug(f"The command is: {cmd}")
+        pipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+        res = pipe.communicate()
+        
+    def delete_remote_dir_using_rclone(self, storage, remote_dir):
+        self.logger.debug(f"using rclone to delete remote dir {storage}:{remote_dir}")
+        cmd = f"sudo rclone mkdir {storage}:{remote_dir}"
+        self.logger.debug(f"The command is: {cmd}")
+        pipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+        res = pipe.communicate()
+    
+    
+    # Prepare to upload
+    def upload_data_to_storage(self, data_type, local_file_name, storage, remote_dir):
+        self.logger.debug(f"using rclone to upload {local_file_name} to {storage}:{remote_dir}")
+        if (data_type=="prometheus"):
+            local_file_path = os.path.join(self.prometheus_mapping_path, local_file_name)
+        elif (data_type == "elk"):
+            local_file_path = os.path.join(self.elk_mapping_path, local_file_name)
+        else:
+            sys.exit(f"data type has to be prometheus or elk. Exit program..")
+        cmd = f"sudo rclone copy {local_file_path} {storage}:{remote_dir}"
+        self.logger.debug(f"The command is: {cmd}")
+        pipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+        res = pipe.communicate()
+        self.logger.debug(f"You should see {local_file_name} in {storage}:{remote_dir}")
+        
+    # prepare to download
+    def download_data_from_storage(self, data_type, storage, remote_dir, file_name):
+        self.logger.debug(f"using rclone to download {file_name} to {storage}:{remote_dir}")
+        if (data_type=="prometheus"):
+            local_file_path = self.prometheus_rclone_download_path
+        elif (data_type == "elk"):
+            local_file_path = self.elk_rclone_download_path
+        else:
+            sys.exit(f"data type has to be prometheus or elk. Exit program..")
+        cmd = f"sudo rclone copy {storage}:{remote_dir}/{file_name} {local_file_path}"
+        self.logger.debug(f"The command is: {cmd}")
+        pipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+        res = pipe.communicate()
+        self.logger.debug(f"You should see {file_name} in {local_file_path}")
+        
+        
+    def process(self):
+        args_json={}
+        if (self.args is None):
+            self.logger.debug(f"Error, no arguments detected")
+            return
+        else:
+            for arg in vars(self.args):
+                args_json[arg]=getattr(self.args, arg)
+            self.logger.debug(args_json)         
+        if ('type' not in args_json.keys()):
+            self.logger.debug(f"Type not found Exit..")
+            return
+        
+        if (args_json['action']=='process_remote_dir'):
+            self.check_rclone_status()
+            if (args_json['type']=='create'):
+                self.create_remote_dir_using_rclone(storage=self.args.storage, remote_dir=self.args.dir)
+            elif (args_json['type']=='delete'):
+                self.delete_remote_dir_using_rclone(storage=self.args.storage, remote_dir=self.args.dir)
+            sys.exit(f"type has to be create or delete. Exit program..")
+        elif (args_json['action']=='generate_backup'):
+            if (args_json['type']=='prometheus'):
+                self.generate_prometheus_snapshot(ht_user=self.args.user, ht_password=self.args.password)
+            elif (args_json['type']=='elk'):
+                #### to be implemented
+                return
+        elif (args_json['action']=='upload_backup'):
+            self.check_rclone_status()
+            if (args_json['type']=='prometheus'):
+                self.upload_data_to_storage(data_type="prometheus", local_file_name=self.args.file, storage=self.args.storage, remote_dir=self.args.dir)
+            elif (args_json['type']=='elk'):
+                #### to be implemented
+                return
+        elif (args_json['action']=='download_backup'):
+            self.check_rclone_status()
+            if (args_json['type']=='prometheus'):
+                self.download_data_from_storage(data_type="prometheus", storage=self.args.storage, remote_dir=self.args.dir, file_name=self.args.file)
+            elif (args_json['type']=='elk'):
+                #### to be implemented
+                return
+            
+        else:
+            sys.exit(f"action has to be process_remote_dir or generate_backup or upload_backup or download_backup. Exit program..")
+        
+        
+                
+            
+        
+    
+
+            
+
+if __name__ == "__main__":
+    d= data_transfer_tool()
+    parser = argparse.ArgumentParser(prog="data_transfer_tool",description="options for the data_transfer_tool executable")
+    action_subparsers = parser.add_subparsers(help='Choose an action', dest='action')
+    generate_parser = action_subparsers.add_parser('generate_backup', help='generate_backup -h')
+    upload_parser= action_subparsers.add_parser('upload_backup', help='upload_backup -h')
+    download_parser=action_subparsers.add_parser('download_backup', help='download_backup -h')
+    rclone_parser = action_subparsers.add_parser('process_remote_dir', help='process_remote_dir -h')
+    
+    
+    # Generate_backup parser(to generate backup data file)
+    type_in_generate_parser = generate_parser.add_subparsers(help='Choose a type', dest='type')
+    prometheus_generate_parser= type_in_generate_parser.add_parser('prometheus', help='prometheus -h')
+    required_args_prometheus_generate = prometheus_generate_parser.add_argument_group('Required named arguments')
+    required_args_prometheus_generate.add_argument("-u", "--user", required=True, help="set ht user name")
+    required_args_prometheus_generate.add_argument("-p", "--password", required=True, help="set ht password")
+    prometheus_generate_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
+    prometheus_generate_parser.set_defaults(type='prometheus')
+    
+    elk_generate_parser = type_in_generate_parser.add_parser('elk', help='elk -h')
+    #### to be implemented
+    elk_generate_parser.set_defaults(type='elk')
+    
+    
+    
+    # upload_backup parser (to upload data to cloud storage)
+    type_in_upload_parser = upload_parser.add_subparsers(help='Choose a type', dest='type')
+    prometheus_upload_parser= type_in_upload_parser.add_parser('prometheus', help='prometheus -h')
+    required_args_prometheus_upload = prometheus_upload_parser.add_argument_group('Required named arguments')
+    required_args_prometheus_upload.add_argument("-f", "--file", required=True, help="set file name")
+    required_args_prometheus_upload.add_argument("-s", "--storage", required=True, help="set storage")
+    required_args_prometheus_upload.add_argument("-d", "--dir", required=True, help="set remote dir")
+    prometheus_upload_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
+    prometheus_upload_parser.set_defaults(type='prometheus')
+    
+    elk_upload_parser = type_in_upload_parser.add_parser('elk', help='elk -h')
+    #### to be implemented
+    elk_upload_parser.set_defaults(type='elk')
+    
+    
+    
+    # download_backup parser (to download data from cloud storage)
+    type_in_download_parser = download_parser.add_subparsers(help='Choose a type', dest='type')
+    prometheus_download_parser= type_in_download_parser.add_parser('prometheus', help='prometheus -h')
+    required_args_prometheus_download = prometheus_download_parser.add_argument_group('Required named arguments')
+    required_args_prometheus_download.add_argument("-f", "--file", required=True, help="set file name")
+    required_args_prometheus_download.add_argument("-s", "--storage", required=True, help="set storage")
+    required_args_prometheus_download.add_argument("-d", "--dir", required=True, help="set remote dir")
+    prometheus_download_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
+    prometheus_upload_parser.set_defaults(type='prometheus')
+    
+    
+    elk_download_parser = type_in_upload_parser.add_parser('elk', help='elk -h')
+    #### to be implemented
+    elk_download_parser.set_defaults(type='elk')
+    
+    
+    
+    
+    # rclone parser
+    type_in_rclone_parser = rclone_parser.add_subparsers(help='Choose a type', dest='type')
+    rclone_create_parser = type_in_rclone_parser.add_parser('create', help='create -h')
+    required_args_rclone_create = rclone_create_parser.add_argument_group('Required named arguments')
+    required_args_rclone_create.add_argument("-s", "--storage", required=True, help="set storage")
+    required_args_rclone_create.add_argument("-d", "--dir", required=True, help="set remote dir")
+    rclone_create_parser.set_defaults(type='create')
+    
+    rclone_delete_parser = type_in_rclone_parser.add_parser('delete', help='delete -h')
+    required_args_rclone_delete = rclone_delete_parser.add_argument_group('Required named arguments')
+    required_args_rclone_delete.add_argument("-s", "--storage", required=True, help="set storage")
+    required_args_rclone_delete.add_argument("-d", "--dir", required=True, help="set remote dir")
+    rclone_create_parser.set_defaults(type='delete')
+    
+
+    
+    # General parser
+    parser.add_argument("-conf_path", "--config_file_path", action='store_const', const="/root/services/data_transfer/config_file/data_transfer.conf", default="/root/services/data_transfer/config_file/data_transfer.conf", help="show config file path")
+    args = parser.parse_args()
+    d.set_args(args=args)
+    d.process()

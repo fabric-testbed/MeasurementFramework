@@ -1,0 +1,30 @@
+# Remove data transfer docker container and image
+---
+- name: Remove data transfer container
+  hosts: Meas_Node
+  tasks:
+    - name: Remove data transfer container
+      community.general.docker_container:
+        name: data_transfer
+        state: absent
+
+    - name: Remove data transfer docker image
+      community.general.docker_image:
+        name: data_transfer
+        tag: 1.0
+        state: absent
+        
+    - name: Recursively remove volume directory
+      ansible.builtin.file:
+        path: /home/ubuntu/elk
+        state: absent
+        
+    - name: Recursively remove volume directory
+      ansible.builtin.file:
+        path: /home/ubuntu/prometheus/download
+        state: absent
+        
+    - name: Recursively remove volume directory
+      ansible.builtin.file:
+        path: /home/ubuntu/elk/download
+        state: absent
