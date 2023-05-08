@@ -2,25 +2,22 @@
 ---
 - name: Create data transfer service
   hosts: Meas_Node
-  tasks:  
-  - name: create build directory
-      file:
+  tasks:
+    - name: Create a build directory
+      ansible.builtin.file:
         path: /home/ubuntu/data_transfer
         state: directory
-        owner: root
-        group: root
         mode: '0755'
-  - name: copy Dockerfile
-      copy:
+
+    - name: copy Dockerfile
+      ansible.builtin.copy:
         src: /home/mfuser/mf_git/user_services/data_transfer/data_transfer/dockerfile/Dockerfile
         dest: /home/ubuntu/data_transfer/Dockerfile
-        owner: root
-        group: root
         mode: '0644'
-  - name: build container image
-      docker_image:
+
+    - name: build container image
+      community.docker.docker_image:
         name: data_transfer:1.0
         build:
           path: /home/ubuntu/data_transfer
-          source: build
-        state: present
+        source: build

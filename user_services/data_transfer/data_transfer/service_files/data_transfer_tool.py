@@ -122,7 +122,7 @@ class data_transfer_tool():
         
     # prepare to download
     def download_data_from_storage(self, data_type, storage, remote_dir, file_name):
-        self.logger.debug(f"using rclone to download {file_name} to {storage}:{remote_dir}")
+        self.logger.debug(f"using rclone to download {file_name} from {storage}:{remote_dir}")
         if (data_type=="prometheus"):
             local_file_path = self.prometheus_rclone_download_path
         elif (data_type == "elk"):

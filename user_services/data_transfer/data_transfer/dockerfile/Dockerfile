@@ -3,7 +3,7 @@ RUN apt-get update && \
     apt-get -y install sudo nano vim git && \
     rm -rf /var/lib/apt/lists/*
 RUN pip install --upgrade pip
-RUN git clone --branch data_transfer https://github.com/fabric-testbed/MeasurementFramework.git
+RUN git clone --branch data-export-import-docker https://github.com/fabric-testbed/MeasurementFramework.git
 RUN curl https://rclone.org/install.sh | sudo bash
 RUN mkdir /root/services
 RUN mkdir /root/services/data_transfer
