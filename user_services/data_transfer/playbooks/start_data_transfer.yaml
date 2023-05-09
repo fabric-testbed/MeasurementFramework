@@ -1,4 +1,4 @@
-# Start influxdb container
+# Start data transfer container
 ---
 - name: Start data transfer container
   hosts: Meas_Node
@@ -6,15 +6,16 @@
   - name: Start data transfer container
     community.general.docker_container:
       name: data_transfer
-      image: data_transfer:1.0  
+      image: data_transfer:1.0
       state: started
       restart: true
       privileged: true
-      network_mode: host
       detach: true
+      interactive: true
+      tty: true
+      network_mode: host
       volumes:
         - /opt/data/fabric_prometheus/prometheus:/root/services/data_transfer/prometheus
-        - /home/ubuntu/.config/rclone:/root/.config/rclone
         - /home/ubuntu/elk:/root/services/data_transfer/elk
         - /home/ubuntu/prometheus/download:/root/services/data_transfer/prometheus_data/download
         - /home/ubuntu/elk/download:/root/services/data_transfer/elk_data/download
