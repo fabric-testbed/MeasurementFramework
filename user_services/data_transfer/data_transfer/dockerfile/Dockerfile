@@ -1,6 +1,6 @@
 FROM python:3.9-slim-buster
 RUN apt-get update && \
-    apt-get -y install sudo nano vim git curl && \
+    apt-get -y install sudo nano vim git curl unzip && \
     rm -rf /var/lib/apt/lists/*
 RUN pip install --upgrade pip
 RUN git clone --branch data-export-import-docker https://github.com/fabric-testbed/MeasurementFramework.git
