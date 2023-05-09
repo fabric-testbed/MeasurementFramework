@@ -100,7 +100,7 @@ class data_transfer_tool():
     # Use rclone to delete remote dirs    
     def delete_remote_dir_using_rclone(self, storage, remote_dir):
         self.logger.debug(f"using rclone to delete remote dir {storage}:{remote_dir}")
-        cmd = f"sudo rclone mkdir {storage}:{remote_dir}"
+        cmd = f"sudo rclone purge {storage}:{remote_dir}"
         self.logger.debug(f"The command is: {cmd}")
         pipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
         res = pipe.communicate()

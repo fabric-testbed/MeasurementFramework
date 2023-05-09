@@ -18,7 +18,7 @@ def main():
     service_dir =  os.path.dirname(__file__)
     logFilePath = os.path.join(service_dir, "log", "stop.log")
     logging.basicConfig(filename=logFilePath, format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level="INFO")
-    logging.info("-----Start data transfer Start Script.-----")
+    logging.info("-----Start data transfer Stop Script.-----")
 
     # For some reason the local ansible.cfg file is not being used
     os.environ["ANSIBLE_HOST_KEY_CHECKING"] = "False"
