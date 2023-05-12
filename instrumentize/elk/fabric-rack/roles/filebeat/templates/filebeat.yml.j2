@@ -1,27 +1,24 @@
 filebeat.inputs:
-
 {% if elk_destination == 'ODC' %}
   {% if hostname in ODC.AM_logs_to_monitor %}
-    - type: filestream
-      enabled: true
-      id: {{ hostname }}
-      paths:
-         - /home/nrig-service/ControlFramework/fabric_cf/*/*/logs/*.log
-  {% endif %}
+  - type: filestream
+    enabled: true
+    id: {{ hostname }}
+    paths:
+       - /home/nrig-service/ControlFramework/fabric_cf/*/*/logs/*.log
+  {% elif hostname.startswith('uis.') %}
+  - type: filestream
+    enabled: true
+    id: {{ hostname }}
+    paths:
+       - /home/nrig-service/fabric-core-api/logs/metrics/core-api-metrics.log
+  {% elif hostname.startswith('cm.') %}
+  - type: filestream
+    enabled: true
+    id: {{ hostname }}
+    paths:
+       - /home/nrig-service/CredentialManager/log/credmgr/credmgr.log
 
-  {% if hostname.startswith('uis.') %}
-    - type: filestream
-      enabled: true
-      id: {{ hostname }}
-      paths:
-         - /home/nrig-service/fabric-core-api/logs/metrics/core-api-metrics.log
-  {% endif %}
-  {% if hostname.startswith('cm.') %}
-    - type: filestream
-      enabled: true
-      id: {{ hostname }}
-      paths:
-         - /home/nrig-service/CredentialManager/log/credmgr/credmgr.log
   {% endif %}
 {% endif %}
 
