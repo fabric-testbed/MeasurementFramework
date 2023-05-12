@@ -9,9 +9,7 @@ filebeat.inputs:
        - {{ collector.log_path }}
 {% endif %}
 {% endfor %}
-{% endif %}
-
-{% if component_type == 'head' %}
+{% elif component_type == 'head' %}
   - type: filestream
     enabled: true
     id: {{ hank_name }}-am
@@ -43,7 +41,7 @@ filebeat.inputs:
        - /var/log/remote/192.168.{{ hank_id }}.110/*.log
        - /var/log/remote/192.168.{{ hank_id }}.111/*.log
 
-{% endif %}
+{% elif component_type == 'head' or component_type == 'worker' %}
 
   - type: filestream
     enabled: true
@@ -69,6 +67,8 @@ filebeat.modules:
       var.paths: ["/var/log/secure*"]
       var.convert_timezone: false
 
+{% endif%}
+
 setup.template.settings:
   index.number_of_shards: 1
 
@@ -81,7 +81,7 @@ output.kafka:
   password: "{{ hostvars[inventory_hostname]['mfkfk_password'] }}"
   sasl.mechanism: SCRAM-SHA-256
   ssl.verification_mode: certificate
-  ssl.certificate_authorities: "{{ hostvars[inventory_hostname]['ssl']['certificate_authorities'] }}"
+  ssl.certificate_authorities: {{ hostvars[inventory_hostname]['ssl']['certificate_authorities'] }}
 
 processors:
   - add_host_metadata:
