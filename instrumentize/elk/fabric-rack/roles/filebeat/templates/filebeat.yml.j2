@@ -6,7 +6,7 @@ filebeat.inputs:
     enabled: true
     id: {{ hostname }}
     paths:
-       - {% collector.log_path %}
+       - {{ collector.log_path }}
 {% endif %}
 {% endfor %}
 {% endif %}
