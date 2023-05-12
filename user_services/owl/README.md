@@ -38,7 +38,7 @@ Refer to the Jupyter Notebook examples.
 1. clone the repository and navigate to the `owl` directory.
 
 ```
-git clone -b owl https://github.com/fabric-testbed/MeasurementFramework.git
+git clone -b owl-main https://github.com/fabric-testbed/MeasurementFramework.git
 cd MeasurementFramework/user_services/owl
 ```
 
