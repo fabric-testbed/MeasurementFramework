@@ -14,11 +14,9 @@ The user needs to create two files (`hosts` and `.vault_key_beats`) under `beats
 
 - zeek_enable (true or false): If true, it enables Filebeat's zeek module that collect zeek log data. This supposed to be enabled only for head nodes.
 
-- elk_destination ('ODC' or 'GMP'): Defaults to 'ODC' if not present (settings.yml). Redirects logs to the ELK on the GMP Rack or ODC rack based on this value.
-
 ```yml
 [filebeats]
-fabric-hn ansible_ssh_host=192.168.1.10 ansible_port=22 system_enable=true zeek_enable=true elk_destination='GMP'
+fabric-hn ansible_ssh_host=192.168.1.10 ansible_port=22 system_enable=true zeek_enable=true
 fabric-w1 ansible_ssh_host=192.168.1.10 ansible_port=22 system_enable=true zeek_enable=true
 
 [packetbeats]
