@@ -26,7 +26,7 @@
     dest: "{{ item.dest }}"
   loop:
     - { src: "docker-compose.yml", dest: "/opt/beats/" }
-    - { src: "../../files/"_intermediate_certificate_name, dest: "/opt/beats/" }
+    - { src: "../../files/" + intermediate_certificate_name, dest: "/opt/beats/" }
 
 # Copy the filebeat.yml
 - name: Copy Filebeat template file
