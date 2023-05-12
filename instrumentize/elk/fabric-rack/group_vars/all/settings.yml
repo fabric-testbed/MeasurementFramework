@@ -8,6 +8,13 @@ ODC:
     - "beta-7.fabric-testbed.net"
     - "netam-dev.fabric-testbed.net"
     - "al2sam-dev.fabric-testbed.net"
+    - "broker.fabric-testbed.net"
+    - "orchestrator.fabric-testbed.net"
+    - "al2sam.fabric-testbed.net"
+    - "netam.fabric-testbed.net"
+  CORE_SERVICES_logs_to_monitor:
+    - "cm.fabric-testbed.net"
+    - "uis.fabric-testbed.net"
   mfkfk_username: beats
   mfkfk_password: !vault |
             $ANSIBLE_VAULT;1.1;AES256
@@ -24,6 +31,8 @@ ODC:
   ssl:
     certificate_authorities: 
       - "/etc/filebeat/mfbr1-p_fabric-testbed_net_interm.cer"
+
+
 GMP:
   mfkfk_username: beats
   mfkfk_password: !vault |
@@ -35,9 +44,9 @@ GMP:
             32303437613133353336613730343565646133333866646136336134663236303432
   mfkfk_topic_name: fabric-beats
   mfkfk_hosts: 
-    - "mfbr1-g.fabric-testbed.net:9094"
-    - "mfbr2-g.fabric-testbed.net:9094"
-    - "mfbr3-g.fabric-testbed.net:9094"
+    - "mbbr1-d1.fabric-testbed.net:9094"
+    - "mbbr2-d1.fabric-testbed.net:9094"
+    - "mbbr3-d1.fabric-testbed.net:9094"
   ssl:
     certificate_authorities: 
-      - "/etc/filebeat/mfbr1-g_fabric-testbed_net_interm.cer"
+      - "/etc/filebeat/mbbr1-d1_fabric-testbed_net_interm.cer"
