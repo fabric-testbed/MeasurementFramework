@@ -1,6 +1,6 @@
 filebeat.inputs:
 {% if component_type != 'head' and component_type != 'worker' %}
-{% for collector in log_collection %}
+{% for collector in logs_collection %}
 {% if hostname in hosts %}
   - type: filestream
     enabled: true
