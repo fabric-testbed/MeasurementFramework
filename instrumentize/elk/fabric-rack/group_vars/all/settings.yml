@@ -1,52 +1,36 @@
 #####################
 #       ELK       #
 #####################
-elk_destination: 'ODC' # ODC/GMP will be overridden on individual hostvars if needed
-ODC:
-  AM_logs_to_monitor:
-    - "beta-6.fabric-testbed.net"
-    - "beta-7.fabric-testbed.net"
-    - "netam-dev.fabric-testbed.net"
-    - "al2sam-dev.fabric-testbed.net"
-    - "broker.fabric-testbed.net"
-    - "orchestrator.fabric-testbed.net"
-    - "al2sam.fabric-testbed.net"
-    - "netam.fabric-testbed.net"
-  CORE_SERVICES_logs_to_monitor:
-    - "cm.fabric-testbed.net"
-    - "uis.fabric-testbed.net"
-  mfkfk_username: beats
-  mfkfk_password: !vault |
-            $ANSIBLE_VAULT;1.1;AES256
-            38343835366235376235616666373537613866663563333530656137633863666133396637363663
-            3436366636313361633734653330373831323464656531350a306564383963323337373937376538
-            65613537393162306161613964333066393834306637623664323961373639383763623236393762
-            6534333266333439640a663232663634373066646433383761656539656430333532633132336231
-            32303437613133353336613730343565646133333866646136336134663236303432
-  mfkfk_topic_name: fabric-beats
-  mfkfk_hosts: 
-    - "mfbr1-p.fabric-testbed.net:9094"
-    - "mfbr2-p.fabric-testbed.net:9094"
-    - "mfbr3-p.fabric-testbed.net:9094"
-  ssl:
-    certificate_authorities: 
-      - "/etc/filebeat/mfbr1-p_fabric-testbed_net_interm.cer"
+infra_hosts:
+  - "beta-6.fabric-testbed.net"
+  - "beta-7.fabric-testbed.net"
+  - "netam-dev.fabric-testbed.net"
+  - "al2sam-dev.fabric-testbed.net"
+  - "broker.fabric-testbed.net"
+  - "orchestrator.fabric-testbed.net"
+  - "al2sam.fabric-testbed.net"
+  - "netam.fabric-testbed.net"
 
-
-GMP:
-  mfkfk_username: beats
-  mfkfk_password: !vault |
-            $ANSIBLE_VAULT;1.1;AES256
-            38343835366235376235616666373537613866663563333530656137633863666133396637363663
-            3436366636313361633734653330373831323464656531350a306564383963323337373937376538
-            65613537393162306161613964333066393834306637623664323961373639383763623236393762
-            6534333266333439640a663232663634373066646433383761656539656430333532633132336231
-            32303437613133353336613730343565646133333866646136336134663236303432
-  mfkfk_topic_name: fabric-beats
-  mfkfk_hosts: 
-    - "mbbr1-d1.fabric-testbed.net:9094"
-    - "mbbr2-d1.fabric-testbed.net:9094"
-    - "mbbr3-d1.fabric-testbed.net:9094"
-  ssl:
-    certificate_authorities: 
-      - "/etc/filebeat/mbbr1-d1_fabric-testbed_net_interm.cer"
+logs_collection:
+  - { hosts: infra_hosts, log_path: "/home/nrig-service/ControlFramework/fabric_cf/*/*/logs/*.log"}
+  - { hosts: ["uis.fabric-testbed.net"], log_path: "/home/nrig-service/fabric-core-api/logs/metrics/core-api-metrics.log"}
+  - { hosts: ["cm.fabric-testbed.net"], log_path: "/home/nrig-service/CredentialManager/log/credmgr/credmgr.log"}
+ 
+mfkfk_username: beats
+mfkfk_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          38343835366235376235616666373537613866663563333530656137633863666133396637363663
+          3436366636313361633734653330373831323464656531350a306564383963323337373937376538
+          65613537393162306161613964333066393834306637623664323961373639383763623236393762
+          6534333266333439640a663232663634373066646433383761656539656430333532633132336231
+          32303437613133353336613730343565646133333866646136336134663236303432
+mfkfk_topic_name: fabric-beats
+mfkfk_hosts: 
+  - "mfbr1-p.fabric-testbed.net:9094"
+  - "mfbr2-p.fabric-testbed.net:9094"
+  - "mfbr3-p.fabric-testbed.net:9094"
+ssl:
+  certificate_authorities: 
+    - "/etc/filebeat/mfbr1-p_fabric-testbed_net_interm.cer"
+    
+intermediate_certificate_name: "mfbr1-p_fabric-testbed_net_interm.cer"
