@@ -1,6 +1,5 @@
 # Check if docker-compose is installed
 - name: Check if Docker Compose is installed
-  tags: docker-compose
   shell: command -v docker-compose >/dev/null 2>&1
   register: is_docker_compose_install
 
@@ -30,7 +29,6 @@
 
 # Copy the filebeat.yml
 - name: Copy Filebeat template file
-  tags: filebeat
   become: true
   template:
     src: filebeat.yml.j2
@@ -38,7 +36,18 @@
 
 # Start Filebeat
 - name: Start Filebeat
-  tags: filebeat
-  shell: docker-compose up -d filebeat
-  args:
-    chdir: /opt/beats/
+  community.docker.docker_compose:
+    project_src: /opt/beats
+    project_name: fabric_beats_filebeat
+    state: started
+    build: true
+  register: output
+
+- name: Check if service is running
+  ansible.builtin.assert:
+    that:
+      - "output.services.fabric_beats_filebeat.state.running"
+
+  # shell: docker-compose up -d filebeat
+  # args:
+  #   chdir: /opt/beats/
