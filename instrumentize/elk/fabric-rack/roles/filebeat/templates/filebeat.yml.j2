@@ -75,7 +75,7 @@ setup.template.settings:
 # -------------------------------- Kafka Output --------------------------------
 output.kafka:
   enabled: true
-  hosts: "{{ hostvars[inventory_hostname]['mfkfk_hosts'] }}"
+  hosts: {{ hostvars[inventory_hostname]['mfkfk_hosts'] }}
   topic: "{{ hostvars[inventory_hostname]['mfkfk_topic_name'] }}"
   username: "{{ hostvars[inventory_hostname]['mfkfk_username'] }}"
   password: "{{ hostvars[inventory_hostname]['mfkfk_password'] }}"
