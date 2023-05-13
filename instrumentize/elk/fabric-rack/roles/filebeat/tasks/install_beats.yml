@@ -5,6 +5,7 @@
       - pip
       - docker
       - docker-compose
+    executable: pip3.9
     state: "latest"
 
 - block:
