@@ -40,8 +40,8 @@ filebeat.inputs:
     paths:
        - /var/log/remote/192.168.{{ hank_id }}.110/*.log
        - /var/log/remote/192.168.{{ hank_id }}.111/*.log
-
-{% elif component_type == 'head' or component_type == 'worker' %}
+{% endif %}
+{% if component_type == 'head' or component_type == 'worker' %}
 
   - type: filestream
     enabled: true
