@@ -1,12 +1,11 @@
 # Check if docker-compose is installed
 - name: Check if Docker Compose is installed
-  shell: command -v docker-compose >/dev/null 2>&1
-  register: is_docker_compose_install
-
-# If docker-compose is not installed, quit
-- name: Exit if docker-compose is missing
-  fail: msg="docker-compose is missing"
-  when: is_docker_compose_install.rc != 0
+  ansible.builtin.pip:
+    name: 
+      - pip
+      - docker
+      - docker-compose
+    executable: pip3
 
 - block:
   - name: Ensure docker daemon is started and enabled
