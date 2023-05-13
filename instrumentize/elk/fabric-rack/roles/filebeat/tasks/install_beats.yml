@@ -34,6 +34,11 @@
     src: filebeat.yml.j2
     dest: /opt/beats/filebeat-docker.yml
 
+- name: stop old ocontainer
+  shell: docker-compose stop
+  args:
+    chdir: /opt/beats/
+    
 # Start Filebeat
 - name: Start Filebeat
   community.docker.docker_compose:
@@ -49,6 +54,3 @@
     that:
       - "output.services.fabric_beats_filebeat.state.running"
 
-  # shell: docker-compose up -d filebeat
-  # args:
-  #   chdir: /opt/beats/
