@@ -1,13 +1,3 @@
-# Check if docker-compose is installed
-- name: Check if Docker Compose is installed
-  ansible.builtin.pip:
-    name: 
-      - pip
-      - docker
-      - docker-compose
-    executable: pip3.9
-    state: "latest"
-
 - block:
   - name: Ensure docker daemon is started and enabled
     systemd:
@@ -15,7 +5,6 @@
       enabled: true
       state: 'started'
   when: component_type == 'worker'
-
 
 # Copy required files
 - name: Copy required files
