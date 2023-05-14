@@ -34,23 +34,23 @@
     src: filebeat.yml.j2
     dest: /opt/beats/filebeat-docker.yml
 
-- name: stop old ocontainer
-  shell: docker-compose stop
-  args:
-    chdir: /opt/beats/
+# - name: stop old container
+#   shell: docker-compose down
+#   args:
+#     chdir: /opt/beats/
 
 # Start Filebeat
 - name: Start Filebeat
   community.docker.docker_compose:
-    project_src: /opt/beats
+    project_src: /opt/beats/
     project_name: fabric_beats_filebeat
     state: present
     restarted: true
-    build: true
+    debug: false
   register: output
 
 - name: Check if service is running
   ansible.builtin.assert:
     that:
-      - "output.services.fabric_beats_filebeat.state.running"
+      - "output.services.filebeat.fabric_beats_filebeat.state.running"
 
