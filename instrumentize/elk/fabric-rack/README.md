@@ -50,54 +50,12 @@ The following command deploys `Packetbeat` on the nodes in the `hosts` file.
 ansible-playbook --vault-password-file .vault_key_beats deploy_packetbeat.yml --tags "packetbeat"
 ```
 
-# 3. Start, Stop, Remove Beats containers
+# 3. Remove Beats containers
 
 ## 3.1. Start Beats
 
-Start Filebeat
 
-```shell
-ansible-playbook --vault-password-file .vault_key_beats deploy_filebeat.yml --extra-vars='op=start' --tags "filebeat"
-```
-
-Start Packetbeat
-
-```shell
-ansible-playbook --vault-password-file .vault_key_beats deploy_packetbeat.yml --tags "packetbeat"
-```
-
-## 3.2. Restart Beats
-
-> Restarting beats can be used to update configuration of instances. (e.g. updating `system_enable` in hosts file)
-
-Restart Filebeat
-
-```shell
-ansible-playbook --vault-password-file .vault_key_beats deploy_filebeat.yml --extra-vars='op=stop'--tags "filebeat"
-ansible-playbook --vault-password-file .vault_key_beats deploy_filebeat.yml --extra-vars='op=start'--tags "filebeat"
-```
-
-Restart Packetbeat
-
-```shell
-ansible-playbook --vault-password-file .vault_key_beats deploy_packetbeat.yml --tags "packetbeat"
-```
-
-## 3.3. Stop Beats
-
-Stop Filebeat
-
-```shell
-ansible-playbook --vault-password-file .vault_key_beats deploy_filebeat.yml --extra-vars='op=stop'--tags "filebeat"
-```
-
-Stop Packetbeat
-
-```shell
-ansible-playbook --vault-password-file .vault_key_beats deploy_packetbeat.yml --tags "packetbeat"
-```
-
-## 3.4. Remove Beats
+## 3.1. Remove Beats
 
 Remove Filebeat
 

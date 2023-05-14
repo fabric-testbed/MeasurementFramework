@@ -4,9 +4,3 @@
 
 - include: remove_beats.yml
   when: op == 'remove'
-
-- include: start_beats.yml
-  when: op == 'start'
-
-- include: stop_beats.yml
-  when: op == 'stop'
