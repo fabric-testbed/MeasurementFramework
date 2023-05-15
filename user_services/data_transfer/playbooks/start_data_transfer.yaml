@@ -19,3 +19,5 @@
         - /var/lib/docker/volumes/elk_snapshotbackup:/root/services/data_transfer/elk
         - /home/ubuntu/prometheus/download:/root/services/data_transfer/prometheus_data/download
         - /home/ubuntu/elk/download:/root/services/data_transfer/elk_data/download
+        - /home/ubuntu/prometheus/tar:/root/services/data_transfer/prometheus_data/tar
+        - /home/ubuntu/elk/tar:/root/services/data_transfer/elk_data/tar
