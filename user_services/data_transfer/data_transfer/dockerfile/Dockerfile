@@ -14,8 +14,10 @@ RUN mkdir /root/services/data_transfer/prometheus
 RUN mkdir /root/services/data_transfer/elk
 RUN mkdir /root/services/data_transfer/prometheus_data
 RUN mkdir /root/services/data_transfer/prometheus_data/download
+RUN mkdir /root/services/data_transfer/prometheus_data/tar
 RUN mkdir /root/services/data_transfer/elk_data
 RUN mkdir /root/services/data_transfer/elk_data/download
+RUN mkdir /root/services/data_transfer/elk_data/tar
 RUN mv /MeasurementFramework/user_services/data_transfer/data_transfer/service_files/* /root/services/data_transfer/service_files
 WORKDIR /root/services/data_transfer/service_files
 ENTRYPOINT [ "python3" ]

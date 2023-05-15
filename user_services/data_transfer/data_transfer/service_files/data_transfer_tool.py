@@ -18,6 +18,7 @@ class data_transfer_tool():
         self.logger=None
         self.servicename="data_transfer"
         self.read_config()
+    
     # read file paths from config file    
     def read_config(self):
         config = configparser.ConfigParser()
@@ -26,6 +27,8 @@ class data_transfer_tool():
         self.elk_mapping_path = config['ELK_MAPPING']['Dir']
         self.prometheus_rclone_download_path=config['PROMETHEUS_DOWNLOAD']['Dir']
         self.elk_rclone_download_path=config['ELK_DOWNLOAD']['Dir']
+        self.prometheus_tar_path=config['PROMETHEUS_TAR']['Dir']
+        self.elk_tar_path=config['ELK_TAR']['Dir']
 
     # Set args    
     def set_args(self, args):
@@ -70,14 +73,73 @@ class data_transfer_tool():
         
         
     
-    # Elasticsearch (to be implemented)
-    def generate_elk_json(self):
+    # Elasticsearch 
+    # Step1 create snapshot repo    
+    def create_snapshot_repo(self, repo_name):
+        """
+        registers a snapshot repo using elk rest api
+        Args:
+            repo_name(str): name of the repo to be created 
+        """
+        self.logger.debug(f"Creating snapshot repo on meas node")
+        default_dir = "/var/lib/docker/volumes/elk_snapshotbackup/_data"
+        cmd = f'curl -X PUT "http://localhost:9200/_snapshot/{repo_name}?pretty" -H "Content-Type: application/json" -d \'{{ "type": "fs", "settings": {{ "location": "{default_dir}" }} }}\''
+        self.logger.debug(f"Running command: {cmd}")
+        p = subprocess.Popen(cmd, shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        res = p.wait()
+        
+    #Step2: create a snapshot in the repo
+    def create_elk_snapshot(repo_name, snapshot_name, indice=None):
+        # indice default to None which includes all indices
+        # snapshot will be available at /var/lib/docker/volumes/elk_snapshotbackup/_data
+        
+        """
+        creates a snapshot repo using elk rest api
+        Args:
+            repo_name(str): name of the repo to be created 
+            snapshot_name(str): name of the snapshot to be created
+            indice(optional, list): list of indices to use
+        """
+        self.logger.debug(f"Creating snapshot on meas node")
+        json_str = '"ignore_unavailable": true, "include_global_state": false'
+        if indice:
+            indice_str=",".join(indice)
+            indice_str_final = f'"indices": "{indice_str}",'
+            json_str_new = f'{indice_str_final} {json_str}'
+            json_str_final = f"{{{json_str_new}}}"
+        else:
+            json_str_final = f"{{{json_str}}}"
+        cmd = f'curl -X PUT "http://localhost:9200/_snapshot/{repo_name}/{snapshot_name}?wait_for_completion=true&pretty" -H "Content-Type: application/json" -d \'{json_str_final}\''
+        self.logger.debug(f"Running command: {cmd}")
+        p = subprocess.Popen(cmd, shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        res = p.wait()
+    
+    def tar_prometheus_file(self, file_name, snapshot_name):
+        self.logger.debug(f"Creating prometheus snapshot tar file in container")
+        local_file_path = self.prometheus_tar_path
+        cmd = cmd = f'sudo tar -C {self.prometheus_mapping_path}/snapshots -cvf {self.prometheus_tar_path}/{file_name} {snapshot_name}'
+        self.logger.debug(f"Running command: {cmd}")
+        p = subprocess.Popen(cmd, shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        res = p.wait()
+        
+    def tar_elk_file(self, file_name):
+        self.logger.debug(f"Creating elk snapshot tar file in container")
+        local_file_path = self.elk_tar_path
+        cmd = f'sudo tar -C {self.elk_mapping_path} -cvf {self.elk_tar_path}/{file_name} _data'
+        self.logger.debug(f"Running command: {cmd}")
+        p = subprocess.Popen(cmd, shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        res = p.wait()
+        
+    
+    
+    # One function to include all
+    def generate_elk_snapshot(self, repo_name, snapshot_name):
         # to be store in self.elk_mapping_path (/root/services/data_transfer/elk) in the container
         # which maps /home/ubuntu/elk on the host
         # as defined in the start_data_transfer.yaml playbook
-        return
-    
-    
+        self.create_snapshot_repo(repo_name=repo_name)
+        self.create_elk_snapshot(repo_name=repo_name, snapshot_name=snapshot_name)
+        
     # Check whether rclone is installed in the container or not 
     def check_rclone_status(self):
         self.logger.debug(f"Checking whether rclone is installed...")
@@ -110,19 +172,19 @@ class data_transfer_tool():
     def upload_data_to_storage(self, data_type, local_file_name, storage, remote_dir):
         self.logger.debug(f"using rclone to upload {local_file_name} to {storage}:{remote_dir}")
         if (data_type=="prometheus"):
-            local_file_path = os.path.join(f"{self.prometheus_mapping_path}/snapshots", local_file_name)
+            local_file_path = self.prometheus_tar_path
         elif (data_type == "elk"):
-            local_file_path = os.path.join(self.elk_mapping_path, local_file_name)
+            local_file_path = self.elk_tar_path
         else:
             sys.exit(f"data type has to be prometheus or elk. Exit program..")
-        cmd = f"sudo rclone copy -P {local_file_path} {storage}:{remote_dir}/{local_file_name}"
+        cmd = f"sudo rclone copy -P {local_file_path}/{local_file_name} {storage}:{remote_dir}"
         self.logger.debug(f"The command is: {cmd}")
         pipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
         res = pipe.communicate()
         #self.logger.debug(f"You should see {local_file_name} in {storage}:{remote_dir}")
         
     # prepare to download
-    def download_data_from_storage(self, data_type, storage, remote_dir, file_name):
+    def download_data_from_storage(self,data_type, storage, remote_dir, file_name):
         self.logger.debug(f"using rclone to download {file_name} from {storage}:{remote_dir}")
         if (data_type=="prometheus"):
             local_file_path = self.prometheus_rclone_download_path
@@ -130,7 +192,7 @@ class data_transfer_tool():
             local_file_path = self.elk_rclone_download_path
         else:
             sys.exit(f"data type has to be prometheus or elk. Exit program..")
-        cmd = f"sudo rclone copy -P {storage}:{remote_dir}/{file_name} {local_file_path}/{file_name}"
+        cmd = f"sudo rclone copy -P {storage}:{remote_dir}/{file_name} {local_file_path}"
         self.logger.debug(f"The command is: {cmd}")
         pipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
         res = pipe.communicate()
@@ -162,25 +224,27 @@ class data_transfer_tool():
             if (args_json['type']=='prometheus'):
                 self.generate_prometheus_snapshot(ht_user=self.args.user, ht_password=self.args.password)
             elif (args_json['type']=='elk'):
-                #### to be implemented
-                return
+                self.generate_elk_snapshot(repo_name=self.args.repo, snapshot_name= self.args.snapshot)
         elif (args_json['action']=='upload_backup'):
             self.check_rclone_status()
             if (args_json['type']=='prometheus'):
                 self.upload_data_to_storage(data_type="prometheus", local_file_name=self.args.file, storage=self.args.storage, remote_dir=self.args.dir)
             elif (args_json['type']=='elk'):
-                #### to be implemented
-                return
+                self.upload_data_to_storage(data_type="elk", local_file_name=self.args.file, storage=self.args.storage, remote_dir=self.args.dir)
         elif (args_json['action']=='download_backup'):
             self.check_rclone_status()
             if (args_json['type']=='prometheus'):
                 self.download_data_from_storage(data_type="prometheus", storage=self.args.storage, remote_dir=self.args.dir, file_name=self.args.file)
             elif (args_json['type']=='elk'):
-                #### to be implemented
-                return
+                self.download_data_from_storage(data_type="elk", storage=self.args.storage, remote_dir=self.args.dir, file_name=self.args.file)
+        elif (args_json['action']=='tar_snapshot'):
+            if (args_json['type']=='prometheus'):
+                self.tar_prometheus_file(file_name=self.args.file, snapshot_name=self.args.snapshot)
+            elif (args_json['type']=='elk'):
+                self.tar_elk_file(file_name=self.args.file)
             
         else:
-            sys.exit(f"action has to be process_remote_dir or generate_backup or upload_backup or download_backup. Exit program..")
+            sys.exit(f"action has to be process_remote_dir or generate_backup or upload_backup or download_backup or tar_snapshot. Exit program..")
         
         
 if __name__ == "__main__":
@@ -191,6 +255,7 @@ if __name__ == "__main__":
     upload_parser= action_subparsers.add_parser('upload_backup', help='upload_backup -h')
     download_parser=action_subparsers.add_parser('download_backup', help='download_backup -h')
     rclone_parser = action_subparsers.add_parser('process_remote_dir', help='process_remote_dir -h')
+    tar_parser = action_subparsers.add_parser('tar_snapshot', help='tar_snapshot -h')
     
     
     # Generate_backup parser(to generate backup data file)
@@ -203,7 +268,10 @@ if __name__ == "__main__":
     prometheus_generate_parser.set_defaults(type='prometheus')
     
     elk_generate_parser = type_in_generate_parser.add_parser('elk', help='elk -h')
-    #### to be implemented
+    required_args_elk_generate = elk_generate_parser.add_argument_group('Required named arguments')
+    required_args_elk_generate.add_argument("-r", "--repo", required=True, help="set repo name")
+    required_args_elk_generate.add_argument("-s", "--snapshot", required=True, help="set snapshot password")
+    elk_generate_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
     elk_generate_parser.set_defaults(type='elk')
     
     
@@ -219,7 +287,11 @@ if __name__ == "__main__":
     prometheus_upload_parser.set_defaults(type='prometheus')
     
     elk_upload_parser = type_in_upload_parser.add_parser('elk', help='elk -h')
-    #### to be implemented
+    required_args_elk_upload = prometheus_upload_parser.add_argument_group('Required named arguments')
+    required_args_elk_upload.add_argument("-file", "--file", required=True, help="set file name")
+    required_args_elk_upload.add_argument("-s", "--storage", required=True, help="set storage")
+    required_args_elk_upload.add_argument("-d", "--dir", required=True, help="set remote dir")
+    elk_upload_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
     elk_upload_parser.set_defaults(type='elk')
     
     
@@ -236,7 +308,11 @@ if __name__ == "__main__":
     
     
     elk_download_parser = type_in_upload_parser.add_parser('elk', help='elk -h')
-    #### to be implemented
+    required_args_elk_download = prometheus_download_parser.add_argument_group('Required named arguments')
+    required_args_elk_download.add_argument("-file", "--file", required=True, help="set file name")
+    required_args_elk_download.add_argument("-s", "--storage", required=True, help="set storage")
+    required_args_elk_download.add_argument("-d", "--dir", required=True, help="set remote dir")
+    elk_download_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
     elk_download_parser.set_defaults(type='elk')
     
     
@@ -257,6 +333,22 @@ if __name__ == "__main__":
     required_args_rclone_delete.add_argument("-d", "--dir", required=True, help="set remote dir")
     rclone_delete_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
     rclone_delete_parser.set_defaults(type='delete')
+    
+    
+    # tar parser
+    type_in_tar_parser = tar_parser.add_subparsers(help='Choose a type', dest='type')
+    prometheus_tar_parser= type_in_tar_parser.add_parser('prometheus', help='prometheus -h')
+    required_args_prometheus_tar = prometheus_generate_parser.add_argument_group('Required named arguments')
+    required_args_prometheus_tar.add_argument("-file", "--file", required=True, help="set tar file name")
+    required_args_prometheus_tar.add_argument("-s", "--snapshot", required=True, help="set snapshot name")
+    prometheus_tar_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
+    prometheus_tar_parser.set_defaults(type='prometheus')
+    
+    elk_tar_parser = type_in_generate_parser.add_parser('elk', help='elk -h')
+    required_args_elk_tar = elk_generate_parser.add_argument_group('Required named arguments')
+    required_args_elk_tar.add_argument("-file", "--file", required=True, help="set tar file name")
+    elk_tar_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='verbose output')
+    elk_tar_parser.set_defaults(type='elk')
     
 
     

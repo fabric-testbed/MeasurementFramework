@@ -16,6 +16,6 @@
       network_mode: host
       volumes:
         - /opt/data/fabric_prometheus/prometheus:/root/services/data_transfer/prometheus
-        - /home/ubuntu/elk:/root/services/data_transfer/elk
+        - /var/lib/docker/volumes/elk_snapshotbackup:/root/services/data_transfer/elk
         - /home/ubuntu/prometheus/download:/root/services/data_transfer/prometheus_data/download
         - /home/ubuntu/elk/download:/root/services/data_transfer/elk_data/download
