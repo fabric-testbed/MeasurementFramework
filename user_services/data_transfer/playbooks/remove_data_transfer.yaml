@@ -16,7 +16,12 @@
         
     - name: Recursively remove volume directory
       ansible.builtin.file:
-        path: /home/ubuntu/elk
+        path: /home/ubuntu/elk/tar
+        state: absent
+    
+    - name: Recursively remove volume directory
+      ansible.builtin.file:
+        path: /home/ubuntu/prometheus/tar
         state: absent
         
     - name: Recursively remove volume directory
