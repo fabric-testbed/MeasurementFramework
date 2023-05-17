@@ -171,9 +171,9 @@ if __name__ == "__main__":
     bucket = args.bucket
 
 
-    session = TcpdumpOps(token, org, url, bucket)
+    session = TcpdumpOps(ip_addr, port)
     if args.live:
-        session.start_live_capture()
+        session.start_live_capture(token, org, url, bucket)
     else:
         session.start_capture(output_dir, interval_pcap)
 
