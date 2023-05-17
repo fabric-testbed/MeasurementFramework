@@ -80,7 +80,7 @@ class TcpdumpOps:
                 timestamp = re.findall('\d{10}\.\d{,9}', parts[0])
                 seq_n = parts[1]
         
-                t_delta = Decimal(time_dst) - Decimal(timestamp[0])
+                t_delta = int((Decimal(time_dst) - Decimal(timestamp[0]))*1000000000)
         
                 packet_data["sent"] = timestamp[0]
                 packet_data["latency"] = t_delta
@@ -122,9 +122,10 @@ if __name__ == "__main__":
                         help="number of capture seconds for each pcap file")
     parser.add_argument("--outdir", type=str, default="/owl_output",
                         help="output dir where pcap files will be saved")
-    parser.add_argument("--duration", type=int, default=60, 
+    parser.add_argument("--duration", type=int, default=60,
                         help="number of seconds to run each capture")
-
+    parser.add_argument("--live", action='store_true',
+                        help="add this for live capture")
 
     args = parser.parse_args()
     ip_addr = args.ip
@@ -132,17 +133,14 @@ if __name__ == "__main__":
     interval_pcap = args.pcap_sec
     output_dir = args.outdir 
     sec = args.duration 
+    live = args.live
 
-    session1 = TcpdumpOps(ip_addr, port)
-    session1.start_capture(output_dir, interval_pcap)
+    session = TcpdumpOps(ip_addr, port)
+    if args.live:
+        session.start_live_capture()
+    else:
+        session.start_capture(output_dir, interval_pcap)
+
     time.sleep(sec)
-    session1.stop()
-
-    time.sleep(5)
-
-    session2 = TcpdumpOps(ip_addr, port)
-    session2.start_live_capture()
-    time.sleep(sec)
-    session2.stop()
-
+    session.stop()
 
