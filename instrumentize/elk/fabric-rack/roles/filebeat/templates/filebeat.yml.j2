@@ -13,6 +13,12 @@ filebeat.inputs:
   - type: filestream
     enabled: true
     id: {{ hank_name }}-am
+    parsers:
+    - multiline:
+        type: pattern
+        pattern: '^\d{4}-\d{2}-\d{2} '
+        negate: true
+        match: after
     paths:
        - /home/nrig-service/ControlFramework/fabric_cf/authority/{{ hank_name }}-am/logs/*.log
 
