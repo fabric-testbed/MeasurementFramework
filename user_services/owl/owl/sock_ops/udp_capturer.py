@@ -6,6 +6,10 @@ import re
 from decimal import *
 import argparse
 import psutil
+import influxdb_client 
+from influxdb_client import InfluxDBClient, Point, WritePrecision
+from influxdb_client.client.write_api import SYNCHRONOUS
+
 
 # This script must be run as root
 
@@ -38,7 +42,16 @@ class TcpdumpOps:
         # without this, capturer may exit (when sender is not running)
         self.p.wait()
 
-    def start_live_capture(self):
+
+    def start_live_capture(self, influxdb_token, 
+                           influxdb_org, influxdb_url, influxdb_bucket):
+
+        # influxdb set up
+        write_client = influxdb_client.InfluxDBClient(url=influxdb_url, 
+                                    token=influxdb_token, org=influxdb_org)
+        write_api = write_client.write_api(write_options=SYNCHRONOUS)
+
+
         cmd = f'sudo tcpdump -U  -q -n  -A -tt \
                 -i {self.interface} --direction in \
                 -j adapter_unsynced \
@@ -85,11 +98,24 @@ class TcpdumpOps:
                 packet_data["sent"] = timestamp[0]
                 packet_data["latency"] = t_delta
                 packet_data["seq"] = seq_n
-        
+
+                # Push the data to InfluxDB
+
+                point = (Point("owl")
+                        .tag("sender", packet_data["sender"])
+                        .tag("receiver", packet_data["receiver"])
+                        .field("received", float(packet_data["received"]))
+                        .field("latency", int(packet_data["latency"]))
+                        .field("seq_n", int(packet_data["seq"]))
+                        .time(int(packet_data["sent"]*1000000000), 
+                        write_precision=WritePrecision.NS)
+                        )        
+
+                write_api.write(bucket=influxdb_bucket, org=org, record=point)
+
                 # For debugging
                 print(packet_data)
 
-                # TODO: Push this to InfluxDB
 
     def stop(self):
         self.p.terminate()
@@ -126,6 +152,11 @@ if __name__ == "__main__":
                         help="number of seconds to run each capture")
     parser.add_argument("--live", action='store_true',
                         help="add this for live capture")
+    parser.add_argument("--token", type=str, help="influxdb token (str)")
+    parser.add_argument("--org", type=str, help="influxdb org name (str)")
+    parser.add_argument("--url", type=str, help="influxdb url (str)")
+    parser.add_argument("--bucket", type=str, help="influxdb bucket name (str)")
+
 
     args = parser.parse_args()
     ip_addr = args.ip
@@ -134,8 +165,13 @@ if __name__ == "__main__":
     output_dir = args.outdir 
     sec = args.duration 
     live = args.live
+    token = args.token
+    org = args.org
+    url = args.url
+    bucket = args.bucket
 
-    session = TcpdumpOps(ip_addr, port)
+
+    session = TcpdumpOps(token, org, url, bucket)
     if args.live:
         session.start_live_capture()
     else:
