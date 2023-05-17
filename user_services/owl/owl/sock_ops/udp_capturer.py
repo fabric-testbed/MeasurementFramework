@@ -107,7 +107,7 @@ class TcpdumpOps:
                         .field("received", float(packet_data["received"]))
                         .field("latency", int(packet_data["latency"]))
                         .field("seq_n", int(packet_data["seq"]))
-                        .time(int(packet_data["sent"]*1000000000), 
+                        .time(int(Decimal(packet_data["sent"])*1000000000), 
                         write_precision=WritePrecision.NS)
                         )        
 
