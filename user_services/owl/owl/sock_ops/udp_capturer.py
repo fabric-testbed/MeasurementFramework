@@ -25,7 +25,7 @@ class TcpdumpOps:
         self.port = port
 
     def start_capture(self, output_dir, pcap_interval):
-        cmd = f"sudo tcpdump -vfn -XX -tt  \
+        cmd = f"sudo tcpdump -U -vfn -XX -tt  \
                 -i {self.interface}  --direction in \
                 -j adapter_unsynced \
                 --time-stamp-precision nano \
@@ -52,7 +52,7 @@ class TcpdumpOps:
         write_api = write_client.write_api(write_options=SYNCHRONOUS)
 
 
-        cmd = f'sudo tcpdump -U  -q -n  -A -tt \
+        cmd = f'sudo tcpdump -U -l -q -n  -A -tt \
                 -i {self.interface} --direction in \
                 -j adapter_unsynced \
                 port {str(self.port)} \
