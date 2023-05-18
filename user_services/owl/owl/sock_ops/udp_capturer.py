@@ -63,8 +63,9 @@ class TcpdumpOps:
         self.p = subprocess.Popen(cmd.split(),stdout=subprocess.PIPE)
 
         # Set decimal to 9 sub-decimal digits
-        getcontext().prec=9
-        print(getcontext())
+        # This is causing a problem so commented out for now
+        #getcontext().prec=9
+        #print(getcontext())
 
         while True:
             line = self.p.stdout.readline()
@@ -93,12 +94,12 @@ class TcpdumpOps:
                 timestamp = re.findall('\d{10}\.\d{,9}', parts[0])
                 seq_n = parts[1]
         
-                t_delta = int((Decimal(time_dst) - Decimal(timestamp[0]))*1000000000)
+                t_delta = (Decimal(time_dst) - Decimal(timestamp[0]))*1000000000
         
                 packet_data["sent"] = timestamp[0]
                 packet_data["latency"] = t_delta
                 packet_data["seq"] = seq_n
-
+                packet_data["sent_ns"] = Decimal(timestamp[0])*1000000000
                 # Push the data to InfluxDB
 
                 point = (Point("owl")
@@ -107,7 +108,7 @@ class TcpdumpOps:
                         .field("received", float(packet_data["received"]))
                         .field("latency", int(packet_data["latency"]))
                         .field("seq_n", int(packet_data["seq"]))
-                        .time(int(Decimal(packet_data["sent"])*1000000000), 
+                        .time(int(packet_data["sent_ns"]), 
                         write_precision=WritePrecision.NS)
                         )        
 
