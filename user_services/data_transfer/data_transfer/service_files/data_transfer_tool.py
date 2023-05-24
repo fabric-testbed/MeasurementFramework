@@ -307,7 +307,7 @@ if __name__ == "__main__":
     prometheus_upload_parser.set_defaults(type='prometheus')
     
     
-    elk_download_parser = type_in_upload_parser.add_parser('elk', help='elk -h')
+    elk_download_parser = type_in_download_parser.add_parser('elk', help='elk -h')
     required_args_elk_download = elk_download_parser.add_argument_group('Required named arguments')
     required_args_elk_download.add_argument("-file", "--file", required=True, help="set file name")
     required_args_elk_download.add_argument("-s", "--storage", required=True, help="set storage")
