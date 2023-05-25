@@ -123,7 +123,7 @@ prometheus_config_template_files:
   - prometheus_config.yml
 
     # blackbox targets
-  - #fabric_http_targets.yml
+  #- fabric_http_targets.yml
 
   # aux node exporters and local node exporter
   - central_node_targets.yml
