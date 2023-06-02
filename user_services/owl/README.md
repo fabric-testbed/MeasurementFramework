@@ -90,14 +90,14 @@ and receiver scripts rather than creating config files and using `NodeSockManage
 
 ```
 # sender side
-$sudo docker run --rm -dp <port_num>:<port_num> \
+$sudo docker run --rm -d \
 --network="host"  \
 --pid="host" \
 --privileged \
 owl-app:latest  sock_ops/udp_sender.py [options]
 
 # receiver 
-$sudo docker run --rm -dp <port_num>:<port_num> \
+$sudo docker run --rm -d \
 --mount type=bind,source=<path/to/local/output/dir>,target=/owl_output \
 --network="host"  \
 --pid="host"
@@ -111,7 +111,7 @@ owl-app  sock_ops/udp_capturer.py [options]
 # On Node 1
 
 # sender side
-sudo docker run -dp 5005:5005 \
+sudo docker run -d \
 --network="host"  \
 --pid="host" \
 --privileged \
@@ -126,7 +126,7 @@ owl-app:latest  sock_ops/udp_sender.py  \
 # On Node 2
 
 # receiver
-sudo docker run -dp 5005:5005 \
+sudo docker run -d \
 --mount type=bind,source=/tmp/owl/,target=/owl_output \
 --network="host"  \
 --pid="host" \
@@ -134,8 +134,7 @@ sudo docker run -dp 5005:5005 \
 owl-app  sock_ops/udp_capturer.py \
 --ip "10.0.0.2" \
 --port 5005 \
---pcap-sec 60 \
---outdir /owl_output \
+--outfile /owl_output/owl.pcap \
 --duration 60
 ```
 
