@@ -179,16 +179,35 @@ Alternatively use `NodeSockManager` on multiple nodes with config and links file
 sudo python3 owl/NodeSockManager.py <path/to/config/file>
 ```
 
-# How to Convert Collected data (`.pcap` files) to a CSV file  
+# How to view live OWL data using InfluxDB
 
-(Work in Progress)
-Use either `owl/data_ops/read_pcap.py` or `owl/DataProcessManager.py`
+### Prerequisites
+- InfluxDB server
+- DB information (url, org, token, bucket)
+
+### Usage
+On the receiver node, while `udp_capturer.py` is collecting data (or afterwards)
+run `send_data.py` as follows:
+
+```
+python3 send_data.py [--verbose] 
+	--pcapfile <file>.pcap 
+	--token "<InfluxDB API token>" 
+	--org "<InfluxDB org>"
+	--url "<InfluxDB url>"
+	--bucket "<InfluxDB bucket>"
+```
+
+`send_data.py` reads the pcap file, converts it to ASCII, extract the relevant 
+information for one-way latency measurements, and send it to the InfluxDB server.
+
+Once stored on InfluxDB, data can be downloaded in several different formats, 
+including csv.
 
 
 
 # Current Limitations
 - IPV4 only
-- "static" capture only (capturer side saves tcpdump output to .pcap files)
 - Assumes hosts are (non-routing) endpoints.
 
 
