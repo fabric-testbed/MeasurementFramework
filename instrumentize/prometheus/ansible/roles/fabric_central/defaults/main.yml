@@ -166,7 +166,12 @@ thanos_config_templates:
   # NOTE needs the CEPH vars contained elsehere in this file
   - object_store_config.yml
   - stores.yml
+  # alertmanger urls used by thanos ruler
+  - ruler_alertmanagers.yml
 
+thanos_alert_rule_file_dir: files/alert_rules/thanos_ruler
+thanos_ruler_files:
+  - test_rules.yml
 
 thanos_cert: "{{ host_cert }}"
 thanos_key: "{{ host_key }}"

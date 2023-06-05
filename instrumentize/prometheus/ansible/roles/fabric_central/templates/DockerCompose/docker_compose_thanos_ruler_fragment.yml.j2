@@ -15,21 +15,25 @@
       # Config files. Same as for Sidecar
       - "{{ base_install_dir }}/thanos/config/:/etc/thanos/"
       # Rule files 
-      - "{{ base_install_dir }}/thanos/config:/etc/thanos/rule_files"
+      - "{{ base_install_dir }}/thanos/rules:/etc/thanos/rule_files"
 
     command:
       - 'rule'
       - '--objstore.config-file=/etc/thanos/object_store_config.yml'
-#??    --data-dir             "/path/to/data" \
+#??    --data-dir             "/path/to/data" \ TODO may want to map if desire non-volitile
       - '--eval-interval=30s'
       - '--rule-file=/etc/thanos/*_rules.yml'
 #??    --alert.query-url      "http://0.0.0.0:9090" \ # This tells what query URL to link to in UI.
-      - '--alertmanagers.url={{ alertmanager_url }}'
-#    --query                "query.example.org" \
-#    --query                "query2.example.org" \
 
-      - '--label="rack=podc"'
-      - '--label="ruler=central"'
+
+
+      - '--alertmanagers.config-file=/etc/thanos/ruler_alertmanagers.yml'
+      - '--query={{ install_name }}_thanos_query:10922'
+
+      - "--label=rack=\"{{hank_name}}\""
+      - "--label=ruler=\"central\""
+
+
 
 
       # Optional debuging
