@@ -82,12 +82,6 @@ filebeat.inputs:
 
   - type: filestream
     enabled: true
-    id: {{ hank_name }}-nova
-    paths:
-       - /var/log/nova/*.log
-
-  - type: filestream
-    enabled: true
     id: {{ hank_name }}-neutron
     paths:
        - /var/log/neutron/*.log
