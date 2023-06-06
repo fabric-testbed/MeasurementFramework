@@ -28,7 +28,7 @@
   - name: Start Logstash
     community.docker.docker_compose:
       project_src: /opt/logstash/
-      project_name: fabric_beats
+#      project_name: fabric_beats
       state: present
       restarted: true
       debug: false
