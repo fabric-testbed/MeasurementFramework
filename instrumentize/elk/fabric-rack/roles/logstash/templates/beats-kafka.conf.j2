@@ -24,14 +24,3 @@ output {
     sasl_jaas_config => "org.apache.kafka.common.security.scram.ScramLoginModule required username="{{ hostvars[inventory_hostname]['mfkfk_username'] }}" password="{{ hostvars[inventory_hostname]['mfkfk_password'] }}";"
   }
 }
-
-
-output.kafka:
-  enabled: true
-  hosts: {{ hostvars[inventory_hostname]['mfkfk_hosts'] }}
-  topic: "{{ hostvars[inventory_hostname]['mfkfk_topic_name'] }}"
-  username: "{{ hostvars[inventory_hostname]['mfkfk_username'] }}"
-  password: "{{ hostvars[inventory_hostname]['mfkfk_password'] }}"
-  sasl.mechanism: SCRAM-SHA-256
-  ssl.verification_mode: certificate
-  ssl.certificate_authorities: {{ hostvars[inventory_hostname]['ssl']['certificate_authorities'] }}
