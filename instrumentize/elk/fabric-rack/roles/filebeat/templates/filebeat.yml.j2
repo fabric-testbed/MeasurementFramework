@@ -46,6 +46,24 @@ filebeat.inputs:
     paths:
        - /var/log/remote/192.168.{{ hank_id }}.110/*.log
        - /var/log/remote/192.168.{{ hank_id }}.111/*.log
+
+  - module: rabbitmq
+    log:
+      enabled: true
+      var.paths: ["/var/log/rabbitmq/rabbit@{{ hank_name }}-hn.log"]
+
+  - module: apache
+    access:
+      enabled: true
+      var.paths: 
+        - "/var/log/httpd/*access.log"
+        - "/var/log/httpd/access_log"
+    error:
+      enabled: true
+      var.paths: 
+        - "/var/log/httpd/*error.log"
+        - "/var/log/httpd/error_log"
+
 {% endif %}
 {% if component_type == 'head' or component_type == 'worker' %}
 
@@ -61,6 +79,24 @@ filebeat.inputs:
     paths:
        - /var/log/ptp4l.log
        - /var/log/phc2sys.log
+
+  - type: filestream
+    enabled: true
+    id: {{ hank_name }}-nova
+    paths:
+       - /var/log/nova/*.log
+
+  - type: filestream
+    enabled: true
+    id: {{ hank_name }}-neutron
+    paths:
+       - /var/log/neutron/*.log
+
+  - type: filestream
+    enabled: true
+    id: dnf
+    paths:
+       - /var/log/dnf*.log
 
 filebeat.modules:
   - module: system
