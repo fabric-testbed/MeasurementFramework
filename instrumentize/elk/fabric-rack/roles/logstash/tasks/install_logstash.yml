@@ -28,18 +28,14 @@
   - name: Start Logstash
     community.docker.docker_compose:
       project_src: /opt/logstash/
-#      project_name: fabric_beats
       state: present
       restarted: true
       debug: false
     register: output
 
-  - debug:
-      var: output
-
-  # - name: Check if service is running
-  #   ansible.builtin.assert:
-  #     that:
-  #       - "output.services.logstash.fabric_beats_filebeat.state.running"
+  - name: Check if service is running
+    ansible.builtin.assert:
+      that:
+        - "output.services.logstash.fabric_logstash.state.running"
   when: component_type == 'head'
 

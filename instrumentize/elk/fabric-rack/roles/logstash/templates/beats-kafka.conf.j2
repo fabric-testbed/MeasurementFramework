@@ -17,7 +17,7 @@ output {
     security_protocol => "SASL_SSL"
     ssl_truststore_location => "/etc/logstash/{{ hostvars[inventory_hostname]['ssl_truststore_file'] }}"
     ssl_truststore_password => "{{ hostvars[inventory_hostname]['ssl_truststore_password'] }}"
-    bootstrap_servers => {{ hostvars[inventory_hostname]['mfkfk_hosts'] | join(',') }}
+    bootstrap_servers => "{{ hostvars[inventory_hostname]['mfkfk_hosts'] | join(',') }}""
     topic_id => "{{ hostvars[inventory_hostname]['mfkfk_topic_name'] }}"
     #decorate_events => true
     codec => json

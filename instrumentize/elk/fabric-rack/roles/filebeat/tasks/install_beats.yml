@@ -16,23 +16,15 @@
     - { src: "docker-compose.yml", dest: "/opt/beats/" }
     - { src: "{{ '../../files/' + hostvars[inventory_hostname]['intermediate_certificate_name'] }}", dest: "/opt/beats/" }
 
-# Copy the filebeat.yml
 - name: Copy Filebeat template file
   become: true
   template:
     src: filebeat.yml.j2
     dest: /opt/beats/filebeat-docker.yml
 
-# - name: stop old container
-#   shell: docker-compose down
-#   args:
-#     chdir: /opt/beats/
-
-# Start Filebeat
 - name: Start Filebeat
   community.docker.docker_compose:
     project_src: /opt/beats/
- #   project_name: fabric_beats
     state: present
     restarted: true
     debug: false

@@ -2,5 +2,4 @@
 - name: Tear down existing services
   community.docker.docker_compose:
     project_src: /opt/beats/
-#    project_name: fabric_beats_filebeat
     state: absent
