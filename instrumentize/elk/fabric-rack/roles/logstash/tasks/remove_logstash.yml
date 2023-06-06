@@ -2,5 +2,5 @@
 - name: Tear down existing services
   community.docker.docker_compose:
     project_src: /opt/logstash/
-    project_name: fabric_beats
+#    project_name: fabric_beats
     state: absent
