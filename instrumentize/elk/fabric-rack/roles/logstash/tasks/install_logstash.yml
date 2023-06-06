@@ -1,0 +1,45 @@
+- block:
+  - name: Ensure docker daemon is started and enabled
+    systemd:
+      name: docker
+      enabled: true
+      state: 'started'
+
+  # Copy required files
+  - name: Copy required files
+    become: true
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+    loop:
+      - { src: "docker-compose.yml", dest: "/opt/logstash/" }
+      - { src: "{{ '../../files/' + hostvars[inventory_hostname]['ssl_truststore_file'] }}", dest: "/opt/logstash/" }
+
+  # Copy the filebeat.yml
+  - name: Copy Logstash template file
+    become: true
+    template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+    with_items:
+      - { src: "beats-kafka.conf.j2", dest: "/opt/logstash/beats-kafka.conf" }
+      - { src: "logstash-docker.yml.j2", dest: "/opt/logstash/logstash-docker.yml" }
+
+  - name: Start Logstash
+    community.docker.docker_compose:
+      project_src: /opt/logstash/
+      project_name: fabric_beats
+      state: present
+      restarted: true
+      debug: false
+    register: output
+
+  - debug:
+      var: output
+
+  # - name: Check if service is running
+  #   ansible.builtin.assert:
+  #     that:
+  #       - "output.services.logstash.fabric_beats_filebeat.state.running"
+  when: component_type == 'head'
+
