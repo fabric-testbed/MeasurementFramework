@@ -6,11 +6,11 @@ services:
     network_mode: host
     extra_hosts:
 {% for mf_br in mfkfk_hosts %}
-  {% if network_layer.host.ipv6 == 'v6' %}
-      {{ (mf_br | split(':'))[0] }}: {{ hostvars[(mf_br|split('.'))[0]]['network']['ipv6']['public_ip'] }}
-  {% else %}
-      {{ (mf_br | split(':'))[0] }}: {{ hostvars[(mf_br|split('.'))[0]]['network']['ipv4']['public_ip'] }}
-  {% endif %}
+{% if network_layer.host.ipv6 == 'v6' %}
+      {{(mf_br | split(':'))[0] }}: {{ hostvars[(mf_br|split('.'))[0]]['network']['ipv6']['public_ip']}}
+{% else %}
+      {{(mf_br | split(':'))[0] }}: {{ hostvars[(mf_br|split('.'))[0]]['network']['ipv4']['public_ip']}}
+{% endif %}
 {% endfor %}
     restart: always
     container_name: fabric_logstash
