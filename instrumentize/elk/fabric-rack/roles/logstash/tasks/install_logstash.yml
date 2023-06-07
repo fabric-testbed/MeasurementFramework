@@ -12,7 +12,7 @@
       src: "{{ item.src }}"
       dest: "{{ item.dest }}"
     loop:
-      - { src: "docker-compose.yml", dest: "/opt/logstash/" }
+#      - { src: "docker-compose.yml", dest: "/opt/logstash/" }
       - { src: "{{ '../../files/' + hostvars[inventory_hostname]['ssl_truststore_file'] }}", dest: "/opt/logstash/" }
 
   # Copy the filebeat.yml
@@ -24,6 +24,7 @@
     with_items:
       - { src: "beats-kafka.conf.j2", dest: "/opt/logstash/beats-kafka.conf" }
       - { src: "logstash-docker.yml.j2", dest: "/opt/logstash/logstash-docker.yml" }
+      - { src: "docker-compose.yml.j2", dest: "/opt/logstash/docker-compose.yml" }
 
   - name: Start Logstash
     community.docker.docker_compose:
