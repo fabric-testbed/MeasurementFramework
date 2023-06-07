@@ -1,0 +1,39 @@
+version: "3.6"
+
+services:
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.6.1
+    network_mode: host
+    extra_hosts:
+{% for mf_br in mfkfk_hosts %}
+  {% if network_layer.host.ipv6 == 'v6' %}
+      {{ (mf_br | split(':'))[0] }}: {{ hostvars[(mf_br|split('.'))[0]]['network']['ipv6']['public_ip'] }}
+  {% else %}
+      {{ (mf_br | split(':'))[0] }}: {{ hostvars[(mf_br|split('.'))[0]]['network']['ipv4']['public_ip'] }}
+  {% endif %}
+{% endfor %}
+    restart: always
+    container_name: fabric_logstash
+    user: root
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1024m"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/lib/docker/containers/:/var/lib/docker/containers/:ro"
+    secrets:
+      - source: logstash.yml
+        target: /usr/share/logstash/config/logstash.yml
+      - source: kafka.broker1.truststore.jks
+        target: /etc/logstash/kafka.broker1.truststore.jks
+      - source: beats-kafka.conf
+        target: /usr/share/logstash/pipeline/logstash.conf
+
+secrets:
+  logstash.yml:
+    file: ./logstash-docker.yml
+  kafka.broker1.truststore.jks:
+    file: ./kafka.broker1.truststore.jks
+  beats-kafka.conf:
+    file: ./beats-kafka.conf
