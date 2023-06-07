@@ -10,7 +10,7 @@
 
 - name: Install Node Exporter
   include_role: 
-    name: cloudalchemy.node_exporter
+    name: prometheus.prometheus.node_exporter
   
   vars:
     node_exporter_basic_auth_users: "{{ { node_exporter_username : node_exporter_password } }}"

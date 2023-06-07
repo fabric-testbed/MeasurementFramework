@@ -1,0 +1,26 @@
+# Input
+input {
+  beats {
+    port => 5044
+  }
+}
+
+# Filter
+filter {
+
+}
+
+# Output to Kafka
+output {
+  kafka {
+    sasl_mechanism => "SCRAM-SHA-256"
+    security_protocol => "SASL_SSL"
+    ssl_truststore_location => "/etc/logstash/{{ hostvars[inventory_hostname]['ssl_truststore_file'] }}"
+    ssl_truststore_password => "{{ hostvars[inventory_hostname]['ssl_truststore_password'] }}"
+    bootstrap_servers => "{{ hostvars[inventory_hostname]['mfkfk_hosts'] | join(',') }}"
+    topic_id => "{{ hostvars[inventory_hostname]['mfkfk_topic_name'] }}"
+    #decorate_events => true
+    codec => json
+    sasl_jaas_config => "org.apache.kafka.common.security.scram.ScramLoginModule required username='{{ hostvars[inventory_hostname]['mfkfk_username'] }}' password='{{ hostvars[inventory_hostname]['mfkfk_password'] }}';"
+  }
+}

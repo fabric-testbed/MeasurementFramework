@@ -8,7 +8,7 @@ groups:
   rules:
   
   - alert: HostPhysicalComponentTooHot
-    expr: node_hwmon_temp_celsius > 75
+    expr: node_hwmon_temp_celsius > 90
     for: 1m
     labels:
       severity: critical
@@ -56,7 +56,7 @@ groups:
 
 
   - alert: HostOutOfMemory
-    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 2
     for: 2m
     labels:
       severity: warning
