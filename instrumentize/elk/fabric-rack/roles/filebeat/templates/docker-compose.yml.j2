@@ -18,7 +18,7 @@ services:
 {% if component_type != 'head' and component_type != 'worker' %}
 {% for collector in logs_collection %}
 {% if hostname in collector.hosts and "/home/nrig-service/ControlFramework/fabric_cf" not in collector.log_path %}
-      - "{{ collector.log_path|dirname+':'+collector.log_path|dirname }}"
+      - "{{ collector.log_path|dirname+'/:'+collector.log_path|dirname+'/' }}"
 {% endif %}
 {% endfor %}
 {% else %}
