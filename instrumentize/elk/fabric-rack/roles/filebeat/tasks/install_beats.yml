@@ -22,7 +22,7 @@
     dest: "{{ item.dest }}"
   with_items:
     - { src: "filebeat.yml.j2", dest: "/opt/beats/filebeat-docker.yml" }
-    - { src: "docker-compose.yml.j2", dest: "/opt/logstash/docker-compose.yml" }
+    - { src: "docker-compose.yml.j2", dest: "/opt/beats/docker-compose.yml" }
 
 - name: Start Filebeat
   community.docker.docker_compose:
