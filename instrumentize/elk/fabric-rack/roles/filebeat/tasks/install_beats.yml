@@ -13,14 +13,16 @@
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
   loop:
-    - { src: "docker-compose.yml", dest: "/opt/beats/" }
     - { src: "{{ '../../files/' + hostvars[inventory_hostname]['intermediate_certificate_name'] }}", dest: "/opt/beats/" }
 
 - name: Copy Filebeat template file
   become: true
   template:
-    src: filebeat.yml.j2
-    dest: /opt/beats/filebeat-docker.yml
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: "filebeat.yml.j2", dest: "/opt/beats/filebeat-docker.yml" }
+    - { src: "docker-compose.yml.j2", dest: "/opt/logstash/docker-compose.yml" }
 
 - name: Start Filebeat
   community.docker.docker_compose:
