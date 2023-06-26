@@ -77,6 +77,7 @@ scrape_configs:
       - files:
             - '*_node_targets.yml'
 
+{% if hostvars[hank_name + '-time'] is defined and 'ansible_host' in (hostvars[hank_name + '-time']).keys() %}
  # PTP Server Web UI
   - job_name: 'ptp_server_ui'
     metrics_path: /probe
@@ -92,7 +93,7 @@ scrape_configs:
               target_label: instance
             - target_label: __address__
               replacement: "{{ install_name }}_blackbox:9115"
-
+{% endif %}
 
  # Docker Exporter for Local Containers
   - job_name: 'docker'
@@ -144,6 +145,8 @@ scrape_configs:
 # These should be moved out when that that is fixed
 # Management Switch
 #  OK but should add more fields
+{% if hostvars[hank_name + '-pdu'] is defined  and 'ansible_host' in (hostvars[hank_name + '-pdu']).keys() %}
+
   - job_name: 'pdu'
     #scrape_interval: 120s
     static_configs:
@@ -159,6 +162,7 @@ scrape_configs:
               target_label: instance
             - target_label: __address__
               replacement: "{{ install_name }}_snmp:9116"
+{% endif %}
 
 # Management Switch
 # OK
@@ -229,6 +233,7 @@ scrape_configs:
             - target_label: __address__
               replacement: "{{ install_name }}_snmp:9116"
 
+{% if hostvars[hank_name + '-time'] is defined and 'ansible_host' in (hostvars[hank_name + '-time']).keys() %}
 
 # PTU
 # OK
@@ -247,5 +252,15 @@ scrape_configs:
             - target_label: __address__
               replacement: "{{ install_name }}_snmp:9116"
 
+{% endif %}
 
-
+# Get the metrics for the snmp exporter          
+  - job_name: 'snmp_metrics'
+    static_configs:
+            - targets:
+              - "fabric_prometheus_snmp:9116"
+# Get the metrics for the blackbox exporter          
+  - job_name: 'blackbox_metrics'
+    static_configs:
+            - targets:
+              - "fabric_prometheus_blackbox:9115"

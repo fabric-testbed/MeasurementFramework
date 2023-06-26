@@ -1,0 +1,37 @@
+- block:
+  - name: Ensure docker daemon is started and enabled
+    systemd:
+      name: docker
+      enabled: true
+      state: 'started'
+  when: component_type == 'worker'
+
+# Copy required files
+- name: Copy required files
+  become: true
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: "docker-compose.yml", dest: "/opt/beats/" }
+    - { src: "{{ '../../files/' + hostvars[inventory_hostname]['intermediate_certificate_name'] }}", dest: "/opt/beats/" }
+
+- name: Copy Filebeat template file
+  become: true
+  template:
+    src: filebeat.yml.j2
+    dest: /opt/beats/filebeat-docker.yml
+
+- name: Start Filebeat
+  community.docker.docker_compose:
+    project_src: /opt/beats/
+    state: present
+    restarted: true
+    debug: false
+  register: output
+
+- name: Check if service is running
+  ansible.builtin.assert:
+    that:
+      - "output.services.filebeat.fabric_beats_filebeat.state.running"
+
