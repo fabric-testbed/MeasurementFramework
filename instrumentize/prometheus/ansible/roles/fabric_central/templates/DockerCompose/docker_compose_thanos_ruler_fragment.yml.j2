@@ -30,7 +30,7 @@
       - '--alertmanagers.config-file=/etc/thanos/ruler_alertmanagers.yml'
       - '--query={{ install_name }}_thanos_query:10922'
 
-      - "--label=rack=\"{{hank_name}}\""
+      #- "--label=rack=\"\""
       - "--label=ruler=\"central\""
 
 
