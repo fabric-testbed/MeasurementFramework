@@ -10,6 +10,8 @@
 
 - name: Install Node Exporter
   include_role: 
+    #name: prometheus.prometheus.node_exporter
+    #cloudalchemy only works with the os image
     name: cloudalchemy.node_exporter
   
   vars:

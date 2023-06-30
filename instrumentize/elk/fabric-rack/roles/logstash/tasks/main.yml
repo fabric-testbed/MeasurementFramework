@@ -1,0 +1,6 @@
+
+- include: install_logstash.yml
+  when: op == 'install'
+
+- include: remove_logstash.yml
+  when: op == 'remove'

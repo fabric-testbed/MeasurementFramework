@@ -26,7 +26,7 @@ fabric-w1 ansible_ssh_host=192.168.1.10 ansible_port=22
 
 ## 1.2. `.vault_key_beats` file
 
-`.vault_key_beats` file contains ansible vault secret to decrypt `group_vars/all/settings.yml` file. You can find password on the `Software Systems` on `1Password`. Create the `.vault_key_beats` file anywhere but make it sure give the correct path when you run ansible-playbook later.
+`.vault_key_beats` file contains ansible vault secret to decrypt the variable `mfkfk_password` in `group_vars/all/settings.yml` file. You can find password on the `Software Systems` on `1Password`. Create the `.vault_key_beats` file anywhere but make it sure give the correct path when you run ansible-playbook later.
 
 # 2. Deploy Beats
 
@@ -39,7 +39,7 @@ The following command deploys `Filebeat` on the nodes in the `hosts` file.
 > Change path to `vault_key_beats` based on your file location.
 
 ```shell
-ansible-playbook --vault-password-file .vault_key_beats deploy_beats.yml --tags "filebeat"
+ansible-playbook --vault-password-file .vault_key_beats deploy_beat.yml --extra-vars='op=install'--tags "filebeat"
 ```
 
 ## 2.2. Deploy Packetbeat
@@ -47,67 +47,26 @@ ansible-playbook --vault-password-file .vault_key_beats deploy_beats.yml --tags 
 The following command deploys `Packetbeat` on the nodes in the `hosts` file.
 
 ```shell
-ansible-playbook --vault-password-file .vault_key_beats deploy_beats.yml --tags "packetbeat"
+ansible-playbook --vault-password-file .vault_key_beats deploy_packetbeat.yml --tags "packetbeat"
 ```
 
-# 3. Start, Stop, Remove Beats containers
+# 3. Remove Beats containers
 
 ## 3.1. Start Beats
 
-Start Filebeat
 
-```shell
-ansible-playbook --vault-password-file .vault_key_beats start_beats.yml --tags "filebeat"
-```
-
-Start Packetbeat
-
-```shell
-ansible-playbook --vault-password-file .vault_key_beats start_beats.yml --tags "packetbeat"
-```
-
-## 3.2. Restart Beats
-
-> Restarting beats can be used to update configuration of instances. (e.g. updating `system_enable` in hosts file)
-
-Restart Filebeat
-
-```shell
-ansible-playbook --vault-password-file .vault_key_beats restart_beats.yml --tags "filebeat"
-```
-
-Restart Packetbeat
-
-```shell
-ansible-playbook --vault-password-file .vault_key_beats restart_beats.yml --tags "packetbeat"
-```
-
-## 3.3. Stop Beats
-
-Stop Filebeat
-
-```shell
-ansible-playbook --vault-password-file .vault_key_beats stop_beats.yml --tags "filebeat"
-```
-
-Stop Packetbeat
-
-```shell
-ansible-playbook --vault-password-file .vault_key_beats stop_beats.yml --tags "packetbeat"
-```
-
-## 3.4. Remove Beats
+## 3.1. Remove Beats
 
 Remove Filebeat
 
 ```shell
-ansible-playbook --vault-password-file .vault_key_beats remove_beats.yml --tags "filebeat"
+ansible-playbook --vault-password-file .vault_key_beats deploy_filebeat.yml --extra-vars='op=remove'--tags "filebeat"
 ```
 
 Remove Packetbeat
 
 ```shell
-ansible-playbook --vault-password-file .vault_key_beats remove_beats.yml --tags "packetbeat"
+ansible-playbook --vault-password-file .vault_key_beats deploy_packetbeat.yml --tags "packetbeat"
 ```
 
 # 4. Encrypt and decrypt with ansible vault
@@ -115,11 +74,13 @@ ansible-playbook --vault-password-file .vault_key_beats remove_beats.yml --tags 
 Encrypt with ansible vault key.
 
 ```shell
-ansible-vault encrypt --vault-password-file .vault_key_beats group_vars/all/settings.yml
+ansible-vault encrypt_string --vault-password-file .vault_key_beats <STRING TO ENCRYPT>
 ```
 
 Decrypt with ansible vault key.
 
 ```shell
-ansible-vault decrypt --vault-password-file .vault_key_beats group_vars/all/settings.yml
+ansible localhost -e '@group_vars/all/settings.yml' --vault-password-file .vault_key_beats  -m debug -a 'var=ODC.mfkfk_password'
+ansible localhost -e '@group_vars/all/settings.yml' --vault-password-file .vault_key_beats  -m debug -a 'var=GMP.mfkfk_password'
 ```
+

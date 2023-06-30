@@ -1,0 +1,14 @@
+---
+# - hosts: all
+#   tags: base
+#   become: true
+#   vars:
+#     docker_compose_ver: 1.25.5
+#   roles:
+#     - base
+
+# Installing Filebeat on nodes
+- hosts: filebeats
+  tags: filebeat
+  roles:
+    - filebeat
