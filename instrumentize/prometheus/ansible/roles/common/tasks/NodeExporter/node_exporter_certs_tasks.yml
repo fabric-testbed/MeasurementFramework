@@ -1,8 +1,8 @@
 ---
-- name: Add Node Exporters
+- name: Add Node Exporter Certs
   block:
   # This installs the needed self signed certs for the node_exporter.
-  # Note user and group is also done in cloudalchemy.node-exporter used later, 
+  # Note user and group is also done in node-exporter role used later, 
   #   but we need it here for the cert creation.
   - name: Add node-exp group.
     group:
