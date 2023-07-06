@@ -1,0 +1,24 @@
+---
+##############################
+#  Node Exporter Install     #
+##############################
+
+# The node exporters are installed directly on the nodes with systemd enabled.
+# To enable TLS, there needs to be a cert installed. Self-signed certs are generally used since
+#    most nodes do not have certs and they are only used to encrypt the data, not ensure who the 
+#    host is.
+# The node export listens to the ip:host set in the node_exporter_web_listen_address var. Ddefaults to port 9100
+
+- name: Install Node Exporter Certs
+  include_tasks: NodeExporter/node_exporter_certs_tasks.yml
+
+- name: Install Node Exporter
+  include_role: 
+    name: prometheus.prometheus.node_exporter
+
+  vars:
+    node_exporter_basic_auth_users: "{{ { node_exporter_username : node_exporter_password } }}"
+    node_exporter_tls_server_config:
+      # Note these values are hardcoded in above task.
+      cert_file: /etc/node_exporter/tls.cert
+      key_file: /etc/node_exporter/tls.key

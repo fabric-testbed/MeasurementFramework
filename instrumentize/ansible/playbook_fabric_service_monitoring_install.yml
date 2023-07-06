@@ -1,0 +1,8 @@
+---
+# Setup node exporter on a fabric service VM
+# See MF Software Systems Service node_exporter in 1password for the user/password needed  as vars node_exporter_username & node_exporter_password 
+- hosts: <some service vm>
+
+  roles:
+    - ../prometheus/ansible/roles/fabric_service
+  
