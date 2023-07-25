@@ -20,3 +20,7 @@ amst,atla,brist,cern,clem,dall,fiu,gatech,gpn,hawi,indi,kans,lbnl,learn,losa,mas
 
 # minus learn
 amst,atla,brist,cern,clem,dall,fiu,gatech,gpn,hawi,indi,kans,lbnl,losa,mass,max,mich,ncsa,newy,prin,psc,renc,rutg,salt,seat,sri,star,tacc,toky,ucsd,uky,utah,wash
+
+# OR'd
+# List for dashboards
+amst|atla|brist|cern|clem|dall|fiu|gatech|gpn|hawi|indi|kans|lbnl|learn|losa|mass|max|mich|ncsa|newy|prin|psc|renc|rutg|salt|seat|sri|star|tacc|toky|ucsd|uky|utah|wash
