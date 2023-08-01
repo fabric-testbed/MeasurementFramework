@@ -6,7 +6,9 @@ root_url = https://%(domain)s/grafana
 # for grafana 10
 serve_from_sub_path = false 
 
-
+[auth]
+# Required for cilogon to look up user by email. Feature was disabled in grafana 10
+oauth_allow_insecure_email_lookup = true 
 
 [auth.generic_oauth]
 {% if grafana_oauth_client_id is defined %}
