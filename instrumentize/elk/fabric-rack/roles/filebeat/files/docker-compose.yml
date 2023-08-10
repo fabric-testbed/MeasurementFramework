@@ -19,6 +19,7 @@ services:
       - "/opt/data/zeek/logs:/opt/zeek/logs"
       - "/opt/data/zeek/spool:/opt/zeek/spool"
       - "/home/nrig-service/ControlFramework/fabric_cf/:/home/nrig-service/ControlFramework/fabric_cf/"
+      - "/home/nrig-service/log/:/home/nrig-service/log/"
     secrets:
       - source: filebeat.yml
         target: /usr/share/filebeat/filebeat.yml
