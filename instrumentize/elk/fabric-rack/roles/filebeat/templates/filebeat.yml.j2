@@ -111,9 +111,23 @@ filebeat.modules:
 setup.template.settings:
   index.number_of_shards: 1
 
+{% if component_type == 'head' or component_type == 'worker' %}
+
 #-------------- Logstash Output ---------------
 output.logstash:
   hosts: ["192.168.{{ hank_id }}.10:5044"]
+{% else %}
+# -------------------------------- Kafka Output --------------------------------
+output.kafka:
+  enabled: true
+  hosts: {{ hostvars[inventory_hostname]['mfkfk_hosts'] }}
+  topic: "{{ hostvars[inventory_hostname]['mfkfk_topic_name'] }}"
+  username: "{{ hostvars[inventory_hostname]['mfkfk_username'] }}"
+  password: "{{ hostvars[inventory_hostname]['mfkfk_password'] }}"
+  sasl.mechanism: SCRAM-SHA-256
+  ssl.verification_mode: certificate
+  ssl.certificate_authorities: {{ hostvars[inventory_hostname]['ssl']['certificate_authorities'] }}
+{% endif%}
 
 processors:
   - add_host_metadata:
