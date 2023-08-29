@@ -198,6 +198,25 @@ python3 send_data.py [--verbose]
 	--bucket "<InfluxDB bucket>"
 ```
 
+#### Using Docker image
+
+```
+docker pull fabrictestbed/owl:0.1.5
+
+sudo docker run -d \
+--mount type=bind,source=/tmp/owl/,target=/owl_output \
+--network="host"
+--pid="host" \
+--privileged \
+owl:0.1.5 sock_ops/send_data.py \
+--pcapfile <file>.pcap \
+--token "<InfluxDB API token>" \
+--org "<InfluxDB org>" \
+--url "<InfluxDB url>" \
+--bucket "<InfluxDB bucket>"
+```
+
+
 `send_data.py` reads the pcap file, converts it to ASCII, extract the relevant 
 information for one-way latency measurements, and send it to the InfluxDB server.
 
