@@ -12,6 +12,7 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xmx1g -Xms1g"
+      - path.repo=/usr/share/elasticsearch/backup
     logging:
       driver: "json-file"
       options:
@@ -22,6 +23,7 @@ services:
         hard: -1
     volumes:
       - data01:/usr/share/elasticsearch/data
+      - snapshotbackup:/usr/share/elasticsearch/backup
     networks:
       - elk
 
@@ -37,6 +39,7 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xmx1g -Xms1g"
+      - path.repo=/usr/share/elasticsearch/backup
     logging:
       driver: "json-file"
       options:
@@ -47,6 +50,7 @@ services:
         hard: -1
     volumes:
       - data02:/usr/share/elasticsearch/data
+      - snapshotbackup:/usr/share/elasticsearch/backup
     networks:
       - elk
 
@@ -62,6 +66,7 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xmx1g -Xms1g"
+      - path.repo=/usr/share/elasticsearch/backup
     logging:
       driver: "json-file"
       options:
@@ -72,6 +77,7 @@ services:
         hard: -1
     volumes:
       - data03:/usr/share/elasticsearch/data
+      - snapshotbackup:/usr/share/elasticsearch/backup
     networks:
       - elk
 
@@ -135,6 +141,8 @@ volumes:
   data02:
     driver: local
   data03:
+    driver: local
+  snapshotbackup:
     driver: local
 
 networks:
