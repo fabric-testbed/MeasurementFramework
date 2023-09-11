@@ -46,20 +46,23 @@ def parse_and_send(pcap_file, verbose=False, influxdb_token=None,
             break
     
         newline = line.rstrip().decode()
-        IP_pos = newline.find("IP")
+        IP_pos = newline.find(" IP ")
     
         # Find a line that looks like
         # "1661899028.527932821 IP 10.10.2.1.40634 > 10.10.1.1.5005: UDP, length 23"
         if IP_pos != -1:
             packet_data = {}
     
-            time_dst = newline[:(IP_pos-1)]
+            time_dst = newline[:IP_pos]
             IPs = re.findall(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})', newline)
+
+            try:
+                packet_data["sender"] = IPs[0]
+                packet_data["receiver"] = IPs[1]
+                packet_data["received"] = time_dst
     
-            packet_data["sender"] = IPs[0]
-            packet_data["receiver"] = IPs[1]
-            packet_data["received"] = time_dst
-    
+            except Exception as e:
+                print(e)
     
         # Find a line that looks like ".........F1661899028.5274663,1877"
         elif re.search(r'\d{10}.\d{,9},\d{1,4}$', newline):
@@ -68,24 +71,39 @@ def parse_and_send(pcap_file, verbose=False, influxdb_token=None,
             seq_n = parts[1]
     
             t_delta = (Decimal(time_dst) - Decimal(timestamp[0]))*1000000000
-    
-            packet_data["sent"] = timestamp[0]
-            packet_data["latency"] = t_delta
-            packet_data["seq"] = seq_n
-            packet_data["sent_ns"] = Decimal(timestamp[0])*1000000000
-            # Push the data to InfluxDB
 
-            point = (Point("owl")
-                    .tag("sender", packet_data["sender"])
-                    .tag("receiver", packet_data["receiver"])
-                    .field("received", float(packet_data["received"]))
-                    .field("latency", int(packet_data["latency"]))
-                    .field("seq_n", int(packet_data["seq"]))
-                    .time(int(packet_data["sent_ns"]), 
-                    write_precision=WritePrecision.NS)
-                    )        
+            try:
+                packet_data["sent"] = timestamp[0]
+                packet_data["latency"] = t_delta
+                packet_data["seq"] = seq_n
+                packet_data["sent_ns"] = Decimal(timestamp[0])*1000000000
+            
+            except Exception as e:
+                print(e)
 
-            write_api.write(bucket=influxdb_bucket, org=org, record=point)
+
+            # Check if all keys have non-empty values
+            all_non_empty = all(value is not None and value != '' for value 
+                                in packet_data.values())
+
+            if all_non_empty:
+                # If all values are there, push the data to InfluxDB
+
+                point = (Point("owl")
+                        .tag("sender", packet_data["sender"])
+                        .tag("receiver", packet_data["receiver"])
+                        .field("received", float(packet_data["received"]))
+                        .field("latency", int(packet_data["latency"]))
+                        .field("seq_n", int(packet_data["seq"]))
+                        .time(int(packet_data["sent_ns"]), 
+                        write_precision=WritePrecision.NS)
+                        )        
+
+                write_api.write(bucket=influxdb_bucket, org=org, record=point)
+
+            else:
+                # Do not send incomplete entries to InfluxDB
+                pass
 
             if verbose:
                 print(packet_data)
