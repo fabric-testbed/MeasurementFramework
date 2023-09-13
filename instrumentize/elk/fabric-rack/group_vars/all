@@ -15,6 +15,7 @@ logs_collection:
   - { hosts: "{{ infra_hosts }}", log_path: "/home/nrig-service/ControlFramework/fabric_cf/*/*/logs/*.log"}
   - { hosts: ["uis.fabric-testbed.net"], log_path: "/home/nrig-service/fabric-core-api/logs/metrics/core-api-metrics.log"}
   - { hosts: ["cm.fabric-testbed.net"], log_path: "/home/nrig-service/CredentialManager/log/credmgr/credmgr.log"}
+  - { hosts: ["websession.fabric-testbed.net"], log_path: "/home/nrig-service/log/*.log"}
  
 mfkfk_username: beats
 mfkfk_password: !vault |
