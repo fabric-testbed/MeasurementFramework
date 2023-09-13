@@ -18,7 +18,7 @@
         
     - name: Pull fabrictestbed/owl image from DockerHub
       community.general.docker_image:
-        name: fabrictestbed/owl:0.1.3
+        name: fabrictestbed/owl:0.1.4
         source: pull
 
 

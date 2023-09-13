@@ -38,7 +38,7 @@ Refer to the Jupyter Notebook examples.
 1. clone the repository and navigate to the `owl` directory.
 
 ```
-git clone -b owl https://github.com/fabric-testbed/MeasurementFramework.git
+git clone -b owl-main https://github.com/fabric-testbed/MeasurementFramework.git
 cd MeasurementFramework/user_services/owl
 ```
 
@@ -90,14 +90,14 @@ and receiver scripts rather than creating config files and using `NodeSockManage
 
 ```
 # sender side
-$sudo docker run --rm -dp <port_num>:<port_num> \
+$sudo docker run --rm -d \
 --network="host"  \
 --pid="host" \
 --privileged \
 owl-app:latest  sock_ops/udp_sender.py [options]
 
 # receiver 
-$sudo docker run --rm -dp <port_num>:<port_num> \
+$sudo docker run --rm -d \
 --mount type=bind,source=<path/to/local/output/dir>,target=/owl_output \
 --network="host"  \
 --pid="host"
@@ -111,7 +111,7 @@ owl-app  sock_ops/udp_capturer.py [options]
 # On Node 1
 
 # sender side
-sudo docker run -dp 5005:5005 \
+sudo docker run -d \
 --network="host"  \
 --pid="host" \
 --privileged \
@@ -126,7 +126,7 @@ owl-app:latest  sock_ops/udp_sender.py  \
 # On Node 2
 
 # receiver
-sudo docker run -dp 5005:5005 \
+sudo docker run -d \
 --mount type=bind,source=/tmp/owl/,target=/owl_output \
 --network="host"  \
 --pid="host" \
@@ -134,8 +134,7 @@ sudo docker run -dp 5005:5005 \
 owl-app  sock_ops/udp_capturer.py \
 --ip "10.0.0.2" \
 --port 5005 \
---pcap-sec 60 \
---outdir /owl_output \
+--outfile /owl_output/owl.pcap \
 --duration 60
 ```
 
@@ -180,16 +179,54 @@ Alternatively use `NodeSockManager` on multiple nodes with config and links file
 sudo python3 owl/NodeSockManager.py <path/to/config/file>
 ```
 
-# How to Convert Collected data (`.pcap` files) to a CSV file  
+# How to view live OWL data using InfluxDB
 
-(Work in Progress)
-Use either `owl/data_ops/read_pcap.py` or `owl/DataProcessManager.py`
+### Prerequisites
+- InfluxDB server
+- DB information (url, org, token, bucket)
+
+### Usage
+On the receiver node, while `udp_capturer.py` is collecting data (or afterwards)
+run `send_data.py` as follows:
+
+```
+python3 send_data.py [--verbose] 
+	--pcapfile <file>.pcap 
+	--token "<InfluxDB API token>" 
+	--org "<InfluxDB org>"
+	--url "<InfluxDB url>"
+	--bucket "<InfluxDB bucket>"
+```
+
+#### Using Docker image
+
+```
+docker pull fabrictestbed/owl:0.1.5
+
+sudo docker run -d \
+--mount type=bind,source=/tmp/owl/,target=/owl_output \
+--network="host"
+--pid="host" \
+--privileged \
+owl:0.1.5 sock_ops/send_data.py \
+--pcapfile <file>.pcap \
+--token "<InfluxDB API token>" \
+--org "<InfluxDB org>" \
+--url "<InfluxDB url>" \
+--bucket "<InfluxDB bucket>"
+```
+
+
+`send_data.py` reads the pcap file, converts it to ASCII, extract the relevant 
+information for one-way latency measurements, and send it to the InfluxDB server.
+
+Once stored on InfluxDB, data can be downloaded in several different formats, 
+including csv.
 
 
 
 # Current Limitations
 - IPV4 only
-- "static" capture only (capturer side saves tcpdump output to .pcap files)
 - Assumes hosts are (non-routing) endpoints.
 
 
