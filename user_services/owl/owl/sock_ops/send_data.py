@@ -68,11 +68,11 @@ def parse_and_send(pcap_file, verbose=False, influxdb_token=None,
         elif re.search(r'\d{10}.\d{,9},\d{1,4}$', newline):
             parts = re.split(",", newline)
             timestamp = re.findall('\d{10}\.\d{,9}', parts[0])
-            seq_n = parts[1]
-    
-            t_delta = (Decimal(time_dst) - Decimal(timestamp[0]))*1000000000
-
+            
             try:
+                seq_n = parts[1]
+                t_delta = (Decimal(time_dst) - Decimal(timestamp[0]))*1000000000
+
                 packet_data["sent"] = timestamp[0]
                 packet_data["latency"] = t_delta
                 packet_data["seq"] = seq_n
