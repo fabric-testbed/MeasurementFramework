@@ -6,7 +6,9 @@
     state: "{{ snmp_state }}"
     name: "{{ install_name }}_snmp"
     network_mode: "{{ docker_network_name }}"
-    image: prom/snmp-exporter
+    #image: prom/snmp-exporter
+    # lock down to version 22 because of config file format change
+    image: prom/snmp-exporter:v0.22.0
     #user: 0:0
     volumes:      
         # Add generated snmp.yml file. 
