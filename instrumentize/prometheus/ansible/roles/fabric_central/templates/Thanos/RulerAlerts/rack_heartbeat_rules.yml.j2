@@ -1,35 +1,28 @@
 groups:
-        - name: check test
+        - name: Heartbeat rules
           rules:
 
-                  - alert: AAAAHeartBeatTest
-                    expr: ALERTS{alertname="PrometheusAlertmanagerHeartbeat"} == 1
+                  - alert: RackHeartbeatMissing
+                    expr: absent {alertname="PrometheusAlertmanagerHeartbeat", rack~="amst|atla|brist|cern|clem|dall|fiu|gatech|gpn|hawi|indi|kans|lbnl|losa|mass|max|mich|ncsa|newy|prin|psc|renc|rutg|salt|seat|sri|star|tacc|toky|ucsd|uky|utah|wash"}
                     for: 1m
                     labels:
-                        hearty: "testing"
+                        source: thanos_ruler
+                        fabric_response: mf
                         rack_to_check: "{{ $labels.instance }}"
                         rack_checked: "{{ $labels.rack }}"
                     annotations:
-                        summary: "Checking for heart beat alert. Test, ignore."
-
-
-                  - alert: AAAAHeartBeatMissing
-                    expr: absent( ALERTS{alertname="PrometheusAlertmanagerHeartbeat", rack="non"} )
-                    for: 1m
-                    labels:
-                        hearty: "testing"
-                        rack_to_check: "{{ $labels.instance }}"
-                        rack_checked: "{{ $labels.rack }}"
-                    annotations:
-                        summary: "Checking for heart beat alert. Test, ignore."
+                        summary: "Heartbeat missing for rack {{ $labels.rack }}"
+                        description: "Heartbeat missing for rack {{ $labels.rack }}"
 
 
                   - alert: AlertsUnableToReachAlertmanager
                     expr: increase(prometheus_notifications_errors_tota[1d]) > 0
                     for: 1d
                     labels:
-                        hearty: "testing"
+                        source: thanos_ruler
+                        fabric_response: mf
                         rack_to_check: "{{ $labels.instance }}"
                         rack_checked: "{{ $labels.rack }}"
                     annotations:
-                        summary: "Checking for heart beat alert. Test, ignore."
+                        summary: "{{ $labels.rack }} is not able to reach the Alertmanager."
+                        summary: "{{ $labels.rack }} alerts are not able to reach the Alertmanager."

@@ -175,9 +175,9 @@ thanos_ruler_files: []
   
 
 thanos_alert_rule_template_dir: templates/Thanos/RulerAlerts
-thanos_ruler_templates: []
-#  - ruler_isadj_state.yml
-  
+thanos_ruler_templates: 
+  #- ruler_isadj_state.yml
+  - rack_heartbeat_rules.yml
 
 
 thanos_cert: "{{ host_cert }}"
@@ -371,3 +371,7 @@ absent_isisISAdjState_queries:
   - 'isisISAdjState{instance="192.168.40.3", isisCircIndex="68", isisISAdjIndex="3", job="data-sw-isis", rack="cern"}'
 
   - 'isisISAdjState{instance="192.168.42.3", isisCircIndex="74", isisISAdjIndex="3", job="data-sw-isis", rack="amst"}'
+
+
+absent_ifAdminStatus_queries: []
+  

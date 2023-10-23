@@ -1,8 +1,36 @@
-
+groups:
+        - name: Abscent isisISAdjStates
+          rules:
 
 {% for r in absent_isisISAdjState_queries %}
 
-{{ r }}
+
+                  - alert: isisISAdjStateMissing
+                    expr: absent ( {{ r }} )
+                    for: 15m
+{% raw %}
+                    labels:
+                        thanos_ruler: "testing"
+                        rack_to_check: "{{ $labels.instance }}"
+                        rack_checked: "{{ $labels.rack }}"
+                    annotations:
+                        summary: "ISAdjState missing for rack {{ $labels.rack }}  CircIndex {{ $labels.isisCircIndex }}, AdjIndex {{ $labels.isisISAdjIndex }}"
+                        description: "ISAdjState missing for rack {{ $labels.rack }} CircIndex {{ $labels.isisCircIndex }}, AdjIndex {{ $labels.isisISAdjIndex }}"
+{% endraw %}
+
+
+                  - alert: isisISAdjStateDown
+                    expr:  {{ r }}  != 3
+                    for: 15m
+{% raw %}
+                    labels:
+                        thanos_ruler: "testing"
+                        rack_to_check: "{{ $labels.instance }}"
+                        rack_checked: "{{ $labels.rack }}"
+                    annotations:
+                        summary: "ISAdjState Down (not up) for rack {{ $labels.rack }}  CircIndex {{ $labels.isisCircIndex }}, AdjIndex {{ $labels.isisISAdjIndex }}"
+                        description: "ISAdjState Down (not up) for rack {{ $labels.rack }} CircIndex {{ $labels.isisCircIndex }}, AdjIndex {{ $labels.isisISAdjIndex }}"
+{% endraw %}
 
 {% endfor %}
 
