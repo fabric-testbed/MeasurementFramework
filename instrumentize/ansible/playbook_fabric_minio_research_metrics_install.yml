@@ -1,0 +1,10 @@
+---
+# Level 2 Metrics
+# Creating the Research Metrics Minio.
+- hosts: research-metrics
+
+  roles:
+    - role: ../minio/ansible/roles/central
+      vars:
+        install_name: research-metrics-minio
+    

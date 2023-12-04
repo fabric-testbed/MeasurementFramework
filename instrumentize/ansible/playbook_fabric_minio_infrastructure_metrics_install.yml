@@ -1,0 +1,10 @@
+---
+# Level 1 Metrics
+# Creating the Infrastructure Metrics Minio.
+- hosts: infra-metrics
+
+  roles:
+    - role: ../minio/ansible/roles/central
+      vars:
+        install_name: infrastructure-metrics-minio
+    
