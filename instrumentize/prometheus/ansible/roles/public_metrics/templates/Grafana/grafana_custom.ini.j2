@@ -67,6 +67,6 @@ level = debug
 #    access to other resources
 #data_source_proxy_whitelist = {{ install_name }}_thanos_query:10922,loki_fab_loki_1:3100
 #data_source_proxy_whitelist = {{ install_name }}_thanos_query:10922,{{ install_name }}_loki:3100,dev-metrics.fabric-testbed.net:3100,fabric_loki:3100,metrics.fabric-testbed.net:3100
-
+#################### TODO ADD MIMIR ACCESS ONLY ?? or keep prometheus also? ##################
 # Allow the setting of admin account name to something else
 admin_user = {{ grafana_admin_user | default("admin")}}

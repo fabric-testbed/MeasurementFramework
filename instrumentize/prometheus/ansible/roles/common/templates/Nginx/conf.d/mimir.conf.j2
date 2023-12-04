@@ -1,0 +1,12 @@
+# Mimir
+
+    server {
+        listen 9009 ssl http2;
+        listen [::]:9009 ssl http2;
+
+
+        include /etc/nginx/ssl_snippet.conf;
+        location / {
+            proxy_pass http://{{ install_name }}_mimir:8080;
+        }
+    }
