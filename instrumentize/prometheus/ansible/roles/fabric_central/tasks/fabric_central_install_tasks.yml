@@ -31,8 +31,6 @@
   #become: yes 
   ansible.builtin.pip: 
     # bycrypt is no longer needed -  mdf is being used instead. encrypted starts with $apr1$
-    # Confusion if bycrypt is still needed for htaccess
-    #name: passlib[bcrypt]
     name: passlib
     executable: pip3
     state: present
