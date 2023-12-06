@@ -17,7 +17,7 @@ RUN git clone --branch owl-main  https://github.com/fabric-testbed/MeasurementFr
 RUN mkdir /owl_output
 RUN mkdir /owl_config
 RUN gcc -fPIC -shared -o /MeasurementFramework/user_services/owl/owl/sock_ops/time_ops/ptp_time.so \
-	/MeasurementFramework/user_services/owl/owl/sock_ops/time_ops/ptp_time.c
+	/MeasurementFramework/user_services/owl/owl/sock_ops/ptp_time.c
 RUN ls -l /
 
 WORKDIR /MeasurementFramework/user_services/owl/owl
