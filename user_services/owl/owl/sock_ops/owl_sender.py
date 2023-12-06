@@ -2,9 +2,9 @@ import os
 import sys
 import socket
 import time
-import json
 import argparse
-from time_ops import ptp
+from threading import Timer
+import ptp 
 
 #######
 # Timer part:
@@ -12,11 +12,10 @@ from time_ops import ptp
 # By https://github.com/MestreLion
 #######
 
-from threading import Timer
 
-class UDP_sender(object):
+class OwlSender():
     def __init__(self, interval, dst_ip, dst_port, start_num, 
-                 ptp_so_file=None, sys_clock=False):
+                 ptp_so_file="ptp_time.so", sys_clock=False):
         
         if sys_clock:
             self.ptp_device = None
@@ -43,14 +42,14 @@ class UDP_sender(object):
         start="-s"
         end=" -c CLOCK_REALTIME"
         
-        if (end in result):
+        if end in result:
             sindex= result.rfind(start)
             eindex= result.rfind(end)
             device = result[sindex+3:eindex].strip()   
-            return (device)
+            return device
 
-        else:
-            sys.exit("Cannot find running ptp device")
+        # else
+        sys.exit("Cannot find running ptp device")
 
 
     def _run(self):
@@ -67,8 +66,8 @@ class UDP_sender(object):
                                 device_name = self.ptp_device,
                                 so_file=self.ptp_so_file)
 
-        MESSAGE = f"{current_timestamp},{str(self.seq_n)}"
-        self.sock.sendto(MESSAGE.encode(), (self.dst_ip, self.dst_port))
+        create_timestamp = f"{current_timestamp},{str(self.seq_n)}"
+        self.sock.sendto(create_timestamp.encode(), (self.dst_ip, self.dst_port))
         self.seq_n = self.seq_n + 1
 
 
@@ -96,11 +95,11 @@ if __name__ == "__main__":
                         help='destination port')
     parser.add_argument("--frequency", type=float, default=0.5,
                         help="second interval at which probe packet will be sent")
-    parser.add_argument("--seq-n", type=int, default=1234,
+    parser.add_argument("--seq-n", type=int, default=1234, 
                         help="initial sequence number")
-    parser.add_argument("--duration", type=int, default=60,
+    parser.add_argument("--duration", type=int, default=None, 
                         help="number of seconds to run")
-    parser.add_argument("--ptp-so-file", type=str, default="./time_ops/ptp_time.so", 
+    parser.add_argument("--ptp-so-file", type=str, default="ptp_time.so", 
                         help='path to ptp_time.so file.')
     parser.add_argument("--sys-clock", action=argparse.BooleanOptionalAction,
                         help='uses Python time module (mostly for debugging)')
@@ -111,16 +110,16 @@ if __name__ == "__main__":
     dest_ip = args.dest_ip
     dest_port = args.dest_port
     seq_n = args.seq_n
-    duration = args.duration
     ptp_so_file = args.ptp_so_file
     sys_clock = args.sys_clock
 
-    owl_sender = UDP_sender(send_interval, dest_ip, dest_port, seq_n, 
+    owl_sender = OwlSender(send_interval, dest_ip, dest_port, seq_n, 
                             ptp_so_file, sys_clock)
-    try:
-        time.sleep(duration) # function should run during this time
-    finally:
-        owl_sender.stop()
 
-
-
+    if args.duration:
+        duration = args.duration
+        
+        try:
+            time.sleep(duration) # function should run during this time
+        finally:
+            owl_sender.stop()
