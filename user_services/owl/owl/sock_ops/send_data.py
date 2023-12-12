@@ -131,11 +131,11 @@ if __name__ == "__main__":
                         help="path/to/the/pcap/file")
     parser.add_argument("--verbose", "-v", action='store_true', 
                         help="verbose(print packet info)")
-    parser.add_argument("--token", type=str, help="influxdb token (str)")
-    parser.add_argument("--org", type=str, help="influxdb org name (str)")
-    parser.add_argument("--url", type=str, help="influxdb url (str)")
-    parser.add_argument("--desttype", type=str, help="destination type (cloud or MN) (str)")
-    parser.add_argument("--bucket", type=str, help="influxdb bucket name (str)")
+    parser.add_argument("--token", type=str, help="InfluxDB token (str)")
+    parser.add_argument("--org", type=str, help="InfluxDB organization name (str)")
+    parser.add_argument("--url", type=str, help="InfluxDB URL (str)")
+    parser.add_argument("--desttype", type=str, help="Destination for InfluxDB data. Either 'cloud' for the Cloud instance, or 'meas_node' for the Measurement Node (str)")
+    parser.add_argument("--bucket", type=str, help="InfluxDB bucket name (str)")
     
     args = parser.parse_args()
     
