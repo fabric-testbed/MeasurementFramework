@@ -13,6 +13,8 @@ RUN apt-get update && \
 RUN pip install --upgrade pip
 RUN pip install --pre scapy[basic]
 RUN pip install --upgrade psutil
+RUN pip install influxdb3-python
+
 RUN git clone --branch owl-main  https://github.com/fabric-testbed/MeasurementFramework.git
 RUN mkdir /owl_output
 RUN mkdir /owl_config
