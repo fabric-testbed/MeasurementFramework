@@ -11,6 +11,8 @@ import influxdb_client
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 
+import influxdb_client_3
+
 '''
 Script for reading/tailing a pcap file, convert the relevant contents to ASCII, 
 and send data to InfluxDB. Intended for live-monitoring of OWL data.
@@ -22,13 +24,15 @@ InfluxDB Python client:
 
 
 def parse_and_send(pcap_file, verbose=False, influxdb_token=None, 
-    influxdb_org=None, influxdb_url=None, influxdb_bucket=None):
+    influxdb_org=None, influxdb_url=None, influxdb_bucket=None, influxdb_desttype="meas_node"):
 
     # InfluxDB set up
-    write_client = influxdb_client.InfluxDBClient(url=influxdb_url, 
+    if influxdb_desttype == "cloud":
+        write_client = influxdb_client_3.InfluxDBClient3(host=influxdb_url, token=influxdb_token, org=influxdb_org)    # For cloud push only.
+    elif influxdb_desttype == "meas_node":
+        write_client = influxdb_client.InfluxDBClient(url=influxdb_url, 
                                 token=influxdb_token, org=influxdb_org)
-    write_api = write_client.write_api(write_options=SYNCHRONOUS)
-
+        write_api = write_client.write_api(write_options=SYNCHRONOUS)
 
     # Continuously read the end of a pcap file
     cmd = f'tail -c +1 -f {pcap_file} | tcpdump -A -tt -n -l -r -'
@@ -89,17 +93,28 @@ def parse_and_send(pcap_file, verbose=False, influxdb_token=None,
             if all_non_empty:
                 # If all values are there, push the data to InfluxDB
 
-                point = (Point("owl")
-                        .tag("sender", packet_data["sender"])
-                        .tag("receiver", packet_data["receiver"])
-                        .field("received", float(packet_data["received"]))
-                        .field("latency", int(packet_data["latency"]))
-                        .field("seq_n", int(packet_data["seq"]))
-                        .time(int(packet_data["sent_ns"]), 
-                        write_precision=WritePrecision.NS)
-                        )        
-
-                write_api.write(bucket=influxdb_bucket, org=org, record=point)
+                # Cloud push requires different InfluxDB client module. 
+                if desttype == "meas_node":
+                    point = (Point("owl")
+                            .tag("sender", packet_data["sender"])
+                            .tag("receiver", packet_data["receiver"])
+                            .field("received", float(packet_data["received"]))
+                            .field("latency", int(packet_data["latency"]))
+                            .field("seq_n", int(packet_data["seq"]))
+                            .time(int(packet_data["sent_ns"]), 
+                            write_precision=WritePrecision.NS)
+                            )        
+                    write_api.write(bucket=influxdb_bucket, org=org, record=point)
+                elif desttype == "cloud":
+                    point = (influxdb_client_3.Point("owl")
+                            .tag("sender", packet_data["sender"])
+                            .tag("receiver", packet_data["receiver"])
+                            .field("received", float(packet_data["received"]))
+                            .field("latency", int(packet_data["latency"]))
+                            .field("seq_n", int(packet_data["seq"]))
+                            .time(int(packet_data["sent_ns"]) 
+                            ))        
+                    write_client.write(database=influxdb_bucket, record=point)
 
             else:
                 # Do not send incomplete entries to InfluxDB
@@ -116,10 +131,11 @@ if __name__ == "__main__":
                         help="path/to/the/pcap/file")
     parser.add_argument("--verbose", "-v", action='store_true', 
                         help="verbose(print packet info)")
-    parser.add_argument("--token", type=str, help="influxdb token (str)")
-    parser.add_argument("--org", type=str, help="influxdb org name (str)")
-    parser.add_argument("--url", type=str, help="influxdb url (str)")
-    parser.add_argument("--bucket", type=str, help="influxdb bucket name (str)")
+    parser.add_argument("--token", type=str, help="InfluxDB token (str)")
+    parser.add_argument("--org", type=str, help="InfluxDB organization name (str)")
+    parser.add_argument("--url", type=str, help="InfluxDB URL (str)")
+    parser.add_argument("--desttype", type=str, help="Destination for InfluxDB data. Either 'cloud' for the Cloud instance, or 'meas_node' for the Measurement Node (str)")
+    parser.add_argument("--bucket", type=str, help="InfluxDB bucket name (str)")
     
     args = parser.parse_args()
     
@@ -129,9 +145,7 @@ if __name__ == "__main__":
     org = args.org
     url = args.url
     bucket = args.bucket
+    desttype = args.desttype
 
     parse_and_send(pcap_file, verbose=verbose, influxdb_token=token, influxdb_org=org, 
-                    influxdb_url=url, influxdb_bucket=bucket)
-
-
-
+                    influxdb_url=url, influxdb_bucket=bucket, influxdb_desttype=desttype)
