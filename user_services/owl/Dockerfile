@@ -16,6 +16,7 @@ RUN pip install influxdb-client
 RUN pip install --upgrade psutil
 RUN pip install requests
 RUN pip install influxdb3-python
+RUN pip install pandas
 
 RUN git clone --branch owl-main  https://github.com/fabric-testbed/MeasurementFramework.git
 RUN mkdir /owl_output
