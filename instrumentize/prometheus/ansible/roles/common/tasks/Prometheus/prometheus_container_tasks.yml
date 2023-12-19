@@ -39,6 +39,7 @@
       - '--web.enable-lifecycle'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-admin-api'
       # breaks connection to sidecar - '--web.external-url={{ ansible_host }}'  # This maybe correct for fabric racks etc, but maybe not for other cases
     restart_policy: always
 
