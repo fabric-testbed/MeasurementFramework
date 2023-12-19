@@ -94,27 +94,32 @@ def parse_and_send(pcap_file, verbose=False, influxdb_token=None,
                 # If all values are there, push the data to InfluxDB
 
                 # Cloud push requires different InfluxDB client module. 
-                if desttype == "meas_node":
-                    point = (Point("owl")
-                            .tag("sender", packet_data["sender"])
-                            .tag("receiver", packet_data["receiver"])
-                            .field("received", float(packet_data["received"]))
-                            .field("latency", int(packet_data["latency"]))
-                            .field("seq_n", int(packet_data["seq"]))
-                            .time(int(packet_data["sent_ns"]), 
-                            write_precision=WritePrecision.NS)
-                            )        
-                    write_api.write(bucket=influxdb_bucket, org=org, record=point)
-                elif desttype == "cloud":
-                    point = (influxdb_client_3.Point("owl")
-                            .tag("sender", packet_data["sender"])
-                            .tag("receiver", packet_data["receiver"])
-                            .field("received", float(packet_data["received"]))
-                            .field("latency", int(packet_data["latency"]))
-                            .field("seq_n", int(packet_data["seq"]))
-                            .time(int(packet_data["sent_ns"]) 
-                            ))        
-                    write_client.write(database=influxdb_bucket, record=point)
+                # The try/except block ensures that any prev failure in forming
+                # packet_data causes program to not write out data.
+                try:
+                    if desttype == "meas_node":
+                        point = (Point("owl")
+                                .tag("sender", packet_data["sender"])
+                                .tag("receiver", packet_data["receiver"])
+                                .field("received", float(packet_data["received"]))
+                                .field("latency", int(packet_data["latency"]))
+                                .field("seq_n", int(packet_data["seq"]))
+                                .time(int(packet_data["sent_ns"]), 
+                                write_precision=WritePrecision.NS)
+                                )        
+                        write_api.write(bucket=influxdb_bucket, org=org, record=point)
+                    elif desttype == "cloud":
+                        point = (influxdb_client_3.Point("owl")
+                                .tag("sender", packet_data["sender"])
+                                .tag("receiver", packet_data["receiver"])
+                                .field("received", float(packet_data["received"]))
+                                .field("latency", int(packet_data["latency"]))
+                                .field("seq_n", int(packet_data["seq"]))
+                                .time(int(packet_data["sent_ns"]) 
+                                ))        
+                        write_client.write(database=influxdb_bucket, record=point)
+                except Exception as e:
+                    print(e)
 
             else:
                 # Do not send incomplete entries to InfluxDB
