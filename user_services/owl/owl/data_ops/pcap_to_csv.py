@@ -7,7 +7,7 @@ import datetime
 import argparse
 
 
-def convert_pcap_to_csv(pcapfile, outfile="owl_output.csv", verbose=Fales):
+def convert_pcap_to_csv(pcapfile, outfile="owl_output.csv", verbose=False):
 
     pkts=rdpcap(pcapfile)
     print(f"reading... {pcapfile}")
