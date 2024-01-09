@@ -1,9 +1,5 @@
 import subprocess
 import time
-import os
-import signal
-import re
-from decimal import *
 import argparse
 import psutil
 
@@ -17,6 +13,7 @@ class TcpdumpOps:
         
         self.interface = self.find_interface(ip_addr)
         self.port = port
+        self.p = None
 
 
     def start_capture(self, outfile=None, pcap_interval=None):
@@ -38,6 +35,7 @@ class TcpdumpOps:
         print("pcap file: ", outfile)
 
         self.p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+
         print("Pid: ", self.p.pid)
        
         # without this, capturer may exit (when sender is not running)
@@ -75,7 +73,7 @@ if __name__ == "__main__":
                         help="number of capture seconds for each pcap file")
     parser.add_argument("--outfile", type=str, default="/owl_output/owl.pcap",
                         help="path/to/output/file")
-    parser.add_argument("--duration", type=int, default=60,
+    parser.add_argument("--duration", type=int, default=None,
                         help="number of seconds to run capture")
 
 
@@ -84,12 +82,13 @@ if __name__ == "__main__":
     port = args.port
     interval_pcap = args.pcap_sec
     outfile = args.outfile
-    sec = args.duration 
-
 
     session = TcpdumpOps(ip_addr, port)
     session.start_capture(outfile, interval_pcap)
     
-    time.sleep(sec)
-    session.stop()
+    if args.duration:
+        sec = args.duration 
+        
+        time.sleep(sec)
+        session.stop()
 

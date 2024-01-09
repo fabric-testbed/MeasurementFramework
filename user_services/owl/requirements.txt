@@ -1,4 +1,4 @@
-ansible==7.0.0
+ansible==9.1.0
 ansible-base==2.10.17
 ansible-core==2.14.5
 appdirs==1.4.4
@@ -7,13 +7,14 @@ cffi==1.15.0
 cryptography==41.0.6
 influxdb-client==1.36.1
 Jinja2==3.0.3
-lxml==4.9.2
 MarkupSafe==2.1.1
+mccabe==0.7.0
 packaging==21.3
+platformdirs==4.1.0
 psutil==5.9.4
 pycparser==2.21
+pylint==3.0.2
 pyparsing==3.0.7
-pyshark==0.6
 python-dateutil==2.8.2
 PyYAML==6.0
 reactivex==4.0.4
