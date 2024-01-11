@@ -6,6 +6,17 @@
   debug: 
     msg: "!!!!!!!!!!!!!Setting up Public metrics {{ install_name }} at {{ ansible_host }}.!!!!!!!!!!!!!"
 
+
+# - name: Test network minio 
+#   include_tasks: Minio/minio_setup_tasks.yml
+#   # vars:
+#   #   base_install_dir: "{{ minio_base_install_dir }}"
+#   #   base_data_dir: "{{ minio_base_install_dir }}"
+
+# - name: get out
+#   fail:
+#     msg: quitting
+
 # - name: Python version
 #   debug:
 #     msg: "{{ ansible_python_interpreter }}"
@@ -37,7 +48,7 @@
 ####################
 #  DOCKER NETWORK  #
 ####################
-# note that taking down the network may affect other containers added by other scripts 
+# Created network will be external to the created docker-compose
 - name: Setup the docker network to be used by the monitoring containers.
   include_tasks: setup_tasks/setup_docker_ipv6_network_tasks.yml
 
@@ -60,12 +71,12 @@
 
 
 ##############################
-#  Setup OPT/DATA Directory  #
+#  Mount OPT/DATA Directory  #
 ##############################
 - name: Setup OPT/DATA Directory
   block:
   - name: Create and mount data dir
-    import_tasks: create_mount_data_dir_tasks.yml
+    import_tasks: Minio/create_mount_data_dir_tasks.yml
   when: 
     - mount_data_drive is defined 
     - mount_data_drive #== yes
@@ -78,6 +89,16 @@
 - name: Setup user for promtheus monitoring system
   # Create a user to setup all the fab monitoring stuff under.
   include_tasks: setup_tasks/create_prom_user_tasks.yml
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -120,7 +141,6 @@
 #################
 #   BASE DIRs   #
 #################
-##### since minio is separate this should be changed to standard fab-prom ser
 - name: Create Base Directories 
   block:
 
@@ -137,6 +157,30 @@
   - name: Create Data Directory
     file: 
       path: "{{ base_data_dir }}"
+      recurse: yes
+      state: directory 
+      mode: 0755
+      owner: "{{ prom_user_name }}"
+      group: "{{ prom_group_name }}"
+    become: yes
+
+
+
+################
+#    MinIO     #
+################
+
+
+#################
+#  MINIO DIRs   #
+#################
+# Currently only need data directory
+- name: Create Minio Directories 
+  block:
+
+  - name: Create Data Directory for Minio
+    file: 
+      path: "{{ base_data_dir }}/minio/data"
       recurse: yes
       state: directory 
       mode: 0755

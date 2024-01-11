@@ -6,67 +6,33 @@ root_url = https://%(domain)s/grafana
 # for grafana 10
 serve_from_sub_path = false 
 
+
+[users]
+# let the users use explore (can also edit dashboards but cannot save them)
+viewers_can_edit = true 
+
+
 [auth]
 # Required for cilogon to look up user by email. Feature was disabled in grafana 10
-oauth_allow_insecure_email_lookup = true 
+#oauth_allow_insecure_email_lookup = true 
 
-[auth.generic_oauth]
-{% if grafana_oauth_client_id is defined %}
-enabled = true
-client_id = {{ grafana_oauth_client_id }}
-client_secret = {{ grafana_oauth_client_secret }}
-scopes = openid profile email org.cilogon.userinfo
-auth_url = https://cilogon.org/authorize
-token_url = https://cilogon.org/oauth2/token
-api_url = https://cilogon.org/oauth2/userinfo
+#[auth.anonymous]
+#enabled = true 
+## default to only one  org_name = 
+#org_role = Viewer
+## not sure why to hide version? simplify interface or prevent hackers getting version?
+#hide_version = true 
 
-allow_sign_up = false
-tls_skip_verify_insecure = true
-tls_client_cert = /etc/grafana/certs/cert
-tls_client_key = /etc/grafana/certs/key
-
-
-# There is a pull request change at https://github.com/grafana/grafana/pull/28021 it will add the ability to not let users with a role log in.
-# However it has been put on hold until version 8.0 is released. They are on 7.4 at the moment.
-# can't deny a user any role.. the will always be a view! push request is in but has been blocked
-
-#role_attribute_path = contains(project_roles[*], 'CO:COU:facility-operators:members:active') && 'Admin' || contains(profile[*], "CO:COU:metrics:members:active") && 'Admin' || 'Viewer'
-# For now anyone who can get into the grafana should be able to edit. 
-#role_attribute_path = contains(project_roles[*], 'CO:COU:facility-operators:members:active') && 'Admin' || contains(profile[*], "CO:COU:metrics:members:active") && 'Admin' || 'Editor'
-
-{% endif %}
-
-[smtp]
-
-# No longer use grafana email alerts 
-# CHANGEME is place holder for former hank_name var 
-#enabled = true
-#host = mail.fabric-testbed.net:25
-#from_address = no-reply_CHANGEME_alerts@metrics.fabric-testbed.net
-#from_name = CHANGEME Grafana Alert
-#skip_verify = true
-#ehlo_identity = metrics.fabric-testbed.net
-#startTLS_policy = “MandatoryStartTLS”
-#user =
-#password =
-
-#enabled = false
-#host = mail.fabric-testbed.net:25
-#from_address = alerts@metrics.<your rack>.fabric-testbed.net
-#from_name = <your rack name> Grafana Alert
-#user = <your email user>
-#password = <your email password>
 
 [log]
 level = debug
 
-
 [security]
-
 # Only allow the one datasource to prevent someone from trying to gain 
 #    access to other resources
 #data_source_proxy_whitelist = {{ install_name }}_thanos_query:10922,loki_fab_loki_1:3100
 #data_source_proxy_whitelist = {{ install_name }}_thanos_query:10922,{{ install_name }}_loki:3100,dev-metrics.fabric-testbed.net:3100,fabric_loki:3100,metrics.fabric-testbed.net:3100
 #################### TODO ADD MIMIR ACCESS ONLY ?? or keep prometheus also? ##################
+
 # Allow the setting of admin account name to something else
 admin_user = {{ grafana_admin_user | default("admin")}}

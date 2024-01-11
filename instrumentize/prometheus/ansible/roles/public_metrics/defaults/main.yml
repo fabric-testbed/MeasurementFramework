@@ -8,11 +8,6 @@ ansible_python_interpreter: python3
 alertmanager_port: 9093    
 
 
-
-
-
-
-
 prom_user_name: fab-prom
 prom_group_name: fab-prom
 
@@ -34,14 +29,17 @@ minio_port: 9000
 minio_console_port: 9099
 
 
-
 ####################
 #     Grafana      #
 ####################
 
 grafana_files_dir: files/Grafana
-# grafana_plugin_files: 
+grafana_plugin_files: [] 
 #   - flant-statusmap-panel-v0.4.1.tar
+
+grafana_datasource_template_files:
+  - grafana_local_prometheus_datasource.yml
+  - grafana_local_mimir_datasource.yml
 
 grafana_templates_dir: templates/Grafana
 
@@ -51,10 +49,10 @@ grafana_user_name: grafana
 grafana_user_id: 472
 grafana_group_name: root  
 
-grafana_datasource_template_files: 
+#grafana_datasource_template_files: 
   # Note can only use one default datasorce.
   #- grafana_local_prometheus_datasource.yml
-  - grafana_thanos_datasource.yml
+  #- grafana_thanos_datasource.yml
 
 
 # TODO change these values
@@ -76,6 +74,8 @@ prometheus_config_template_files:
 prometheus_config_files: []
   # need default var even if empty
 
+
+
 prometheus_secrets: []
 
 
@@ -89,6 +89,8 @@ nginx_ip_ports:
   #- 10902:10902   # thanos sidecar stats
   ##- 10901:10901 # thanos sidecar 
   - 9009:9009  # mimir
+  - 9000:9000 # minio s3
+  - 9099:9099 # minio web ui
   
 nginx_template_dir: templates/Nginx
 
@@ -96,7 +98,7 @@ nginx_server_confd_template_files:
   - mimir.conf
   - prometheus_dual.conf
   - grafana_dual_web_sockets.conf
-  #- thanos_sidecar_grpc.conf
+  - public_minio.conf
 
 nginx_config_template_files:
   - ssl_snippet.conf
