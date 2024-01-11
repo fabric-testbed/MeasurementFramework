@@ -1,8 +1,0 @@
----
-# Level 1 Metrics
-# Creating the Fabric Infrastructure Metrics Containers (minus minio).
-- hosts: infra-metrics
-
-  roles:
-    - role: ../prometheus/ansible/roles/public_metrics
-

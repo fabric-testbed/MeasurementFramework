@@ -4,7 +4,7 @@
 - hosts: infra-metrics
 
   roles:
-    - role: ../minio/ansible/roles/central
+    - role: ../../minio/ansible/roles/central
       vars:
         install_name: infrastructure-metrics-minio
     
