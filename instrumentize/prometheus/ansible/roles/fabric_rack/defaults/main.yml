@@ -1,8 +1,11 @@
 ---
 # This file contains the common default variables that are the same for all racks.
 
+ansible_python_interpreter: "/bin/python3"
+
+
 # empty value to be filled in later if needed
-extra_node_hosts: {}
+extra_node_hosts: []
 
 install_node_exporters: yes
 
@@ -77,33 +80,11 @@ alert_rule_files:
 recording_rule_file_dir: files/recording_rules
 
 # Default recording rules for a rack
-recording_rule_files:
-  - isis_rules.yml
-
-
-####################
-# Container States #
-####################
-
-# snmp_state: absent
-# blackbox_state: absent
-# docker_exporter_state: absent
-# prometheus_state: absent
-# nginx_state: absent
-# thanos_sidecar_state absent
-
-
-snmp_state: started
-blackbox_state: started
-docker_exporter_state: started
-prometheus_state: started
-nginx_state: started
-thanos_sidecar_state: started
+recording_rule_files: []
 
 ####################
 #   Alertmanager   #
 ####################
-#alertmanager_url: 192.128.12.238:9093
 alertmanager_url: metrics.fabric-testbed.net:9093
 
 ####################
@@ -112,7 +93,7 @@ alertmanager_url: metrics.fabric-testbed.net:9093
 thanos_templates_dir: templates/Thanos
 thanos_config_templates:
   - object_store_config.yml
-  # NOTE needs the CEPH vars contained in *_private_vars.yml
+  # NOTE needs s3 key vars contained in group_vars/all
 
 thanos_cert: "{{ host_cert }}"
 thanos_key: "{{ host_key }}"
