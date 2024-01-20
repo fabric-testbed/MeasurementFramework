@@ -2,6 +2,31 @@
 
 
 
+# - name: Install docker Python SDK
+#   ansible.builtin.pip:
+#     name: docker 
+#     executable: pip3
+#     state: present
+#   become: yes
+
+# # - name: Install requests for Python docker SDK
+# #   ansible.builtin.pip:
+# #     name: requests 
+# #     executable: pip3.9
+# #     state: absent
+
+
+# # needed on remote for htpasswd
+# - name: passlib
+#   #become: yes 
+#   ansible.builtin.pip: 
+#     # bycrypt is no longer needed -  mdf is being used instead. encrypted starts with $apr1$
+#     name: passlib
+#     executable: pip3
+#     state: present
+#   become: yes
+
+
 # Sanity Check
 # - name: Sanity Check
 #   pause:
@@ -24,7 +49,7 @@
 - name: set_etc_var
   # Create etc/hosts entries in the Prometheus Container for the rack nodes that will have node exporters running. This makes labeling in Grafaan easier.
   set_fact:
-    extra_node_hosts: "{{ extra_node_hosts | combine({ hostvars[item].hostname : hostvars[item].ansible_host }) }}"
+    extra_node_hosts: "{{ extra_node_hosts | combine([{ hostvars[item].hostname : hostvars[item].ansible_host }]) }}"
   with_items: "{{ groups[hank_name] }}"
 
 ####################     
@@ -36,21 +61,23 @@
 
 
 
-####################
-# Remove all previous monitoring docker containers #
-####################
-- name: Remove containers
-  include_tasks: container_tasks/remove_docker_container_tasks.yml
-  vars:
-    containers_to_act_on: 
-      - prometheus
-      - grafana
-      - nginx
-      - thanos_sidecar
-      - alertmanager
-      - blackbox
-      - docker_exporter
-      - snmp
+##############################
+#  Stop the Docker Compose   #
+##############################
+
+- name: Stop Docker Compose 
+  block:
+  - name: Check if docker-compose.yml exists 
+    stat: 
+      path: "{{ base_install_dir }}/docker-compose.yml"
+    register: docker_compose_file_status
+
+  - name: Stop Docker compose file
+    shell: docker-compose down 
+    args:
+      chdir: "{{ base_install_dir }}"
+    when: docker_compose_file_status.stat.exists
+
 
 
 ####################
@@ -125,10 +152,7 @@
   - name: Setup Promtheus Config Files
     include_tasks: Prometheus/add_prometheus_config_files.yml
 
-  - name: Prometheus Container
-    # 3. Start docker container
-    include_tasks: Prometheus/prometheus_container_tasks.yml
-  
+
 ####################
 #     THANOS       #
 ####################
@@ -140,30 +164,6 @@
     - name: Thanos Configs
       include_tasks: Thanos/add_thanos_config_templates_tasks.yml
       # See vars for templates used
-
-- name: Thanos Containers
-  block:        
-    - name: Thanos Sidecar
-      include_tasks: Thanos/thanos_sidecar_container_tasks.yml
-      # For a rack we are just starting up sidecar.
-
-#  May add this later for high availablility for Alert manager
-# ####################
-# #  ALERTMANAGER    #
-# ####################  
-#     - name: Setup Alertmanager
-#       block: 
-#         - name: Alertmanager Directories
-#           include_tasks: Alertmanager/setup_alertmanager_directories_tasks.yml
-
-#         - name: Alertmanager Config
-#           include_tasks: Alertmanager/config_alertmanager_tasks.yml
-
-#         - name: Alertmanager Container
-#           include_tasks: Alertmanager/alertmanager_container_tasks.yml
-#       vars:
-#         alertmanager_template_dir: templates/geni_slice
-#         alertmanager_state: started
 
 ####################
 # SNMP EXPORTER    #
@@ -180,8 +180,6 @@
     - name: SNMP Config from fragments 
       include_tasks: SNMPExporter/combine_snmp_config_task.yml
       
-    - name: SNMP Container 
-      include_tasks: SNMPExporter/snmp_exporter_container_tasks.yml
 ####################
 # BLACKBOX EXPORTER #
 ####################
@@ -193,15 +191,6 @@
     - name: Blackbox Config 
       include_tasks: Blackbox/config_blackbox_tasks.yml
 
-    - name: Blackbox Container 
-      include_tasks: Blackbox/blackbox_container_tasks.yml
-####################
-# DOCKER EXPORTER  #
-####################
-- name: Setup Docker Exporter
-  block:
-    - name: Docker Exporter Container 
-      include_tasks: DockerExporter/docker_exporter_container_tasks.yml
 
 ####################
 #     NGINX        #
@@ -234,18 +223,27 @@
 
   when: true
 
-- name: NGNIX Container
-  include_tasks: Nginx/nginx_container_tasks.yml
 
+##############################
+#  Create Docker Compose     #
+##############################
 
-# Ensure that all of the containers are actually up and running
-- name: Ensure all the containers are up and running.
-  include_tasks: container_tasks/inspect_container_tasks.yml 
-  with_items:
-      - prometheus
-      - nginx
-      - thanos_sidecar
-      - blackbox
-      - docker_exporter
-      - snmp
+- name: Add Docker Compose file 
+  block:
+    - name: Create docker-compose.yml 
+      template:
+        src: "templates/DockerCompose/docker_compose_complete.yml.j2"
+        dest: "{{ base_install_dir }}/docker-compose.yml"
+  become: yes
+
+##############################
+#  Start Docker Compose      #
+##############################
+
+- name: Start Docker Compose 
+  block:
+  - name: Start Docker compose file
+    shell: docker-compose up -d
+    args:
+      chdir: "{{ base_install_dir }}"
 

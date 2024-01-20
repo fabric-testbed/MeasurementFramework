@@ -52,21 +52,6 @@
 #     - install_type == 'fabric_rack' 
 
 
-
-# ##############################
-# #     Docker Exporter        #
-# ##############################
-# - name: Install worker node docker monitoring 
-#   # need each worker node to have docker network and exporter
-#   block:
-#   - name: Install worker docker monitoring
-#     import_tasks: monitored_node_tasks.yml
-#     when: 
-#       component_type == 'worker'
-#   when: 
-#     - install_type is defined
-#     - install_type == 'fabric_rack' 
-
 # OK
 ##############################
 # Setup VPN Ping Configs     #
@@ -86,5 +71,8 @@
     - component_type == 'head'
     - set_vpn_pings is defined
     - set_vpn_pings #== yes
+
+
+
 
 
