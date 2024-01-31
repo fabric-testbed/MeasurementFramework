@@ -1,6 +1,19 @@
 ---
 
 
+
+############################
+# Get Remote Write Configs #
+############################
+
+- name: Get Parsed Files 
+  import_tasks: get_mf_parser_files_tasks.yml
+  delegate_to: 127.0.0.1
+  when: component_type == 'head'
+  tags:
+  - clone_mf_parsers
+
+
 # OK
 ##############################
 #  Fabric Rack Prometheus    #
