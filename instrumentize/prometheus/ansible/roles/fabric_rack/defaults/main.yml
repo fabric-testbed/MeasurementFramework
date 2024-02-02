@@ -62,19 +62,53 @@ prometheus_config_files: []
  
 alert_rule_file_dir: files/alert_rules
 
+
+
 # Default alert rules for a rack
-alert_rule_files:
+# Have 2 options depending on the rack having PTP server
+alert_rule_files_part_without_ptp:
+  - alert_alert_rules.yml
+  - cadvisor_alert_rules.yml
   - dns_alert_rules.yml
-  - docker_alert_rules.yml
   - mail_alert_rules.yml
-  - network_alert_rules.yml
   - node_alert_rules.yml
   - prometheus_alert_rules.yml
- # - ssl_alert_rules.yml
   - time_alert_rules.yml
   # vpn ping only needed on uky/renc racks but do no harm if on others
   - vpn_ping_alert_rules.yml
- # - web_site_alert_rules.yml
+  #- ptp_time_alert_rules.yml
+
+alert_rule_files_part_with_ptp:
+  - alert_alert_rules.yml
+  - cadvisor_alert_rules.yml
+  - dns_alert_rules.yml
+  - mail_alert_rules.yml
+  - node_alert_rules.yml
+  - prometheus_alert_rules.yml
+  - time_alert_rules.yml
+  # vpn ping only needed on uky/renc racks but do no harm if on others
+  - vpn_ping_alert_rules.yml
+  - ptp_time_alert_rules.yml
+
+alert_rule_files:  "{% if hostvars[hank_name + '-time'] is defined and 'ansible_host' in (hostvars[hank_name + '-time']).keys() %}  {{alert_rule_files_part_with_ptp}}  {% else %} {{alert_rule_files_part_without_ptp}} {% endif %}"
+
+
+
+# # Default alert rules for a rack
+# alert_rule_files:
+#   - dns_alert_rules.yml
+#   - cadvisor_alert_rules.yml
+#   - mail_alert_rules.yml
+#   - node_alert_rules.yml
+#   - prometheus_alert_rules.yml
+#   - time_alert_rules.yml
+#   # vpn ping only needed on uky/renc racks but do no harm if on others
+#   - vpn_ping_alert_rules.yml
+#  # - web_site_alert_rules.yml
+
+#   #- ptp_time_alert_rules.yml
+
+# alert_rule_files:  "{% if hostvars[hank_name + '-time'] is defined and 'ansible_host' in (hostvars[hank_name + '-time']).keys() %}  {{alert_rule_files}} + ['ptp_time_alert_rules.yml']  {% else %} {{alert_rule_files}} {% endif %}" 
 
 
 recording_rule_file_dir: files/recording_rules

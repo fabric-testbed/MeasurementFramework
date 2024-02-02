@@ -1,0 +1,19 @@
+# TODO develop cadvisor alerts to replace docker alerts
+# may need to list names of all containers needed??
+# # file: cadvisor_alert_rules.yml
+# # location: all racks, central
+
+# groups: 
+
+# - name: Cadvisor Docker Containers
+#   rules: 
+  
+#   - alert: ContainerMissing
+#     expr: if absent(container_last_seen{name="??"})
+#     for: 15m
+#     labels:
+#       severity: error
+#       fabric_response: mf
+#     annotations:
+#       summary:  "{{ $externalLabels.rack }} Fabric Prometheus system docker container, {{ $labels.name }}, is down."   
+#       description:  "{{ $externalLabels.rack }} A container, {{ $labels.name }}, for the fabric promethues monitoring has not been seen in the last 15m." 

@@ -1,0 +1,20 @@
+---
+# file: vpn_ping_alert_rules.yml
+# location: uky/renc racks
+
+groups: 
+
+- name: VPN Alerts
+  rules:
+
+  - alert: VPNPingFailed
+    expr: probe_success {job="ping", reason="vpn"} == 0
+    for: 5m
+    labels:
+      severity: warning
+      fabric_system: vpn
+      fabric_response: system
+    annotations:
+      summary:  "VPN ping from {{ $externalLabels.rack }} to {{ $labels.instance }} failed for 5 minutes."   
+      description:  "{{ $labels.instance }} did not respond to VPN ping from {{ $externalLabels.rack }} for 5 minutes." 
+
