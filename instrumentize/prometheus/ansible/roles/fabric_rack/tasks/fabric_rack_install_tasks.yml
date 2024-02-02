@@ -38,9 +38,8 @@
 
 - name: Files Check 
   debug:
-    msg: "Alert Files are: {{ alert_rule_files }}"
-
-
+    msg: "Alert Files are: {{ item }}"
+  with_items: "{{ alert_rule_files }}"
 
 # needed on remote for htpasswd
 - name: passlib
