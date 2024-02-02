@@ -36,6 +36,11 @@
   debug:
     msg: "!!!!!!!!!!!!!Setting up Fabric Rack Install {{ install_name }} on {{ hank_name }} at {{ ansible_host }}.!!!!!!!!!!!!!"
 
+- name: Files Check 
+  debug:
+    msg: "Alert Files are: {{ alert_rule_files }}"
+
+
 
 # needed on remote for htpasswd
 - name: passlib
