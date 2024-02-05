@@ -119,7 +119,7 @@
 - name: Backup base install directories
   include_tasks: takedown_tasks/backup_base_install_dir_tasks.yml
   when:
-    - hank_name == 'uky' or hank_name == 'renc'
+    - hank_name == 'uky' or hank_name == 'renc' or hank_name == 'lbnl'
     # NOTE hardcoded here to back up dev racks since they may be manipulated by hand
     # All other racks should never have any non ansible installed code so deleteing it all is fine.
     
