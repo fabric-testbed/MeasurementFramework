@@ -4,7 +4,7 @@ ansible-core==2.14.5
 appdirs==1.4.4
 certifi==2023.7.22
 cffi==1.15.0
-cryptography==41.0.6
+cryptography==42.0.0
 influxdb-client==1.36.1
 Jinja2==3.0.3
 MarkupSafe==2.1.1
