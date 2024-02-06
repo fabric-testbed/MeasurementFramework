@@ -139,6 +139,9 @@
       include_tasks: Thanos/add_thanos_config_templates_tasks.yml
       # See vars for templates used
 
+    - name: Thanos Rules
+      include_tasks: Thanos/add_thanos_rules_tasks.yml
+      # See vars for templates used
 
 ####################
 #  ALERTMANAGER    #

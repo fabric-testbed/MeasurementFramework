@@ -1,17 +1,14 @@
 [server]
-#domain = {{ hostname }}
-##root_url = https://%(domain)s
-## version if using grafana as root 
-root_url = https://%(domain)s/grafana
-
 
 domain = {{ server_hostname }}
-#root_url = https://%(domain)s
-# version if using grafana as root 
-#root_url = https://%(domain)s:443/grafana
-serve_from_sub_path = true 
+root_url = https://%(domain)s/grafana
 
+# for grafana 10
+serve_from_sub_path = false 
 
+[auth]
+# Required for cilogon to look up user by email. Feature was disabled in grafana 10
+oauth_allow_insecure_email_lookup = true 
 
 [auth.generic_oauth]
 {% if grafana_oauth_client_id is defined %}

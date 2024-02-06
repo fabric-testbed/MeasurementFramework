@@ -1,0 +1,35 @@
+groups:
+        - name: check test
+          rules:
+
+                  - alert: AAAAHeartBeatTest
+                    expr: ALERTS{alertname="PrometheusAlertmanagerHeartbeat"} == 1
+                    for: 1m
+                    labels:
+                        hearty: "testing"
+                        rack_to_check: "{{ $labels.instance }}"
+                        rack_checked: "{{ $labels.rack }}"
+                    annotations:
+                        summary: "Checking for heart beat alert. Test, ignore."
+
+
+                  - alert: AAAAHeartBeatMissing
+                    expr: absent( ALERTS{alertname="PrometheusAlertmanagerHeartbeat", rack="non"} )
+                    for: 1m
+                    labels:
+                        hearty: "testing"
+                        rack_to_check: "{{ $labels.instance }}"
+                        rack_checked: "{{ $labels.rack }}"
+                    annotations:
+                        summary: "Checking for heart beat alert. Test, ignore."
+
+
+                  - alert: AlertsUnableToReachAlertmanager
+                    expr: increase(prometheus_notifications_errors_tota[1d]) > 0
+                    for: 1d
+                    labels:
+                        hearty: "testing"
+                        rack_to_check: "{{ $labels.instance }}"
+                        rack_checked: "{{ $labels.rack }}"
+                    annotations:
+                        summary: "Checking for heart beat alert. Test, ignore."
