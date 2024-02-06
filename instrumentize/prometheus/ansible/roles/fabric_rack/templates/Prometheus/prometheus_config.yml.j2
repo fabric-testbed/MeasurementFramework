@@ -7,7 +7,11 @@ global:
   # external systems (federation, remote storage, Alertmanager).
   external_labels:
       rack: "{{ hank_name }}"
-  
+
+################# REMOTE WRITE for PUBLIC METRIC SITES ##################
+
+{% include 'tmp_deployment_files/mf-parsers/remote_write/remote_write_configs/2024.01.29.21.41_public_remote_write_out.yml' %}
+
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
   - '*_alerts.yml'
@@ -95,10 +99,11 @@ scrape_configs:
               replacement: "{{ install_name }}_blackbox:9115"
 {% endif %}
 
- # Docker Exporter for Local Containers
-  - job_name: 'docker'
-    static_configs:
-      - targets: ['{{ install_name }}_docker_exporter:9417']
+# Deprecated for Cadvisor
+# # Docker Exporter for Local Containers
+#  - job_name: 'docker'
+#    static_configs:
+#      - targets: ['{{ install_name }}_docker_exporter:9417']
 
 
 #########################################
@@ -264,3 +269,11 @@ scrape_configs:
     static_configs:
             - targets:
               - "fabric_prometheus_blackbox:9115"
+
+ # Cadvisor for Local Docker Containers
+
+  - job_name: cadvisor
+    scrape_interval: 30s
+    static_configs:
+    - targets:
+      - "{{ install_name }}_cadvisor:8080"

@@ -1,0 +1,40 @@
+target: all,alertmanager,overrides-exporter
+
+# Configure Mimir to use Minio as object storage backend.
+common:
+  storage:
+    backend: s3
+    s3:
+      endpoint: {{ mimir_minio_endpoint }}
+      access_key_id: {{ mimir_access_key_id }}
+      secret_access_key: {{ mimir_secret_access_key }}
+      # TODO revisit if needed insecure: true
+      bucket_name: {{ mimir_bucket_name }}
+
+# Blocks storage requires a prefix when using a common object storage bucket.
+blocks_storage:
+  storage_prefix: blocks
+  tsdb:
+    dir: /data/ingester
+
+# Use memberlist, a gossip-based protocol, to enable the 3 Mimir replicas to communicate
+#memberlist:
+#  join_members: [mimir-1, mimir-2, mimir-3]
+
+# Not using ruler
+#ruler:
+#  rule_path: /data/ruler
+#  alertmanager_url: http://127.0.0.1:8080/alertmanager
+#  ring:
+#    # Quickly detect unhealthy rulers to speed up the tutorial.
+#    heartbeat_period: 2s
+#    heartbeat_timeout: 10s
+
+# Not using alertmanager
+#alertmanager:
+#  data_dir: /data/alertmanager
+#  fallback_config_file: /etc/alertmanager-fallback-config.yaml
+#  external_url: http://localhost:9009/alertmanager
+
+server:
+  log_level: info
