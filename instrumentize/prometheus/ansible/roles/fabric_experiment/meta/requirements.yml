@@ -17,7 +17,7 @@ roles:
 
 # For Node Exporters
   #- name: cloudalchemy.node_exporter
-  - name: prometheus.prometheus.node_exporter
+  - name: prometheus.prometheus
   #version:
 
 collections:
