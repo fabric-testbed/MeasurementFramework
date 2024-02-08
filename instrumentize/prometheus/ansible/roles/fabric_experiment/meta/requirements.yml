@@ -16,8 +16,9 @@ roles:
   #version:
 
 # For Node Exporters
-  #- name: cloudalchemy.node_exporter
-  - name: prometheus.prometheus
+  # cloudalchemy is already installed in os image
+  - name: cloudalchemy.node_exporter
+  #- name: prometheus.prometheus
   #version:
 
 collections:
