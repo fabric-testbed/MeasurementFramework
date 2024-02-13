@@ -1,0 +1,13 @@
+---
+# Grafana plugins are installed by adding plugin to plugins dir.
+- name: Grafana Plugins
+  block:
+    - name: "Add Grafana Plugin."
+      ansible.builtin.unarchive: 
+        src: '{{ grafana_files_dir }}/plugins/{{ item }}'
+        dest: "{{ base_install_dir }}/grafana/plugins"
+        owner: "{{ grafana_user_name }}"
+        group: "{{ grafana_group_name }}"
+      with_items: "{{ grafana_plugin_files }}"
+      when: grafana_plugin_files is defined
+  become: yes

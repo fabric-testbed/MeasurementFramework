@@ -218,6 +218,14 @@ scrape_configs:
       - targets:
         - '{{ install_name }}_thanos_query:10922'
 
+# Ruler
+  - job_name: 'thanos_ruler'
+    scheme: http
+    static_configs:
+      - targets:
+        - '{{ install_name }}_thanos_ruler:10902'
+
+
 # Compact
 #  - job_name: 'thanos_compact'
 #    scheme: http 

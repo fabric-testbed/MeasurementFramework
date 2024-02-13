@@ -1,0 +1,32 @@
+---
+# Checks that the docker network has been setup and is running for the publicly available metric servers
+# Creating the Docker Network.
+- hosts: infra-metrics
+
+  # roles:
+  #   - role: ../minio/ansible/roles/central
+      # vars:
+      #   install_name: infrastructure-metrics-network
+  
+
+# Add and ensure docker network is setup for fabric_prometheus containers
+#
+  tasks:
+    
+  - name: Create network in docker for related monitoring containers.
+    community.docker.docker_network:
+            name: "{{ docker_network_name }}"
+            enable_ipv6: yes
+            ipam_config:
+                - subnet: "{{ docker_ipv6_subnet }}"
+                  gateway: "{{ docker_ipv6_gateway }}"
+                
+                # # Docker will basically do DHCP for ip4
+                # - subnet: 172.22.0.0/16
+                #   gateway: 172.22.0.1
+    become: yes
+                            
+
+
+    vars:
+      install_name: infrastructure-metrics-network

@@ -1,0 +1,10 @@
+---
+# Level 0 Metrics
+# Creating the Public Metrics Minio.
+- hosts: public-metrics
+
+  roles:
+    - role: ../minio/ansible/roles/central
+      vars:
+        install_name: public-metrics-minio
+    
