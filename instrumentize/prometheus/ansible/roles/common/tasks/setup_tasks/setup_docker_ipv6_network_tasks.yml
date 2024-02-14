@@ -2,7 +2,7 @@
 # Add and ensure docker network is setup for fabric_prometheus containers
 #
 
-- name: Create network in docker for related monitoring containers.
+- name: Create network IPV4 & IPV6 in docker for related monitoring containers.
   community.docker.docker_network:
           name: "{{ docker_network_name }}"
           enable_ipv6: yes
