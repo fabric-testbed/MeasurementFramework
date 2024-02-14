@@ -1,6 +1,6 @@
 ---
 - block:
-  - include_tasks: find_ptp_interfaces.yml
+  - include: find_ptp_interfaces.yml
     loop: "{{ ansible_interfaces }}"
     loop_control:
       loop_var: IFACE
@@ -10,7 +10,7 @@
     - ptp_stop
 
 - block:
-  - include_tasks: for_vms.yml
+  - include: for_vms.yml
     become: True
   tags: ptp_install
 
