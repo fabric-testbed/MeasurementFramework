@@ -1,2 +1,0 @@
-nginx_template_file: nginx.conf.j2
-nginx_htaccess_username: fabric

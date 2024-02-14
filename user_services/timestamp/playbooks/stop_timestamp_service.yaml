@@ -1,9 +1,0 @@
-# Stop timestamp service
----
-- name: Stop timestamp container
-  hosts: Experiment_Nodes 
-  tasks:
-  - name: Stop timestamp container
-    community.general.docker_container:
-      name: timestamp
-      state: stopped

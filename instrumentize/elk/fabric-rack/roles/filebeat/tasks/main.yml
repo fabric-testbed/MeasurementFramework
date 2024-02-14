@@ -1,6 +1,0 @@
-
-- include_tasks: install_beats.yml
-  when: op == 'install'
-
-- include_tasks: remove_beats.yml
-  when: op == 'remove'

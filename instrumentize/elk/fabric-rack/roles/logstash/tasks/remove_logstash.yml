@@ -1,5 +1,0 @@
-# Start Filebeat
-- name: Tear down existing services
-  community.docker.docker_compose:
-    project_src: /opt/logstash/
-    state: absent

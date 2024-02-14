@@ -1,9 +1,0 @@
-# Stop influxdb service
----
-- name: Stop influxdb container
-  hosts: Meas_Node 
-  tasks:
-  - name: Stop influxdb container
-    community.general.docker_container:
-      name: influxdb
-      state: stopped

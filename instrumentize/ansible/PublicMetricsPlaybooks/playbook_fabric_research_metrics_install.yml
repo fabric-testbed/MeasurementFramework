@@ -1,8 +1,0 @@
----
-# Level 2 Metrics
-# Creating the Fabric Research Metrics Containers (minus minio).
-- hosts: research-metrics
-
-  roles:
-    - role: ../prometheus/ansible/roles/public_metrics
-

@@ -1,6 +1,0 @@
-
-- include_tasks: install_logstash.yml
-  when: op == 'install'
-
-- include_tasks: remove_logstash.yml
-  when: op == 'remove'
