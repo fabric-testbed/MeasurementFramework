@@ -1,13 +1,9 @@
 from subprocess import Popen, PIPE
 from shlex import split
-import time
-import os
-import signal
 import re
 from decimal import *
 import argparse
 
-import influxdb_client 
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 
@@ -24,13 +20,16 @@ InfluxDB Python client:
 
 
 def parse_and_send(pcap_file, verbose=False, influxdb_token=None, 
-    influxdb_org=None, influxdb_url=None, influxdb_bucket=None, influxdb_desttype="meas_node"):
+    influxdb_org=None, influxdb_url=None, influxdb_bucket=None, 
+    influxdb_desttype="meas_node"):
 
     # InfluxDB set up
     if influxdb_desttype == "cloud":
-        write_client = influxdb_client_3.InfluxDBClient3(host=influxdb_url, token=influxdb_token, org=influxdb_org)    # For cloud push only.
+        write_client = influxdb_client_3.InfluxDBClient3(host=influxdb_url, 
+                       token=influxdb_token, org=influxdb_org)
+
     elif influxdb_desttype == "meas_node":
-        write_client = influxdb_client.InfluxDBClient(url=influxdb_url, 
+        write_client = InfluxDBClient(url=influxdb_url, 
                                 token=influxdb_token, org=influxdb_org)
         write_api = write_client.write_api(write_options=SYNCHRONOUS)
 
@@ -38,7 +37,7 @@ def parse_and_send(pcap_file, verbose=False, influxdb_token=None,
     cmd = f'tail -c +1 -f {pcap_file} | tcpdump -A -tt -n -l -r -'
 
     if verbose:
-        print(f"Starting tcpdump session: ", cmd)
+        print(f"Starting tcpdump session: {cmd}")
 
     p1 = Popen(split(f"tail -c +1 -f {pcap_file}"), stdout=PIPE)
     p2 = Popen(split("tcpdump -A -tt -n -l -r -"), stdin=p1.stdout, stdout=PIPE)
@@ -69,7 +68,7 @@ def parse_and_send(pcap_file, verbose=False, influxdb_token=None,
                 print(e)
     
         # Find a line that looks like ".........F1661899028.5274663,1877"
-        elif re.search(r'\d{10}.\d{,9},\d{1,4}$', newline):
+        elif re.search(r'\d{10}.\d{,9},\d{1,}$', newline):
             parts = re.split(",", newline)
             timestamp = re.findall('\d{10}\.\d{,9}', parts[0])
             
@@ -97,7 +96,7 @@ def parse_and_send(pcap_file, verbose=False, influxdb_token=None,
                 # The try/except block ensures that any prev failure in forming
                 # packet_data causes program to not write out data.
                 try:
-                    if desttype == "meas_node":
+                    if influxdb_desttype == "meas_node":
                         point = (Point("owl")
                                 .tag("sender", packet_data["sender"])
                                 .tag("receiver", packet_data["receiver"])
@@ -107,8 +106,8 @@ def parse_and_send(pcap_file, verbose=False, influxdb_token=None,
                                 .time(int(packet_data["sent_ns"]), 
                                 write_precision=WritePrecision.NS)
                                 )        
-                        write_api.write(bucket=influxdb_bucket, org=org, record=point)
-                    elif desttype == "cloud":
+                        write_api.write(bucket=influxdb_bucket, org=influxdb_org, record=point)
+                    elif influxdb_desttype == "cloud":
                         point = (influxdb_client_3.Point("owl")
                                 .tag("sender", packet_data["sender"])
                                 .tag("receiver", packet_data["receiver"])
@@ -139,7 +138,9 @@ if __name__ == "__main__":
     parser.add_argument("--token", type=str, help="InfluxDB token (str)")
     parser.add_argument("--org", type=str, help="InfluxDB organization name (str)")
     parser.add_argument("--url", type=str, help="InfluxDB URL (str)")
-    parser.add_argument("--desttype", type=str, help="Destination for InfluxDB data. Either 'cloud' for the Cloud instance, or 'meas_node' for the Measurement Node (str)")
+    parser.add_argument("--desttype", type=str, help="Destination for InfluxDB \
+                        data. Either 'cloud' for the Cloud instance, or \
+                        'meas_node' for the Measurement Node (str)")
     parser.add_argument("--bucket", type=str, help="InfluxDB bucket name (str)")
     
     args = parser.parse_args()
