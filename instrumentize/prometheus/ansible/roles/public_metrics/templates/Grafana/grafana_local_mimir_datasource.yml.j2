@@ -1,0 +1,30 @@
+# Default rack data source of just the local Mimir
+# config file version
+apiVersion: 1
+
+# list of datasources that should be deleted from the database
+#deleteDatasources:
+#  - name: Mimir
+#    orgId: 1
+
+# list of datasources to insert/update depending
+# whats available in the database
+datasources:
+  - name: "{{ mimir_datasource_name }}"
+    type: prometheus
+    access: proxy
+    orgId: 1
+    url: http://{{ install_name }}_mimir:8080/prometheus
+    
+    isDefault: true
+    
+    # <map> fields that will be converted to json and stored in json_data
+    jsonData:
+      httpHeaderName1: "X-Scope-OrgID"
+    # <string> json object of data that will be encrypted.
+    secureJsonData:
+      httpHeaderValue1: "{{ mimir_scope_id }}"
+    version: 1
+
+    # <bool> allow users to edit datasources from the UI.
+    editable: false

@@ -1,0 +1,24 @@
+# SNMP Exporter
+  snmp:
+    container_name: "{{ install_name }}_snmp"
+    # have to lock down version due to config file format changed
+    # TODO update snmp.yml file to the new format
+    image: prom/snmp-exporter:v0.22.0
+    
+    #user: 
+    volumes:
+      # Add generated snmp.yml file. 
+      # See https://github.com/prometheus/snmp_exporter/tree/master/generator for generation details.
+      - "{{ base_install_dir }}/snmp/config/snmp.yml:/etc/snmp/snmp.yml"
+
+    command:
+      - '--config.file=/etc/snmp/snmp.yml'
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "1024m" 
+        max-file: "5"
+
+    restart: always
+      

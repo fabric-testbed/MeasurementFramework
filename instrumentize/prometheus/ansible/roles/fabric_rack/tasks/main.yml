@@ -1,6 +1,19 @@
 ---
 
 
+
+############################
+# Get Remote Write Configs #
+############################
+
+- name: Get Parsed Files 
+  import_tasks: get_mf_parser_files_tasks.yml
+  delegate_to: 127.0.0.1
+  when: component_type == 'head'
+  tags:
+  - clone_mf_parsers
+
+
 # OK
 ##############################
 #  Fabric Rack Prometheus    #
@@ -52,21 +65,6 @@
 #     - install_type == 'fabric_rack' 
 
 
-
-# ##############################
-# #     Docker Exporter        #
-# ##############################
-# - name: Install worker node docker monitoring 
-#   # need each worker node to have docker network and exporter
-#   block:
-#   - name: Install worker docker monitoring
-#     import_tasks: monitored_node_tasks.yml
-#     when: 
-#       component_type == 'worker'
-#   when: 
-#     - install_type is defined
-#     - install_type == 'fabric_rack' 
-
 # OK
 ##############################
 # Setup VPN Ping Configs     #
@@ -86,5 +84,8 @@
     - component_type == 'head'
     - set_vpn_pings is defined
     - set_vpn_pings #== yes
+
+
+
 
 

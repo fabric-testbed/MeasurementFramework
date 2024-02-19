@@ -3,11 +3,11 @@
 
 # now the containers 
 
-##### PROMETHEUS #############################################################
+##### PROMETHEUS ###############################################################
 
 {% include './docker_compose_' + 'prometheus' +  '_fragment.yml.j2' %}
 
-##### THANOS SIDECAR #############################################################
+##### THANOS SIDECAR ###########################################################
 
 {% include './docker_compose_' + 'thanos_sidecar' +  '_fragment.yml.j2' %}
 
@@ -19,22 +19,30 @@
 
 {% include './docker_compose_' + 'thanos_query' +  '_fragment.yml.j2' %}
 
+##### THANOS RULER #############################################################
+
+{% include './docker_compose_' + 'thanos_ruler' +  '_fragment.yml.j2' %}
+
 ##### ALERTMANAGER #############################################################
 
 {% include './docker_compose_' + 'alertmanager' +  '_fragment.yml.j2' %}
 
-##### BLACKBOX #############################################################
+##### BLACKBOX #################################################################
 
 {% include './docker_compose_' + 'blackbox_exporter' +  '_fragment.yml.j2' %}
 
-##### CADVISOR #############################################################
+##### CADVISOR #################################################################
 
 {% include './docker_compose_' + 'cadvisor' +  '_fragment.yml.j2' %}
 
-##### GRAFANA #############################################################
+##### GRAFANA ##################################################################
 
 {% include './docker_compose_' + 'grafana' +  '_fragment.yml.j2' %}
 
-##### NGINX #############################################################
+##### NGINX ####################################################################
+
+{% include './docker_compose_' + 'nginx' +  '_fragment.yml.j2' %}
+
+##### HEARTBEAT MONITOR ########################################################
 
 {% include './docker_compose_' + 'nginx' +  '_fragment.yml.j2' %}
