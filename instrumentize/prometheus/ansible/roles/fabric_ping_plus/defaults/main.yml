@@ -65,6 +65,8 @@ prometheus_config_template_files:
     
   - ping-plus_node_targets.yml
 
+  - head_node_http_targets.yml
+
 prometheus_config_files: []
   # need default var even if empty
 

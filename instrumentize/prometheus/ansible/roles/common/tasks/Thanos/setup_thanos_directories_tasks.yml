@@ -11,7 +11,7 @@
         owner: "{{ prom_user_name }}"
         group: "{{ prom_group_name }}"
       with_items:
-        - [ "config" ]
+        - [ "config", "rules" ]
 
 
     - name: "Create Thanos directories"

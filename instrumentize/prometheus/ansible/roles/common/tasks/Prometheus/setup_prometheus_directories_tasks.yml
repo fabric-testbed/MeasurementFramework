@@ -15,6 +15,7 @@
 
     - name: "Create Prometheus Data directories"
       # This directory could be 10's of GB.
+      # Note the /data directory may no longer be in use by any roles. The data is just in the prometheus dir.
       file:
         path: "{{ base_data_dir }}/prometheus/data"
         state: directory
