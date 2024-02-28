@@ -1,6 +1,0 @@
----
-# Setup PTP on VMs.
-# Possible tages are ptp_install,ptp_start,ptp_stop
-- hosts: all
-  roles:
-    - linuxptp
