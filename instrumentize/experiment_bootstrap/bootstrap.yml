@@ -48,16 +48,18 @@
       when: 
         - (item.name not in (pip_package_info.packages.pip3).keys()) or (pip_package_info.packages.pip3.{{item.name}})[0].version is ansible.builtin.version('{{item.min_version}}','lt')
 
+    - block:
 
-    - name: Unarchive a file that needs to be downloaded (added in 2.0)
-      ansible.builtin.unarchive:
-        src: https://github.com/fabric-testbed/ptp/archive/refs/heads/main.tar.gz
-        dest: /home/mfuser/mf_git/instrumentize/
-        remote_src: yes
+      - name: Unarchive a file that needs to be downloaded (added in 2.0)
+        ansible.builtin.unarchive:
+          src: https://github.com/fabric-testbed/ptp/archive/refs/heads/main.tar.gz
+          dest: /home/mfuser/mf_git/instrumentize/
+          remote_src: yes
 
-    - name: Move ptp-main to ptp
-      command: mv /home/mfuser/mf_git/instrumentize/ptp-main /home/mfuser/mf_git/instrumentize/ptp
-
+      - name: Move ptp-main to ptp
+        command: mv /home/mfuser/mf_git/instrumentize/ptp-main /home/mfuser/mf_git/instrumentize/ptp
+      when: inventory_hostname == 'meas_node'
+      
     - name: Install LinuxPTP
       ansible.builtin.include_role:
         name: /home/mfuser/mf_git/instrumentize/ptp/ansible/roles/linuxptp
