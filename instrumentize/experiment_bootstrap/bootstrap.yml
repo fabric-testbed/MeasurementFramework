@@ -6,6 +6,9 @@
       ansible.builtin.unarchive:
         src: https://github.com/fabric-testbed/ptp/archive/refs/heads/main.tar.gz
         dest: /home/mfuser/mf_git/instrumentize/ptp
+        extra_opts:
+          - --transform 
+          - 's/^ptp-main/ptp/'
         remote_src: yes
 
 - name: Boot Strapping Process
