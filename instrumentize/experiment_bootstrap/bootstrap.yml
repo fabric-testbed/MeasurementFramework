@@ -5,7 +5,7 @@
     - name: Unarchive a file that needs to be downloaded (added in 2.0)
       ansible.builtin.unarchive:
         src: https://github.com/fabric-testbed/ptp/archive/refs/heads/main.tar.gz
-        dest: /home/mfuser/mf_git/instrumentize/ptp
+        dest: /home/mfuser/mf_git/instrumentize
         extra_opts:
           - --transform 
           - 's/^ptp-main/ptp/'
