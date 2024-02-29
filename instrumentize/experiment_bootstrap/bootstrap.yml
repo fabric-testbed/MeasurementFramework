@@ -58,8 +58,8 @@
 
       - name: Move ptp-main to ptp
         command: mv /home/mfuser/mf_git/instrumentize/ptp-main /home/mfuser/mf_git/instrumentize/ptp
-      when: inventory_hostname == 'meas_node'
-      
+      when: inventory_hostname == 'meas-node'
+
     - name: Install LinuxPTP
       ansible.builtin.include_role:
         name: /home/mfuser/mf_git/instrumentize/ptp/ansible/roles/linuxptp
