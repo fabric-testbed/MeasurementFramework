@@ -66,7 +66,7 @@
             backrefs: yes
           with_items: "{{ repo_files.files }}"
 
-          - debug: msg="centos/rocky mirror repos changed to vault repos"
+        - debug: msg="centos/rocky mirror repos changed to vault repos"
 #######################################################          
 
 
