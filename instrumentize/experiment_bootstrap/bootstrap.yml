@@ -29,6 +29,48 @@
       changed_when: false
       when: ansible_distribution == "Ubuntu"
 
+
+########################FIX moved Repos ########################
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html
+# https://regex101.com/
+## TESTING FIXING
+# #baseurl=http://mirror.centos.org/centos/$releasever-stream/virt/$basearch/advancedvirt-common
+# baseurl=http://vault.centos.org/centos/$releasever-stream/virt/$basearch/advancedvirt-common
+
+    - name: Fix centos mirror repos urls
+      when:
+      #- ansible_distribution == "CentOS"
+        - ansible_distribution in [ "CentOS", "Rocky" ]
+        - ansible_distribution_major_version == "8"
+      block:
+        - debug: msg="centos/rocky repo fixing...."
+
+        - name: Get list of yum repo files
+          ansible.builtin.find:
+            paths: /etc/yum.repos.d/
+            patterns: "*.repo"
+            recurse: no
+            file_type: file
+          register: repo_files
+
+        - debug:
+            msg: "{{ item.path }}"
+          with_items: "{{ repo_files.files }}"
+
+
+        - name: Fix Mirror base repo in Centos/Rocky
+          ansible.builtin.lineinfile:
+            path: "{{ item.path }}"
+            regexp: '(^#baseurl=http:\/\/mirror.centos.org\/)(.*)'
+            line: 'baseurl=http://vault.centos.org/\2'
+            backrefs: yes
+          with_items: "{{ repo_files.files }}"
+
+        - debug: msg="centos/rocky mirror repos changed to vault repos"
+#######################################################          
+
+
+
     - name: Update Package Cache (dnf/CentOS)
       dnf:
         update_cache: yes
