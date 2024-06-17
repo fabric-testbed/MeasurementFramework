@@ -24,4 +24,4 @@ scapy==2.5.0
 six==1.16.0
 tomlkit==0.12.3
 typing_extensions==4.7.1
-urllib3==2.1.0
+urllib3==2.2.2
