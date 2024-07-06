@@ -1,7 +1,7 @@
 ansible-base==2.10.17
 ansible-core==2.16.3
 astroid==3.0.1
-certifi==2023.7.22
+certifi==2024.7.4
 cffi==1.15.0
 cryptography==42.0.4
 dill==0.3.7
