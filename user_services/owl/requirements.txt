@@ -3,7 +3,7 @@ ansible-core==2.16.3
 astroid==3.0.1
 certifi==2024.7.4
 cffi==1.15.0
-cryptography==42.0.4
+cryptography==43.0.1
 dill==0.3.7
 influxdb-client==1.40.0
 isort==5.12.0
