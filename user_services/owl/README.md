@@ -13,7 +13,7 @@ time Protocol) service running. To verify this and to look up the PTP clock path
 run the following command:
 
 ```
-px -ef | grep phc2sys
+ps -ef | grep phc2sys
 ```
 
 
