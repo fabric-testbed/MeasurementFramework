@@ -29,6 +29,7 @@ struct timespec get_ptp_time(char *DEVICE)
     clkid = FD_TO_CLOCKID(fd);
     if (clock_gettime(clkid, &ts)) {
         perror("clock_gettime");
+        close(fd);
         exit(0);
     }
     else {

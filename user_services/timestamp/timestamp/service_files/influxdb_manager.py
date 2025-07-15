@@ -20,8 +20,8 @@ class influxdb_manager():
     def __init__(self):
         self.args=None
         self.timestampservice= timestampservice()
-        self.meas_ip = self.timestampservice.get_meas_node_ip()
-        self.host_name= self.timestampservice.get_hostname()
+        self.meas_ip = self.timestampservice.get_meas_node_ip_new()
+        self.host_name= self.timestampservice.get_hostname_new()
         self.packet_output_influx_path= self.timestampservice.packet_output_influx_path
         self.event_output_influx_path= self.timestampservice.event_output_influx_path
         self.packet_influx_download_path = self.timestampservice.packet_influx_download_path 
