@@ -1,0 +1,15 @@
+---
+# Add user to the htpasswd file
+# Note this just adds a user to the file, it does not remove any existing users.
+
+- name: Add multiple users user to htpasswd file
+  htpasswd:
+    path: "{{ base_install_dir }}/nginx/config/htpasswd"
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+  with_items: "{{ ht_users }}"
+  become: yes
+
+# ht_users:
+#   - name: 
+#     password: 

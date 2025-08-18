@@ -1,0 +1,10 @@
+---
+# Add recording rule files to the prometheus config directory
+- name: Add Prometheus Recording Rules via Files
+  copy:
+    src: "{{ recording_rule_file_dir }}/{{ item }}"
+    dest: "{{ base_install_dir }}/prometheus/config/{{ item }}"
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+  with_items: "{{ recording_rule_files | default(omit) }}"
+  become: yes

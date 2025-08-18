@@ -1,0 +1,11 @@
+---
+# Add a file or template to the snmp config directory
+# Note that the template files are passed in without the .j2 suffix
+- name: Add SNMP Config
+  template:
+    src: "{{ snmp_templates_dir }}/{{ item }}.j2"
+    dest: "{{ base_install_dir }}/snmp/config/{{ item }}"
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+  with_items: "{{ snmp_config_template_files }}"
+  become: yes

@@ -1,0 +1,10 @@
+---
+# Add a html files to server
+- name: Add NGINX html files
+  ansible.builtin.copy: 
+    src: files/NginxHtml/    
+    dest: "{{ base_install_dir }}/nginx/html/"
+    directory_mode: yes
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+  become: yes

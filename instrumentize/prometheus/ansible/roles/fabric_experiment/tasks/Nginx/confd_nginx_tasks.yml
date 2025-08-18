@@ -1,0 +1,11 @@
+---
+# Add a file or template to the nginx conf.d directory
+# TODO decide how to remove confd files.
+- name: Add NGINX Server Config
+  template:
+    src: "{{ nginx_template_dir }}/conf.d/{{ item }}.j2"
+    dest: "{{ base_install_dir }}/nginx/conf.d/{{ item }}"
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+  with_items: "{{ nginx_server_confd_template_files }}"
+  become: yes

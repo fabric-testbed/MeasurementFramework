@@ -1,0 +1,30 @@
+---
+# NGINX
+- name: Control NGINX Docker Container
+  become: yes
+  community.docker.docker_container:
+    state: "{{ nginx_state }}"
+    name: "{{ install_name }}_nginx"
+    network_mode: "{{ docker_network_name }}"
+    #networks: aliasies:
+    image: nginx:1.19
+    volumes:
+      #- "/etc/test_ssl/130.127.215.151/fullchain.pem:/etc/nginx/cert_file"
+      - "{{ base_install_dir }}/nginx/config/nginx.conf:/etc/nginx/nginx.conf"
+      - "{{ base_install_dir }}/nginx/config/htpasswd:/etc/nginx/htpasswd"
+      # TLS configs snippet.
+      - "{{ base_install_dir }}/nginx/config/ssl_snippet.conf:/etc/nginx/ssl_snippet.conf"
+      # TLS certs already on node.
+      - "{{ nginx_interm_cert }}:/etc/nginx/root_CA_cert_plus_intermediates_file:ro"
+      - "{{ nginx_key }}:/etc/nginx/key_file:ro"
+      - "{{ nginx_cert }}:/etc/nginx/cert_file:ro"
+      # Conf.d files
+      - "{{ base_install_dir }}/nginx/conf.d:/etc/nginx/conf.d"
+    ports: "{{ nginx_ip_ports }}"
+  
+    container_default_behavior: no_defaults   
+    log_driver: json-file
+    log_options:
+      max-size: 1024m   
+    restart_policy: always
+

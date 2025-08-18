@@ -1,0 +1,29 @@
+---
+# CREATE USER fab-prom #
+- name: "Setup Fabric Prometheus User"
+  block:
+    - name: "Create Fabric Prometheus user as fab-prom"
+      user:
+        name: "{{ prom_user_name }}"
+        shell: /usr/sbin/nologin
+        system: true
+        create_home: false
+        home: /
+  become: yes
+
+
+# GET USER fab-prom  uid:gid #
+- name: "Get Fabric Prometheus User"
+  block:
+    - name: "Get Fabric Prometheus user ids"
+      getent:
+        database: passwd
+        key: "{{ prom_user_name }}"
+    - debug:
+       var: ansible_facts.getent_passwd
+
+    - set_fact:
+        prom_user_uid: "{{ getent_passwd['fab-prom'][1] }}"
+        prom_user_gid: "{{ getent_passwd['fab-prom'][2] }}"
+    # the need to assign it to a var so we can use in later
+  become: yes
