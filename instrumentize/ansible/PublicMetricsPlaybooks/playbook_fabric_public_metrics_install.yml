@@ -1,7 +1,0 @@
----
-# Creating the Fabric Public Metrics Level 0 Containers.
-- hosts: public-metrics
-
-  roles:
-    - role: ../prometheus/ansible/roles/public_metrics
-
