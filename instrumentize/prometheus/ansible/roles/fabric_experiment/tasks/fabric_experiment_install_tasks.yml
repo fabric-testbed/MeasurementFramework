@@ -211,12 +211,12 @@
 #       - 9090:9090     # prometheus stats
     
 
-  # Copy the combined docker-compose file to the remote host's base install directory
-  - name: Copy docker compose file
-    become: true
-    copy:
-      src: "{{ role_path }}/docker-compose.full.yml"
-      dest: "{{ base_install_dir }}/docker-compose.full.yml"
-      owner: "{{ prom_user_name }}"
-      group: "{{ prom_group_name }}"
-      mode: '0644'
+# Copy the combined docker-compose file to the remote host's base install directory
+- name: Copy docker compose file
+  become: true
+  copy:
+    src: "{{ role_path }}/docker-compose.full.yml"
+    dest: "{{ base_install_dir }}/docker-compose.full.yml"
+    owner: "{{ prom_user_name }}"
+    group: "{{ prom_group_name }}"
+    mode: '0644'
