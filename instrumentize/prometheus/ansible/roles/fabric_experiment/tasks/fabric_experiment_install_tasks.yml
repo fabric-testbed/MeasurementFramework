@@ -9,10 +9,10 @@
 
 # needed on remote for htpasswd
 - name: passlib
-  become: yes 
-  pip: 
+  become: true
+  pip:
     name: passlib[bcrypt]
-    executable: pip3 
+    executable: pip3
     state: present
 
 
@@ -28,18 +28,20 @@
 - name: Setup the docker network to be used by the monitoring containers.
   include_tasks: tasks/setup_tasks/setup_docker_network_tasks.yml
 
+
+## TODO change to stop docker compose
 # Stop all docker containers
-- name: Stop containers
-  include_tasks: tasks/container_tasks/remove_docker_container_tasks.yml
-  vars:
-    containers_to_act_on: 
-      - prometheus
-      - grafana
-      - nginx
-      #- alertmanager
-      - blackbox
-      - docker_exporter
-      #- snmp
+# - name: Stop containers
+#   include_tasks: tasks/container_tasks/remove_docker_container_tasks.yml
+#   vars:
+#     containers_to_act_on: 
+#       - prometheus
+#       - grafana
+#       - nginx
+#       #- alertmanager
+#       - blackbox
+#       - docker_exporter
+#       #- snmp
 
 # PROMETHEUS
 # Prometheus consists of several tasks that must be done.
@@ -60,10 +62,10 @@
         - prometheus_config.yml
         - slice_node_targets.yml
     
-  - name: Prometheus Container
-    include_tasks: tasks/Prometheus/prometheus_container_tasks.yml
-    vars:
-      prometheus_state: started
+  # - name: Prometheus Container
+  #   include_tasks: tasks/Prometheus/prometheus_container_tasks.yml
+  #   vars:
+  #     prometheus_state: started
 
   - name: Blackbox Templates 
     include_tasks: tasks/Prometheus/add_prometheus_config_templates.yml
@@ -112,20 +114,20 @@
     - name: Blackbox Config 
       include_tasks: tasks/Blackbox/config_blackbox_tasks.yml
 
-    - name: Blackbox Container 
-      include_tasks: tasks/Blackbox/blackbox_container_tasks.yml
+    # - name: Blackbox Container 
+    #   include_tasks: tasks/Blackbox/blackbox_container_tasks.yml
 
-  vars:
-    blackbox_state: started
+  # vars:
+  #   blackbox_state: started
   
 
-# DOCKER EXPORTER
-- name: Setup Docker Exporter
-  block:
-    - name: Docker Exporter Container 
-      include_tasks: tasks/DockerExporter/docker_exporter_container_tasks.yml
-  vars:
-    docker_exporter_state: started 
+# # DOCKER EXPORTER
+# - name: Setup Docker Exporter
+#   block:
+#     - name: Docker Exporter Container 
+#       include_tasks: tasks/DockerExporter/docker_exporter_container_tasks.yml
+#   vars:
+#     docker_exporter_state: started 
 
 # GRAFANA
 - name: Setup Grafnana
@@ -140,27 +142,27 @@
     - name: Grafana Config
       include_tasks: tasks/Grafana/config_grafana_tasks.yml
       
-    - name: Grafana Container
-      include_tasks: tasks/Grafana/grafana_container_tasks.yml
+    # - name: Grafana Container
+    #   include_tasks: tasks/Grafana/grafana_container_tasks.yml
 
     - name: Grafana Datasources
       include_tasks: tasks/Grafana/grafana_provisioning_tasks.yml
 
-    # Renderer
-    - name: Grafana Renderer Container 
-      include_tasks: tasks/GrafanaRenderer/grafana_renderer_container_tasks.yml
+    # # Renderer
+    # - name: Grafana Renderer Container 
+    #   include_tasks: tasks/GrafanaRenderer/grafana_renderer_container_tasks.yml
 
 
-  vars:
-    # Need to move these defaults somewhere else. 
-    grafana_state: started
-    grafana_cert:  "{{ host_cert }}"
-    grafana_key:  "{{ host_key }}"
-    grafana_user_name: grafana
-    grafana_user_id: 472
-    grafana_group_name: root  
+  # vars:
+  #   # Need to move these defaults somewhere else. 
+  #   grafana_state: started
+  #   grafana_cert:  "{{ host_cert }}"
+  #   grafana_key:  "{{ host_key }}"
+  #   grafana_user_name: grafana
+  #   grafana_user_id: 472
+  #   grafana_group_name: root  
     
-  when: true
+  # when: true
 
 
 
@@ -195,17 +197,26 @@
           #- grafana_with_htaccess.conf
   when: true
 
-- name: NGNIX Container
-  include_tasks: tasks/Nginx/nginx_container_tasks.yml
-  vars:
-    nginx_state: started
-    nginx_cert: "{{ host_cert }}"
-    nginx_key: "{{ host_key }}"
-    nginx_interm_cert: "{{ host_interm_cert }}"
-    nginx_ip_ports:
-      # Note Each port will correspond to a confd file set above.
-      #- 80:80         # Redirected to 443
-      - 443:443       # /grafana for grafana interface
-      - 9090:9090     # prometheus stats
-      ##- "{{ alertmanager_port }}:{{ alertmanager_port }}"    # alertmanager 
-      
+# - name: NGNIX Container
+#   include_tasks: tasks/Nginx/nginx_container_tasks.yml
+#   vars:
+#     nginx_state: started
+#     nginx_cert: "{{ host_cert }}"
+#     nginx_key: "{{ host_key }}"
+#     nginx_interm_cert: "{{ host_interm_cert }}"
+#     nginx_ip_ports:
+#       # Note Each port will correspond to a confd file set above.
+#       #- 80:80         # Redirected to 443
+#       - 443:443       # /grafana for grafana interface
+#       - 9090:9090     # prometheus stats
+    
+
+  # Copy the combined docker-compose file to the remote host's base install directory
+  - name: Copy docker compose file
+    become: true
+    copy:
+      src: "{{ role_path }}/docker-compose.full.yml"
+      dest: "{{ base_install_dir }}/docker-compose.full.yml"
+      owner: "{{ prom_user_name }}"
+      group: "{{ prom_group_name }}"
+      mode: '0644'
