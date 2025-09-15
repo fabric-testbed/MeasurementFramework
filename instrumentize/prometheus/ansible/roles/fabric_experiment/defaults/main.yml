@@ -57,9 +57,8 @@ host_interm_cert: "{{ self_signed_cert_dir }}/{{ hostname }}_fullchain.pem"
 #prometheus_files_dir: files/
 prometheus_templates_dir: templates/Prometheus
 
-# SNMP
-snmp_templates_dir: templates/SNMP
-
+# Docker
+docker_templates_dir: templates/SNMP
 
 # Blackbox
 blackbox_files_dir: files

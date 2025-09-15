@@ -215,8 +215,8 @@
 - name: Copy docker compose file
   become: true
   copy:
-    src: "{{ role_path }}/docker-compose.full.yml"
-    dest: "{{ base_install_dir }}/docker-compose.full.yml"
+    src: "{{ docker_templates_dir }}/docker-compose.full.yml.j2"
+    dest: "{{ base_install_dir }}/docker-compose.yml"
     owner: "{{ prom_user_name }}"
     group: "{{ prom_group_name }}"
     mode: '0644'
