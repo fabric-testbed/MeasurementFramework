@@ -10,6 +10,7 @@
         recurse: yes
         owner: "{{ prom_user_name }}"
         group: "{{ prom_group_name }}"
+        mode: '0755'
       with_items:
         - [ "config", "secrets" ]
 
@@ -22,4 +23,5 @@
         recurse: yes
         owner: "{{ prom_user_name }}"
         group: "{{ prom_group_name }}"
+        mode: '0755'
   become: yes
