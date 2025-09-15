@@ -214,7 +214,7 @@
 # Copy the combined docker-compose file to the remote host's base install directory
 - name: Copy docker compose file
   become: true
-  copy:
+  template:
     src: "{{ docker_templates_dir }}/docker-compose.full.yml.j2"
     dest: "{{ base_install_dir }}/docker-compose.yml"
     owner: "{{ prom_user_name }}"
