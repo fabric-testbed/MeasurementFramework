@@ -48,7 +48,7 @@ services:
     container_name: "{{ install_name }}-fabric-grafana"
     networks:
       - "{{docker_network_name}}"
-    user: "${GRAFANA_USER_NAME:-1000}:${GRAFANA_GROUP_NAME:-1000}"
+  user: "{{ grafana_user_id }}:0"
     volumes:
       - "{{ base_data_dir }}/grafana/data:/var/lib/grafana"
       - "{{ base_install_dir }}/grafana/provisioning:/etc/grafana/provisioning:ro"
@@ -90,13 +90,15 @@ services:
       - "{{ base_install_dir }}/nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro"
       - "{{ base_install_dir }}/nginx/config/htpasswd:/etc/nginx/htpasswd:ro"
       - "{{ base_install_dir }}/nginx/config/ssl_snippet.conf:/etc/nginx/ssl_snippet.conf:ro"
-      - "${NGINX_INTERM_CERT:-/path/to/interm.pem}:/etc/nginx/root_CA_cert_plus_intermediates_file:ro"
-      - "${NGINX_KEY:-/path/to/nginx.key}:/etc/nginx/key_file:ro"
-      - "${NGINX_CERT:-/path/to/nginx.crt}:/etc/nginx/cert_file:ro"
+
       - "{{ base_install_dir }}/nginx/conf.d:/etc/nginx/conf.d:ro"
+
+      # Certs
+      - "{{ nginx_interm_cert }}:/etc/nginx/root_CA_cert_plus_intermediates_file:ro"
+      - "{{ nginx_key }}:/etc/nginx/key_file:ro"
+      - "{{ nginx_cert }}:/etc/nginx/cert_file:ro"
     ports:
-      - "${NGINX_PORT_1:-80}:80"
-      - "${NGINX_PORT_2:-443}:443"
+      - 443:443
     restart: always
     logging:
       driver: json-file
