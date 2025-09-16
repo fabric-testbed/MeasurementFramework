@@ -153,16 +153,16 @@
     #   include_tasks: tasks/GrafanaRenderer/grafana_renderer_container_tasks.yml
 
 
-  vars:
-    # Need to move these defaults somewhere else. 
-    grafana_state: started
-    grafana_cert:  "{{ host_cert }}"
-    grafana_key:  "{{ host_key }}"
-    grafana_user_name: grafana
-    grafana_user_id: 472
-    grafana_group_name: root  
+  # vars:
+  #   # Need to move these defaults somewhere else. 
+  #   grafana_state: started
+  #   grafana_cert:  "{{ host_cert }}"
+  #   grafana_key:  "{{ host_key }}"
+  #   grafana_user_name: grafana
+  #   grafana_user_id: 472
+  #   grafana_group_name: root  
     
-  # when: true
+  # # when: true
 
 
 

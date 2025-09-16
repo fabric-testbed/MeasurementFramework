@@ -71,6 +71,16 @@ grafana_datasource_template_files:
 # grafana_dashboard_template_files:
 #   - grafana_node_exporter_full_dashboard.json
 #   - grafana_dashboard.yml.j2
+grafana_state: started
+grafana_cert:  "{{ host_cert }}"
+grafana_key:  "{{ host_key }}"
+grafana_user_name: grafana
+grafana_user_id: 472
+grafana_group_name: root  
+
+
+
+
 
 # AlertManager
 #alertmanager_template_dir: templates/geni_slice
