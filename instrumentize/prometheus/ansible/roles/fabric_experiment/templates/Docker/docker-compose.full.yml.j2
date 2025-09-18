@@ -97,8 +97,7 @@ services:
       - "{{ nginx_interm_cert }}:/etc/nginx/root_CA_cert_plus_intermediates_file:ro"
       - "{{ nginx_key }}:/etc/nginx/key_file:ro"
       - "{{ nginx_cert }}:/etc/nginx/cert_file:ro"
-    ports:
-      - 443:443
+    ports: {{ nginx_ip_ports }}
     restart: always
     logging:
       driver: json-file
