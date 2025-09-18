@@ -9,6 +9,7 @@
         recurse: yes
         owner: "{{ grafana_user_name }}"
         group: "{{ grafana_group_name }}"
+        mode: '0755'
       with_items:
         - [ "custom", "plugins", "provisioning", "provisioning/dashboards", "provisioning/datasources"  ]
 
@@ -19,6 +20,7 @@
         recurse: yes
         owner: "{{ grafana_user_name }}"
         group: "{{ grafana_group_name }}"
+        mode: '0755'
       with_items:
         - [ "data" ]
 

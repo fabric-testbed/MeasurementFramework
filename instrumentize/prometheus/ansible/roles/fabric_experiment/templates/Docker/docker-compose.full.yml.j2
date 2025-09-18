@@ -29,7 +29,7 @@ services:
       - "--storage.tsdb.path=/prometheus"
       - "--storage.tsdb.max-block-duration=2h"
       - "--storage.tsdb.min-block-duration=2h"
-      - "--storage.tsdb.retention.time=${PROMETHEUS_RETENTION_TIME:-15d}"
+      - "--storage.tsdb.retention.time={{prometheus_retention_time | default("15d")}}"
       - "--web.enable-lifecycle"
       - "--web.console.libraries=/usr/share/prometheus/console_libraries"
       - "--web.console.templates=/usr/share/prometheus/consoles"
@@ -39,9 +39,7 @@ services:
       driver: json-file
       options:
         max-size: "1024m"
-    ports:
-      - "${PROMETHEUS_PORT:-9090}:9090"
-
+    
  # ############################### GRAFANA ##################################
   grafana:
     image: grafana/grafana:9.1.2
@@ -54,16 +52,18 @@ services:
       - "{{ base_install_dir }}/grafana/provisioning:/etc/grafana/provisioning:ro"
       - "{{ base_install_dir }}/grafana/plugins:/var/lib/grafana/plugins"
       - "{{ base_install_dir }}/grafana/custom:/etc/grafana/custom:ro"
-      - "${GRAFANA_CERT:-/path/to/cert}:/etc/grafana/certs/cert:ro"
-      - "${GRAFANA_KEY:-/path/to/key}:/etc/grafana/certs/key:ro"
+
+      # Map the node certs for CiLogon TLS in  custom.ini.
+      - "{{ grafana_cert }}:/etc/grafana/certs/cert:ro"
+      - "{{ grafana_key }}:/etc/grafana/certs/key:ro"
+
     env_file: "{{ base_install_dir }}/grafana/env_file"
     restart: always
     logging:
       driver: json-file
       options:
         max-size: "1024m"
-    ports:
-      - "${GRAFANA_PORT:-3000}:3000"
+
 
  # ########################### GRAFANA_RENDERER #############################
   grafana_renderer:
@@ -71,9 +71,11 @@ services:
     container_name: "{{ install_name }}-fabric-grafana_renderer"
     networks:
       - "{{docker_network_name}}"
-    user: "${GRAFANA_USER_NAME:-1000}:${GRAFANA_GROUP_NAME:-1000}"
+    user: user: "{{ grafana_user_id }}:0"
     environment:
-      AUTH_TOKEN: "${GRAFANA_RENDERER_AUTH_TOKEN:-rgdfioBDUEjujPOHD8ww}"
+      # Hard coded token OK here since this is only used between 2 docker containers without outside exposure
+      # Value is also set in grafana_custom.ini.j2 as renderer_token
+      AUTH_TOKEN:  {{ grafana_renderer_auth_token }}
     restart: always
     logging:
       driver: json-file
@@ -118,8 +120,7 @@ services:
       driver: json-file
       options:
         max-size: "1024m"
-    ports:
-      - "${BLACKBOX_PORT:-9115}:9115"
+
 
 
  # ########################### DOCKER_EXPORTER #############################
@@ -149,8 +150,6 @@ services:
   #     - "/var/lib/docker:/var/lib/docker:ro"
   #     - "/dev/disk/:/dev/disk:ro"
   #     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  #   ports:
-  #     - "${CADVISOR_PORT:-8080}:8080"
   #   restart: always
     # logging:
     #   driver: json-file

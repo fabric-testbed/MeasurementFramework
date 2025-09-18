@@ -64,7 +64,8 @@ grafana_user_id: 472
 grafana_group_name: root  
 
 
-
+# Hard coded token OK here since this is only used between 2 docker containers without outside exposure
+grafana_renderer_auth_token: rgdfioBDUEjujPOHD8ww
 
 
 # AlertManager
