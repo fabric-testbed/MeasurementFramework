@@ -225,7 +225,7 @@
 # Start all the containers using docker compose
 - name: Start all containers with docker compose
   become: true
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ base_install_dir }}"
     state: present
     restarted: true
