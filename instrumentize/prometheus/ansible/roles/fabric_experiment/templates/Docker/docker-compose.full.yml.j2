@@ -19,7 +19,7 @@ services:
     container_name: "{{ install_name }}-fabric-prometheus"
     networks:
       - "{{docker_network_name}}"
-    user: "${PROM_USER:-0:0}"
+    user: "{{prom_user_uid}}:{{prom_user_gid}}"
     volumes:
       - "{{ base_install_dir }}/prometheus/config:/etc/prometheus/config:ro"
       - "{{ base_install_dir }}/prometheus/secrets:/etc/prometheus/secrets:ro"
