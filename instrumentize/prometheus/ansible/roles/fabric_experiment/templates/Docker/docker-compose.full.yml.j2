@@ -71,7 +71,7 @@ services:
     container_name: "{{ install_name }}-fabric-grafana_renderer"
     networks:
       - "{{docker_network_name}}"
-    user: user: "{{ grafana_user_id }}:0"
+    user: "{{ grafana_user_id }}:0"
     environment:
       # Hard coded token OK here since this is only used between 2 docker containers without outside exposure
       # Value is also set in grafana_custom.ini.j2 as renderer_token
