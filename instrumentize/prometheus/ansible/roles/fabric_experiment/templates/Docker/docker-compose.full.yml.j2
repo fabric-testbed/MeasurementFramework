@@ -46,7 +46,7 @@ services:
     container_name: "{{ install_name }}-fabric-grafana"
     networks:
       - "{{docker_network_name}}"
-  user: "{{ grafana_user_id }}:0"
+    user: "{{ grafana_user_id }}:0"
     volumes:
       - "{{ base_data_dir }}/grafana/data:/var/lib/grafana"
       - "{{ base_install_dir }}/grafana/provisioning:/etc/grafana/provisioning:ro"
