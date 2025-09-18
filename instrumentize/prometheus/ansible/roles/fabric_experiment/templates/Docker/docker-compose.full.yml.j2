@@ -16,7 +16,7 @@ services:
 # ################################# PROMETHEUS ################################
   prometheus:
     image: prom/prometheus:v2.33.4
-    container_name: "{{ install_name }}-fabric-prometheus"
+    container_name: "{{ install_name }}-prometheus"
     networks:
       - "{{docker_network_name}}"
     user: "{{prom_user_uid}}:{{prom_user_gid}}"
@@ -43,7 +43,7 @@ services:
  # ############################### GRAFANA ##################################
   grafana:
     image: grafana/grafana:9.1.2
-    container_name: "{{ install_name }}-fabric-grafana"
+    container_name: "{{ install_name }}-grafana"
     networks:
       - "{{docker_network_name}}"
     user: 0:0
@@ -68,7 +68,7 @@ services:
  # ########################### GRAFANA_RENDERER #############################
   grafana_renderer:
     image: grafana/grafana-image-renderer:3.6.1
-    container_name: "{{ install_name }}-fabric-grafana_renderer"
+    container_name: "{{ install_name }}-grafana_renderer"
     networks:
       - "{{docker_network_name}}"
     user: 0:0
@@ -85,7 +85,7 @@ services:
  # ################################### NGINX ################################
   nginx:
     image: nginx:1.19
-    container_name: "{{ install_name }}-fabric-nginx"
+    container_name: "{{ install_name }}-nginx"
     networks:
       - "{{docker_network_name}}"
     volumes:
@@ -109,7 +109,7 @@ services:
  # ################################# BLACKBOX ################################
   blackbox:
     image: prom/blackbox-exporter:latest
-    container_name: "{{ install_name }}-fabric-blackbox"
+    container_name: "{{ install_name }}-blackbox"
     networks:
       - "{{docker_network_name}}"
     volumes:
@@ -126,7 +126,7 @@ services:
  # ########################### DOCKER_EXPORTER #############################
   docker_exporter:
     image: prometheusnet/docker_exporter:latest
-    container_name: "{{ install_name }}-fabric-docker_exporter"
+    container_name: "{{ install_name }}-docker_exporter"
     networks:
       - "{{docker_network_name}}"
     volumes:
@@ -140,7 +140,7 @@ services:
  # ################################## CADVISOR ##################################
   # cadvisor:
   #   image: gcr.io/cadvisor/cadvisor:v0.47.0
-  #   container_name: "{{ install_name }}-fabric-cadvisor"
+  #   container_name: "{{ install_name }}-cadvisor"
   #   networks:
   #     - "{{docker_network_name}}"
   #   volumes:

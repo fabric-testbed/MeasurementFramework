@@ -220,3 +220,12 @@
     owner: "{{ prom_user_name }}"
     group: "{{ prom_group_name }}"
     mode: '0644'
+
+
+# Start all the containers using docker compose
+- name: Start all containers with docker compose
+  become: true
+  community.docker.docker_compose:
+    project_src: "{{ base_install_dir }}"
+    state: present
+    restarted: true
