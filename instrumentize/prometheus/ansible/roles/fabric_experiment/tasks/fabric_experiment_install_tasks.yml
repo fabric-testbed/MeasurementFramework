@@ -228,4 +228,3 @@
   community.docker.docker_compose_v2:
     project_src: "{{ base_install_dir }}"
     state: present
-    restarted: true
