@@ -6,13 +6,7 @@ global:
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
   {# external_labels:
-      geni_slice:  <maybe add slice name here> #}
-
-# Alertmanager configuration
-alerting:
-  alertmanagers:
-  - static_configs:
-    - targets: ['{{ install_name }}_alertmanager:{{ alertmanager_port }}']
+      slice_name:  <maybe add slice name here> #}
 
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
@@ -69,13 +63,8 @@ scrape_configs:
             - source_labels: [node_name]
               target_label: instance
 
-
-
-
  # Docker Exporter for Local Containers
   - job_name: 'docker'
     static_configs:
       - targets: ['{{ install_name }}_docker_exporter:9417']
-
-
 

@@ -1,1 +1,0 @@
-This Grafana tasks directory is not linked to the common directory since the public metrics Grafana will differ more from the common install.

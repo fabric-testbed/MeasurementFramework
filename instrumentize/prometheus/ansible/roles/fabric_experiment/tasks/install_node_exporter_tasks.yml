@@ -1,4 +1,3 @@
-
 # The node exporters are installed directly on the nodes with systemd enabled.
 # To enable TLS, there needs to be a cert installed. Self-signed certs are generally used since
 #    most nodes do not have certs and they are only used to encrypt the data, not ensure who the 
