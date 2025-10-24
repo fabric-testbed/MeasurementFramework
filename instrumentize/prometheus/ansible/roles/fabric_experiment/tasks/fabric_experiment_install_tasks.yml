@@ -3,13 +3,24 @@
 # - pause:
 #     prompt: "Setting up on {{ ansible_host }}. Hit enter to continue."
 
-# needed on remote for htpasswd
+# # needed on remote for htpasswd
+# - name: passlib
+#   become: true
+#   pip:
+#     name: passlib[bcrypt]
+#     executable: pip3
+#     state: present
+
+# Ensure passlib and bcrypt are compatible
 - name: passlib
   become: true
   pip:
-    name: passlib[bcrypt]
+    name: 
+      - "passlib[bcrypt]==1.7.4"
+      - "bcrypt==3.2.2"
     executable: pip3
     state: present
+
 
 
 # USER
