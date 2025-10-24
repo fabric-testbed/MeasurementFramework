@@ -1,0 +1,14 @@
+---
+# Creating the rack monitoring setup.
+- hosts: "{{ rack_to_install | default(omit) }}"
+
+
+  pre_tasks:
+    - name: vars test 
+      debug:
+        msg: "{{ nginx_ip_ports }}" 
+
+  roles:
+    - ../prometheus/ansible/roles/fabric_rack
+
+# Note var files are no longer needed since the vars have been moved to the host & group var files.

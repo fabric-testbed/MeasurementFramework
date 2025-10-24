@@ -1,0 +1,23 @@
+# Blackbox Exporter
+  blackbox:
+    container_name: "{{ install_name }}_blackbox"
+    image: prom/blackbox-exporter
+    
+    #user: 
+    volumes:
+      # config files
+      - "{{ base_install_dir }}/blackbox/config/:/config"
+    command:
+      - '--config.file=/config/blackbox.yml'
+
+    #ports:
+    #        - 9115:9115
+    
+    logging:
+      driver: json-file
+      options:
+        max-size: "1024m" 
+        max-file: "5"
+
+    restart: always
+      

@@ -1,0 +1,7 @@
+# Note GF_USERS_ALLOW_SIGN_UP refers to name & password NOT to CiLogon OAuth
+GF_USERS_ALLOW_SIGN_UP=false
+GF_PATHS_CONFIG=/etc/grafana/custom/custom.ini
+
+{% if grafana_admin_password is defined %}
+GF_SECURITY_ADMIN_PASSWORD={{ grafana_admin_password }}
+{% endif %}
