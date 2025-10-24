@@ -13,6 +13,21 @@
 
 
 
+# Slice info needs to be found somehow so prometheus knows where to request metrics.
+# This should be automatically created by the script that reads the manifest and creates hosts file.
+# GENI Slice
+# geni_slice_name: alert01
+# geni_slice_nodes:
+#     - ip:  128.163.233.170
+#       name: node-0
+#     - ip:  128.163.233.171
+#       name: node-1
+#     - ip:  128.163.233.172
+#       name: node-2
+#     - ip:  128.163.233.173
+#       name: node-3
+    
+
 # Install Important! This will be the base name for the install directories
 #    and docker containers.
 install_name: fabric_prometheus
@@ -42,8 +57,10 @@ host_interm_cert: "{{ self_signed_cert_dir }}/{{ hostname }}_fullchain.pem"
 #prometheus_files_dir: files/
 prometheus_templates_dir: templates/Prometheus
 
-# Docker
-docker_templates_dir: templates/Docker 
+# SNMP
+snmp_templates_dir: templates/SNMP
+
+
 # Blackbox
 blackbox_files_dir: files
 #blackbox_templates_dir: templates
@@ -56,17 +73,6 @@ grafana_datasource_template_files:
 # grafana_dashboard_template_files:
 #   - grafana_node_exporter_full_dashboard.json
 #   - grafana_dashboard.yml.j2
-grafana_state: started
-grafana_cert:  "{{ host_cert }}"
-grafana_key:  "{{ host_key }}"
-grafana_user_name: grafana
-grafana_user_id: 472
-grafana_group_name: root  
-
-
-# Hard coded token OK here since this is only used between 2 docker containers without outside exposure
-grafana_renderer_auth_token: rgdfioBDUEjujPOHD8ww
-
 
 # AlertManager
 #alertmanager_template_dir: templates/geni_slice
@@ -75,20 +81,6 @@ alertmanager_port: 9093
 
 # NGINX
 nginx_template_dir: templates/Nginx
-
-nginx_cert: "{{ host_cert }}"
-nginx_key: "{{ host_key }}"
-nginx_interm_cert: "{{ host_interm_cert }}"
-nginx_ip_ports:
-  # Note Each port will correspond to a confd file set above.
-  #- 80:80         # Redirected to 443
-  - 443:443       # /grafana for grafana interface
-  #- 9090:9090     # prometheus stats
-    
-
-
-
-
 
 # Node Exporter
 node_exporter_web_listen_address: "{{ ansible_host }}:9100"

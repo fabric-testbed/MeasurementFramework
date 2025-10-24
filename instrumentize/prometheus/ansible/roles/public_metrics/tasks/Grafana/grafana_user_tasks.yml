@@ -1,0 +1,16 @@
+---
+## Create the grafana user
+# Grafana has a set user as grafana with UID 472
+# Documentation claims that it now works with root, but I have found that to be unreliable.
+# So I set the user to 472 and the group to root. 
+- name: "Setup Grafana User."
+  block:
+    - name: "Create grafana User."
+      user:
+        name: "{{ grafana_user_name }}"
+        uid:  "{{ grafana_user_id }}"
+        shell: /usr/sbin/nologin
+        system: true
+        create_home: false
+        home: /
+  become: yes

@@ -1,0 +1,24 @@
+{% include './docker_compose_' + 'base' +  '_fragment.yml.j2' %}
+
+
+# now the containers 
+
+##### MINIO ##################################################################
+
+{% include './docker_compose_' + 'minio' + '_fragment.yml.j2' %}
+
+##### MIMIR ###################################################################
+
+{% include './docker_compose_' + 'mimir' + '_fragment.yml.j2' %}
+
+##### PROMETHEUS ##############################################################
+
+{% include './docker_compose_' + 'prometheus' +  '_fragment.yml.j2' %}
+
+##### GRAFANA #################################################################
+
+{% include './docker_compose_' + 'grafana' +  '_fragment.yml.j2' %}
+
+##### NGINX ###################################################################
+
+{% include './docker_compose_' + 'nginx' +  '_fragment.yml.j2' %}

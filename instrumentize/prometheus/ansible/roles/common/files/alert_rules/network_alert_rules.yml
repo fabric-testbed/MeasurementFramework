@@ -1,0 +1,29 @@
+---
+# file: network_alert_rules.yml
+# location: all racks
+
+groups:
+
+- name: Network Alerts
+  rules:
+  
+  - alert: DataPlaneAdjLinkDown
+    expr: isisAdjStateFull == 2
+    for: 1m
+    labels:
+      severity: critical
+      fabric_response: data_net
+    annotations:
+      summary: "Data link is down from {{ $externalLabels.rack }} to {{ $labels.isisISAdjIPAddrAddress }}"  
+      description: "Data link has been down for more than 1 minute from {{ $labels.rack }} to {{ $labels.isisISAdjIPAddrAddress }}"
+
+  - alert: DataPlaneAdjLinkFailed
+    expr: isisAdjStateFull == 4
+    for: 1m
+    labels:
+      severity: critical
+      fabric_response: data_net
+    annotations:
+      summary: "Data link has failed from {{ $externalLabels.rack }} to {{ $labels.isisISAdjIPAddrAddress }}"  
+      description: "Data link has failed for more than 1 minute from {{ $externalLabels.rack }} to {{ $labels.isisISAdjIPAddrAddress }}"
+

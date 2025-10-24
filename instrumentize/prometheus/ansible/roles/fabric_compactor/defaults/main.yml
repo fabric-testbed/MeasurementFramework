@@ -1,0 +1,28 @@
+---
+# Compactor vars
+# These vars have the lowest precedence. Use --extra-vars used will over write them.
+
+ansible_python_interpreter: /usr/local/bin/python3
+pip_version: /usr/local/bin/pip3.9
+
+install_name: compactor
+docker_network_name: "{{ install_name }}"
+base_data_dir: "/opt/data/{{ install_name }}"
+base_install_dir: "/opt/{{ install_name }}" 
+
+
+prom_user_name: fab-prom
+prom_group_name: fab-prom
+
+
+docker_ipv6_subnet: fd8d:73ee:3857:1315::/64
+docker_ipv6_gateway: fd8d:73ee:3857:1315::1
+
+
+####################
+#      Thanos      #
+####################
+thanos_templates_dir: templates/Thanos
+thanos_config_templates:
+  - object_store_config.yml
+

@@ -1,0 +1,12 @@
+---
+# Installs the python sdk to allow ansible to perform operations on docker containers on the remote machine,
+
+- name: Install PIP
+
+  include_role:
+    # To get role use `ansible-galaxy install geerlingguy.pip`
+    name: geerlingguy.pip
+
+  vars: 
+    pip_install_packages:
+      - name: docker

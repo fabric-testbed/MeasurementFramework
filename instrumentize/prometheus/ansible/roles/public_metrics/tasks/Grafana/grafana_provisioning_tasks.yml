@@ -1,0 +1,25 @@
+---
+# Provisioning for Grafana 
+- name: Grafana Provisioning
+  block:
+    - name: "Add Grafana datasource provisioning."
+      template: 
+        backup: yes
+        src: '{{ grafana_templates_dir }}/{{ item }}.j2'
+        dest: "{{ base_install_dir }}/grafana/provisioning/datasources/{{ item }}"
+        owner: "{{ grafana_user_name }}"
+        group: "{{ grafana_group_name }}"
+      with_items: "{{ grafana_datasource_template_files }}"
+      when: grafana_datasource_template_files is defined
+
+    # This may not work since we may need to create a custom dir structure depending on how we add dashboards.
+    - name: "Add Grafana dashboard provisioning."
+      template: 
+        backup: yes
+        src: '{{ grafana_templates_dir }}/{{ item }}.j2'
+        dest: "{{ base_install_dir }}/grafana/provisioning/dashboards/{{ item }}"
+        owner: "{{ grafana_user_name }}"
+        group: "{{ grafana_group_name }}"
+      with_items: "{{ grafana_dashboard_template_files }}"
+      when: grafana_dashboard_template_files is defined
+  become: yes
