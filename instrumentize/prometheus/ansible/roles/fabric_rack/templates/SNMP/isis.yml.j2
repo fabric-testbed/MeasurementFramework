@@ -1,0 +1,236 @@
+# WARNING: This file was auto-generated using snmp_exporter generator, manual changes will be lost.
+ISIS-MIB:
+  walk:
+  - 1.3.6.1.2.1.138.1.1.6.1.3
+  - 1.3.6.1.2.1.138.1.6
+  get:
+  - 1.3.6.1.2.1.138.1.1.1.3.0
+  metrics:
+  - name: isisSysID
+    oid: 1.3.6.1.2.1.138.1.1.1.3
+    type: OctetString
+    help: The ID for this Intermediate System - 1.3.6.1.2.1.138.1.1.1.3
+  - name: isisRouterHostName
+    oid: 1.3.6.1.2.1.138.1.1.6.1.3
+    type: DisplayString
+    help: The hostname listed in the LSP, or a zero-length string if none. - 1.3.6.1.2.1.138.1.1.6.1.3
+    indexes:
+    - labelname: isisRouterSysID
+      type: OctetString
+      fixed_size: 6
+    - labelname: isisRouterLevel
+      type: gauge
+      enum_values:
+        1: area
+        2: domain
+  - name: isisISAdjIndex
+    oid: 1.3.6.1.2.1.138.1.6.1.1.1
+    type: gauge
+    help: A unique value identifying the IS adjacency from all other such adjacencies
+      on this circuit - 1.3.6.1.2.1.138.1.6.1.1.1
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+  - name: isisISAdjState
+    oid: 1.3.6.1.2.1.138.1.6.1.1.2
+    type: gauge
+    help: The state of the adjacency. - 1.3.6.1.2.1.138.1.6.1.1.2
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+    enum_values:
+      1: down
+      2: initializing
+      3: up
+      4: failed
+  - name: isisISAdj3WayState
+    oid: 1.3.6.1.2.1.138.1.6.1.1.3
+    type: gauge
+    help: The 3Way state of the adjacency - 1.3.6.1.2.1.138.1.6.1.1.3
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+    enum_values:
+      0: up
+      1: initializing
+      2: down
+      3: failed
+  - name: isisISAdjNeighSNPAAddress
+    oid: 1.3.6.1.2.1.138.1.6.1.1.4
+    type: OctetString
+    help: The SNPA address of the neighboring system. - 1.3.6.1.2.1.138.1.6.1.1.4
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+  - name: isisISAdjNeighSysType
+    oid: 1.3.6.1.2.1.138.1.6.1.1.5
+    type: gauge
+    help: The type of the neighboring system. - 1.3.6.1.2.1.138.1.6.1.1.5
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+    enum_values:
+      1: l1IntermediateSystem
+      2: l2IntermediateSystem
+      3: l1L2IntermediateSystem
+      4: unknown
+  - name: isisISAdjNeighSysID
+    oid: 1.3.6.1.2.1.138.1.6.1.1.6
+    type: OctetString
+    help: The system ID of the neighboring Intermediate System. - 1.3.6.1.2.1.138.1.6.1.1.6
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+  - name: isisISAdjNbrExtendedCircID
+    oid: 1.3.6.1.2.1.138.1.6.1.1.7
+    type: gauge
+    help: The 4-byte Extended Circuit ID learned from the Neighbor during 3-way handshake,
+      or 0. - 1.3.6.1.2.1.138.1.6.1.1.7
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+  - name: isisISAdjUsage
+    oid: 1.3.6.1.2.1.138.1.6.1.1.8
+    type: gauge
+    help: How is the adjacency used? On a point-to-point link, this might be level1and2,
+      but on a LAN, the usage will be level1 on the adjacency between peers at L1,
+      and level2 for the adjacency between peers at L2. - 1.3.6.1.2.1.138.1.6.1.1.8
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+    enum_values:
+      1: level1
+      2: level2
+      3: level1and2
+  - name: isisISAdjHoldTimer
+    oid: 1.3.6.1.2.1.138.1.6.1.1.9
+    type: gauge
+    help: The holding time, in seconds, for this adjacency - 1.3.6.1.2.1.138.1.6.1.1.9
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+  - name: isisISAdjNeighPriority
+    oid: 1.3.6.1.2.1.138.1.6.1.1.10
+    type: gauge
+    help: Priority of the neighboring Intermediate System for becoming the Designated
+      Intermediate System. - 1.3.6.1.2.1.138.1.6.1.1.10
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+  - name: isisISAdjLastUpTime
+    oid: 1.3.6.1.2.1.138.1.6.1.1.11
+    type: gauge
+    help: When the adjacency most recently entered the state 'up', measured in hundredths
+      of a second since the last re-initialization of the network management subsystem
+      - 1.3.6.1.2.1.138.1.6.1.1.11
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+  - name: isisISAdjAreaAddrIndex
+    oid: 1.3.6.1.2.1.138.1.6.2.1.1
+    type: gauge
+    help: An index for the areas associated with one neighbor - 1.3.6.1.2.1.138.1.6.2.1.1
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+    - labelname: isisISAdjAreaAddrIndex
+      type: gauge
+  - name: isisISAdjAreaAddress
+    oid: 1.3.6.1.2.1.138.1.6.2.1.2
+    type: OctetString
+    help: One Area Address as reported in IIH PDUs received from the neighbor. - 1.3.6.1.2.1.138.1.6.2.1.2
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+    - labelname: isisISAdjAreaAddrIndex
+      type: gauge
+  - name: isisISAdjIPAddrIndex
+    oid: 1.3.6.1.2.1.138.1.6.3.1.1
+    type: gauge
+    help: An index to this table that identifies the IP addresses to which this entry
+      belongs. - 1.3.6.1.2.1.138.1.6.3.1.1
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+    - labelname: isisISAdjIPAddrIndex
+      type: gauge
+  - name: isisISAdjIPAddrType
+    oid: 1.3.6.1.2.1.138.1.6.3.1.2
+    type: gauge
+    help: The type of one IP Address as reported in IIH PDUs received from the neighbor.
+      - 1.3.6.1.2.1.138.1.6.3.1.2
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+    - labelname: isisISAdjIPAddrIndex
+      type: gauge
+    enum_values:
+      0: unknown
+      1: ipv4
+      2: ipv6
+      3: ipv4z
+      4: ipv6z
+      16: dns
+  - name: isisISAdjIPAddrAddress
+    oid: 1.3.6.1.2.1.138.1.6.3.1.3
+    type: InetAddress
+    help: One IP Address as reported in IIH PDUs received from the neighbor - 1.3.6.1.2.1.138.1.6.3.1.3
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+    - labelname: isisISAdjIPAddrIndex
+      type: gauge
+  - name: isisISAdjProtSuppProtocol
+    oid: 1.3.6.1.2.1.138.1.6.4.1.1
+    type: gauge
+    help: One supported protocol as reported in IIH PDUs received from the neighbor.
+      - 1.3.6.1.2.1.138.1.6.4.1.1
+    indexes:
+    - labelname: isisCircIndex
+      type: gauge
+    - labelname: isisISAdjIndex
+      type: gauge
+    - labelname: isisISAdjProtSuppProtocol
+      type: gauge
+      enum_values:
+        129: iso8473
+        142: ipV6
+        204: ip
+    enum_values:
+      129: iso8473
+      142: ipV6
+      204: ip
+  auth:
+    community: '{{ snmp_community_string }}'

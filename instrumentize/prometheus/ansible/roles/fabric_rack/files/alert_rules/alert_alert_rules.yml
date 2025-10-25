@@ -1,0 +1,20 @@
+---
+# file: alert_alert_rules.yml
+# location: central
+
+groups: 
+
+- name: AlertAlert 
+  rules:
+
+  - alert: AlertNotificationFailed
+    expr: rate(prometheus_notifications_dropped_total[5m]) > 0
+    for: 15m
+    labels: 
+      severity: critical
+      fabric_response: mf
+      
+    annotations:
+      summary:  "Alerts are unable to be sent from {{ $labels.instance }} ."   
+      description:  "{{ $labels.instance }} has been unable to send alerts for 15 minutes." 
+

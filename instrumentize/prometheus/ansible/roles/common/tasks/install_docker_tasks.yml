@@ -1,0 +1,10 @@
+---
+# Installs the Docker.
+- name: Install Docker 
+  include_role: 
+    name: geerlingguy.docker
+ 
+  # vars:
+  #   docker_users:
+  #     - <add optional users here>
+         

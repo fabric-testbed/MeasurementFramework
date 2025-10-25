@@ -1,0 +1,91 @@
+# WARNING: This file was auto-generated using snmp_exporter generator, manual changes will be lost.
+PowerNet:
+  walk:
+  - 1.3.6.1.4.1.318.1.1.12.2.1.8.1.1
+  - 1.3.6.1.4.1.318.1.1.12.2.3.1
+  - 1.3.6.1.4.1.318.1.1.12.5.4.1.3
+  get:
+  - 1.3.6.1.4.1.318.1.1.12.1.15.0
+  - 1.3.6.1.4.1.318.1.1.12.1.16.0
+  - 1.3.6.1.4.1.318.1.1.12.1.18.0
+  - 1.3.6.1.4.1.318.1.1.12.1.7.0
+  metrics:
+  - name: rPDUIdentDeviceLinetoLineVoltage
+    oid: 1.3.6.1.4.1.318.1.1.12.1.15
+    type: gauge
+    help: Getting/Setting this OID will return/set the Line to Line Voltage - 1.3.6.1.4.1.318.1.1.12.1.15
+  - name: rPDUIdentDevicePowerWatts
+    oid: 1.3.6.1.4.1.318.1.1.12.1.16
+    type: gauge
+    help: Getting this OID will return the Power in Watts. - 1.3.6.1.4.1.318.1.1.12.1.16
+  - name: rPDUIdentDevicePowerVA
+    oid: 1.3.6.1.4.1.318.1.1.12.1.18
+    type: gauge
+    help: Getting this OID will return the Power in VA. - 1.3.6.1.4.1.318.1.1.12.1.18
+  - name: rPDUIdentDeviceRating
+    oid: 1.3.6.1.4.1.318.1.1.12.1.7
+    type: gauge
+    help: Getting this OID will return the electrical rating of the device in Amps.
+      - 1.3.6.1.4.1.318.1.1.12.1.7
+  - name: rPDULoadDevOutletIndex
+    oid: 1.3.6.1.4.1.318.1.1.12.2.1.8.1.1
+    type: gauge
+    help: The index to the Outlet Monitored Rack PDU Max Outlet Load entry. - 1.3.6.1.4.1.318.1.1.12.2.1.8.1.1
+    indexes:
+    - labelname: rPDULoadDevOutletIndex
+      type: gauge
+  - name: rPDULoadStatusIndex
+    oid: 1.3.6.1.4.1.318.1.1.12.2.3.1.1.1
+    type: gauge
+    help: The index to the Rack PDU phase/bank entry - 1.3.6.1.4.1.318.1.1.12.2.3.1.1.1
+    indexes:
+    - labelname: rPDULoadStatusIndex
+      type: gauge
+  - name: rPDULoadStatusLoad
+    oid: 1.3.6.1.4.1.318.1.1.12.2.3.1.1.2
+    type: gauge
+    help: Getting this OID will return the phase/bank load measured in tenths of Amps.
+      - 1.3.6.1.4.1.318.1.1.12.2.3.1.1.2
+    indexes:
+    - labelname: rPDULoadStatusIndex
+      type: gauge
+  - name: rPDULoadStatusLoadState
+    oid: 1.3.6.1.4.1.318.1.1.12.2.3.1.1.3
+    type: gauge
+    help: Getting this OID will return the phase/bank load state - 1.3.6.1.4.1.318.1.1.12.2.3.1.1.3
+    indexes:
+    - labelname: rPDULoadStatusIndex
+      type: gauge
+    enum_values:
+      1: phaseLoadNormal
+      2: phaseLoadLow
+      3: phaseLoadNearOverload
+      4: phaseLoadOverload
+  - name: rPDULoadStatusPhaseNumber
+    oid: 1.3.6.1.4.1.318.1.1.12.2.3.1.1.4
+    type: gauge
+    help: The phase number to which this record refers. - 1.3.6.1.4.1.318.1.1.12.2.3.1.1.4
+    indexes:
+    - labelname: rPDULoadStatusIndex
+      type: gauge
+  - name: rPDULoadStatusBankNumber
+    oid: 1.3.6.1.4.1.318.1.1.12.2.3.1.1.5
+    type: gauge
+    help: The bank number to which this record refers - 1.3.6.1.4.1.318.1.1.12.2.3.1.1.5
+    indexes:
+    - labelname: rPDULoadStatusIndex
+      type: gauge
+  - name: rPDUStatusPhaseState
+    oid: 1.3.6.1.4.1.318.1.1.12.5.4.1.3
+    type: gauge
+    help: Getting this OID will return the Phase load state - 1.3.6.1.4.1.318.1.1.12.5.4.1.3
+    indexes:
+    - labelname: rPDUStatusPhaseIndex
+      type: gauge
+    enum_values:
+      1: phaseLoadNormal
+      2: phaseLoadLow
+      3: phaseLoadNearOverload
+      4: phaseLoadOverload
+  auth:
+    community: '{{ snmp_community_string }}'
