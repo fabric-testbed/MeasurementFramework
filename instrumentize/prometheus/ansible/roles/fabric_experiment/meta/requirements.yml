@@ -16,9 +16,11 @@ roles:
   #version:
 
 # For Node Exporters
-  # cloudalchemy is already installed in os image
-  - name: cloudalchemy.node_exporter
-  #- name: prometheus.prometheus
+  # cloudalchemy.node_exporter is deprecated/unmaintained; prometheus.prometheus
+  # (prometheus-community/ansible) is its actively maintained successor and
+  # uses the same variable names (node_exporter_web_listen_address,
+  # node_exporter_tls_server_config, node_exporter_basic_auth_users, etc).
+  - name: prometheus.prometheus
   #version:
 
 collections:
