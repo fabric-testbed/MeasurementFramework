@@ -21,7 +21,16 @@ HOME_BASE="/home/mfuser"
 MF_GIT="$HOME_BASE/mf_git"
 REQUIREMENTS_TXT="$MF_GIT/instrumentize/prometheus/ansible/roles/fabric_experiment/meta/requirements.txt"
 REQUIREMENTS_YML="$MF_GIT/instrumentize/prometheus/ansible/roles/fabric_experiment/meta/requirements.yml"
-OUT_TGZ="$MF_GIT/instrumentize/experiment_bootstrap/meas_node_binaries.tgz"
+
+# Optional: name of the FABRIC image this was built on (e.g. default_ubuntu_24),
+# passed in as $1. Tagged onto the tarball's filename so it's obvious which
+# image a given tarball was built against without having to extract it first.
+IMAGE_NAME="${1:-}"
+if [ -n "$IMAGE_NAME" ]; then
+  OUT_TGZ="$MF_GIT/instrumentize/experiment_bootstrap/meas_node_binaries_${IMAGE_NAME}.tgz"
+else
+  OUT_TGZ="$MF_GIT/instrumentize/experiment_bootstrap/meas_node_binaries.tgz"
+fi
 
 # Set before the pip install below (rather than after) so pip's "not on PATH"
 # warning doesn't fire, and so it's already in effect for the ansible-galaxy/
