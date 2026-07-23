@@ -9,21 +9,23 @@
 roles:
 # Ensures pip is installed
   - name: geerlingguy.pip
-  # #version: 
+  # #version:
 
 # Python Docker SDK to allow docker control from ansible.
   - name: geerlingguy.docker
   #version:
+
+collections:
+  - name: community.docker
 
 # For Node Exporters
   # cloudalchemy.node_exporter is deprecated/unmaintained; prometheus.prometheus
   # (prometheus-community/ansible) is its actively maintained successor and
   # uses the same variable names (node_exporter_web_listen_address,
   # node_exporter_tls_server_config, node_exporter_basic_auth_users, etc).
+  # It's a collection, not a legacy Galaxy role -- `ansible-galaxy role install`
+  # hits the old role API and 404s on it, so it must live under `collections:`
+  # and be installed with `ansible-galaxy collection install -r requirements.yml`.
   - name: prometheus.prometheus
-  #version:
-
-collections:
-  - name: community.docker
 
 
