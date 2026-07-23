@@ -23,6 +23,11 @@ REQUIREMENTS_TXT="$MF_GIT/instrumentize/prometheus/ansible/roles/fabric_experime
 REQUIREMENTS_YML="$MF_GIT/instrumentize/prometheus/ansible/roles/fabric_experiment/meta/requirements.yml"
 OUT_TGZ="$MF_GIT/instrumentize/experiment_bootstrap/meas_node_binaries.tgz"
 
+# Set before the pip install below (rather than after) so pip's "not on PATH"
+# warning doesn't fire, and so it's already in effect for the ansible-galaxy/
+# ansible calls further down.
+export PATH="$PATH:$HOME_BASE/.local/bin"
+
 echo "-----Updating apt-----"
 sudo apt update
 
@@ -34,8 +39,6 @@ echo "-----Installing python requirements-----"
 # --break-system-packages: needed on Ubuntu 24.04+ (PEP 668); harmless no-op
 # flag is unavailable on older pip, so pin an image where it's supported.
 python3 -m pip install --user --break-system-packages -r "$REQUIREMENTS_TXT"
-
-export PATH="$PATH:$HOME_BASE/.local/bin"
 
 echo "-----Install Galaxy Roles-----"
 ansible-galaxy install -r "$REQUIREMENTS_YML"
