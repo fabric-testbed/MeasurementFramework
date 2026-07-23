@@ -26,10 +26,11 @@ REQUIREMENTS_YML="$MF_GIT/instrumentize/prometheus/ansible/roles/fabric_experime
 # passed in as $1. Tagged onto the tarball's filename so it's obvious which
 # image a given tarball was built against without having to extract it first.
 IMAGE_NAME="${1:-}"
+BINARIES_DIR="$MF_GIT/instrumentize/experiment_bootstrap/meas_node_binaries"
 if [ -n "$IMAGE_NAME" ]; then
-  OUT_TGZ="$MF_GIT/instrumentize/experiment_bootstrap/meas_node_binaries_${IMAGE_NAME}.tgz"
+  OUT_TGZ="$BINARIES_DIR/meas_node_binaries_${IMAGE_NAME}.tgz"
 else
-  OUT_TGZ="$MF_GIT/instrumentize/experiment_bootstrap/meas_node_binaries.tgz"
+  OUT_TGZ="$BINARIES_DIR/meas_node_binaries.tgz"
 fi
 
 # Set before the pip install below (rather than after) so pip's "not on PATH"
@@ -66,10 +67,12 @@ BUILD_INFO="$HOME_BASE/.mf_binaries_build_info"
 cat "$BUILD_INFO"
 
 echo "-----Packaging tarball-----"
+mkdir -p "$BINARIES_DIR"
 tar czf "$OUT_TGZ" -C / \
   home/mfuser/.local \
   home/mfuser/.ansible \
   home/mfuser/.mf_binaries_build_info
 
 echo "-----Finished! Wrote $OUT_TGZ-----"
-echo "Commit this file and instrumentize/experiment_bootstrap/meas_node_binaries.tgz together."
+echo "Commit this file, and if install_ansible.sh should now pin to it, update"
+echo "MEAS_NODE_BINARIES_TGZ there too."
