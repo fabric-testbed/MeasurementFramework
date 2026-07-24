@@ -93,11 +93,21 @@
         clients : ['pip3']
       register: pip_package_info
 
+    - name: Check for PEP 668 externally-managed-environment marker
+      ansible.builtin.shell: find /usr/lib/python3*/EXTERNALLY-MANAGED /usr/lib64/python3*/EXTERNALLY-MANAGED 2>/dev/null
+      register: externally_managed_marker
+      changed_when: false
+      failed_when: false
+
     - name: Upgrade pip3 to latest version and install Python Docker SDK
       ansible.builtin.pip:
         name: "{{ item.name }}"
         executable: pip3
         state: latest
+        # Only pass --break-system-packages where PEP 668 actually applies
+        # (e.g. Ubuntu 24.04+) -- older pip on other distros (CentOS/Rocky,
+        # older Ubuntu) doesn't recognize this flag and errors on it.
+        extra_args: "{{ '--break-system-packages' if externally_managed_marker.stdout else omit }}"
       with_items: "{{ pip_packages }}"
       when: 
         - (item.name not in (pip_package_info.packages.pip3).keys()) or ((pip_package_info.packages.pip3[item.name])[0]).version is ansible.builtin.version(item.min_version,'lt')
