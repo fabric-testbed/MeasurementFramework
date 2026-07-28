@@ -1,13 +1,24 @@
 from datetime import datetime
 import os
+import re
 import subprocess
 import json
 
-import logging 
+import logging
 
 logfile = os.path.join(os.path.expanduser("~"), "ansible_bootstrap.log")
 logging.basicConfig(filename=logfile, format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level="INFO")
 
+
+def find_unreachable_hosts(play_recap):
+    # PLAY RECAP lines look like:
+    # Node2                      : ok=0    changed=0    unreachable=1    failed=0 ...
+    # A host is only "unreachable" here if ansible couldn't connect at all (eg. the
+    # node never finished booting) -- separate from a task simply failing.
+    return [
+        host
+        for host, _count in re.findall(r"^(\S+)\s*:.*\bunreachable=([1-9]\d*)", play_recap, re.MULTILINE)
+    ]
 
 
 def main():
@@ -62,6 +73,12 @@ def main():
 
     ret_val["ansible_bootstrap"]["play_recap"] = play_recap_bootstrap
 
+    unreachable_hosts = find_unreachable_hosts(play_recap_bootstrap)
+    ret_val["ansible_bootstrap"]["unreachable_hosts"] = unreachable_hosts
+    if unreachable_hosts:
+        msg = f"Unreachable hosts (failed to boot or unreachable via ssh): {', '.join(unreachable_hosts)}"
+        logging.error(msg)
+        print(msg)
 
     ret_val["success"] = (
         (r_bootstrap.returncode == 0)
