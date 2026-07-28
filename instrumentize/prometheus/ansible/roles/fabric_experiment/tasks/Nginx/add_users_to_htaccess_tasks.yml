@@ -1,15 +1,37 @@
 ---
-# Add user to the htpasswd file
-# Note this just adds a user to the file, it does not remove any existing users.
+# Add multiple users to the htpasswd file
+# Note this just adds/updates users, it does not remove any existing users.
+#
+# Uses the real `htpasswd` binary (apache2-utils/httpd-tools, installed in
+# fabric_experiment_install_tasks.yml) rather than Ansible's `htpasswd`
+# module -- see that file and add_user_to_htaccess_tasks.yml for why: the
+# module depends on the unmaintained `passlib` library, pinned against an
+# old `bcrypt` to work around a passlib/bcrypt compatibility bug, which
+# breaks under PEP 668.
 
-- name: Add multiple users user to htpasswd file
-  htpasswd:
+- name: Ensure htpasswd file exists
+  ansible.builtin.file:
     path: "{{ base_install_dir }}/nginx/config/htpasswd"
-    name: "{{ item.name }}"
-    password: "{{ item.password }}"
+    state: touch
+    access_time: preserve
+    modification_time: preserve
+    mode: '0644'
+  become: true
+
+# Password piped via stdin (-i) so it never shows up in `ps`; no_log on the
+# whole task since the rendered command isn't auto-redacted the way the old
+# module's password param was. Always reports "changed" -- htpasswd gives no
+# idempotency signal to key off of, unlike the module it replaces.
+- name: Add multiple users to htpasswd file
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      printf '%s' "{{ item.password }}" | htpasswd -i -B "{{ base_install_dir }}/nginx/config/htpasswd" "{{ item.name }}"
+    executable: /bin/bash
   with_items: "{{ ht_users }}"
-  become: yes
+  become: true
+  no_log: true
 
 # ht_users:
-#   - name: 
-#     password: 
+#   - name:
+#     password:

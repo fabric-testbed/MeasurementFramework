@@ -1,7 +1,12 @@
 # Required for ansible to run this role.
 
-passlib[bcrypt]
-
+# passlib[bcrypt] was removed: it's unmaintained (no release since 2020) and
+# its bcrypt-version-check code breaks against bcrypt>=4.0, which used to
+# force a hard bcrypt==3.2.2 pin here -- and installing that pin via pip now
+# fails outright under PEP 668 (Ubuntu 24.04+). htpasswd entries are now
+# written with the real `htpasswd` binary (apache2-utils/httpd-tools,
+# installed as a normal package by the role itself) instead of Ansible's
+# `htpasswd` module, so passlib/bcrypt aren't needed here at all anymore.
 
 ansible>=4.5.0
 ansible-core>=2.11

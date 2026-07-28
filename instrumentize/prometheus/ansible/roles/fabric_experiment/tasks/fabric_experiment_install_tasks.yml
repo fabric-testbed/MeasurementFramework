@@ -3,23 +3,19 @@
 # - pause:
 #     prompt: "Setting up on {{ ansible_host }}. Hit enter to continue."
 
-# # needed on remote for htpasswd
-# - name: passlib
-#   become: true
-#   pip:
-#     name: passlib[bcrypt]
-#     executable: pip3
-#     state: present
-
-# Ensure passlib and bcrypt are compatible
-- name: passlib
-  become: true
-  pip:
-    name: 
-      - "passlib[bcrypt]==1.7.4"
-      - "bcrypt==3.2.2"
-    executable: pip3
+# htpasswd (bcrypt-hashed) entries are written with the real `htpasswd`
+# binary (see Nginx/add_user_to_htaccess_tasks.yml and
+# add_users_to_htaccess_tasks.yml) rather than Ansible's `htpasswd` module.
+# That module requires `passlib` -- unmaintained since 2020 -- pinned
+# against an old `bcrypt` release to work around a known passlib/bcrypt
+# version-check bug, and installing it via pip now fails outright under
+# PEP 668 (Ubuntu 24.04+). apache2-utils/httpd-tools ships a maintained,
+# distro-packaged htpasswd binary with none of that baggage.
+- name: Install htpasswd utility (apache2-utils/httpd-tools)
+  ansible.builtin.package:
+    name: "{{ 'httpd-tools' if ansible_os_family == 'RedHat' else 'apache2-utils' }}"
     state: present
+  become: true
 
 
 
