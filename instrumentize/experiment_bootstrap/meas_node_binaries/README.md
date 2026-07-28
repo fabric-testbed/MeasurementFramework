@@ -44,9 +44,12 @@ Check this before assuming an existing tarball is still valid for a given node i
 
 ## Which tarball actually gets used
 
-`install_ansible.sh` doesn't auto-select a tarball based on the target node's image -- it's pinned to one specific
-file in this directory via the `MEAS_NODE_BINARIES_TGZ` variable near the bottom of the script. When you build a new
-tarball for a different (or updated) image, update that variable to point at it.
+`install_ansible.sh` looks for an empty marker file named `os_image_<image_name>` in `mfuser`'s home dir (FABRIC
+images drop this to record which base image the node was built from). If `meas_node_binaries_<image_name>.tgz` exists
+here, it's used. Otherwise -- no marker file, or no matching tarball -- it falls back to the tarball pinned in the
+`MEAS_NODE_BINARIES_TGZ` variable near the bottom of the script. When you build a new tarball for a different (or
+updated) image, no script change is needed as long as the marker file's `<image_name>` matches the tarball's; update
+`MEAS_NODE_BINARIES_TGZ` only if you also want it to become the new fallback default.
 
 The old flat `../meas_node_binaries.tgz` (parent directory, no image name) was built against Python 3.8 and is stale
 -- it's unused now that `install_ansible.sh` points here instead, and should be deleted once nothing references it.
