@@ -1,13 +1,20 @@
 ---
+# Everything PTP-related is tagged "ptp" so it can be skipped with
+# `--skip-tags ptp` (see bootstrap_playbooks.py's SKIP_PTP env var) -- eg.
+# when the meas-node's kernel doesn't have a matching linux-modules-extra
+# package available yet, which otherwise aborts the rest of the "Boot
+# Strapping Process" play below (including the Docker install) since that
+# failure isn't ignored.
 - name: Downloading PTP repo
   hosts: meas-node
+  tags: ptp
   tasks:
     - name: Unarchive a file that needs to be downloaded (added in 2.0)
       ansible.builtin.unarchive:
         src: https://github.com/fabric-testbed/ptp/archive/refs/heads/main.tar.gz
         dest: /home/mfuser/mf_git/instrumentize
         extra_opts:
-          - --transform 
+          - --transform
           - 's/^ptp-main/ptp/'
         remote_src: yes
 
@@ -112,9 +119,25 @@
       when: 
         - (item.name not in (pip_package_info.packages.pip3).keys()) or ((pip_package_info.packages.pip3[item.name])[0]).version is ansible.builtin.version(item.min_version,'lt')
 
+    # Failures here (eg. no linux-modules-extra-<kernel> package available
+    # yet for this host's kernel) are logged and swallowed rather than
+    # aborting the rest of this play -- PTP is not needed for Docker/
+    # monitoring to come up, and a failure partway through this role
+    # shouldn't block them. Set SKIP_PTP=1 (see bootstrap_playbooks.py) to
+    # skip attempting this entirely instead.
     - name: Install LinuxPTP
-      ansible.builtin.include_role:
-        name: /home/mfuser/mf_git/instrumentize/ptp/ansible/roles/linuxptp
+      tags: ptp
+      block:
+        - name: Install LinuxPTP
+          ansible.builtin.include_role:
+            name: /home/mfuser/mf_git/instrumentize/ptp/ansible/roles/linuxptp
+      rescue:
+        - name: Warn that LinuxPTP install failed
+          ansible.builtin.debug:
+            msg: >-
+              LinuxPTP install failed on this host and was skipped so the rest of
+              bootstrap could continue. PTP hardware timestamping will not be
+              available until this is fixed and bootstrap is re-run.
 
     - name: Check If Docker Is Installed
       ansible.builtin.command:

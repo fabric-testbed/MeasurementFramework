@@ -47,6 +47,17 @@ def main():
         "-b",
         playbook,
     ]
+
+    # Set SKIP_PTP=1 in the environment to skip PTP install (both the repo
+    # download and the LinuxPTP role, tagged "ptp" in bootstrap.yml) -- eg.
+    # when the meas-node's kernel doesn't have a matching linux-modules-extra
+    # package available, which otherwise aborts the rest of this playbook's
+    # "Boot Strapping Process" play (including the Docker install) partway
+    # through.
+    if os.environ.get("SKIP_PTP", "").lower() in ("1", "true", "yes"):
+        cmd += ["--skip-tags", "ptp"]
+        logging.info("SKIP_PTP set -- skipping PTP install (--skip-tags ptp)")
+
     logging.info(cmd)
 
     r_bootstrap = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
