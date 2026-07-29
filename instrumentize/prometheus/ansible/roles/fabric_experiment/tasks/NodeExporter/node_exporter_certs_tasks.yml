@@ -27,20 +27,22 @@
       owner: root
       group: root
 
-  # Local machine must have either cryptography>=1.3 or pyOpenSSL>=0.15 
-  # Need to install pip install passlib[bcrypt]
-  # https://docs.ansible.com/ansible/latest/collections/community/crypto/openssl_csr_module.html   
-  # Remote machine may be missing this
-  # - name: Ensure python OpenSSL dependencies are installed.
-  #   pip:
-  #       name: cryptography
-  #       executable: pip3
-  #       state: present 
-  # - name: pyopen
-  #   pip:
-  #     name: pyOpenSSL
-  #     executable: pip3
-  #     state: present
+  # The openssl_privatekey/openssl_csr/openssl_certificate tasks below need
+  # cryptography>=3.3 present on *this* (target) node's Python -- not just
+  # the controller's -- since that's where these modules actually run.
+  # https://docs.ansible.com/ansible/latest/collections/community/crypto/openssl_csr_module.html
+  - name: Check for PEP 668 externally-managed-environment marker
+    ansible.builtin.shell: find /usr/lib/python3*/EXTERNALLY-MANAGED /usr/lib64/python3*/EXTERNALLY-MANAGED 2>/dev/null
+    register: externally_managed_marker
+    changed_when: false
+    failed_when: false
+
+  - name: Ensure python cryptography dependency is installed
+    ansible.builtin.pip:
+      name: "cryptography>=3.3"
+      executable: pip3
+      state: present
+      extra_args: "{{ '--break-system-packages' if externally_managed_marker.stdout else omit }}"
 
   - name: create key    
     openssl_privatekey:
