@@ -64,7 +64,10 @@ def _needs_break_system_packages():
 
 
 def install_requirements():
-    cmd = ["sudo", "pip3", "install", "-q", "-r", REQUIREMENTS_FILE]
+    # --ignore-installed avoids "Cannot uninstall X, RECORD file not found"
+    # errors when a dependency (eg. typing_extensions) is already present
+    # as an apt/debian package rather than a pip-tracked one.
+    cmd = ["sudo", "pip3", "install", "-q", "--ignore-installed", "-r", REQUIREMENTS_FILE]
     if _needs_break_system_packages():
         cmd.append("--break-system-packages")
     subprocess.run(cmd, check=True, capture_output=True, text=True)
