@@ -57,8 +57,8 @@ def create_app(auth_token: Optional[str] = None, default_cwd: Optional[str] = No
         if authorization != f"Bearer {expected}":
             raise HTTPException(status_code=401, detail="Unauthorized")
 
-    @app.get("/healthz")
-    def healthz(_: None = Depends(_authorize)):
+    @app.get("/health")
+    def health(_: None = Depends(_authorize)):
         return {"status": "ok"}
 
     @app.get("/status")
