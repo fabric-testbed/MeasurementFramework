@@ -38,7 +38,7 @@ def main():
 
     data = mu.get_data()
     port = data.get("port", mu.DEFAULT_PORT)
-    token = data.get("token") or secrets.token_hex(32)
+    token = mu.get_token_from_file() or data.get("token") or secrets.token_hex(32)
 
     try:
         mu.install_requirements()

@@ -17,6 +17,19 @@ ENV_FILE_PATH = "/etc/mflib/meas-node-server.env"
 DEFAULT_PORT = 5000
 SERVER_SCRIPT = os.path.join(this_service_dir, "server.py")
 REQUIREMENTS_FILE = os.path.join(this_service_dir, "requirements.txt")
+TOKEN_FILE_PATH = "/home/mfuser/mflib_api_token"
+
+
+def get_token_from_file():
+    # mfportal drops the token it will use to talk to this node here before
+    # create.py runs, so the node and portal agree on the token without a
+    # round trip through data.json.
+    try:
+        with open(TOKEN_FILE_PATH) as f:
+            token = f.read().strip()
+        return token or None
+    except Exception:
+        return None
 
 
 def get_data():
