@@ -2,8 +2,7 @@
 # Ping each experimentors node.
 {% for h in groups["Experiment_Nodes"] %}
 - targets:
-
-        - '{{ hostvars[h].hostname }}'
+        - '{{ hostvars[h].ansible_host }}'
 
   labels:
         job: ping
