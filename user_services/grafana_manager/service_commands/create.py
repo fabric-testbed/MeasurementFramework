@@ -39,7 +39,22 @@ def main():
     # To create the grafana service Prometheus must already be setup
     if not os.path.exists(gu.prometheus_default_install_vars_file):
         ret_val["msg"] = "Prometheus services, which include Grafana, has not been set up. Unable to manage Grafana dashboards."
- 
+
+    # Trust the portal's proxied hostname for CSRF before making any admin
+    # API calls below -- Grafana only reads this at startup, so it has to
+    # happen (and the container has to come back up) before interface.* is
+    # used, not after.
+    external_hostname = gu.get_external_hostname()
+    if external_hostname:
+        csrf_result = gu.set_grafana_csrf_trusted_origin(external_hostname)
+        logging.info(csrf_result)
+        ret_val['msg'] += csrf_result['msg'] + '\n'
+        if csrf_result['success'] and not gu.wait_for_grafana_ready():
+            logging.warning("Grafana did not become ready after CSRF-origin restart within timeout.")
+            ret_val['msg'] += "WARNING: Grafana did not become ready after restart within timeout.\n"
+    else:
+        logging.info("No external_hostname in portal_registration.json -- skipping CSRF trusted origin setup.")
+
     default_settings = gu.get_defaults()
 
     interface = gi.GrafanaManager( host = "localhost",
