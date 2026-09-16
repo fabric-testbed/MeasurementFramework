@@ -28,7 +28,7 @@
       - { name: 'docker', min_version: '5.0.3' }
     docker_daemon_options:
       registry-mirrors:
-        - "{{ 'https://registry.' + management_ip_type | lower + '.docker.com' }}"
+        - "{{ 'https://registry.' + (management_ip_type | default('ipv6')) | lower + '.docker.com' }}"
   tasks:
     - name: Update Package Cache (apt/Ubuntu)
       apt:
