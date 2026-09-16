@@ -165,7 +165,7 @@ def check_health(port, token):
     cmd = [
         "curl", "-sf",
         "-H", f"Authorization: Bearer {token}",
-        f"http://[::1]:{port}/healthz",
+        f"http://[::1]:{port}/health",
     ]
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode == 0:
