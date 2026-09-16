@@ -39,7 +39,7 @@ def main():
     # To create the grafana service Prometheus must already be setup
     if not os.path.exists(gu.prometheus_default_install_vars_file):
         ret_val["msg"] = "Prometheus services, which include Grafana, has not been set up. Unable to manage Grafana dashboards."
-
+        logging.warning(ret_val['msg'])
     # Trust the portal's proxied hostname for CSRF before making any admin
     # API calls below -- Grafana only reads this at startup, so it has to
     # happen (and the container has to come back up) before interface.* is
