@@ -1,6 +1,7 @@
 
 import os
 import subprocess
+import tempfile
 import time
 from pathlib import Path
 import json
@@ -76,8 +77,27 @@ def set_grafana_csrf_trusted_origin(hostname):
         ]
     lines.append(f"GF_SECURITY_CSRF_TRUSTED_ORIGINS={hostname}")
 
-    with open(grafana_env_file, "w") as f:
+    # grafana_env_file is owned by grafana:root (see config_grafana_tasks.yml),
+    # but this runs as the unprivileged mfuser -- write via a temp file + sudo
+    # cp instead of open(..., "w") directly, same pattern as
+    # meas_node_server_utilities.install_and_start_systemd_service.
+    with tempfile.NamedTemporaryFile("w", delete=False) as f:
         f.write("\n".join(lines) + "\n")
+        tmp_path = f.name
+
+    try:
+        copy_result = subprocess.run(
+            ["sudo", "cp", tmp_path, grafana_env_file],
+            capture_output=True, text=True,
+        )
+    finally:
+        os.remove(tmp_path)
+
+    if copy_result.returncode != 0:
+        return {
+            "success": False,
+            "msg": f"Failed to write {grafana_env_file}: {copy_result.stderr.strip()}",
+        }
 
     result = subprocess.run(
         ["sudo", "docker", "restart", grafana_container_name],
