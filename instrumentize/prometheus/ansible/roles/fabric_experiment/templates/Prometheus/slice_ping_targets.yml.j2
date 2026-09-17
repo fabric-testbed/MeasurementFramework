@@ -1,13 +1,19 @@
 ---
 # Ping each experimentors node.
 {% for h in groups["Experiment_Nodes"] %}
+{% set _host = hostvars[h].ansible_host %}
+{# No port follows a ping target, so unconditional bracketing is harmless --
+   preserved as-is, just made idempotent against ansible_host values that
+   arrive already bracketed (e.g. from hosts.ini generators that now
+   pre-bracket IPv6), to avoid producing '[[::1]]'. #}
+{% set _target = _host if _host.startswith('[') else ('[' + _host + ']') %}
 - targets:
-        - '[{{ hostvars[h].ansible_host }}]'
+        - '{{ _target }}'
 
   labels:
         job: ping
         node_name: '{{ h }}'
-{% endfor %}          
+{% endfor %}
 
 
 

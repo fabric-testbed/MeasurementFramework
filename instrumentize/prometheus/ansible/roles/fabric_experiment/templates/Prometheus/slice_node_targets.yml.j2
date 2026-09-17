@@ -4,14 +4,16 @@
 
 # Node Exporter for each experimentors.
 {% for h in groups["Experiment_Nodes"] %}
+{% set _host = hostvars[h].ansible_host %}
+{% set _target = _host if _host.startswith('[') else ('[' + _host + ']' if ':' in _host else _host) %}
 - targets:
-        - '[{{ hostvars[h].ansible_host }}]:9100'
+        - '{{ _target }}:9100'
 
   labels:
         job: node
         node_name: '{{ h }}'
 
-{% endfor %}          
+{% endfor %}
 
 
 
