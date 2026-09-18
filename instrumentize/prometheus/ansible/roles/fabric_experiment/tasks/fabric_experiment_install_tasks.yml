@@ -27,8 +27,12 @@
 - name: Self-signed certs.
   include_tasks: tasks/setup_tasks/self_signed_cert_tasks.yml
 # DOCKER NETWORK
+# Was pointing at setup_docker_network_tasks.yml (the IPv4-only variant,
+# enable_ipv6 commented out) -- that's why the network never got IPv6 despite
+# setup_docker_ipv6_network_tasks.yml existing right next to it with
+# enable_ipv6 wired up correctly.
 - name: Setup the docker network to be used by the monitoring containers.
-  include_tasks: tasks/setup_tasks/setup_docker_network_tasks.yml
+  include_tasks: tasks/setup_tasks/setup_docker_ipv6_network_tasks.yml
 
 # PROMETHEUS
 # Prometheus consists of several tasks that must be done.

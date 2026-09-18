@@ -6,10 +6,17 @@
   community.docker.docker_network:
           name: "{{ docker_network_name }}"
           enable_ipv6: yes
+          # Required: without force, an existing network from an earlier run
+          # (e.g. one created back when this task list pointed at the
+          # IPv4-only setup_docker_network_tasks.yml) is left as-is --
+          # enable_ipv6/ipam_config are immutable on a running network, so
+          # "present" alone silently keeps the old IPv4-only network forever.
+          # force disconnects containers, deletes, and recreates it to match.
+          force: yes
           ipam_config:
               - subnet: "{{ docker_ipv6_subnet }}"
                 gateway: "{{ docker_ipv6_gateway }}"
-              
+
               # # Docker will basically do DHCP for ip4
               # - subnet: 172.22.0.0/16
               #   gateway: 172.22.0.1

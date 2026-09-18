@@ -99,11 +99,21 @@ def set_grafana_csrf_trusted_origin(hostname):
         f.write("\n".join(lines) + "\n")
         tmp_path = f.name
 
+    # Both subprocess.run calls below get an explicit timeout -- a hang here
+    # (stuck container, docker daemon issue, sudo unexpectedly prompting for
+    # a password) previously meant create.py blocked forever with no error
+    # and no output, which looked identical to a script that just never
+    # finished.
     try:
         copy_result = subprocess.run(
             ["sudo", "cp", tmp_path, grafana_env_file],
-            capture_output=True, text=True,
+            capture_output=True, text=True, timeout=30,
         )
+    except subprocess.TimeoutExpired:
+        return {
+            "success": False,
+            "msg": f"Timed out writing {grafana_env_file} (sudo cp took longer than 30s).",
+        }
     finally:
         os.remove(tmp_path)
 
@@ -119,16 +129,22 @@ def set_grafana_csrf_trusted_origin(hostname):
             "msg": f"Wrote {grafana_env_file} but {grafana_compose_file} not found -- can't recreate the grafana container.",
         }
 
-    result = subprocess.run(
-        [
-            "sudo", "docker", "compose",
-            "-f", grafana_compose_file,
-            "up", "-d", "--force-recreate", "--no-deps",
-            grafana_compose_service,
-        ],
-        cwd=grafana_compose_dir,
-        capture_output=True, text=True,
-    )
+    try:
+        result = subprocess.run(
+            [
+                "sudo", "docker", "compose",
+                "-f", grafana_compose_file,
+                "up", "-d", "--force-recreate", "--no-deps",
+                grafana_compose_service,
+            ],
+            cwd=grafana_compose_dir,
+            capture_output=True, text=True, timeout=120,
+        )
+    except subprocess.TimeoutExpired:
+        return {
+            "success": False,
+            "msg": f"Timed out recreating the grafana container (docker compose up took longer than 120s).",
+        }
     if result.returncode != 0:
         return {
             "success": False,

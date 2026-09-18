@@ -930,12 +930,20 @@ class GrafanaManager(object):
     # Setup Datasources
     def createDatasource(self, fileDir):
         """
-        Creates Grafana datasource from given JSON file
+        Creates Grafana datasource from given JSON file.
+
+        Grafana's own file-based provisioning
+        (Grafana/grafana_local_prometheus_datasource.yml.j2) already
+        creates a datasource with this same name when the container
+        starts, before this ever runs -- POSTing it again always 409s
+        (Conflict). Check for it by name first and skip instead of
+        blindly POSTing, so a normal create.py run doesn't always report
+        a failure for a datasource that's actually there and working.
 
         :param fileDir: Path to JSON containing Grafana datasource
         :type fileDir: str
         :return: Function Status
-        :rtype: JSON dictionary 
+        :rtype: JSON dictionary
         """
         response = {
             "success": False,
@@ -950,18 +958,29 @@ class GrafanaManager(object):
             response['msg'] = "No Grafana host specified to object."
             return response
 
-        url = 'https://' + self.host + '/grafana/api/datasources'
-
         headers = {
             'Content-Type': 'application/json',
             'User-Agent': "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36",
             'Authorization': "Bearer " + self.apiKey
         }
-        
+
         datasourceFile = open(fileDir)
         datasourceObject = datasourceFile.read()
         datasourceFile.close()
 
+        datasourceName = json.loads(datasourceObject).get("name")
+        if datasourceName:
+            existing = requests.get(
+                'https://' + self.host + '/grafana/api/datasources/name/' + datasourceName,
+                headers=headers, verify=False
+            )
+            if existing.status_code == 200:
+                response['success'] = True
+                response['msg'] = f"Datasource '{datasourceName}' already exists (provisioned or previously created) -- skipping."
+                response['data'] = existing
+                return response
+
+        url = 'https://' + self.host + '/grafana/api/datasources'
         x = requests.post(url, headers=headers, data=datasourceObject, verify=False)
 
         if x.status_code == 200:
@@ -971,7 +990,7 @@ class GrafanaManager(object):
         else:
             response['msg'] = "Failed to upload datasource."
             response['data'] = x
-        
+
         return response
 
     # def deleteDashboard(self, dashboardUID):
