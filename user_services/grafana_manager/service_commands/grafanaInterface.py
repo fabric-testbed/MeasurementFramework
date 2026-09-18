@@ -638,12 +638,22 @@ class GrafanaManager(object):
 
     def createAdminToken(self, tokenName="newToken"):
         """
-        Generate new admin API token for object
+        Generate new admin API token for object.
 
-        :param tokenName: Name of new token
+        Implemented via a Grafana Service Account + Service Account Token:
+        the /api/auth/keys "API Keys" endpoint this used before was fully
+        removed by Grafana (deprecated starting the same 9.1 release that
+        introduced Service Accounts as the replacement; endpoint creation
+        disabled Aug 2024, fully removed Jan 2025). Sets self.apiKey to the
+        token's secret key on success, exactly as before -- every caller
+        downstream (createDashboard, createDatasource, etc.) uses that as
+        a Bearer token identically regardless of which API produced it, so
+        nothing else in this class needs to change.
+
+        :param tokenName: Name of the service account (and its token)
         :type tokenName: str
         :return: Function Status
-        :rtype: JSON dictionary 
+        :rtype: JSON dictionary
         """
         response = {
             "success": False,
@@ -655,11 +665,11 @@ class GrafanaManager(object):
         if self.password is None:
             response['msg'] = "No Grafana host admin password specified to object."
             return response
-        
+
         if self.username is None:
             response['msg'] = "No Grafana host username specified to object."
             return response
-        
+
         if self.host is None:
             response['msg'] = "No Grafana host specified to object."
             return response
@@ -667,16 +677,32 @@ class GrafanaManager(object):
         try:
             # Login to Grafana
             session.post(
-                'https://' + self.host + '/grafana/login', 
+                'https://' + self.host + '/grafana/login',
                 headers={'Content-Type': 'application/json'},
-                json={"password": self.password,"user": self.username}, 
+                json={"password": self.password,"user": self.username},
                 verify=False
             )
-            # Get API key
+            # Create the service account
+            sa = session.post(
+                'https://' + self.host + '/grafana/api/serviceaccounts',
+                headers={'Content-Type': 'application/json'},
+                json={"name": tokenName, "role": "Admin"},
+                verify=False
+            )
+
+            if sa.status_code not in (200, 201):
+                response['msg'] = "Failed to create new Grafana service account."
+                response['data'] = sa
+                session.close()
+                return response
+
+            serviceAccountId = json.loads(sa.text)['id']
+
+            # Create a token for that service account
             x = session.post(
-                'https://' + self.host + '/grafana/api/auth/keys', 
-                headers={'Content-Type': 'application/json'}, 
-                json={"name": tokenName, "role":"Admin"}, 
+                'https://' + self.host + f'/grafana/api/serviceaccounts/{serviceAccountId}/tokens',
+                headers={'Content-Type': 'application/json'},
+                json={"name": tokenName},
                 verify=False
             )
 

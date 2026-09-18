@@ -27,12 +27,30 @@ def main():
 
     data = gu.get_data()
 
+    # Trust the portal's proxied hostname for CSRF, independent of whether
+    # the rest of this script has already run -- deliberately BEFORE the
+    # "already created" early-return below, so re-running create.py on an
+    # already-configured meas-node (e.g. because external_hostname wasn't
+    # available yet on first create, or the portal's proxy hostname
+    # changed) still applies it instead of being skipped entirely.
+    external_hostname = gu.get_external_hostname()
+    if external_hostname:
+        csrf_result = gu.set_grafana_csrf_trusted_origin(external_hostname)
+        logging.info(csrf_result)
+        ret_val['msg'] += csrf_result['msg'] + '\n'
+        if csrf_result['success'] and not gu.wait_for_grafana_ready():
+            logging.warning("Grafana did not become ready after CSRF-origin container recreate within timeout.")
+            ret_val['msg'] += "WARNING: Grafana did not become ready after container recreate within timeout.\n"
+    else:
+        logging.info("No external_hostname in portal_registration.json -- skipping CSRF trusted origin setup.")
+
     if os.path.exists(gu.configFilePath):
-        # Service has already been created, don't run again.
-        ret_val['msg'] = "Grafana Manager service has already been created. Use mflib.info('grafana_manager') for more information."
+        # Rest of the service (admin token, datasource, dashboards) has
+        # already been created, don't run that part again.
+        ret_val['msg'] += "Grafana Manager service has already been created. Use mflib.info('grafana_manager') for more information."
         print( gu.get_json_string(ret_val) )
-        logging.info("create.py script is not running again since the config file has aleady been created.")
-        return 
+        logging.info("create.py script is not running the rest again since the config file has aleady been created.")
+        return
 
 
 
@@ -40,20 +58,6 @@ def main():
     if not os.path.exists(gu.prometheus_default_install_vars_file):
         ret_val["msg"] = "Prometheus services, which include Grafana, has not been set up. Unable to manage Grafana dashboards."
         logging.warning(ret_val['msg'])
-    # Trust the portal's proxied hostname for CSRF before making any admin
-    # API calls below -- Grafana only reads this at startup, so it has to
-    # happen (and the container has to come back up) before interface.* is
-    # used, not after.
-    external_hostname = gu.get_external_hostname()
-    if external_hostname:
-        csrf_result = gu.set_grafana_csrf_trusted_origin(external_hostname)
-        logging.info(csrf_result)
-        ret_val['msg'] += csrf_result['msg'] + '\n'
-        if csrf_result['success'] and not gu.wait_for_grafana_ready():
-            logging.warning("Grafana did not become ready after CSRF-origin restart within timeout.")
-            ret_val['msg'] += "WARNING: Grafana did not become ready after restart within timeout.\n"
-    else:
-        logging.info("No external_hostname in portal_registration.json -- skipping CSRF trusted origin setup.")
 
     default_settings = gu.get_defaults()
 

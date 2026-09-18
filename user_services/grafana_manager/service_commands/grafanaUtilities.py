@@ -32,8 +32,10 @@ configFilePath = os.path.join( this_service_dir, "configFile.txt")
 # so base_install_dir/container names below are the fixed, resolved values --
 # not read from install_vars.json, since install_name isn't passed into it.
 portal_registration_file = "/etc/mflib/portal_registration.json"
-grafana_env_file = "/opt/fabric_prometheus/grafana/env_file"
-grafana_container_name = "fabric_prometheus-grafana"
+grafana_compose_dir = "/opt/fabric_prometheus"
+grafana_compose_file = os.path.join(grafana_compose_dir, "docker-compose.yml")
+grafana_env_file = os.path.join(grafana_compose_dir, "grafana", "env_file")
+grafana_compose_service = "grafana"  # the docker-compose.yml service key, not its container_name
 
 
 def get_external_hostname():
@@ -56,8 +58,20 @@ def set_grafana_csrf_trusted_origin(hostname):
     """
     Sets GF_SECURITY_CSRF_TRUSTED_ORIGINS=hostname in the grafana container's
     env_file (rendered once by the prometheus role's grafana_env.j2, at
-    grafana_env_file) and restarts the container so it picks it up --
-    Grafana only reads this at startup, there's no hot-reload for it.
+    grafana_env_file) and recreates the container via docker compose so it
+    picks it up.
+
+    Deliberately NOT `docker restart`: env_file is only read by Docker at
+    container *creation* time, not on restart -- a plain restart just
+    relaunches the existing container with whatever environment was baked
+    in when `docker compose up` first created it, silently ignoring the
+    updated file (this was tried and confirmed not to work: Grafana kept
+    rejecting the origin after a restart). `docker compose up -d
+    --force-recreate` tears down and recreates the container from the
+    current env_file/compose config, matching how
+    fabric_experiment_install_tasks.yml originally started it
+    (community.docker.docker_compose_v2, project_src=base_install_dir).
+    `--no-deps` scopes the recreate to just the grafana service.
 
     `hostname` must be bare (no scheme, no port) -- Grafana's CSRF
     middleware does an exact hostname string match, no wildcards.
@@ -99,18 +113,30 @@ def set_grafana_csrf_trusted_origin(hostname):
             "msg": f"Failed to write {grafana_env_file}: {copy_result.stderr.strip()}",
         }
 
+    if not os.path.exists(grafana_compose_file):
+        return {
+            "success": False,
+            "msg": f"Wrote {grafana_env_file} but {grafana_compose_file} not found -- can't recreate the grafana container.",
+        }
+
     result = subprocess.run(
-        ["sudo", "docker", "restart", grafana_container_name],
+        [
+            "sudo", "docker", "compose",
+            "-f", grafana_compose_file,
+            "up", "-d", "--force-recreate", "--no-deps",
+            grafana_compose_service,
+        ],
+        cwd=grafana_compose_dir,
         capture_output=True, text=True,
     )
     if result.returncode != 0:
         return {
             "success": False,
-            "msg": f"Wrote {grafana_env_file} but failed to restart {grafana_container_name}: {result.stderr.strip()}",
+            "msg": f"Wrote {grafana_env_file} but failed to recreate the grafana container: {result.stderr.strip()}",
         }
     return {
         "success": True,
-        "msg": f"Set GF_SECURITY_CSRF_TRUSTED_ORIGINS={hostname} in {grafana_env_file} and restarted {grafana_container_name}.",
+        "msg": f"Set GF_SECURITY_CSRF_TRUSTED_ORIGINS={hostname} in {grafana_env_file} and recreated the grafana container to apply it.",
     }
 
 
