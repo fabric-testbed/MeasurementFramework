@@ -77,6 +77,13 @@ def clone_or_update_repo():
         )
 
 
+# Must match the `image:` value in mflib_portal_mcp's own docker-compose.yml
+# (its mflib-mcp service sets both `build:` and `image: mflib-mcp:latest`) --
+# pre-building under this exact tag means the later `docker compose up -d`
+# finds it already present and just starts it instead of building again.
+MCP_IMAGE_TAG = "mflib-mcp:latest"
+
+
 def compose_up():
     # mflib_portal_mcp's own shipped docker-compose.yml already joins the
     # external fabric_prometheus network and publishes on loopback only --
@@ -89,8 +96,19 @@ def compose_up():
     # every other docker invocation from a service_commands script in this
     # codebase (e.g. grafanaUtilities.set_grafana_csrf_trusted_origin())
     # goes through sudo for the same reason.
+    #
+    # Built explicitly via `docker build --network=host` rather than letting
+    # `docker compose up --build` build it implicitly: confirmed in the field
+    # that the implicit compose build fails (pip install inside the build
+    # context can't resolve DNS on this node's default bridge network), while
+    # `docker build --network=host -t mflib-mcp:latest .` succeeds. `up`
+    # afterward has no `--build`, so compose just uses the image already built.
     subprocess.run(
-        ["sudo", "docker", "compose", "up", "-d", "--build"],
+        ["sudo", "docker", "build", "--network=host", "-t", MCP_IMAGE_TAG, "."],
+        cwd=REPO_DIR, check=True, capture_output=True, text=True,
+    )
+    subprocess.run(
+        ["sudo", "docker", "compose", "up", "-d"],
         cwd=REPO_DIR, check=True, capture_output=True, text=True,
     )
 
