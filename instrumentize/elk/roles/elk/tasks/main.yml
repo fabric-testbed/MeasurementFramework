@@ -233,6 +233,12 @@
   args:
     chdir: "/home/{{ become_username }}/mf_git/instrumentize/elk/docker-images/elk/"
 
+-name: Start ELK dockers
+ ansible.builtin.command: docker compose up -d
+ args:
+   chdir: "{{ elk_compose_dir }}"" }}"
+
+
 - name: Start logstash docker
   tags: logstashstart
   become: true
