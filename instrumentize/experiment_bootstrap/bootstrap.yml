@@ -183,7 +183,7 @@
             enabled: true
 
     - name: Check for PEP 668 externally managed marker
-      ansible.builtin.shell: ls /usr/lib/python3*/EXTERNALLY-MANAGED 2>dev/null
+      ansible.builtin.shell: ls /usr/lib/python3*/EXTERNALLY-MANAGED 2>/dev/null
       register: pep668
       changed_when: false
       failed_when: false
