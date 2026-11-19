@@ -1,7 +1,8 @@
-version: "3"
+# ELK_VERSION is passed in by roles/elk (from group_vars/all.yml elk_version);
+# the default below is only used for a manual `docker compose up`. Keep them equal.
 services:
   es01:
-    image: elasticsearch:7.13.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION:-9.5.6}
     container_name: es01
     ports:
       - "9200:9200"
@@ -13,6 +14,8 @@ services:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xmx1g -Xms1g"
       - path.repo=/usr/share/elasticsearch/backup
+      # Security disabled: plain HTTP, no auth. Access to Kibana is gated by nginx basic auth.
+      - xpack.security.enabled=false
     logging:
       driver: "json-file"
       options:
@@ -28,7 +31,7 @@ services:
       - elk
 
   es02:
-    image: elasticsearch:7.13.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION:-9.5.6}
     container_name: es02
     ports:
       - "9201:9200"
@@ -40,6 +43,8 @@ services:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xmx1g -Xms1g"
       - path.repo=/usr/share/elasticsearch/backup
+      # Security disabled: plain HTTP, no auth. Access to Kibana is gated by nginx basic auth.
+      - xpack.security.enabled=false
     logging:
       driver: "json-file"
       options:
@@ -55,7 +60,7 @@ services:
       - elk
 
   es03:
-    image: elasticsearch:7.13.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION:-9.5.6}
     container_name: es03
     ports:
       - "9202:9200"
@@ -67,6 +72,8 @@ services:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xmx1g -Xms1g"
       - path.repo=/usr/share/elasticsearch/backup
+      # Security disabled: plain HTTP, no auth. Access to Kibana is gated by nginx basic auth.
+      - xpack.security.enabled=false
     logging:
       driver: "json-file"
       options:
@@ -82,7 +89,7 @@ services:
       - elk
 
   logstash:
-    image: logstash:7.13.0
+    image: docker.elastic.co/logstash/logstash:${ELK_VERSION:-9.5.6}
     container_name: logstash
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
@@ -99,7 +106,7 @@ services:
       - elk
 
   kibana:
-    image: kibana:7.13.0
+    image: docker.elastic.co/kibana/kibana:${ELK_VERSION:-9.5.6}
     container_name: kibana
     ports:
       - "5601:5601"
@@ -108,7 +115,6 @@ services:
       options:
         max-size: "1024m"
     environment:
-      ELASTICSEARCH_URL: http://es01:9200
       ELASTICSEARCH_HOSTS: http://es01:9200
     networks:
       - elk

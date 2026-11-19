@@ -145,10 +145,19 @@
 #   register: docker_compose_check
 #   ignore_errors: true
 
-# - name: Setting vm.max_map_count
-#   tags: docker
-#   become: true
-#   shell: sysctl -w vm.max_map_count=262144
+# Elasticsearch refuses to start (bootstrap check) if this is < 262144;
+# the kernel default is 65530. No-op when the host is already high enough.
+- name: Ensure vm.max_map_count >= 262144 for Elasticsearch
+  tags: docker
+  become: true
+  shell: |
+    if [ "$(sysctl -n vm.max_map_count)" -lt 262144 ]; then
+      sysctl -w vm.max_map_count=262144
+      echo 'vm.max_map_count=262144' > /etc/sysctl.d/99-elasticsearch.conf
+      echo changed
+    fi
+  register: max_map_count_result
+  changed_when: "'changed' in max_map_count_result.stdout"
 
 # - name: Download and install Docker Compose
 #   tags: docker-compose
@@ -233,6 +242,8 @@
   shell: docker compose up -d es01 es02 es03
   args:
     chdir: "/home/{{ become_username }}/mf_git/instrumentize/elk/docker-images/elk/"
+  environment:
+    ELK_VERSION: "{{ elk_version }}"  # group_vars/all.yml
 
 - name: Start logstash docker
   tags: logstashstart
@@ -240,6 +251,8 @@
   shell: docker compose up -d logstash
   args:
     chdir: "/home/{{ become_username }}/mf_git/instrumentize/elk/docker-images/elk/"
+  environment:
+    ELK_VERSION: "{{ elk_version }}"  # group_vars/all.yml
 
 - name: Start kibana docker
   tags: kibanastart
@@ -247,6 +260,8 @@
   shell: docker compose up -d kibana
   args:
     chdir: "/home/{{ become_username }}/mf_git/instrumentize/elk/docker-images/elk/"
+  environment:
+    ELK_VERSION: "{{ elk_version }}"  # group_vars/all.yml
 
 - name: Start nginx docker
   tags: nginxstart
@@ -254,6 +269,8 @@
   shell: docker compose up -d nginx
   args:
     chdir: "/home/{{ become_username }}/mf_git/instrumentize/elk/docker-images/elk/"
+  environment:
+    ELK_VERSION: "{{ elk_version }}"  # group_vars/all.yml
 
 # Print out generated Nginx password
 - name: Print out generated Nginx password
