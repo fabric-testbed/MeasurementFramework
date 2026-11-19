@@ -11,10 +11,31 @@
   register: filebeat_check
 
 - block:
-  - name: Adding GPG key for CentOS 8
+  # EL9+ blocks SHA1 signatures by default, and Elastic's GPG key is SHA1-signed.
+  # Save the current policy, allow SHA1 just long enough to import the key, then restore it (see always: below).
+  - name: Get current crypto policy
+    tags: filebeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --show
+    register: crypto_policy_orig
+    changed_when: false
+    when: ansible_facts['distribution_major_version'] | int >= 9
+
+  - name: Temporarily allow SHA1 for Elastic GPG key import
+    tags: filebeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --set {{ crypto_policy_orig.stdout }}:SHA1
+    register: sha1_policy
+    when:
+      - ansible_facts['distribution_major_version'] | int >= 9
+      - "'SHA1' not in crypto_policy_orig.stdout"
+
+  - name: Adding Elastic GPG key (CentOS/Rocky)
+    become: true
     rpm_key:
       key: https://packages.elastic.co/GPG-KEY-elasticsearch
       state: present
+      
   
   ####################### FILEBEAT ##########################
   # ansible-playbook site.yml --tags "filebeat" -v
@@ -44,11 +65,17 @@
     ansible.builtin.package:
       name: /tmp/filebeat-{{ filebeat_version }}-x86_64.rpm
       state: present
+     
+  always:
+  - name: Restore original crypto policy
+    tags: filebeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --set {{ crypto_policy_orig.stdout }}
+    when: sha1_policy is changed    
 
   when:
       - ansible_facts['distribution'] in [ "CentOS", "Rocky" ]
       - filebeat_check.stdout == "" or filebeat_check.stdout is version(filebeat_version, '<')
-
 
 # > .deb install
 - block:
