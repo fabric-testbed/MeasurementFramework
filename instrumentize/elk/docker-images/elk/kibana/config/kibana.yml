@@ -5,3 +5,4 @@ elasticsearch.hosts: http://es01:9200
 xpack.apm.enabled: true
 xpack.apm.ui.enabled: true
 logging.dest: stdout
+status.allowAnonymous: true
