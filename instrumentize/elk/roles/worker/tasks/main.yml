@@ -56,6 +56,11 @@
     get_url:
       url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-x86_64.rpm
       dest: /tmp/
+      timeout: 120
+    register: beat_dl
+    until: beat_dl is succeded
+    retries: 5
+    delay: 10
     when:
       - r_filebeat_package_exist.stat.exists == false
 
@@ -91,6 +96,11 @@
     get_url:
       url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-amd64.deb
       dest: /tmp/
+      timeout: 120
+    register: beat_dl
+    until: beat_dl is succeded
+    retries: 5
+    delay: 10
     when:
       - d_filebeat_package_exist.stat.exists == false
 
@@ -188,6 +198,11 @@
     get_url:
       url: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-{{ metricbeat_version }}-x86_64.rpm
       dest: /tmp/
+      timeout: 120
+    register: beat_dl
+    until: beat_dl is succeded
+    retries: 5
+    delay: 10
     when:
       - r_metricbeat_package_exist.stat.exists == false
 
@@ -224,6 +239,11 @@
     get_url:
       url: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-{{ metricbeat_version }}-amd64.deb
       dest: /tmp/
+      timeout: 120
+    register: beat_dl
+    until: beat_dl is succeded
+    retries: 5
+    delay: 10
     when:
       - d_metricbeat_package_exist.stat.exists == false
 
@@ -303,6 +323,11 @@
     get_url:
       url: https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-{{ packetbeat_version }}-x86_64.rpm
       dest: /tmp/
+      timeout: 120
+    register: beat_dl
+    until: beat_dl is succeded
+    retries: 5
+    delay: 10
     when:
       - r_packetbeat_package_exist.stat.exists == false
 
@@ -338,6 +363,11 @@
     get_url:
       url: https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-{{ packetbeat_version }}-amd64.deb
       dest: /tmp/
+      timeout: 120
+    register: beat_dl
+    until: beat_dl is succeded
+    retries: 5
+    delay: 10
     when:
       - d_packetbeat_package_exist.stat.exists == false
 
