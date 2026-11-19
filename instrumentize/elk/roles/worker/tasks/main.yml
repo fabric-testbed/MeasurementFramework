@@ -270,6 +270,27 @@
   register: packetbeat_check
 
 - block:
+
+  - name: Get current crypto policy (metricbeat)
+    tags: metricbeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --show
+    register: crypto_policy_mb
+    changed_when: false
+    when: ansible_facts['distribution_major_version'] | int >= 9
+
+  - name: Temporarily allow SHA1 for metricbeat install
+    tags: metricbeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --set {{ crypto_policy_mb.stdout }}:SHA1
+    register: sha1_policy_mb
+    when:
+      - ansible_facts['distribution_major_version'] | int >= 9
+      - "'SHA1' not in crypto_policy_mb.stdout"
+
+
+
+
   - name: Check if packetbeat package exists CentOS
     tags: packetbeat
     stat:
@@ -291,6 +312,14 @@
     ansible.builtin.package:
       name: /tmp/packetbeat-{{ packetbeat_version }}-x86_64.rpm
       state: present
+
+  always:
+  - name: Restore original crypto policy (metricbeat)
+    tags: metricbeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --set {{ crypto_policy_mb.stdout }}
+    when: sha1_policy_mb is changed
+
   when:
       - ansible_facts['distribution'] in [ "CentOS","Rocky" ]
       - packetbeat_check.stdout == "" or packetbeat_check.stdout is version(packetbeat_version, '<')
