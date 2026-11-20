@@ -58,7 +58,7 @@
       dest: /tmp/
       timeout: 120
     register: beat_dl
-    until: beat_dl is succeded
+    until: beat_dl is succeeded
     retries: 5
     delay: 10
     when:
@@ -98,7 +98,7 @@
       dest: /tmp/
       timeout: 120
     register: beat_dl
-    until: beat_dl is succeded
+    until: beat_dl is succeeded
     retries: 5
     delay: 10
     when:
@@ -200,7 +200,7 @@
       dest: /tmp/
       timeout: 120
     register: beat_dl
-    until: beat_dl is succeded
+    until: beat_dl is succeeded
     retries: 5
     delay: 10
     when:
@@ -241,7 +241,7 @@
       dest: /tmp/
       timeout: 120
     register: beat_dl
-    until: beat_dl is succeded
+    until: beat_dl is succeeded
     retries: 5
     delay: 10
     when:
@@ -325,7 +325,7 @@
       dest: /tmp/
       timeout: 120
     register: beat_dl
-    until: beat_dl is succeded
+    until: beat_dl is succeeded
     retries: 5
     delay: 10
     when:
@@ -365,7 +365,7 @@
       dest: /tmp/
       timeout: 120
     register: beat_dl
-    until: beat_dl is succeded
+    until: beat_dl is succeeded
     retries: 5
     delay: 10
     when:
