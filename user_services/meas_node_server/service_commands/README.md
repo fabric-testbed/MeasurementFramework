@@ -1,9 +1,24 @@
 # meas_node_server Service
 Installs and runs the meas-node status/health server (`server.py`, a small
 FastAPI app) as a systemd service (`meas-node-server.service`) on the meas
-node, bound to its FABNetv6 address (IPv6-only, see `server.py`). mfportal
-uses this to check on a meas node's health/status and to run basic
-inventory/execute/file-transfer calls against it remotely.
+node, listening on IPv6 only (see `server.py`). mfportal uses it to check
+a meas node's health and status and to fetch the Grafana admin password.
+
+All endpoints are read-only and require `Authorization: Bearer <token>`;
+the server refuses to start without a token:
+
+| Endpoint | Returns |
+|---|---|
+| `GET /health` | `{"status": "ok"}` |
+| `GET /status` | uptime and timestamp |
+| `GET /ip` | hostname and `ip -j addr` |
+| `GET /slice` | `/etc/mflib/portal_registration.json` |
+| `GET /metadata` | node name, username, management IP |
+| `GET /grafana-admin-password` | Grafana's admin password from Prometheus's `install_vars.json` (404 until it exists) |
+
+There is no command-execution or file-transfer endpoint on purpose: the
+portal proxies this port to the internet. Add a narrow endpoint for each new
+need instead.
 
 ## create
 `mflib.create("meas_node_server")` installs the FastAPI/uvicorn

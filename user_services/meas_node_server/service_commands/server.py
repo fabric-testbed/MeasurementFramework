@@ -4,57 +4,43 @@
 # (create/start/stop/remove/info) instead of depending on a separate mflib
 # clone + pip install on the meas node.
 #
-# Exposes read-only health/status/inventory endpoints plus a small execute
-# and file-transfer surface that mfportal uses to check on and interact with
-# the meas node over its FABNetv6 address.
+# Every endpoint is read-only and needs the bearer token. There is
+# deliberately no command-execution or file-transfer endpoint: mfportal
+# proxies this port to the internet, so anything here is reachable by
+# whoever holds the token. Add a narrow, fixed endpoint for each new need
+# (like /grafana-admin-password) rather than a general one.
 
 import argparse
-import base64
 import getpass
+import hmac
 import json
 import os
-import shutil
 import socket
 import subprocess
-import tempfile
+import sys
 from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import Depends, FastAPI, Header, HTTPException
-from pydantic import BaseModel
 
 _SLICE_INFO = os.environ.get("MFLIB_SLICE_INFO", "/etc/mflib/portal_registration.json")
+# Written by prometheus/create.py (prom_utilites.install_vars_file).
+_PROMETHEUS_INSTALL_VARS = os.environ.get(
+    "MFLIB_PROMETHEUS_INSTALL_VARS",
+    "/home/mfuser/services/prometheus/extra_files/install_vars.json",
+)
 
 
-class ExecuteRequest(BaseModel):
-    command: str
-    quiet: bool = False
-    cwd: Optional[str] = None
-
-
-class FileTransferRequest(BaseModel):
-    remote_file_path: str
-    content_base64: Optional[str] = None
-
-
-class DirectoryTransferRequest(BaseModel):
-    remote_directory_path: str
-    archive_base64: str
-    archive_format: str = "gztar"
-
-
-def create_app(auth_token: Optional[str] = None, default_cwd: Optional[str] = None):
-    app = FastAPI(title="MeasurementFramework meas-node server", version="1.0.0")
-    state = {
-        "auth_token": auth_token,
-        "default_cwd": default_cwd,
-    }
+def create_app(auth_token: str):
+    if not auth_token:
+        raise ValueError("meas_node_server requires an auth token")
+    # No /docs, /redoc or /openapi.json: they would be served without the token.
+    app = FastAPI(title="MeasurementFramework meas-node server", version="1.1.0",
+                  docs_url=None, redoc_url=None, openapi_url=None)
+    expected = f"Bearer {auth_token}".encode()
 
     def _authorize(authorization: Optional[str] = Header(default=None)):
-        expected = state["auth_token"]
-        if not expected:
-            return
-        if authorization != f"Bearer {expected}":
+        if not authorization or not hmac.compare_digest(authorization.encode(), expected):
             raise HTTPException(status_code=401, detail="Unauthorized")
 
     @app.get("/health")
@@ -107,64 +93,17 @@ def create_app(auth_token: Optional[str] = None, default_cwd: Optional[str] = No
             "management_ip": os.environ.get("MFLIB_MANAGEMENT_IP", "127.0.0.1"),
         }
 
-    @app.post("/execute")
-    def execute(payload: ExecuteRequest, _: None = Depends(_authorize)):
-        process = subprocess.run(
-            payload.command,
-            shell=True,
-            capture_output=True,
-            text=True,
-            executable="/bin/bash",
-            cwd=payload.cwd or state["default_cwd"],
-        )
-        return {
-            "stdout": process.stdout,
-            "stderr": process.stderr,
-            "returncode": process.returncode,
-        }
-
-    @app.post("/upload-file")
-    def upload_file(payload: FileTransferRequest, _: None = Depends(_authorize)):
-        if payload.content_base64 is None:
-            raise HTTPException(status_code=400, detail="content_base64 is required")
-        parent = os.path.dirname(payload.remote_file_path)
-        if parent:
-            os.makedirs(parent, exist_ok=True)
-        with open(payload.remote_file_path, "wb") as remote_file:
-            remote_file.write(base64.b64decode(payload.content_base64))
-        return {"success": True, "remote_file_path": payload.remote_file_path}
-
-    @app.post("/download-file")
-    def download_file(payload: FileTransferRequest, _: None = Depends(_authorize)):
-        if not os.path.exists(payload.remote_file_path):
-            raise HTTPException(status_code=404, detail="Remote file not found")
-        with open(payload.remote_file_path, "rb") as remote_file:
-            content_base64 = base64.b64encode(remote_file.read()).decode("ascii")
-        return {
-            "success": True,
-            "remote_file_path": payload.remote_file_path,
-            "content_base64": content_base64,
-        }
-
-    @app.post("/upload-directory")
-    def upload_directory(
-        payload: DirectoryTransferRequest,
-        _: None = Depends(_authorize),
-    ):
-        if payload.archive_format != "gztar":
-            raise HTTPException(status_code=400, detail="Only gztar archives are supported")
-
-        os.makedirs(payload.remote_directory_path, exist_ok=True)
-        with tempfile.TemporaryDirectory() as tmpdir:
-            archive_path = os.path.join(tmpdir, "upload.tar.gz")
-            with open(archive_path, "wb") as archive_file:
-                archive_file.write(base64.b64decode(payload.archive_base64))
-            shutil.unpack_archive(archive_path, payload.remote_directory_path, "gztar")
-
-        return {
-            "success": True,
-            "remote_directory_path": payload.remote_directory_path,
-        }
+    @app.get("/grafana-admin-password")
+    def grafana_admin_password(_: None = Depends(_authorize)):
+        # 404 until prometheus/create.py has generated the password.
+        try:
+            with open(_PROMETHEUS_INSTALL_VARS) as f:
+                password = json.load(f).get("grafana_admin_password")
+        except (OSError, ValueError):
+            password = None
+        if not password:
+            raise HTTPException(status_code=404, detail="Grafana admin password not generated yet")
+        return {"grafana_admin_password": password}
 
     return app
 
@@ -173,12 +112,15 @@ def main():
     parser = argparse.ArgumentParser(description="Run the MeasurementFramework meas-node status/health server")
     parser.add_argument("--port", type=int, default=5000)
     parser.add_argument("--token", default=os.environ.get("MFLIB_API_TOKEN"))
-    parser.add_argument("--cwd", default=None)
     args = parser.parse_args()
+    if not args.token:
+        sys.exit("[meas_node_server] no token: set MFLIB_API_TOKEN (create.py does this). Refusing to start.")
 
     import uvicorn
 
-    # Bind IPv6-only so the server is reachable via FABNetv6 but not IPv4.
+    # IPv6-only on every IPv6 address of the node (not just FABNetv6: a node
+    # whose management interface has a public IPv6 address is reachable there
+    # too). The token is what protects it.
     sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
     sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 1)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -186,7 +128,7 @@ def main():
     sock.listen(10)
 
     print(f"[meas_node_server] listening on [::]:{args.port} (IPv6 / FABNetv6 only)")
-    config = uvicorn.Config(create_app(auth_token=args.token, default_cwd=args.cwd))
+    config = uvicorn.Config(create_app(auth_token=args.token))
     server = uvicorn.Server(config)
     server.run(sockets=[sock])
 
