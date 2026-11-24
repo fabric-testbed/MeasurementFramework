@@ -138,25 +138,35 @@
   when:
     - docker_valid.failed
 
-- name: Check if Docker Compose is installed
-  tags: docker-compose
-  command: docker-compose --version
-  register: docker_compose_check
-  ignore_errors: true
+# No longer needed, docker compose in in docker now
+# - name: Check if Docker Compose is installed
+#   tags: docker-compose
+#   command: docker-compose --version
+#   register: docker_compose_check
+#   ignore_errors: true
 
-- name: Setting vm.max_map_count
+# Elasticsearch refuses to start (bootstrap check) if this is < 262144;
+# the kernel default is 65530. No-op when the host is already high enough.
+- name: Ensure vm.max_map_count >= 262144 for Elasticsearch
   tags: docker
   become: true
-  shell: sysctl -w vm.max_map_count=262144
+  shell: |
+    if [ "$(sysctl -n vm.max_map_count)" -lt 262144 ]; then
+      sysctl -w vm.max_map_count=262144
+      echo 'vm.max_map_count=262144' > /etc/sysctl.d/99-elasticsearch.conf
+      echo changed
+    fi
+  register: max_map_count_result
+  changed_when: "'changed' in max_map_count_result.stdout"
 
-- name: Download and install Docker Compose
-  tags: docker-compose
-  become: true
-  get_url:
-    url: https://github.com/docker/compose/releases/download/{{ docker_compose_ver }}/docker-compose-Linux-x86_64
-    dest: /usr/bin/docker-compose
-    mode: 0755
-  when: docker_compose_check.failed
+# - name: Download and install Docker Compose
+#   tags: docker-compose
+#   become: true
+#   get_url:
+#     url: https://github.com/docker/compose/releases/download/{{ docker_compose_ver }}/docker-compose-Linux-x86_64
+#     dest: /usr/bin/docker-compose
+#     mode: 0755
+#   when: docker_compose_check.failed
 
 # ==============================================================
 
@@ -229,30 +239,38 @@
 - name: Start ELK dockers
   tags: elkstart
   become: true
-  shell: docker-compose up -d es01 es02 es03
+  shell: docker compose up -d es01 es02 es03
   args:
     chdir: "/home/{{ become_username }}/mf_git/instrumentize/elk/docker-images/elk/"
+  environment:
+    ELK_VERSION: "{{ elk_version }}"  # group_vars/all.yml
 
 - name: Start logstash docker
   tags: logstashstart
   become: true
-  shell: docker-compose up -d logstash
+  shell: docker compose up -d logstash
   args:
     chdir: "/home/{{ become_username }}/mf_git/instrumentize/elk/docker-images/elk/"
+  environment:
+    ELK_VERSION: "{{ elk_version }}"  # group_vars/all.yml
 
 - name: Start kibana docker
   tags: kibanastart
   become: true
-  shell: docker-compose up -d kibana
+  shell: docker compose up -d kibana
   args:
     chdir: "/home/{{ become_username }}/mf_git/instrumentize/elk/docker-images/elk/"
+  environment:
+    ELK_VERSION: "{{ elk_version }}"  # group_vars/all.yml
 
 - name: Start nginx docker
   tags: nginxstart
   become: true
-  shell: docker-compose up -d nginx
+  shell: docker compose up -d nginx
   args:
     chdir: "/home/{{ become_username }}/mf_git/instrumentize/elk/docker-images/elk/"
+  environment:
+    ELK_VERSION: "{{ elk_version }}"  # group_vars/all.yml
 
 # Print out generated Nginx password
 - name: Print out generated Nginx password

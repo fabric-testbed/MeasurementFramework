@@ -1,0 +1,13 @@
+---
+# Single source of truth for the Elastic Stack version used by the playbooks in
+# this directory (fabric_deploy.yml, site.yml, geni_deploy.yml). Ansible loads
+# group_vars/ next to the playbook automatically.
+#
+#   - roles/elk passes it to `docker compose` as ELK_VERSION (Elasticsearch,
+#     Logstash, Kibana images in docker-images/elk/docker-compose.yml)
+#   - the playbooks set filebeat/metricbeat/packetbeat_version from it
+#
+# Beats must not be newer than Elasticsearch. When changing this, also update
+# the ${ELK_VERSION:-x.y.z} fallback in docker-images/elk/docker-compose.yml.
+# Elasticsearch security (TLS/auth) is disabled in that compose file.
+elk_version: 9.5.6

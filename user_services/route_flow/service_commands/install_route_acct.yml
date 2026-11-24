@@ -1,0 +1,92 @@
+---
+# Installs the per-route byte counter (mf_route_acct.sh) on each experiment node as a
+# systemd service, so the counters survive reboots.
+#
+# Run by route_flow create.py / update.py with:
+#   --extra-vars @<vars.json>   containing
+#   route_flow_peers: { "<node>": [["<peer>", "<peer_ip>"], ...], ... }
+#   route_flow_script: <path to mf_route_acct.sh on the meas node>
+# Hosts that aren't keys of route_flow_peers are skipped.
+
+- hosts: Experiment_Nodes
+  become: true
+  gather_facts: false
+  vars:
+    default_textfile_dir: /var/lib/node_exporter
+  tasks:
+    - name: Skip nodes without experiment peers
+      ansible.builtin.meta: end_host
+      when: inventory_hostname not in route_flow_peers
+
+    - name: Find node_exporter's textfile collector directory
+      ansible.builtin.shell: >
+        ps -eo args | grep -o -- '--collector.textfile.directory=[^ ]*' | head -1 | cut -d= -f2
+      register: textfile_dir_out
+      changed_when: false
+      failed_when: false
+
+    - name: Use it (or the role's default)
+      ansible.builtin.set_fact:
+        route_flow_textfile_dir: "{{ (textfile_dir_out.stdout | default('')) | trim or default_textfile_dir }}"
+
+    - name: Make sure iptables is installed
+      ansible.builtin.package:
+        name: iptables
+        state: present
+
+    - name: Create /etc/mflib
+      ansible.builtin.file:
+        path: /etc/mflib
+        state: directory
+        mode: "0755"
+
+    - name: Install the counter script
+      ansible.builtin.copy:
+        src: "{{ route_flow_script }}"
+        dest: /usr/local/bin/mf_route_acct.sh
+        mode: "0755"
+      notify: restart mf-route-acct
+
+    - name: Write this node's peer list
+      ansible.builtin.copy:
+        dest: /etc/mflib/route_flow_peers
+        mode: "0644"
+        content: |
+          # <peer_name> <peer_ip>  (written by MeasurementFramework route_flow)
+          {% for p in route_flow_peers[inventory_hostname] %}
+          {{ p[0] }} {{ p[1] }}
+          {% endfor %}
+      notify: restart mf-route-acct
+
+    - name: Install the systemd unit
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/mf-route-acct.service
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=MeasurementFramework per-route byte counters for node_exporter
+          After=network-online.target
+          Wants=network-online.target
+
+          [Service]
+          ExecStart=/usr/local/bin/mf_route_acct.sh {{ inventory_hostname }} /etc/mflib/route_flow_peers {{ route_flow_textfile_dir }}
+          Restart=always
+          RestartSec=5
+
+          [Install]
+          WantedBy=multi-user.target
+      notify: restart mf-route-acct
+
+    - name: Enable and start mf-route-acct
+      ansible.builtin.systemd:
+        name: mf-route-acct
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: restart mf-route-acct
+      ansible.builtin.systemd:
+        name: mf-route-acct
+        state: restarted
+        daemon_reload: true

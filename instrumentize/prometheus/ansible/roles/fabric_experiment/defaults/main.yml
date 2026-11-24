@@ -18,6 +18,15 @@
 install_name: fabric_prometheus
 # Network
 docker_network_name: "{{ install_name }}"
+# Internal-only addressing for container-to-container traffic on
+# docker_network_name -- unrelated to the meas node's own FABNetv6 address.
+# ULA (fc00::/7) range, safe to leave as-is; override in group_vars if it
+# ever collides with something else on the host. Previously undefined here
+# (same "set in another file" pattern as the node_exporter/grafana
+# credentials above), which silently disabled enable_ipv6 on this network --
+# see setup_docker_ipv6_network_tasks.yml.
+docker_ipv6_subnet: "fd00:1234:5678::/64"
+docker_ipv6_gateway: "fd00:1234:5678::1"
 # Install Directories
 base_data_dir: "/opt/data/{{ install_name }}"
 base_install_dir: "/opt/{{ install_name }}" 

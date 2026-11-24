@@ -12,7 +12,7 @@ server {
                 auth_basic "Grafana Access";
                 auth_basic_user_file /etc/nginx/htpasswd;
                 proxy_set_header Host $http_host; 
-                proxy_pass http://{{ install_name }}_grafana:3000/;
+                proxy_pass http://{{ install_name }}-grafana:3000/;
         }
 }
 

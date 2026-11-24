@@ -1,13 +1,20 @@
 ---
+# Everything PTP-related is tagged "ptp" so it can be skipped with
+# `--skip-tags ptp` (see bootstrap_playbooks.py's SKIP_PTP env var) -- eg.
+# when the meas-node's kernel doesn't have a matching linux-modules-extra
+# package available yet, which otherwise aborts the rest of the "Boot
+# Strapping Process" play below (including the Docker install) since that
+# failure isn't ignored.
 - name: Downloading PTP repo
   hosts: meas-node
+  tags: ptp
   tasks:
     - name: Unarchive a file that needs to be downloaded (added in 2.0)
       ansible.builtin.unarchive:
         src: https://github.com/fabric-testbed/ptp/archive/refs/heads/main.tar.gz
         dest: /home/mfuser/mf_git/instrumentize
         extra_opts:
-          - --transform 
+          - --transform
           - 's/^ptp-main/ptp/'
         remote_src: yes
 
@@ -21,7 +28,7 @@
       - { name: 'docker', min_version: '5.0.3' }
     docker_daemon_options:
       registry-mirrors:
-        - "{{ 'https://registry.' + management_ip_type | lower + '.docker.com' }}"
+        - "{{ 'https://registry.' + (management_ip_type | default('ipv6')) | lower + '.docker.com' }}"
   tasks:
     - name: Update Package Cache (apt/Ubuntu)
       apt:
@@ -93,18 +100,44 @@
         clients : ['pip3']
       register: pip_package_info
 
+    - name: Check for PEP 668 externally-managed-environment marker
+      ansible.builtin.shell: find /usr/lib/python3*/EXTERNALLY-MANAGED /usr/lib64/python3*/EXTERNALLY-MANAGED 2>/dev/null
+      register: externally_managed_marker
+      changed_when: false
+      failed_when: false
+
     - name: Upgrade pip3 to latest version and install Python Docker SDK
       ansible.builtin.pip:
         name: "{{ item.name }}"
         executable: pip3
         state: latest
+        # Only pass --break-system-packages where PEP 668 actually applies
+        # (e.g. Ubuntu 24.04+) -- older pip on other distros (CentOS/Rocky,
+        # older Ubuntu) doesn't recognize this flag and errors on it.
+        extra_args: "{{ '--break-system-packages' if externally_managed_marker.stdout else omit }}"
       with_items: "{{ pip_packages }}"
       when: 
         - (item.name not in (pip_package_info.packages.pip3).keys()) or ((pip_package_info.packages.pip3[item.name])[0]).version is ansible.builtin.version(item.min_version,'lt')
 
+    # Failures here (eg. no linux-modules-extra-<kernel> package available
+    # yet for this host's kernel) are logged and swallowed rather than
+    # aborting the rest of this play -- PTP is not needed for Docker/
+    # monitoring to come up, and a failure partway through this role
+    # shouldn't block them. Set SKIP_PTP=1 (see bootstrap_playbooks.py) to
+    # skip attempting this entirely instead.
     - name: Install LinuxPTP
-      ansible.builtin.include_role:
-        name: /home/mfuser/mf_git/instrumentize/ptp/ansible/roles/linuxptp
+      tags: ptp
+      block:
+        - name: Install LinuxPTP
+          ansible.builtin.include_role:
+            name: /home/mfuser/mf_git/instrumentize/ptp/ansible/roles/linuxptp
+      rescue:
+        - name: Warn that LinuxPTP install failed
+          ansible.builtin.debug:
+            msg: >-
+              LinuxPTP install failed on this host and was skipped so the rest of
+              bootstrap could continue. PTP hardware timestamping will not be
+              available until this is fixed and bootstrap is re-run.
 
     - name: Check If Docker Is Installed
       ansible.builtin.command:
@@ -149,14 +182,19 @@
             name: docker
             enabled: true
 
+    # - name: Check for PEP 668 externally managed marker
+    #   ansible.builtin.shell: ls /usr/lib/python3*/EXTERNALLY-MANAGED 2>/dev/null
+    #   register: pep668
+    #   changed_when: false
+    #   failed_when: false
 
-    - name: Downgrade urllib3
-      ansible.builtin.pip:
-        name: "urllib3"
-        version: "1.26.15"
-        executable: pip3
-        state: "forcereinstall"
-
+    # - name: Downgrade urllib3
+    #   ansible.builtin.pip:
+    #     name: "urllib3"
+    #     version: "1.26.15"
+    #     executable: pip3
+    #     state: "forcereinstall"
+    #     extra_args: "{{ '--break-system-packages' if pep668.stdout else omit }}"
 
   handlers:
     - name: Restart Docker Daemon

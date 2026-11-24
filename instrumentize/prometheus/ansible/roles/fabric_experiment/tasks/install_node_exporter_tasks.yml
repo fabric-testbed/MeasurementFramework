@@ -8,12 +8,10 @@
   include_tasks: NodeExporter/node_exporter_certs_tasks.yml
 
 - name: Install Node Exporter
-  include_role: 
-    # prometheus version is not built into the os images, so may not load properly
-    # note prometheus.prometheus must be added to meta/requirements if below is enabled
-    #name: prometheus.prometheus.node_exporter
-    #cloudalchemy is quicker with the os image
-    name: cloudalchemy.node_exporter
+  include_role:
+    # cloudalchemy.node_exporter is deprecated/unmaintained; switched to its
+    # actively maintained successor, prometheus.prometheus.node_exporter.
+    name: prometheus.prometheus.node_exporter
   
   vars:
     node_exporter_basic_auth_users: "{{ { node_exporter_username : node_exporter_password } }}"

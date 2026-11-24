@@ -44,7 +44,7 @@ scrape_configs:
             - source_labels: [__address__]
               target_label: __param_target
             - target_label: __address__
-              replacement: "{{ install_name }}_blackbox:9115"
+              replacement: "{{ install_name }}-blackbox:9115"
             - source_labels: [node_name]
               target_label: instance
 
@@ -66,5 +66,5 @@ scrape_configs:
  # Docker Exporter for Local Containers
   - job_name: 'docker'
     static_configs:
-      - targets: ['{{ install_name }}_docker_exporter:9417']
+      - targets: ['{{ install_name }}-docker_exporter:9417']
 

@@ -11,10 +11,31 @@
   register: filebeat_check
 
 - block:
-  - name: Adding GPG key for CentOS 8
+  # EL9+ blocks SHA1 signatures by default, and Elastic's GPG key is SHA1-signed.
+  # Save the current policy, allow SHA1 just long enough to import the key, then restore it (see always: below).
+  - name: Get current crypto policy
+    tags: filebeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --show
+    register: crypto_policy_orig
+    changed_when: false
+    when: ansible_facts['distribution_major_version'] | int >= 9
+
+  - name: Temporarily allow SHA1 for Elastic GPG key import
+    tags: filebeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --set {{ crypto_policy_orig.stdout }}:SHA1
+    register: sha1_policy
+    when:
+      - ansible_facts['distribution_major_version'] | int >= 9
+      - "'SHA1' not in crypto_policy_orig.stdout"
+
+  - name: Adding Elastic GPG key (CentOS/Rocky)
+    become: true
     rpm_key:
       key: https://packages.elastic.co/GPG-KEY-elasticsearch
       state: present
+      
   
   ####################### FILEBEAT ##########################
   # ansible-playbook site.yml --tags "filebeat" -v
@@ -35,6 +56,11 @@
     get_url:
       url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-x86_64.rpm
       dest: /tmp/
+      timeout: 120
+    register: beat_dl
+    until: beat_dl is succeeded
+    retries: 5
+    delay: 10
     when:
       - r_filebeat_package_exist.stat.exists == false
 
@@ -44,11 +70,17 @@
     ansible.builtin.package:
       name: /tmp/filebeat-{{ filebeat_version }}-x86_64.rpm
       state: present
+     
+  always:
+  - name: Restore original crypto policy
+    tags: filebeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --set {{ crypto_policy_orig.stdout }}
+    when: sha1_policy is changed    
 
   when:
       - ansible_facts['distribution'] in [ "CentOS", "Rocky" ]
       - filebeat_check.stdout == "" or filebeat_check.stdout is version(filebeat_version, '<')
-
 
 # > .deb install
 - block:
@@ -64,6 +96,11 @@
     get_url:
       url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-amd64.deb
       dest: /tmp/
+      timeout: 120
+    register: beat_dl
+    until: beat_dl is succeeded
+    retries: 5
+    delay: 10
     when:
       - d_filebeat_package_exist.stat.exists == false
 
@@ -129,6 +166,26 @@
 
 - block:
 
+
+# -----------
+  - name: Get current crypto policy (metricbeat)
+    tags: metricbeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --show
+    register: crypto_policy_mb
+    changed_when: false
+    when: ansible_facts['distribution_major_version'] | int >= 9
+
+  - name: Temporarily allow SHA1 for metricbeat install
+    tags: metricbeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --set {{ crypto_policy_mb.stdout }}:SHA1
+    register: sha1_policy_mb
+    when:
+      - ansible_facts['distribution_major_version'] | int >= 9
+      - "'SHA1' not in crypto_policy_mb.stdout"
+# ==============
+
   - name: Check if metricbeat package exists CentOS
     tags: metricbeat
     stat:
@@ -141,6 +198,11 @@
     get_url:
       url: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-{{ metricbeat_version }}-x86_64.rpm
       dest: /tmp/
+      timeout: 120
+    register: beat_dl
+    until: beat_dl is succeeded
+    retries: 5
+    delay: 10
     when:
       - r_metricbeat_package_exist.stat.exists == false
 
@@ -150,6 +212,15 @@
     ansible.builtin.package:
       name: /tmp/metricbeat-{{ metricbeat_version }}-x86_64.rpm
       state: present
+# ------------
+  always:
+  - name: Restore original crypto policy (metricbeat)
+    tags: metricbeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --set {{ crypto_policy_mb.stdout }}
+    when: sha1_policy_mb is changed
+# ==========
+
   when:
       - ansible_facts['distribution'] in [ "CentOS", "Rocky" ]
       - metricbeat_check.stdout == "" or metricbeat_check.stdout is version(metricbeat_version, '<')
@@ -168,6 +239,11 @@
     get_url:
       url: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-{{ metricbeat_version }}-amd64.deb
       dest: /tmp/
+      timeout: 120
+    register: beat_dl
+    until: beat_dl is succeeded
+    retries: 5
+    delay: 10
     when:
       - d_metricbeat_package_exist.stat.exists == false
 
@@ -214,6 +290,27 @@
   register: packetbeat_check
 
 - block:
+
+  - name: Get current crypto policy (metricbeat)
+    tags: metricbeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --show
+    register: crypto_policy_mb
+    changed_when: false
+    when: ansible_facts['distribution_major_version'] | int >= 9
+
+  - name: Temporarily allow SHA1 for metricbeat install
+    tags: metricbeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --set {{ crypto_policy_mb.stdout }}:SHA1
+    register: sha1_policy_mb
+    when:
+      - ansible_facts['distribution_major_version'] | int >= 9
+      - "'SHA1' not in crypto_policy_mb.stdout"
+
+
+
+
   - name: Check if packetbeat package exists CentOS
     tags: packetbeat
     stat:
@@ -226,6 +323,11 @@
     get_url:
       url: https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-{{ packetbeat_version }}-x86_64.rpm
       dest: /tmp/
+      timeout: 120
+    register: beat_dl
+    until: beat_dl is succeeded
+    retries: 5
+    delay: 10
     when:
       - r_packetbeat_package_exist.stat.exists == false
 
@@ -235,6 +337,14 @@
     ansible.builtin.package:
       name: /tmp/packetbeat-{{ packetbeat_version }}-x86_64.rpm
       state: present
+
+  always:
+  - name: Restore original crypto policy (metricbeat)
+    tags: metricbeat
+    become: true
+    ansible.builtin.command: update-crypto-policies --set {{ crypto_policy_mb.stdout }}
+    when: sha1_policy_mb is changed
+
   when:
       - ansible_facts['distribution'] in [ "CentOS","Rocky" ]
       - packetbeat_check.stdout == "" or packetbeat_check.stdout is version(packetbeat_version, '<')
@@ -253,6 +363,11 @@
     get_url:
       url: https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-{{ packetbeat_version }}-amd64.deb
       dest: /tmp/
+      timeout: 120
+    register: beat_dl
+    until: beat_dl is succeeded
+    retries: 5
+    delay: 10
     when:
       - d_packetbeat_package_exist.stat.exists == false
 

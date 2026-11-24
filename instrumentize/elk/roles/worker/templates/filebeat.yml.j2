@@ -1,10 +1,7 @@
 filebeat.inputs:
-- type: log
-  enabled: false
-  paths:
-    - /var/log/*.log
-  
+# (the old `type: log` input is deprecated in Filebeat 9; use filestream)
 - type: filestream
+  id: var-log-files      # filestream inputs need a unique id in 9.x
   enabled: false
   paths:
     - /var/log/*.log
